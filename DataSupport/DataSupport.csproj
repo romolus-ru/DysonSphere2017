@@ -40,6 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataSupport.cs" />
     <Compile Include="Data\AchieveDescription.cs" />
     <Compile Include="Data\AchieveKeep.cs" />
     <Compile Include="Data\AtlasFiles.cs" />
@@ -95,7 +96,12 @@
     <Compile Include="Data\TimerDate.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\Engine\Engine.csproj">
+      <Project>{5ef366ca-251d-44c6-873e-b51c8d42a6c8}</Project>
+      <Name>Engine</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
