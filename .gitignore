@@ -43,5 +43,10 @@ Temporary Items
 .apdisk
 *.pdb
 /files/
+/_files/
 obj/
 *.vshost.*
+_bin/
+.vs/
+TestResults/
+packages/
