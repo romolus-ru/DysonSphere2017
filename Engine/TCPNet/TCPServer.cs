@@ -34,7 +34,7 @@ namespace Engine.TCPNet
 
         private TcpListener listener;
         public List<TCPEngineConnector> _clientsInfo = new List<TCPEngineConnector>();
-        public String ServerAddress = "localhost";
+        public string ServerAddress = "localhost";
         public int ServerPort = 5002;
 
         // Accept one client connection asynchronously.
