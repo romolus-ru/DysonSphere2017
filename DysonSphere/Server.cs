@@ -29,7 +29,7 @@ namespace DysonSphere
 			
 			
 			// получить из БД список классов
-
+			
 
 
 
