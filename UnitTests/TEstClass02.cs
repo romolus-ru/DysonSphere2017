@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Diagnostics;
+using DataSupportEF;
 
 namespace UnitTests
 {
@@ -15,7 +16,7 @@ namespace UnitTests
 		[Description("Соединяемся с БД и получаем данные из таблицы")]
 		public void DBConnectTest()
 		{
-			var db = new DataSupportEF.DataSupportEF();
+			var db = new DataSupportEF6();
 			var a = db.AtlasFilesGetAll();
 			Debug.WriteLine(a.Count+" count rows in table");
 		}

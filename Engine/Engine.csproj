@@ -47,11 +47,14 @@
     <Compile Include="EventSystem\Event\MessageString.cs" />
     <Compile Include="EventSystem\FileArchieve.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Server.cs" />
     <Compile Include="TCPNet\TCPConnector.cs" />
     <Compile Include="TCPNet\TCPEngineConnector.cs" />
     <Compile Include="TCPNet\TCPMessage.cs" />
     <Compile Include="TCPNet\TCPServer.cs" />
     <Compile Include="Utils\Collector.cs" />
+    <Compile Include="Utils\LogData.cs" />
+    <Compile Include="Utils\LogSystem.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -1,4 +1,5 @@
-﻿using DataSupport.Data;
+﻿using DataSupport;
+using DataSupport.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,17 +8,20 @@ using System.Threading.Tasks;
 
 namespace DataSupportEF
 {
-	public class DataSupportEF : DataSupport.DataSupport
+	public class DataSupportEF6 : DataSupportBase
 	{
 		private DysonSphereContext ds;
-		public DataSupportEF()
+		protected override string LogTag { get { return "DataSupportED6"; } }
+		public DataSupportEF6()
 		{
 			ds = new DysonSphereContext();
 		}
 
 		public override List<AtlasFiles> AtlasFilesGetAll()
 		{
-			return ds.AtlasFiles.ToList();
+			var a = ds.AtlasFiles.ToList();
+			Log("atlasFilesGet count="+a.Count);
+			return a;
 		}
 
 		public override void SetLog(Action<string> log1)
