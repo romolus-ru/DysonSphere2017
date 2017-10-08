@@ -40,7 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DataSupport.cs" />
+    <Compile Include="DataSupportBase.cs" />
     <Compile Include="Data\AchieveDescription.cs" />
     <Compile Include="Data\AchieveKeep.cs" />
     <Compile Include="Data\AtlasFiles.cs" />

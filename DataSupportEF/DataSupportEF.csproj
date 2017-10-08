@@ -55,7 +55,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DataSupportEF.cs" />
+    <Compile Include="DataSupportEF6.cs" />
     <Compile Include="DontCreateDB.cs" />
     <Compile Include="DysonSphereContext.cs" />
     <Compile Include="Program.cs" />

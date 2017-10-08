@@ -11,7 +11,7 @@ namespace DataSupportEF
 	public class DataSupportEF6 : DataSupportBase
 	{
 		private DysonSphereContext ds;
-		protected override string LogTag { get { return "DataSupportED6"; } }
+		protected override string LogTag { get { return "DataSupportEF6"; } }
 		public DataSupportEF6()
 		{
 			ds = new DysonSphereContext();

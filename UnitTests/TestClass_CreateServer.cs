@@ -1,12 +1,13 @@
-﻿using DataSupportEF;
-using Engine;
+﻿using Engine;
 using Engine.Utils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using DataSupportEF;
+using DysonSphere;
 
 namespace UnitTests
 {
 	[TestClass]
-	class TestClass_CreateServer
+	public class TestClass_CreateServer
 	{
 		/// <summary>
 		/// Создаём сервер
@@ -19,7 +20,9 @@ namespace UnitTests
 			var ls = new LogSystem();
 			var DBContext = new DataSupportEF6();
 			DBContext.InitLogSystem(ls);
-			var server = new Server();
+
+			var server = new Server(DBContext, ls);
+			var a = 1;
 		}
 	}
 }
