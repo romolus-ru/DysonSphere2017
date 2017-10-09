@@ -1,4 +1,5 @@
 ﻿using DataSupport.Data;
+using Engine.Data;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -26,6 +27,7 @@ namespace DataSupportEF
 
 		// Отражение таблиц базы данных на свойства с типом DbSet
 		public DbSet<AtlasFiles> AtlasFiles { get; set; }
+		public DbSet<CollectClass> CollectClasses { get; set; }
 
 		protected override void OnModelCreating(DbModelBuilder modelBuilder)
 		{

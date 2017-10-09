@@ -54,7 +54,7 @@
   <ItemGroup>
     <Compile Include="TestClass01.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TestClass02.cs" />
+    <Compile Include="TestClass_DBTests01.cs" />
     <Compile Include="TestClass_CreateServer.cs" />
   </ItemGroup>
   <ItemGroup>

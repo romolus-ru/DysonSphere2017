@@ -6,7 +6,7 @@ using DataSupportEF;
 namespace UnitTests
 {
 	[TestClass]
-	public class TestClass02
+	public class TestClass_DBTests01
 	{
 		/// <summary>
 		/// Простой тест с использованием сериализации/десериазизации
@@ -20,5 +20,21 @@ namespace UnitTests
 			var a = db.AtlasFilesGetAll();
 			Debug.WriteLine(a.Count+" count rows in table");
 		}
+
+		/// <summary>
+		/// Простой тест с использованием сериализации/десериазизации
+		/// </summary>
+		[TestCategory("DB|2")]
+		[TestMethod]
+		[Description("Получаем данные для сбора классов для коллектора")]
+		public void DBGetClassesTest()
+		{
+			// смапить таблицу на реальную таблицу
+			var db = new DataSupportEF6();
+			var a = db.GetCollectClasses();
+			Debug.WriteLine(a.Count + " count rows in table");
+			Assert.AreNotEqual(0, a.Count);
+		}
+
 	}
 }

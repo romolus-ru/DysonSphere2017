@@ -1,4 +1,5 @@
 ﻿using DataSupport.Data;
+using Engine.Data;
 using Engine.Utils;
 using System;
 using System.Collections.Generic;
@@ -32,5 +33,19 @@ namespace DataSupport
 
         }
 
+		public virtual List<CollectClass> GetCollectClasses()
+		{
+			return null;
+		}
+
+		/// <summary>
+		/// Save or Update CollectClass
+		/// </summary>
+		/// <param name="collectClass">entity</param>
+		/// <param name="save">save now</param>
+		public virtual void SaveCollectClasses(CollectClass collectClass, bool save=true)
+		{
+
+		}
     }
 }

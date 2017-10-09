@@ -24,17 +24,15 @@ namespace DysonSphere
 			_datasupport = dataSupport;
 			// сохраняем обработчик логов
 			_logsystem = logSystem;
+
 			// коллектор получает необходимые классы из ДЛЛ через базу
-			var classesList = new List<CollectClass>();
-			
-			
-			// получить из БД список классов
-			
-
-
-
+			var classesList = _datasupport.GetCollectClasses();			
 			var collector = new Collector();
 			collector.LoadClasses(classesList);
+			
+			
+			// надо какие то настройки сервера получить. тоже из базы
+
 			// создаётся объект для работы с пользователями
 			// создаётся объект для работы с играми
 			// создаётся обработчик соединений
