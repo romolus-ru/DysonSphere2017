@@ -68,9 +68,9 @@ namespace Engine.Utils
             foreach (var cl in collect)
             {
                 if (cl.FileName.ToLower() == "engine.dll")
-                    LoadClassEngine(cl.IdFilesClasses, cl.FileName, cl.ClassName);
+                    LoadClassEngine(cl.Id, cl.FileName, cl.ClassName);
                 else
-                    LoadClass(cl.IdFilesClasses, cl.FileName, cl.ClassName);
+                    LoadClass(cl.Id, cl.FileName, cl.ClassName);
                 //или отдельный метод или этот же метод, но что бы использовалась текущая сборка
             }
         }

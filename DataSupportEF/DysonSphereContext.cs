@@ -32,6 +32,10 @@ namespace DataSupportEF
 		protected override void OnModelCreating(DbModelBuilder modelBuilder)
 		{
 			modelBuilder.Entity<AtlasFiles>().HasKey(u => u.IdAtlasFile);
+			modelBuilder.Entity<CollectClass>()
+				.ToTable("_FilesClasses")
+				.HasKey(u => u.Id)
+				.Property(u => u.Id).HasColumnName("IdFilesClasses");
 		}
 
 	}

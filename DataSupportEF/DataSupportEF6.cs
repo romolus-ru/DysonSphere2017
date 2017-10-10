@@ -40,7 +40,7 @@ namespace DataSupportEF
 
 		public override void SaveCollectClasses(CollectClass collectClass, bool save=true)
 		{
-			ds.Entry(collectClass).State= collectClass.IdFilesClasses == 0 ?
+			ds.Entry(collectClass).State= collectClass.Id == 0 ?
 								   EntityState.Added :
 								   EntityState.Modified;
 			if (save) ds.SaveChanges();

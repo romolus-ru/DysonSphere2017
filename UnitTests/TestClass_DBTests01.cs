@@ -29,7 +29,6 @@ namespace UnitTests
 		[Description("Получаем данные для сбора классов для коллектора")]
 		public void DBGetClassesTest()
 		{
-			// смапить таблицу на реальную таблицу
 			var db = new DataSupportEF6();
 			var a = db.GetCollectClasses();
 			Debug.WriteLine(a.Count + " count rows in table");
