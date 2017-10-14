@@ -109,10 +109,11 @@ namespace Utils_setup
 				var lvi = item as ListViewItemFileClasses;
 				if (lvi == null) continue;
 				var cl1 = lvi.Collect1;
-				_DBContext.DeleteCollectClasses(cl1);
+				_DBContext.DeleteCollectClasses(cl1,false);
 				lvi.InitWithDataFromDB(null);
 				lvi.Checked = false;
 			}
+			_DBContext.SaveChanges();
 		}
 	}
 }
