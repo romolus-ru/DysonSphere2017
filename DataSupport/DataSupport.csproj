@@ -94,6 +94,7 @@
     <Compile Include="Data\StarInfo.cs" />
     <Compile Include="Data\TimerCounter.cs" />
     <Compile Include="Data\TimerDate.cs" />
+    <Compile Include="Data\_Settings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

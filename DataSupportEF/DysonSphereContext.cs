@@ -28,6 +28,7 @@ namespace DataSupportEF
 		// Отражение таблиц базы данных на свойства с типом DbSet
 		public DbSet<AtlasFiles> AtlasFiles { get; set; }
 		public DbSet<CollectClass> CollectClasses { get; set; }
+		public DbSet<_Settings> Settings { get; set; }
 
 		protected override void OnModelCreating(DbModelBuilder modelBuilder)
 		{
@@ -36,6 +37,7 @@ namespace DataSupportEF
 				.ToTable("_FilesClasses")
 				.HasKey(u => u.Id)
 				.Property(u => u.Id).HasColumnName("IdFilesClasses");
+			modelBuilder.Entity<_Settings>().HasKey(u => u.IdSettings);
 		}
 
 	}

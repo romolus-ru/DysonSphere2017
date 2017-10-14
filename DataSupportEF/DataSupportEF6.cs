@@ -51,7 +51,13 @@ namespace DataSupportEF
 		public override int ServerSettingsGetValue(string valueName)
 		{
 			if (_settings == null) {
-
+				_settings = new Dictionary<string, int>();
+				var sts = ds.Settings.ToList();
+				foreach (var item in sts) {
+					if (!_settings.ContainsKey(item.TargetSubSys)) {
+						_settings.Add(item.TargetSubSys, item.ClassId);
+					}
+				}
 			}
 			if (!_settings.ContainsKey(valueName)) {
 				Log("значение " + valueName + " не обнаружено в настройках");
