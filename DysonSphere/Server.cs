@@ -1,6 +1,7 @@
 ﻿using DataSupport;
 using Engine.Data;
 using Engine.Utils;
+using Engine.Visualization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,13 +32,13 @@ namespace DysonSphere
 			collector.LoadClasses(classesList);
 
 			// таблица settings и там указать какие классы для чего использовать
-			var visualizationId = _datasupport.ServerSettingsSetValue("visualization");
-			получить нужные данные и закэшировать их. что бы что бы потом уже без запроса всё получать
+			var visualizationId = _datasupport.ServerSettingsGetValue("visualization");
+			//получить нужные данные и закэшировать их. что бы что бы потом уже без запроса всё получать
 			// надо какие то настройки сервера получить. тоже из базы
 			// основные настройки - объект визуализации. остальное пока по умолчанию
 
 			// создаётся объект для вывода на экран
-			var visualization = collector.GetObject(visualizationId);
+			var visualization = collector.GetObject(visualizationId) as VisualizationProvider;
 			// создаётся объект для работы с пользователями
 			// создаётся объект для работы с играми
 			// создаётся обработчик соединений

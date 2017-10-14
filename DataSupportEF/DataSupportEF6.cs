@@ -44,7 +44,20 @@ namespace DataSupportEF
 								   EntityState.Added :
 								   EntityState.Modified;
 			if (save) ds.SaveChanges();
+		}
 
+		private Dictionary<string, int> _settings = null;
+
+		public override int ServerSettingsGetValue(string valueName)
+		{
+			if (_settings == null) {
+
+			}
+			if (!_settings.ContainsKey(valueName)) {
+				Log("значение " + valueName + " не обнаружено в настройках");
+				return -1;
+			}
+			return _settings[valueName];
 		}
 
 	}
