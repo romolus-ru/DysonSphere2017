@@ -86,5 +86,33 @@ namespace Utils_setup
 				//Log(" " + type.FullName + " " + type.Name + " " + type.Namespace + " " + type.ToString());
 			}
 		}
+
+		private void btnAddChecked_Click(object sender, EventArgs e)
+		{
+			var list = listView1.CheckedItems;
+			foreach (var item in list) {
+				var lvi = item as ListViewItemFileClasses;
+				if (lvi == null) continue;
+				var cl1 = new CollectClass();
+				cl1.FileName = lvi.FileName;
+				cl1.ClassName = lvi.ClassName;
+				_DBContext.SaveCollectClasses(cl1);
+				lvi.InitWithDataFromDB(cl1);
+				lvi.Checked = false;
+			}
+		}
+
+		private void button1_Click(object sender, EventArgs e)
+		{
+			var list = listView1.CheckedItems;
+			foreach (var item in list) {
+				var lvi = item as ListViewItemFileClasses;
+				if (lvi == null) continue;
+				var cl1 = lvi.Collect1;
+				_DBContext.DeleteCollectClasses(cl1);
+				lvi.InitWithDataFromDB(null);
+				lvi.Checked = false;
+			}
+		}
 	}
 }

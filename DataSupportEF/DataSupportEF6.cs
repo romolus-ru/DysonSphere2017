@@ -21,16 +21,22 @@ namespace DataSupportEF
 			ds = new DysonSphereContext();
 		}
 
-		public override List<AtlasFiles> AtlasFilesGetAll()
+		public override void SaveChanges()
 		{
-			var a = ds.AtlasFiles.ToList();
-			Log("atlasFilesGet count="+a.Count);
-			return a;
+			base.SaveChanges();
+			ds.SaveChanges();
 		}
 
 		public override void SetLog(Action<string> log1)
 		{
 			ds.Database.Log += log1;
+		}
+
+		public override List<AtlasFiles> AtlasFilesGetAll()
+		{
+			var a = ds.AtlasFiles.ToList();
+			Log("atlasFilesGet count="+a.Count);
+			return a;
 		}
 
 		public override List<CollectClass> GetCollectClasses()
@@ -43,6 +49,12 @@ namespace DataSupportEF
 			ds.Entry(collectClass).State= collectClass.Id == 0 ?
 								   EntityState.Added :
 								   EntityState.Modified;
+			if (save) ds.SaveChanges();
+		}
+
+		public override void DeleteCollectClasses(CollectClass collectClass, bool save = true)
+		{
+			ds.Entry(collectClass).State = EntityState.Deleted;
 			if (save) ds.SaveChanges();
 		}
 

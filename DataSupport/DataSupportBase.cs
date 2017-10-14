@@ -23,6 +23,11 @@ namespace DataSupport
 		/// <param name="msg"></param>
 		protected void Log(string msg) { _logSystem?.AddLog(LogTag, msg, 0); }
 
+		/// <summary>
+		/// Сохранить все изменения
+		/// </summary>
+		public virtual void SaveChanges() { }
+
 		public virtual List<AtlasFiles> AtlasFilesGetAll()
 		{
 			return null;
@@ -49,6 +54,16 @@ namespace DataSupport
 		/// <param name="collectClass">entity</param>
 		/// <param name="save">save now</param>
 		public virtual void SaveCollectClasses(CollectClass collectClass, bool save = true)
+		{
+
+		}
+
+		/// <summary>
+		/// Удалить класс из базы
+		/// </summary>
+		/// <param name="collectClass"></param>
+		/// <param name="save"></param>
+		public virtual void DeleteCollectClasses(CollectClass collectClass, bool save = true)
 		{
 
 		}

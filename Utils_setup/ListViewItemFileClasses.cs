@@ -45,7 +45,7 @@ namespace Utils_setup
 		public void InitWithDataFromDB(CollectClass collect)
 		{
 			Collect1 = collect;
-			id = collect.Id;
+			id = collect?.Id ?? -1;
 			RefreshInfo();
 		}
 
