@@ -31,7 +31,24 @@ namespace Utils_setup
 			FoundInFile = true;
 			FileName = fileName;
 			ClassName = type.FullName;
+			RefreshInfo();
 		}
+		public ListViewItemFileClasses(CollectClass collect)
+		{
+			FoundInFile = false;
+			Collect1 = collect;
+			FileName = collect.FileName;
+			ClassName = collect.ClassName;
+			RefreshInfo();
+		}
+
+		public void InitWithDataFromDB(CollectClass collect)
+		{
+			Collect1 = collect;
+			id = collect.Id;
+			RefreshInfo();
+		}
+
 		public void RefreshInfo()
 		{
 			Text = "";

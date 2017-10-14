@@ -35,6 +35,7 @@ namespace Utils_setup
 			listView1.Items.Clear();
 			var path = AppDomain.CurrentDomain.BaseDirectory;
 			var files = Directory.GetFiles(path, "*.dll");
+			// получаем классы из файлов
 			foreach (var fl in files) {
 				if (fl.Contains("EntityFramework.dll")) continue;
 				if (fl.Contains("EntityFramework.SqlServer.dll")) continue;
@@ -42,7 +43,22 @@ namespace Utils_setup
 				if (fl.Contains("UnitTests.dll")) continue;
 				FindObjectsInAssembly(fl);
 			}
-			var a = 1;
+			var DBClasses = _DBContext.GetCollectClasses();
+			foreach (var class1 in DBClasses) {
+				// проверяем есть ли уже такой объект
+				var founded = false;
+				foreach (ListViewItemFileClasses item in listView1.Items) {
+					if (item.FileName != class1.FileName) continue;
+					if (item.ClassName != class1.ClassName) continue;
+					// совпадает
+					founded = true;
+					item.InitWithDataFromDB(class1);
+				}
+				if (!founded) {// не нашли
+					var lvi = new ListViewItemFileClasses(class1);
+					listView1.Items.Add(lvi);
+				}
+			}
 		}
 
 		public void FindObjectsInAssembly(string assemblyFile)
@@ -67,7 +83,6 @@ namespace Utils_setup
 				if (type.FullName.Contains("`")) continue;
 				var lvi = new ListViewItemFileClasses(fname, type);
 				listView1.Items.Add(lvi);
-				lvi.RefreshInfo();
 				//Log(" " + type.FullName + " " + type.Name + " " + type.Namespace + " " + type.ToString());
 			}
 		}
