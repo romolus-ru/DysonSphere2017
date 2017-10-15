@@ -9,7 +9,12 @@ namespace Engine.Visualization
 	/// <summary>
 	/// Основной класс, отвечает за связь с внешним миром и отображение информации
 	/// </summary>
-	class View
+	public class View
 	{
+		private VisualizationProvider _provider;
+		public View(VisualizationProvider provider)
+		{
+			_provider = provider;
+		}
 	}
 }

@@ -363,6 +363,7 @@ namespace VisualizationOpenGL
 		public override void Run()
 		{
 			base.Run();
+			_formOpenGl.WindowState = FormWindowState.Maximized;
 			_formOpenGl.BringToFront();
 			_formOpenGl.Focus();
 			_formOpenGl.ShowDialog();

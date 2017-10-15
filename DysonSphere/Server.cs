@@ -18,6 +18,7 @@ namespace DysonSphere
 		private DataSupportBase _datasupport;
 		private LogSystem _logsystem;
 		private string LogTag = "Server";
+		private View _view;
 
 		public Server(DataSupportBase dataSupport, LogSystem logSystem)
 		{
@@ -31,10 +32,13 @@ namespace DysonSphere
 			var collector = new Collector();
 			collector.LoadClasses(classesList);
 
-			var visualizationId = _datasupport.ServerSettingsGetValue("visualization");
 			// создаётся объект для вывода на экран
+			var visualizationId = _datasupport.ServerSettingsGetValue("visualization");
 			var visualization = collector.GetObject(visualizationId) as VisualizationProvider;
 			visualization.InitVisualization(500, 500, true);
+
+			_view = new View(visualization);
+
 			// запуск и обработку перенести в отдельный поток
 			visualization.Run();
 
