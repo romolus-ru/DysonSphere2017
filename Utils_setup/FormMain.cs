@@ -43,6 +43,10 @@ namespace Utils_setup
 				if (fl.Contains("EntityFramework.SqlServer.dll")) continue;
 				if (fl.Contains("Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll")) continue;
 				if (fl.Contains("UnitTests.dll")) continue;
+				if (fl.Contains("OpenGL4Net.dll")) continue;
+				if (fl.Contains("Tao.DevIl.dll")) continue;
+				if (fl.Contains("Tao.FreeGlut.dll")) continue;
+				if (fl.Contains("Tao.Platform.Windows.dll")) continue;
 				FindObjectsInAssembly(fl);
 			}
 			var DBClasses = _DBContext.GetCollectClasses();

@@ -1,7 +1,7 @@
 ﻿using System.Windows.Forms;
 using OpenGL4NET;
 
-namespace VisualizationOpenGL4
+namespace VisualizationOpenGL
 {
 	public partial class FormOpenGL4 : Form
 	{

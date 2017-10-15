@@ -4,7 +4,7 @@ using System.Text;
 using System.Windows.Forms;
 using Engine;
 
-namespace VisualizationOpenGL4
+namespace VisualizationOpenGL
 {
 	/// <summary>
 	/// Создаётся исключительно для данной визуализации

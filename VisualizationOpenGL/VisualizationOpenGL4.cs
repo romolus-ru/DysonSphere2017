@@ -10,7 +10,7 @@ using Tao.Platform.Windows;
 using OpenGL4NET;
 using Engine.Visualization;
 
-namespace VisualizationOpenGL4
+namespace VisualizationOpenGL
 {
 	class VisualizationOpenGL4 : VisualizationProvider
 	{

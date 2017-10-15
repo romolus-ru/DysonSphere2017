@@ -86,6 +86,8 @@ namespace DataSupportEF
 		public override void ServerSettingsSetValue(string valueName, int classId)
 		{
 			var st1 = ds.Settings.Where(s => s.TargetSys == "Server" && s.TargetSubSys == "valueName").FirstOrDefault();
+			if (st1 == null) st1 = new _Settings();
+			st1.TargetSys = "Server";
 			st1.TargetSubSys = valueName;
 			st1.ClassId = classId;
 			ds.Entry(st1).State = st1.IdSettings == 0 ?

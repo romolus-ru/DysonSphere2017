@@ -1,4 +1,4 @@
-﻿namespace VisualizationOpenGL4
+﻿namespace VisualizationOpenGL
 {
 	partial class FormOpenGL4
 	{

@@ -57,6 +57,7 @@
     <Compile Include="Utils\Collector.cs" />
     <Compile Include="Utils\LogData.cs" />
     <Compile Include="Utils\LogSystem.cs" />
+    <Compile Include="Visualization\View.cs" />
     <Compile Include="Visualization\VisualizationProvider.cs" />
   </ItemGroup>
   <ItemGroup />
