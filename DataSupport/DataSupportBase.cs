@@ -48,6 +48,11 @@ namespace DataSupport
 			return -1;
 		}
 
+		public virtual void ServerSettingsSetValue(string valueName, int classId)
+		{
+
+		}
+
 		/// <summary>
 		/// Save or Update CollectClass
 		/// </summary>

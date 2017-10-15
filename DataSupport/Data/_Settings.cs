@@ -8,6 +8,7 @@ namespace DataSupport.Data
     {
         public int IdSettings { get; set; }
         public int ClassId { get; set; }
-        public string TargetSubSys { get; set; }
-    }
+		public string TargetSys { get; set; }
+		public string TargetSubSys { get; set; }
+	}
 }

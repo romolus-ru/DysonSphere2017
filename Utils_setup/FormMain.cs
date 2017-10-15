@@ -13,6 +13,7 @@ using DataSupportEF;
 using System.Reflection;
 using System.IO;
 using Engine.Data;
+using Engine.Visualization;
 
 namespace Utils_setup
 {
@@ -20,6 +21,7 @@ namespace Utils_setup
 	{
 		private LogSystem _ls;
 		private DataSupportEF6 _DBContext;
+		private string appPath = "";
 		private void Log(string msg) { _ls.AddLog(msg); }
 
 		public FormMain()
@@ -28,13 +30,13 @@ namespace Utils_setup
 			_ls = new LogSystem();
 			_DBContext = new DataSupportEF6();
 			_DBContext.InitLogSystem(_ls);
+			appPath = AppDomain.CurrentDomain.BaseDirectory;
 		}
 
 		private void btnScan_Click(object sender, EventArgs e)
 		{
 			listView1.Items.Clear();
-			var path = AppDomain.CurrentDomain.BaseDirectory;
-			var files = Directory.GetFiles(path, "*.dll");
+			var files = Directory.GetFiles(appPath, "*.dll");
 			// получаем классы из файлов
 			foreach (var fl in files) {
 				if (fl.Contains("EntityFramework.dll")) continue;
@@ -65,8 +67,7 @@ namespace Utils_setup
 		{
 			Assembly assembly;
 			if (!File.Exists(assemblyFile)) return;
-			// пробуем загрузить
-			try {
+			try {// пробуем загрузить
 				AssemblyName assemblyName = AssemblyName.GetAssemblyName(assemblyFile);
 				assembly = Assembly.Load(assemblyName);
 			}
@@ -114,6 +115,57 @@ namespace Utils_setup
 				lvi.Checked = false;
 			}
 			_DBContext.SaveChanges();
+		}
+
+		private void btnSetVisualization_Click(object sender, EventArgs e)
+		{
+			var list = listView1.CheckedItems;
+			if (list.Count < 1) return;
+			var lvi = list[0] as ListViewItemFileClasses;
+			if (lvi == null) return;
+			var cl1 = lvi.Collect1;
+			var assemblyFile = appPath + lvi.FileName;
+
+			Assembly assembly;
+			if (!File.Exists(assemblyFile)) return;
+			try {// пробуем загрузить
+				AssemblyName assemblyName = AssemblyName.GetAssemblyName(assemblyFile);
+				assembly = Assembly.Load(assemblyName);
+			}
+			catch (Exception ex) {// если не загрузилось то показываем что к чему
+				Log("Ошибка при загрузке сборки " + assemblyFile + Environment.NewLine + ex.Message + Environment.NewLine + ex.GetType());
+				return; // и выходим
+			}
+
+			// ищем нужные типы в объектах и сохраняем их для последующего использования
+			var fname = assemblyFile.Substring(assemblyFile.LastIndexOf(@"\") + 1);
+			Type[] types = assembly.GetTypes();
+			Type objectType = typeof(VisualizationProvider);
+
+			var pE = from pe in types where pe != objectType select pe;
+			foreach (Type type in pE) {
+				var searchType = type;
+				var founded = false; // флаг что нашли тип с нужным предком
+				while (searchType != typeof(object)) {
+					if (searchType == objectType) {
+						founded = true; // нашли, выходим
+						break;
+					}
+					// идём выше по иерархии
+					if (searchType.BaseType != null) searchType = searchType.BaseType;
+					// или прерываем поиск
+					if (searchType.BaseType == null) break;
+				}
+				if (founded) {
+					_DBContext.ServerSettingsSetValue("visualization", cl1.Id);
+					break;
+				}
+			}
+			foreach (var item in list) {
+				var lvi1 = item as ListViewItem;
+				lvi1.Checked = false;
+			}
+
 		}
 	}
 }

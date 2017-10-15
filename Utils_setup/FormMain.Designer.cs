@@ -28,20 +28,22 @@
 		private void InitializeComponent()
 		{
 			this.panel1 = new System.Windows.Forms.Panel();
+			this.button1 = new System.Windows.Forms.Button();
+			this.btnAddChecked = new System.Windows.Forms.Button();
+			this.btnScan = new System.Windows.Forms.Button();
 			this.panel2 = new System.Windows.Forms.Panel();
 			this.listView1 = new System.Windows.Forms.ListView();
 			this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.btnScan = new System.Windows.Forms.Button();
-			this.btnAddChecked = new System.Windows.Forms.Button();
-			this.button1 = new System.Windows.Forms.Button();
+			this.btnSetVisualization = new System.Windows.Forms.Button();
 			this.panel1.SuspendLayout();
 			this.panel2.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// panel1
 			// 
+			this.panel1.Controls.Add(this.btnSetVisualization);
 			this.panel1.Controls.Add(this.button1);
 			this.panel1.Controls.Add(this.btnAddChecked);
 			this.panel1.Controls.Add(this.btnScan);
@@ -50,6 +52,36 @@
 			this.panel1.Name = "panel1";
 			this.panel1.Size = new System.Drawing.Size(1095, 53);
 			this.panel1.TabIndex = 0;
+			// 
+			// button1
+			// 
+			this.button1.Location = new System.Drawing.Point(345, 12);
+			this.button1.Name = "button1";
+			this.button1.Size = new System.Drawing.Size(173, 30);
+			this.button1.TabIndex = 2;
+			this.button1.Text = "Удалить из базы";
+			this.button1.UseVisualStyleBackColor = true;
+			this.button1.Click += new System.EventHandler(this.button1_Click);
+			// 
+			// btnAddChecked
+			// 
+			this.btnAddChecked.Location = new System.Drawing.Point(166, 12);
+			this.btnAddChecked.Name = "btnAddChecked";
+			this.btnAddChecked.Size = new System.Drawing.Size(173, 30);
+			this.btnAddChecked.TabIndex = 1;
+			this.btnAddChecked.Text = "Добавить в базу";
+			this.btnAddChecked.UseVisualStyleBackColor = true;
+			this.btnAddChecked.Click += new System.EventHandler(this.btnAddChecked_Click);
+			// 
+			// btnScan
+			// 
+			this.btnScan.Location = new System.Drawing.Point(12, 12);
+			this.btnScan.Name = "btnScan";
+			this.btnScan.Size = new System.Drawing.Size(130, 30);
+			this.btnScan.TabIndex = 0;
+			this.btnScan.Text = "Scan";
+			this.btnScan.UseVisualStyleBackColor = true;
+			this.btnScan.Click += new System.EventHandler(this.btnScan_Click);
 			// 
 			// panel2
 			// 
@@ -94,35 +126,15 @@
 			this.columnHeader3.Text = "Class";
 			this.columnHeader3.Width = 306;
 			// 
-			// btnScan
+			// btnSetVisualization
 			// 
-			this.btnScan.Location = new System.Drawing.Point(12, 12);
-			this.btnScan.Name = "btnScan";
-			this.btnScan.Size = new System.Drawing.Size(130, 30);
-			this.btnScan.TabIndex = 0;
-			this.btnScan.Text = "Scan";
-			this.btnScan.UseVisualStyleBackColor = true;
-			this.btnScan.Click += new System.EventHandler(this.btnScan_Click);
-			// 
-			// btnAddChecked
-			// 
-			this.btnAddChecked.Location = new System.Drawing.Point(166, 12);
-			this.btnAddChecked.Name = "btnAddChecked";
-			this.btnAddChecked.Size = new System.Drawing.Size(173, 30);
-			this.btnAddChecked.TabIndex = 1;
-			this.btnAddChecked.Text = "Добавить в базу";
-			this.btnAddChecked.UseVisualStyleBackColor = true;
-			this.btnAddChecked.Click += new System.EventHandler(this.btnAddChecked_Click);
-			// 
-			// button1
-			// 
-			this.button1.Location = new System.Drawing.Point(345, 12);
-			this.button1.Name = "button1";
-			this.button1.Size = new System.Drawing.Size(173, 30);
-			this.button1.TabIndex = 2;
-			this.button1.Text = "Удалить из базы";
-			this.button1.UseVisualStyleBackColor = true;
-			this.button1.Click += new System.EventHandler(this.button1_Click);
+			this.btnSetVisualization.Location = new System.Drawing.Point(524, 12);
+			this.btnSetVisualization.Name = "btnSetVisualization";
+			this.btnSetVisualization.Size = new System.Drawing.Size(173, 30);
+			this.btnSetVisualization.TabIndex = 3;
+			this.btnSetVisualization.Text = "Установить визуализацию";
+			this.btnSetVisualization.UseVisualStyleBackColor = true;
+			this.btnSetVisualization.Click += new System.EventHandler(this.btnSetVisualization_Click);
 			// 
 			// FormMain
 			// 
@@ -150,6 +162,7 @@
 		private System.Windows.Forms.ColumnHeader columnHeader3;
 		private System.Windows.Forms.Button btnAddChecked;
 		private System.Windows.Forms.Button button1;
+		private System.Windows.Forms.Button btnSetVisualization;
 	}
 }
 

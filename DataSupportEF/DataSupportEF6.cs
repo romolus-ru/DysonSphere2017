@@ -60,22 +60,39 @@ namespace DataSupportEF
 
 		private Dictionary<string, int> _settings = null;
 
+		private void ServerSettingsGetAll()
+		{
+			_settings = new Dictionary<string, int>();
+			var sts = ds.Settings.Where(s => s.TargetSys == "Server").ToList();
+			foreach (var item in sts) {
+				if (!_settings.ContainsKey(item.TargetSubSys)) {
+					_settings.Add(item.TargetSubSys, item.ClassId);
+				}
+			}
+		}
+
 		public override int ServerSettingsGetValue(string valueName)
 		{
 			if (_settings == null) {
-				_settings = new Dictionary<string, int>();
-				var sts = ds.Settings.ToList();
-				foreach (var item in sts) {
-					if (!_settings.ContainsKey(item.TargetSubSys)) {
-						_settings.Add(item.TargetSubSys, item.ClassId);
-					}
-				}
+				ServerSettingsGetAll();
 			}
 			if (!_settings.ContainsKey(valueName)) {
 				Log("значение " + valueName + " не обнаружено в настройках");
 				return -1;
 			}
 			return _settings[valueName];
+		}
+
+		public override void ServerSettingsSetValue(string valueName, int classId)
+		{
+			var st1 = ds.Settings.Where(s => s.TargetSys == "Server" && s.TargetSubSys == "valueName").FirstOrDefault();
+			st1.TargetSubSys = valueName;
+			st1.ClassId = classId;
+			ds.Entry(st1).State = st1.IdSettings == 0 ?
+					   EntityState.Added :
+					   EntityState.Modified;
+			ds.SaveChanges();
+			ServerSettingsGetAll();
 		}
 
 	}
