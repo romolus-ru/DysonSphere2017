@@ -70,7 +70,9 @@
     <Compile Include="VisualizationOpenGL4.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="DevIL.dll" />
+    <Content Include="DevIL.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="OpenGL4Net.dll" />
     <Content Include="Tao.DevIl.dll" />
     <Content Include="Tao.FreeGlut.dll" />

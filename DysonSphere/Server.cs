@@ -34,6 +34,8 @@ namespace DysonSphere
 			var visualizationId = _datasupport.ServerSettingsGetValue("visualization");
 			// создаётся объект для вывода на экран
 			var visualization = collector.GetObject(visualizationId) as VisualizationProvider;
+			visualization.InitVisualization(500, 500, true);
+			// запуск и обработку перенести в отдельный поток
 			visualization.Run();
 
 			// создаётся объект для работы с пользователями

@@ -134,7 +134,7 @@ namespace Engine.Utils
             Type[] types = assembly.GetTypes();
             foreach (Type type in types)
             {
-                if (type.Name == className)
+                if (type.FullName == className)
                 {
                     ret = type; break;
                 }
