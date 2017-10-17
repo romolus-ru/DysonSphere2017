@@ -49,6 +49,8 @@
     <Compile Include="EventSystem\Event\MessageString.cs" />
     <Compile Include="EventSystem\FileArchieve.cs" />
     <Compile Include="Input.cs" />
+    <Compile Include="Model.cs" />
+    <Compile Include="ModelMain.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TCPNet\TCPConnector.cs" />
     <Compile Include="TCPNet\TCPEngineConnector.cs" />
@@ -58,6 +60,7 @@
     <Compile Include="Utils\LogData.cs" />
     <Compile Include="Utils\LogSystem.cs" />
     <Compile Include="Visualization\View.cs" />
+    <Compile Include="Visualization\ViewMain.cs" />
     <Compile Include="Visualization\VisualizationProvider.cs" />
   </ItemGroup>
   <ItemGroup />

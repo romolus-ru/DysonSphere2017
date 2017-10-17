@@ -11,7 +11,7 @@ namespace Engine.Visualization
 	/// </summary>
 	public class View
 	{
-		private VisualizationProvider _provider;
+		protected VisualizationProvider _provider;
 		public View(VisualizationProvider provider)
 		{
 			_provider = provider;

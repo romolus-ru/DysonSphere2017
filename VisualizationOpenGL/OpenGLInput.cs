@@ -96,7 +96,7 @@ namespace VisualizationOpenGL
 		/// Установить новые координаты курсора
 		/// </summary>
 		/// <returns></returns>
-		protected override Boolean SetCursor()
+		protected override bool SetCursor()
 		{
 			Boolean ret = false;
 			var newCur = Cursor.Position;// экранные координаты курсора
@@ -146,7 +146,7 @@ namespace VisualizationOpenGL
 			int nResultLower = ToUnicodeEx(key, scanCode, _keys, stringBuilder,
 												   stringBuilder.Capacity, 0, handle);
 
-			string output = String.Empty;
+			string output = string.Empty;
 			if (nResultLower > 0)
 			{
 				output = stringBuilder.ToString();
