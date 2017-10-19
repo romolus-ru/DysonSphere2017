@@ -19,7 +19,7 @@ namespace DataSupport
 
 		public void InitLogSystem(LogSystem logSystem) { _logSystem = logSystem; }
 
-		/// <summary>Логирование информации </summary>
+		/// <summary>Логирование информации</summary>
 		/// <param name="msg"></param>
 		protected void Log(string msg) { _logSystem?.AddLog(LogTag, msg, 0); }
 

@@ -48,6 +48,7 @@
     <Compile Include="EventSystem\Event\EventBase.cs" />
     <Compile Include="EventSystem\Event\MessageString.cs" />
     <Compile Include="EventSystem\FileArchieve.cs" />
+    <Compile Include="GameInitializer.cs" />
     <Compile Include="Input.cs" />
     <Compile Include="Model.cs" />
     <Compile Include="ModelMain.cs" />

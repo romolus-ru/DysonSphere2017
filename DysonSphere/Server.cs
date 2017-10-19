@@ -59,6 +59,12 @@ namespace DysonSphere
 			Log("Сервер работает");
 		}
 
+		private void InitGame(int gameId)
+		{
+			// получаем инициализатор игры
+
+		}
+
 		private void Log(string msg) {
 			_logsystem?.AddLog(LogTag, msg, 1);
 		}
