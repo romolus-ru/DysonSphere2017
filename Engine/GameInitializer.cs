@@ -1,4 +1,6 @@
-﻿using Engine.Visualization;
+﻿// TODO посмотреть может быть можно сделать интерфейс для логирования. может быть и partial для этого использовать
+
+using Engine.Visualization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,17 +12,35 @@ namespace Engine
 	/// <summary>
 	/// Инициализирует игру. вид и модель
 	/// </summary>
-	class GameInitializer
+	public class GameInitializer
 	{
-		public void InitGame(ModelMain modelMain, ViewMain viewMain, VisualizationProvider provider)
+		public void InitGame(ModelMain modelMain, ViewManager viewMain, VisualizationProvider provider)
 		{
 			var model = CreateModel();
 			var view = CreateView(provider);
 			InitDelegates(model, view);
+			InitResourcesThread(provider);
 			// TODO добавить модель и вид в нужные места
-			// TODO посмотреть может быть можно сделать интерфейс для логирования. может быть и partial для этого использовать
+			modelMain.AddModel(model);
+			viewMain.AddView(view);
 		}
 
+		/// <summary>
+		/// Запуск потока для загрузки ресурсов. Переводим менеджера в режим ожидания и вывода загружаемых данных
+		/// </summary>
+		private void InitResourcesThread(VisualizationProvider provider)
+		{
+			// пока напрямую вызываем
+			InitResources(provider);
+		}
+
+		/// <summary>
+		/// Инициализируем ресурсы. запускается в отдельном потоке
+		/// </summary>
+		protected void InitResources(VisualizationProvider provider)
+		{
+
+		}
 		/// <summary>
 		/// Соединяем нужные делегаты модели и вида
 		/// </summary>
@@ -50,6 +70,5 @@ namespace Engine
 			return null;
 		}
 
-		public 
 	}
 }

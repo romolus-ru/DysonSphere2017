@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Timer = System.Windows.Forms.Timer;
 
 namespace DysonSphere
 {
@@ -17,12 +18,20 @@ namespace DysonSphere
 	/// </summary>
 	public class Server
 	{
+		private Stopwatch _stopwatch;
 		private DataSupportBase _datasupport;
 		private LogSystem _logsystem;
+		private Collector _collector;
+		private VisualizationProvider _visualization;
 		private string LogTag = "Server";
 		private ModelMain _model;
-		private ViewMain _view;
-		private Stopwatch _stopwatch;
+		private ViewManager _viewManager;
+		private Timer _timer;
+
+		/// <summary>
+		/// Значение времени для рассчёта количества кадров в секунду
+		/// </summary>
+		public static int TimerInterval = 1000 / 60;
 
 		public Server(DataSupportBase dataSupport, LogSystem logSystem)
 		{
@@ -32,22 +41,23 @@ namespace DysonSphere
 			// сохраняем обработчик логов
 			_logsystem = logSystem;
 
+			_timer = new Timer();
+			_timer.Interval = TimerInterval;
+			_timer.Tick += MainTimerRun;
+
 			// коллектор получает необходимые классы из ДЛЛ через базу
 			var classesList = _datasupport.GetCollectClasses();			
-			var collector = new Collector();
-			collector.LoadClasses(classesList);
+			_collector = new Collector();
+			_collector.LoadClasses(classesList);
 
 			// создаётся объект для вывода на экран
 			var visualizationId = _datasupport.ServerSettingsGetValue("visualization");
-			var visualization = collector.GetObject(visualizationId) as VisualizationProvider;
-			visualization.InitVisualization(500, 500, true);
+			_visualization = _collector.GetObject(visualizationId) as VisualizationProvider;
+			_visualization.InitVisualization(500, 500, true);
 
 			_model = new ModelMain();
-			_view = new ViewMain(visualization);
+			_viewManager = new ViewManager(_visualization);
 			// соединяем модели, формируем основные пути передачи информации
-
-			// запуск и обработку перенести в отдельный поток
-			visualization.Run();
 
 			// создаётся объект для работы с пользователями
 			// создаётся объект для работы с играми
@@ -59,14 +69,38 @@ namespace DysonSphere
 			Log("Сервер работает");
 		}
 
+		/// <summary>
+		/// Инициализируем и запускаем игру по коду
+		/// </summary>
+		/// <param name="gameId"></param>
 		private void InitGame(int gameId)
 		{
 			// получаем инициализатор игры
-
+			var gi = _collector.GetObject(gameId) as GameInitializer;
+			gi.InitGame(_model, _viewManager, _visualization);
 		}
 
 		private void Log(string msg) {
 			_logsystem?.AddLog(LogTag, msg, 1);
+		}
+
+		/// <summary>
+		/// Запуск обработки по таймеру и визуализации
+		/// </summary>
+		public void Run()
+		{
+			_timer.Start();
+			_visualization.Run();
+		}
+
+		/// <summary>
+		/// Основной цикл. по таймеру
+		/// </summary>
+		private void MainTimerRun(object sender, EventArgs eventArgs)
+		{
+			//_input.GetInput();// обработка устройств ввода
+			_model.Tick();
+			_viewManager.Draw();
 		}
 	}
 }

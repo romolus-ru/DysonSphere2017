@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{CC68667C-3EB4-444D-BAB9-E1A4188D3934}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>DysonSphere</RootNamespace>
     <AssemblyName>DysonSphere</AssemblyName>
@@ -32,9 +32,13 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -51,6 +55,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DataSupportEF\DataSupportEF.csproj">
+      <Project>{37F8E551-9EDC-436E-81BD-20859A17B771}</Project>
+      <Name>DataSupportEF</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DataSupport\DataSupport.csproj">
       <Project>{A4C51DEF-5050-403E-B858-A543CED7E72F}</Project>
       <Name>DataSupport</Name>

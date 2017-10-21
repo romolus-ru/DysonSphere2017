@@ -26,7 +26,9 @@ namespace VisualizationOpenGL
 			//}
 
 			_formOpenGl = new FormOpenGL4();
-			_formOpenGl.Size = new Size(CanvasHeight, CanvasWidth);
+			_formOpenGl.Size = fullScreen ?
+				Screen.PrimaryScreen.Bounds.Size : 
+				_formOpenGl.Size = new Size(width, height);
 			_formOpenGl.KeyPreview = true;
 
 			_formOpenGl.Text = @"OpenGL4";
