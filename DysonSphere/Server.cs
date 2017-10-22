@@ -35,7 +35,7 @@ namespace DysonSphere
 
 		public Server(DataSupportBase dataSupport, LogSystem logSystem)
 		{
-			_stopwatch = new Stopwatch();
+			_stopwatch = Stopwatch.StartNew();
 			// сохраняем объект для работы с данными
 			_datasupport = dataSupport;
 			// сохраняем обработчик логов
@@ -58,6 +58,10 @@ namespace DysonSphere
 			_model = new ModelMain();
 			_viewManager = new ViewManager(_visualization);
 			// соединяем модели, формируем основные пути передачи информации
+			// вынести в отдельный метод. делать что то наподобие serverInitializer нету смысла - надо будет передавать много параметров, а они уникальные
+			var serverView = new ServerView(_visualization);
+			serverView.SetTimerInfo(GetTime);
+			_viewManager.AddView(serverView);
 
 			// создаётся объект для работы с пользователями
 			// создаётся объект для работы с играми
@@ -93,6 +97,10 @@ namespace DysonSphere
 			_visualization.Run();
 		}
 
+		public TimeSpan GetTime()
+		{
+			return _stopwatch.Elapsed;
+		}
 		/// <summary>
 		/// Основной цикл. по таймеру
 		/// </summary>

@@ -45,12 +45,12 @@ namespace VisualizationOpenGL
 			gl.DepthFunc(GL.LESS);		// The Type Of Depth Test To Do
 			gl.Enable(GL.ALPHA_TEST);
 			ResizeGlScene(_formOpenGl.Width, _formOpenGl.Height);
-			//LoadFont("default", "Consolas", 24);
+			LoadFont("default", "Consolas", 12);
 			//LoadFont("default", "Book Antiqua", 14);
 			//LoadFont("default2", "Book Antiqua", 10);
-			LoadFont("default", "Impact обычный", 12);
+			//LoadFont("default", "Impact обычный", 12);
 			//LoadFont("default2", "Segoe UI", 15);
-			LoadFont("default2", "Segoe Print", 15);
+			//LoadFont("default2", "Segoe Print", 15);
 			//LoadFont("default2", "Calibri", 14);
 			//_controller.AddEventHandler("setHeader", (o, args) => SetHeader(o, args as MessageEventArgs));
 			//_controller.AddEventHandler("systemExit", Exit);

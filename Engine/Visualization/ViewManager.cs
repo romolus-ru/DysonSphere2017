@@ -22,7 +22,7 @@ namespace Engine.Visualization
 
 		public void AddView(View view)
 		{
-			//_component.Add(view);
+			_viewSystem.AddView(view);
 		}
 
 		int a = 1;
@@ -32,15 +32,15 @@ namespace Engine.Visualization
 		public void Draw()
 		{
 			_provider.BeginDraw();
+
+			_viewSystem.Draw(_provider);
 			// TODO сделать простую визуализацию чтоб показывать таймер сохраненный на сервере
 
-			_provider.SetColor(System.Drawing.Color.Teal);
-			_provider.Box(10, 10, 1660, 1030);
-			a++;
-			if (a > 1600) a = 0;
-			_provider.SetColor(System.Drawing.Color.Indigo);
-			_provider.Box(a, 100, 200, 300);
-
+			//_provider.SetColor(System.Drawing.Color.Teal);
+			//_provider.Box(10, 10, 1660, 1030);
+			//a++;if (a > 1600) a = 0;
+			//_provider.SetColor(System.Drawing.Color.Indigo);
+			//_provider.Box(a, 100, 200, 300);
 
 			_provider.FlushDrawing();
 		}
