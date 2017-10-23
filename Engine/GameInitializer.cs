@@ -1,8 +1,12 @@
-﻿// TODO посмотреть может быть можно сделать интерфейс для логирования. может быть и partial для этого использовать
-// TODO Вынести из visualizationProvider часть функционала - текстуры и шрифт отдельно. и часть построения фигур тоже перенести
-// TODO улучшить иерархию классов визуализации - нужно сделать несколько промежуточных классов
+﻿// TODO улучшить иерархию классов визуализации - нужно сделать несколько промежуточных классов
+// TODO в визуализации сделать иерархию что бы соответствовала порядку вывода элементов на экран
+// TODO работа с шейдерами
 // TODO обработка кнопок клавиатуры
+// TODO разделить объект по работе с БД на части. например авторизация, логирование, обработка игр
+// TODO 2 режима работы с клавиатурой - обрабатывать каждое нажатие отдельно (через отдельный класс в котором хранится код нажатой кнопки) 
+// или получать список нажатых кнопок с заданной периодичностью. но всё это должно быть в функционале класса input
 
+using Engine.Utils;
 using Engine.Visualization;
 using System;
 using System.Collections.Generic;
@@ -17,8 +21,10 @@ namespace Engine
 	/// </summary>
 	public class GameInitializer
 	{
-		public void InitGame(ModelMain modelMain, ViewManager viewMain, VisualizationProvider provider)
+		private const string LogTag = "GameInitializer";
+		public void InitGame(ModelMain modelMain, ViewManager viewMain, VisualizationProvider provider, LogSystem logs)
 		{
+			logs.AddLog(LogTag, "запускаем инициализацию игры");
 			var model = CreateModel();
 			var view = CreateView(provider);
 			InitDelegates(model, view);
@@ -26,6 +32,7 @@ namespace Engine
 			// TODO добавить модель и вид в нужные места
 			modelMain.AddModel(model);
 			viewMain.AddView(view);
+			logs.AddLog(LogTag, "инициализацию игры завершена");
 		}
 
 		/// <summary>

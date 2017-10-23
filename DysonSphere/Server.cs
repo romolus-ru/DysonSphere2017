@@ -78,7 +78,7 @@ namespace DysonSphere
 		{
 			// получаем инициализатор игры
 			var gi = _collector.GetObject(gameId) as GameInitializer;
-			gi.InitGame(_model, _viewManager, _visualization);
+			gi.InitGame(_model, _viewManager, _visualization, _logsystem);
 		}
 
 		private void Log(string msg) {
