@@ -60,7 +60,7 @@ namespace DysonSphere
 			// соединяем модели, формируем основные пути передачи информации
 			// вынести в отдельный метод. делать что то наподобие serverInitializer нету смысла - надо будет передавать много параметров, а они уникальные
 			var serverView = new ServerView(_visualization);
-			serverView.SetTimerInfo(GetTime);
+			serverView.SetTimerInfo(_stopwatch);
 			_viewManager.AddView(serverView);
 
 			// создаётся объект для работы с пользователями (мат модель работы с пользователями)
@@ -94,10 +94,6 @@ namespace DysonSphere
 			_visualization.Run();
 		}
 
-		public TimeSpan GetTime()
-		{
-			return _stopwatch.Elapsed;
-		}
 		/// <summary>
 		/// Основной цикл. по таймеру
 		/// </summary>
