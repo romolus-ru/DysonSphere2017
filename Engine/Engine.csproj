@@ -61,7 +61,9 @@
     <Compile Include="Utils\LogData.cs" />
     <Compile Include="Utils\LogSystem.cs" />
     <Compile Include="Visualization\View.cs" />
+    <Compile Include="Visualization\ViewComponent.cs" />
     <Compile Include="Visualization\ViewManager.cs" />
+    <Compile Include="Visualization\ViewObject.cs" />
     <Compile Include="Visualization\ViewSystem.cs" />
     <Compile Include="Visualization\VisualizationProvider.cs" />
   </ItemGroup>

@@ -100,6 +100,7 @@ namespace DysonSphere
 		private void MainTimerRun(object sender, EventArgs eventArgs)
 		{
 			//_input.GetInput();// обработка устройств ввода
+			// обработка сетевого взаимодействия (получение обновления)
 			_model.Tick();
 			_viewManager.Draw();
 		}

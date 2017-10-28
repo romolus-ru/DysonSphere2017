@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Engine.Visualization
 {
+	// TODO возможно уже лишний. всё разнесено или будет разнесено в объекты иерархии ViewObject
 	/// <summary>
 	/// Основной класс, отвечает за связь с внешним миром и отображение информации
 	/// </summary>

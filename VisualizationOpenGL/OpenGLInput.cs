@@ -41,9 +41,9 @@ namespace VisualizationOpenGL
 		/// Установить какие кнопки нажаты
 		/// </summary>
 		/// <returns>Нажата ли хоть 1 клавиша</returns>
-		protected override Boolean SetKeyboard()
+		protected override bool SetKeyboard()
 		{
-			Boolean ret = false;
+			bool ret = false;
 			GetKeyboardState(_keys);
 			// проходим по первой половине массива
 			for (int i = 0; i < 256; i++){
@@ -98,7 +98,7 @@ namespace VisualizationOpenGL
 		/// <returns></returns>
 		protected override bool SetCursor()
 		{
-			Boolean ret = false;
+			bool ret = false;
 			var newCur = Cursor.Position;// экранные координаты курсора
 			// преобразуем координаты в клиентские
 			// (в полноэкранном режиме это всё ненужно)
