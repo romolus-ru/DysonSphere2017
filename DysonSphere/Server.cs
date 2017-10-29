@@ -4,11 +4,8 @@ using Engine.Data;
 using Engine.Utils;
 using Engine.Visualization;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Windows.Forms;
 using Timer = System.Windows.Forms.Timer;
 
 namespace DysonSphere
@@ -47,14 +44,14 @@ namespace DysonSphere
 			_timer.Tick += MainTimerRun;
 
 			// коллектор получает необходимые классы из ДЛЛ через базу
-			var classesList = _datasupport.GetCollectClasses();			
+			var classesList = _datasupport.GetCollectClasses();
 			_collector = new Collector();
 			_collector.LoadClasses(classesList);
 
 			// создаётся объект для работы с пользовательским вводом
 			var inputId = _datasupport.ServerSettingsGetValue("input");
 			_input = _collector.GetObject(inputId) as Input;
-			
+
 			// создаётся объект для вывода на экран
 			var visualizationId = _datasupport.ServerSettingsGetValue("visualization");
 			_visualization = _collector.GetObject(visualizationId) as VisualizationProvider;
@@ -68,11 +65,21 @@ namespace DysonSphere
 			serverView.SetTimerInfo(_stopwatch);
 			_viewManager.AddView(serverView);
 
+			var btn1 = new ViewButton();
+			btn1.Init(_visualization, _input);
+			btn1.InitButton(MsgToModel, "caption", "hint", Keys.Y);
+			_viewManager.AddView(btn1);
+
 			// создаётся объект для работы с пользователями (мат модель работы с пользователями)
 			// создаётся объект для работы с играми (мат модель запуска серверов игр)
 			// создаётся обработчик соединений
-			
+
 			Log("Сервер работает");
+		}
+
+		private void MsgToModel()
+		{
+			var a = 1;
 		}
 
 		/// <summary>
