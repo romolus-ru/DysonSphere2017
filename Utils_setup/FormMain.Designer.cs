@@ -28,6 +28,7 @@
 		private void InitializeComponent()
 		{
 			this.panel1 = new System.Windows.Forms.Panel();
+			this.btnSetVisualization = new System.Windows.Forms.Button();
 			this.button1 = new System.Windows.Forms.Button();
 			this.btnAddChecked = new System.Windows.Forms.Button();
 			this.btnScan = new System.Windows.Forms.Button();
@@ -36,13 +37,14 @@
 			this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.btnSetVisualization = new System.Windows.Forms.Button();
+			this.btnSetInput = new System.Windows.Forms.Button();
 			this.panel1.SuspendLayout();
 			this.panel2.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// panel1
 			// 
+			this.panel1.Controls.Add(this.btnSetInput);
 			this.panel1.Controls.Add(this.btnSetVisualization);
 			this.panel1.Controls.Add(this.button1);
 			this.panel1.Controls.Add(this.btnAddChecked);
@@ -52,6 +54,16 @@
 			this.panel1.Name = "panel1";
 			this.panel1.Size = new System.Drawing.Size(1095, 53);
 			this.panel1.TabIndex = 0;
+			// 
+			// btnSetVisualization
+			// 
+			this.btnSetVisualization.Location = new System.Drawing.Point(524, 12);
+			this.btnSetVisualization.Name = "btnSetVisualization";
+			this.btnSetVisualization.Size = new System.Drawing.Size(173, 30);
+			this.btnSetVisualization.TabIndex = 3;
+			this.btnSetVisualization.Text = "Установить визуализацию";
+			this.btnSetVisualization.UseVisualStyleBackColor = true;
+			this.btnSetVisualization.Click += new System.EventHandler(this.btnSetVisualization_Click);
 			// 
 			// button1
 			// 
@@ -126,15 +138,15 @@
 			this.columnHeader3.Text = "Class";
 			this.columnHeader3.Width = 306;
 			// 
-			// btnSetVisualization
+			// btnSetInput
 			// 
-			this.btnSetVisualization.Location = new System.Drawing.Point(524, 12);
-			this.btnSetVisualization.Name = "btnSetVisualization";
-			this.btnSetVisualization.Size = new System.Drawing.Size(173, 30);
-			this.btnSetVisualization.TabIndex = 3;
-			this.btnSetVisualization.Text = "Установить визуализацию";
-			this.btnSetVisualization.UseVisualStyleBackColor = true;
-			this.btnSetVisualization.Click += new System.EventHandler(this.btnSetVisualization_Click);
+			this.btnSetInput.Location = new System.Drawing.Point(703, 12);
+			this.btnSetInput.Name = "btnSetInput";
+			this.btnSetInput.Size = new System.Drawing.Size(173, 30);
+			this.btnSetInput.TabIndex = 4;
+			this.btnSetInput.Text = "Установить Input";
+			this.btnSetInput.UseVisualStyleBackColor = true;
+			this.btnSetInput.Click += new System.EventHandler(this.btnSetInput_Click);
 			// 
 			// FormMain
 			// 
@@ -163,6 +175,7 @@
 		private System.Windows.Forms.Button btnAddChecked;
 		private System.Windows.Forms.Button button1;
 		private System.Windows.Forms.Button btnSetVisualization;
+		private System.Windows.Forms.Button btnSetInput;
 	}
 }
 

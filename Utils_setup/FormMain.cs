@@ -14,6 +14,7 @@ using System.Reflection;
 using System.IO;
 using Engine.Data;
 using Engine.Visualization;
+using Engine;
 
 namespace Utils_setup
 {
@@ -121,7 +122,7 @@ namespace Utils_setup
 			_DBContext.SaveChanges();
 		}
 
-		private void btnSetVisualization_Click(object sender, EventArgs e)
+		private void SetObjectSettings(string settingsName,Type objectType)
 		{
 			var list = listView1.CheckedItems;
 			if (list.Count < 1) return;
@@ -144,7 +145,7 @@ namespace Utils_setup
 			// ищем нужные типы в объектах и сохраняем их для последующего использования
 			var fname = assemblyFile.Substring(assemblyFile.LastIndexOf(@"\") + 1);
 			Type[] types = assembly.GetTypes();
-			Type objectType = typeof(VisualizationProvider);
+			//Type objectType = typeof(VisualizationProvider);
 
 			var pE = from pe in types where pe != objectType select pe;
 			foreach (Type type in pE) {
@@ -161,7 +162,7 @@ namespace Utils_setup
 					if (searchType.BaseType == null) break;
 				}
 				if (founded) {
-					_DBContext.ServerSettingsSetValue("visualization", cl1.Id);
+					_DBContext.ServerSettingsSetValue(settingsName, cl1.Id);
 					break;
 				}
 			}
@@ -169,7 +170,17 @@ namespace Utils_setup
 				var lvi1 = item as ListViewItem;
 				lvi1.Checked = false;
 			}
+		}
 
+		private void btnSetVisualization_Click(object sender, EventArgs e)
+		{
+			SetObjectSettings("visualization", typeof(VisualizationProvider));
+
+		}
+
+		private void btnSetInput_Click(object sender, EventArgs e)
+		{
+			SetObjectSettings("input", typeof(Input));
 		}
 	}
 }
