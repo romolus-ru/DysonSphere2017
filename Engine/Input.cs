@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Engine.Visualization;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -80,6 +81,12 @@ namespace Engine
 		/// <returns></returns>
 		protected virtual bool SetCursor() { return false; }
 
+		public void ModalStart(ViewComponent view) {
+			// TODO запускаем модальный режим для компонента
+		}
+		public void ModalStop(ViewComponent view) {
+			// TODO останавливаем модальный режим для компонента
+		}
 
 
 		/////////// всё что ниже - старое. будет переноситься выше по мере необходимости. и/или переделываться

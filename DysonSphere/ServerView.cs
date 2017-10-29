@@ -10,7 +10,6 @@ namespace DysonSphere
 {
 	class ServerView : View
 	{
-		private Func<TimeSpan> GetTime;
 		private Stopwatch _serverSW;
 		public ServerView(VisualizationProvider provider) : base(provider)
 		{

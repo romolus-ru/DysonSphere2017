@@ -16,7 +16,9 @@ namespace Engine.Visualization
 		public ViewComponent Parent { get; protected set; }
 
 		protected VisualizationProvider VisualizationProvider;
-		
+		protected Input Input;
+		public string Name { get; protected set; }
+
 		/// <summary>
 		/// Координата X объекта
 		/// </summary>
@@ -120,17 +122,17 @@ namespace Engine.Visualization
 		/// </summary>
 		/// <param name="visualizationProvider"></param>
 		/// <remarks>Отдельно потому что инициализация происходит при добавлении объекта к вышестоящему компоненту</remarks>
-		public void Init(VisualizationProvider visualizationProvider)
+		public void Init(VisualizationProvider visualizationProvider, Input input)
 		{
 			VisualizationProvider = visualizationProvider;// сохраняем для будущего использования
-			InitObject(VisualizationProvider);
+			Input = input;
+			InitObject(VisualizationProvider, input);
 		}
 
 		/// <summary>
 		/// переопределяемая инициализация объекта для текущей визуализации
 		/// </summary>
-		/// <param name="visualizationProvider"></param>
-		protected virtual void InitObject(VisualizationProvider visualizationProvider) { }
+		protected virtual void InitObject(VisualizationProvider visualizationProvider, Input input) { }
 
 		/// <summary>
 		/// В данном случае надо показать и компоненты
@@ -159,7 +161,7 @@ namespace Engine.Visualization
 			Components.Add(component);
 			component.Parent = this;
 			component.Show();
-			component.Init(VisualizationProvider);
+			component.Init(VisualizationProvider, Input);
 		}
 
 		/// <summary>
@@ -238,16 +240,7 @@ namespace Engine.Visualization
 		/// <summary>
 		/// Переопределяемая обработка события курсора
 		/// </summary>
-		/// <param name="o"></param>
-		/// <param name="args"></param>
 		protected virtual void Cursor(int cursorX, int cursorY) { }
-
-		#endregion
-
-		#region Keyboard
-
-		клавиатура подключается для каждого отдельного действия
-		для событий кликов надо что то делать.
 
 		#endregion
 
@@ -260,7 +253,6 @@ namespace Engine.Visualization
 		public void Draw(VisualizationProvider visualizationProvider)
 		{
 			if (CanDraw) {
-				DrawComponentBackground(visualizationProvider);
 				DrawObject(visualizationProvider);
 				DrawComponents(visualizationProvider);
 			}
@@ -271,17 +263,6 @@ namespace Engine.Visualization
 		/// </summary>
 		/// <param name="visualizationProvider"></param>
 		public override void DrawObject(VisualizationProvider visualizationProvider) { }
-
-		/// <summary>
-		/// Прорисовать фон компонентов, если нужно
-		/// </summary>
-		/// <param name="visualizationProvider"></param>
-		protected virtual void DrawComponentBackground(VisualizationProvider visualizationProvider)
-		{
-			//if (CursorOver)	visualizationProvider.SetColor(Color.DodgerBlue, 20);
-			//else			visualizationProvider.SetColor(Color.DimGray, 50);
-			//visualizationProvider.Box(X, Y, Width, Height);
-		}
 
 		/// <summary>
 		/// Перерисовать подчиненные компоненты
@@ -316,7 +297,7 @@ namespace Engine.Visualization
 		/// <param name="visualizationProvider"></param>
 		protected virtual void DrawObjectToTexture(VisualizationProvider visualizationProvider)
 		{
-
+			
 		}
 
 		#endregion
@@ -340,7 +321,7 @@ namespace Engine.Visualization
 		/// <param name="x"></param>
 		/// <param name="y"></param>
 		/// <returns>Находится координата в пределах области контрола или нет</returns>
-		public virtual Boolean InRange(int x, int y)
+		public virtual bool InRange(int x, int y)
 		{
 			if (!CanDraw) return false; // компонент не рисуется - значит не проверяем дальше
 			if ((X < x) && (x < X + Width)) {
@@ -382,22 +363,16 @@ namespace Engine.Visualization
 			Name = name;
 		}
 
-		public Boolean ModalStart()
+		public void ModalStart()
 		{
-			var args = ViewControlEventArgs.Send(this);
-			Controller.StartEvent("ViewSystem.ModalStart", this, args);
-			if (args.Result) {
-				IsModal = true;
-				_isModalStoreCanDraw = CanDraw;// сохраняем состояние, при выводе модального объекта извне оно не обрабатывается, но сильно меняется
-			}
-			return args.Result;
+			Input.ModalStart(this);
+			IsModal = true;
 		}
 
 		public void ModalStop()
 		{
 			IsModal = false;
-			CanDraw = _isModalStoreCanDraw;// восстанавливаем старое состояние, которое было до модального вызова
-			Controller.StartEvent("ViewSystem.ModalStop", this, ViewControlEventArgs.Send(this));
+			Input.ModalStop(this);
 		}
 
 		/// <summary>
@@ -407,17 +382,17 @@ namespace Engine.Visualization
 		public List<string> GetObjectsView()
 		{
 			var ret = new List<string>();
-			foreach (var control in Components) {
-				GetObjectsView(ret, control, 1);
+			foreach (var component in Components) {
+				GetObjectsView(ret, component, 1);
 			}
 			return ret;
 		}
 
-		private void GetObjectsView(List<string> list, ViewControl control, int deep)
+		private void GetObjectsView(List<string> list, ViewComponent component, int deep)
 		{
-			if (!control.CanDraw) return;
-			list.Add("".PadLeft((deep - 1), ' ') + ":" + control.Name + "(" + control.GetType().Name + ")");
-			foreach (var cntrl in control.Controls) {
+			if (!component.CanDraw) return;
+			list.Add("".PadLeft((deep - 1), ' ') + ":" + component.Name + "(" + component.GetType().Name + ")");
+			foreach (var cntrl in component.Components) {
 				GetObjectsView(list, cntrl, deep + 1);
 			}
 		}

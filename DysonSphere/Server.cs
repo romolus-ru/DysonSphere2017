@@ -22,6 +22,7 @@ namespace DysonSphere
 		private DataSupportBase _datasupport;
 		private LogSystem _logsystem;
 		private Collector _collector;
+		private Input _input;
 		private VisualizationProvider _visualization;
 		private string LogTag = "Server";
 		private ModelMain _model;
@@ -50,6 +51,10 @@ namespace DysonSphere
 			_collector = new Collector();
 			_collector.LoadClasses(classesList);
 
+			// создаётся объект для работы с пользовательским вводом
+			var inputId = _datasupport.ServerSettingsGetValue("input");
+			_input = _collector.GetObject(inputId) as Input;
+			
 			// создаётся объект для вывода на экран
 			var visualizationId = _datasupport.ServerSettingsGetValue("visualization");
 			_visualization = _collector.GetObject(visualizationId) as VisualizationProvider;
@@ -78,7 +83,7 @@ namespace DysonSphere
 		{
 			// получаем инициализатор игры
 			var gi = _collector.GetObject(gameId) as GameInitializer;
-			gi.InitGame(_model, _viewManager, _visualization, _logsystem);
+			gi.InitGame(_model, _viewManager, _visualization, _logsystem, _input);
 		}
 
 		private void Log(string msg) {
