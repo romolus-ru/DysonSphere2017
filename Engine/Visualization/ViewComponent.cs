@@ -127,6 +127,7 @@ namespace Engine.Visualization
 			VisualizationProvider = visualizationProvider;// сохраняем для будущего использования
 			Input = input;
 			InitObject(VisualizationProvider, input);
+			Show();
 		}
 
 		/// <summary>
@@ -140,7 +141,7 @@ namespace Engine.Visualization
 		public void Show()
 		{
 			CanDraw = true;
-			foreach (var control in Components) { control.Show(); }
+			foreach (var component in Components) { component.Show(); }
 		}
 
 		/// <summary>
@@ -148,7 +149,7 @@ namespace Engine.Visualization
 		/// </summary>
 		public void Hide()
 		{
-			foreach (var control in Components) { control.Hide(); }
+			foreach (var component in Components) { component.Hide(); }
 			CanDraw = false;
 		}
 
@@ -186,8 +187,8 @@ namespace Engine.Visualization
 				Components.Remove(topObject);
 				Components.Insert(0, topObject);
 			} else {
-				foreach (var control in Components) {
-					control.BringToFront(topObject);
+				foreach (var component in Components) {
+					component.BringToFront(topObject);
 				}
 			}
 		}
@@ -203,8 +204,8 @@ namespace Engine.Visualization
 				Components.Remove(topObject);
 				Components.Add(topObject);
 			} else {
-				foreach (var control in Components) {
-					control.SendToBack(topObject);
+				foreach (var component in Components) {
+					component.SendToBack(topObject);
 				}
 			}
 		}
@@ -225,14 +226,14 @@ namespace Engine.Visualization
 			Cursor(cursorX, cursorY);
 			if (Components.Count > 0) {
 				CursorOverOffed = false;
-				foreach (var control in Components) {
-					control.CursorOverOff();
-					if (!control.InRange(cursorX - X, cursorY - Y)) {
-						control.CursorOverOff();
+				foreach (var component in Components) {
+					component.CursorOverOff();
+					if (!component.InRange(cursorX - X, cursorY - Y)) {
+						component.CursorOverOff();
 						continue; // компонент не в точке нажатия
 					}
 					// смещаем курсор и передаём контролу смещенные координаты
-					control.CursorHandler(cursorX - X, cursorY - Y);
+					component.CursorHandler(cursorX - X, cursorY - Y);
 				}
 			}
 		}
@@ -274,8 +275,8 @@ namespace Engine.Visualization
 			visualizationProvider.OffsetAdd(X, Y);// смещаем и рисуем компоненты независимо от их настроек
 												  // прорисовываем в обратном порядке, от нижних к верхним - наверху находятся те объекты, которые рисуются последними
 			for (int index = Components.Count - 1; index >= 0; index--) {
-				var control = Components[index];
-				control.Draw(visualizationProvider);
+				var component = Components[index];
+				component.Draw(visualizationProvider);
 			}
 			visualizationProvider.OffsetRemove();// восстанавливаем смещение			
 		}
@@ -309,8 +310,8 @@ namespace Engine.Visualization
 		{
 			CursorOver = false;
 			if (CursorOverOffed) return;
-			foreach (var controls in Components) {
-				controls.CursorOverOff();
+			foreach (var component in Components) {
+				component.CursorOverOff();
 			}
 			CursorOverOffed = true;
 		}

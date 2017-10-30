@@ -14,15 +14,16 @@ namespace Engine.Visualization
 		private VisualizationProvider _provider;
 		private ViewSystem _viewSystem;
 
-		public ViewManager(VisualizationProvider provider)
+		public ViewManager(VisualizationProvider provider, Input input)
 		{
 			_provider = provider;
-			_viewSystem = new ViewSystem(_provider);
+			_viewSystem = new ViewSystem();
+			_viewSystem.Init(provider, input);
 		}
 
-		public void AddView(View view)
+		public void AddView(ViewComponent view)
 		{
-			_viewSystem.AddView(view);
+			_viewSystem.AddComponent(view);
 		}
 
 		int a = 1;

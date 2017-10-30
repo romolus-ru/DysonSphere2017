@@ -58,10 +58,10 @@ namespace DysonSphere
 			_visualization.InitVisualization(500, 500, true);
 
 			_model = new ModelMain();
-			_viewManager = new ViewManager(_visualization);
+			_viewManager = new ViewManager(_visualization, _input);
 			// соединяем модели, формируем основные пути передачи информации
 			// вынести в отдельный метод. делать что то наподобие serverInitializer нету смысла - надо будет передавать много параметров, а они уникальные
-			var serverView = new ServerView(_visualization);
+			var serverView = new ServerView();
 			serverView.SetTimerInfo(_stopwatch);
 			_viewManager.AddView(serverView);
 

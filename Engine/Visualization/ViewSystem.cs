@@ -9,9 +9,9 @@ namespace Engine.Visualization
 	/// <summary>
 	/// Вершина визуальной иерархии. выводит сообщения об ошибках, управляет модальностью и т.п.
 	/// </summary>
-	class ViewSystem : View
+	class ViewSystem : ViewComponent
 	{
-		public ViewSystem(VisualizationProvider provider) : base(provider)
+		public ViewSystem() : base()
 		{
 		}
 	}

@@ -8,10 +8,10 @@ using System.Threading.Tasks;
 
 namespace DysonSphere
 {
-	class ServerView : View
+	class ServerView : ViewComponent
 	{
 		private Stopwatch _serverSW;
-		public ServerView(VisualizationProvider provider) : base(provider)
+		public ServerView() : base()
 		{
 		}
 
@@ -20,7 +20,7 @@ namespace DysonSphere
 			_serverSW = timeInfo;
 		}
 
-		protected override void DrawObject(VisualizationProvider provider)
+		protected override void DrawComponents(VisualizationProvider provider)
 		{
 			var ts = _serverSW.Elapsed;
 			provider.Print(100, 100, ts.Ticks.ToString());

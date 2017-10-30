@@ -1,5 +1,5 @@
-﻿// TODO переделать ServerView и ViewManager чтоб наcледовались от ViewComponent
-// Обычный клик будет получаться как нажатие кнопки. а значит не сможет определяться был ли он в нужном месте получен или относитсяк другому объекту
+﻿// TODO кнопку дотестировать 
+// TODO Обычный клик будет получаться как нажатие кнопки. а значит не сможет определяться был ли он в нужном месте получен или относитсяк другому объекту
 // ViewManager должен создать и инициализировать вывод курсора (ViewCursor). и соответственно управлять им будет
 // TODO улучшить иерархию классов визуализации - нужно сделать несколько промежуточных классов
 // TODO в визуализации сделать иерархию что бы соответствовала порядку вывода элементов на экран
@@ -73,7 +73,7 @@ namespace Engine
 		/// </summary>
 		/// <param name="model"></param>
 		/// <param name="view"></param>
-		protected void InitDelegates(Model model, View view)
+		protected void InitDelegates(Model model, ViewComponent view)
 		{
 			
 		}
@@ -92,7 +92,7 @@ namespace Engine
 		/// </summary>
 		/// <param name="provider"></param>
 		/// <returns></returns>
-		protected virtual View CreateView(VisualizationProvider provider)
+		protected virtual ViewComponent CreateView(VisualizationProvider provider)
 		{
 			return null;
 		}
