@@ -13,12 +13,15 @@ namespace Engine.Visualization
 	{
 		private VisualizationProvider _provider;
 		private ViewSystem _viewSystem;
+		private ViewCursor _viewCursor;
 
 		public ViewManager(VisualizationProvider provider, Input input)
 		{
 			_provider = provider;
 			_viewSystem = new ViewSystem();
-			_viewSystem.Init(provider, input);
+			_viewSystem.Init(_provider, input);
+			_viewCursor = new ViewCursor();
+			_viewCursor.Init(_provider, input);
 		}
 
 		public void AddView(ViewComponent view)
@@ -43,6 +46,7 @@ namespace Engine.Visualization
 			//_provider.SetColor(System.Drawing.Color.Indigo);
 			//_provider.Box(a, 100, 200, 300);
 
+			_viewCursor.Draw(_provider);
 			_provider.FlushDrawing();
 		}
 	}

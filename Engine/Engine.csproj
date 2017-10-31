@@ -63,6 +63,7 @@
     <Compile Include="Visualization\View.cs" />
     <Compile Include="Visualization\ViewButton.cs" />
     <Compile Include="Visualization\ViewComponent.cs" />
+    <Compile Include="Visualization\ViewCursor.cs" />
     <Compile Include="Visualization\ViewManager.cs" />
     <Compile Include="Visualization\ViewObject.cs" />
     <Compile Include="Visualization\ViewSystem.cs" />

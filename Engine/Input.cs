@@ -102,10 +102,6 @@ namespace Engine
 		/// </summary>
 		public int CursorY { get; protected set; }
 
-		// координаты курсора полученные от системы
-		protected int CurOldX = 0;// для сравнения для метода SetCursor
-		protected int CurOldY = 0;// для сравнения для метода SetCursor
-
 		/// <summary>
 		/// Смещение колеса мыши
 		/// </summary>

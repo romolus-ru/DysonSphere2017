@@ -105,16 +105,14 @@ namespace VisualizationOpenGL
 			//PointEventArgs newCurClient = PointEventArgs.Set(newCur);// создаём аргументы для передачи координат
 			//Controller.StartEvent("VisualizationCursorGet", this, newCurClient);// получаем обновлённые координаты
 
-			if (newCur.X != CurOldX)
+			if (newCur.X != CursorX)
 			{
-				//CursorX = newCurClient.Pt.X;
-				CurOldX = newCur.X;
+				CursorX = newCur.X;
 				ret = true;
 			}
-			if (newCur.Y != CurOldY)
+			if (newCur.Y != CursorY)
 			{
-				//CursorY = newCurClient.Pt.Y;
-				CurOldY = newCur.Y;
+				CursorY = newCur.Y;
 				ret = true;
 			}
 			return ret;

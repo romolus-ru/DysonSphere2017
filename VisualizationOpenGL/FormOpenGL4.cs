@@ -11,6 +11,7 @@ namespace VisualizationOpenGL
 		{
 			InitializeComponent();
 			rc = RenderingContext.CreateContext(this);
+			Cursor.Hide();
 		}
 
 	}
