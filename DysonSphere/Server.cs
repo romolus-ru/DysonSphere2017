@@ -68,7 +68,16 @@ namespace DysonSphere
 			var btn1 = new ViewButton();
 			btn1.Init(_visualization, _input);
 			btn1.InitButton(MsgToModel, "caption", "hint", Keys.Y);
+			btn1.SetParams(600, 300, 40, 40, "btn1");
 			_viewManager.AddView(btn1);
+			_input.AddCursorAction(btn1.CursorHandler);
+
+			var btn2 = new ViewButton();
+			btn2.Init(_visualization, _input);
+			btn2.InitButton(MsgToModel, "caption", "hint", Keys.U);
+			btn2.SetParams(700, 300, 40, 40, "btn2");
+			_viewManager.AddView(btn2);
+			_input.AddCursorAction(btn2.CursorHandler);
 
 			// создаётся объект для работы с пользователями (мат модель работы с пользователями)
 			// создаётся объект для работы с играми (мат модель запуска серверов игр)

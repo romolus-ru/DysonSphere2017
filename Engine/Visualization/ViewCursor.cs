@@ -31,6 +31,7 @@ namespace Engine.Visualization
 			//provider.Print(cx-8, cy-8, "X");
 			provider.Line(cx - 10, cy - 10, cx + 10, cy + 10);
 			provider.Line(cx + 10, cy - 10, cx - 10, cy + 10);
+			provider.Print(20, 20, "x " + cx + " y" + cy);
 		}
 	}
 }
