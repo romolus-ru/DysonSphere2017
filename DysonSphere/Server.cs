@@ -65,19 +65,20 @@ namespace DysonSphere
 			serverView.SetTimerInfo(_stopwatch);
 			_viewManager.AddView(serverView);
 
+			var pnl = new ViewPanel();
+			_viewManager.AddView(pnl);
+			pnl.SetParams(100, 100, 600, 400, "Pnl");
+
 			var btn1 = new ViewButton();
-			btn1.Init(_visualization, _input);
+			pnl.AddComponent(btn1);
 			btn1.InitButton(MsgToModel, "caption", "hint", Keys.Y);
-			btn1.SetParams(600, 300, 40, 40, "btn1");
-			_viewManager.AddView(btn1);
-			_input.AddCursorAction(btn1.CursorHandler);
+			btn1.SetParams(120, 200, 40, 40, "btn1");
 
 			var btn2 = new ViewButton();
-			btn2.Init(_visualization, _input);
+			pnl.AddComponent(btn2);
 			btn2.InitButton(MsgToModel, "caption", "hint", Keys.U);
-			btn2.SetParams(700, 300, 40, 40, "btn2");
-			_viewManager.AddView(btn2);
-			_input.AddCursorAction(btn2.CursorHandler);
+			btn2.SetParams(170, 200, 40, 40, "btn2");
+			// у компонента сделать методы получения абсолютных координат при изменении координат X Y компонента
 
 			// создаётся объект для работы с пользователями (мат модель работы с пользователями)
 			// создаётся объект для работы с играми (мат модель запуска серверов игр)

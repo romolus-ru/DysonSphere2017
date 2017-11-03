@@ -66,6 +66,7 @@
     <Compile Include="Visualization\ViewCursor.cs" />
     <Compile Include="Visualization\ViewManager.cs" />
     <Compile Include="Visualization\ViewObject.cs" />
+    <Compile Include="Visualization\ViewPanel.cs" />
     <Compile Include="Visualization\ViewSystem.cs" />
     <Compile Include="Visualization\VisualizationProvider.cs" />
   </ItemGroup>

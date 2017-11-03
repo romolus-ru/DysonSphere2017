@@ -53,6 +53,7 @@ namespace Engine.Visualization
 			OnClick += click;
 			Input.AddKeyAction(KeyPressed, keys);
 			Input.AddKeyAction(ClickedOnScreen, Keys.LButton);
+			Input.AddCursorAction(this.CursorHandler);
 			Caption = caption;
 			Hint = hint;
 			Name = caption;
