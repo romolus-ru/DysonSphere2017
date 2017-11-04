@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DysonSphere", "DysonSphere\DysonSphere.csproj", "{CC68667C-3EB4-444D-BAB9-E1A4188D3934}"
+	ProjectSection(ProjectDependencies) = postProject
+		{4A301523-16EC-4A9D-AFD3-A8BD38159204} = {4A301523-16EC-4A9D-AFD3-A8BD38159204}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataSupport", "DataSupport\DataSupport.csproj", "{A4C51DEF-5050-403E-B858-A543CED7E72F}"
 EndProject

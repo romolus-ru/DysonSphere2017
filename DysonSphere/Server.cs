@@ -73,12 +73,12 @@ namespace DysonSphere
 			pnl.AddComponent(btn1);
 			btn1.InitButton(MsgToModel, "caption", "hint", Keys.Y);
 			btn1.SetParams(120, 200, 40, 40, "btn1");
+			btn1.InitTexture("btn0");
 
 			var btn2 = new ViewButton();
 			pnl.AddComponent(btn2);
 			btn2.InitButton(MsgToModel, "caption", "hint", Keys.U);
 			btn2.SetParams(170, 200, 40, 40, "btn2");
-			// у компонента сделать методы получения абсолютных координат при изменении координат X Y компонента
 
 			// создаётся объект для работы с пользователями (мат модель работы с пользователями)
 			// создаётся объект для работы с играми (мат модель запуска серверов игр)

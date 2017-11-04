@@ -15,6 +15,8 @@ namespace Engine.Visualization
 		/// </summary>
 		public Action OnClick;
 
+		private string _btnTexture = null;
+
 		/// <summary>
 		/// Получили сообщение что нажали - определяем местоположение
 		/// </summary>
@@ -79,6 +81,17 @@ namespace Engine.Visualization
 			if (Hint != "" && CursorOver) {
 				visualizationProvider.Print(X + 10, Y + Height + 5 - f, Hint);
 			}
+			if (_btnTexture != null) {
+				//visualizationProvider.DrawTexture(X + 300, Y + 300, "btn0");
+				//visualizationProvider.DrawTexture2(X, Y, "btn0", 0, 0, 10, 10);
+				visualizationProvider.DrawTexturePart(X, Y, "btn0", 0, 0, 10, 10);
+			}
+		}
+
+		public void InitTexture(string textureName)
+		{
+			_btnTexture = textureName;
+			VisualizationProvider.LoadTexture(_btnTexture, @"..\_files\_graph\btn01.png");
 		}
 
 
