@@ -85,10 +85,6 @@
       <Project>{37F8E551-9EDC-436E-81BD-20859A17B771}</Project>
       <Name>DataSupportEF</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DataSupport\DataSupport.csproj">
-      <Project>{a4c51def-5050-403e-b858-a543ced7e72f}</Project>
-      <Name>DataSupport</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Engine\Engine.csproj">
       <Project>{5EF366CA-251D-44C6-873E-B51C8D42A6C8}</Project>
       <Name>Engine</Name>

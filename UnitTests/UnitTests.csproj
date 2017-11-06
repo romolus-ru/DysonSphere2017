@@ -62,10 +62,6 @@
       <Project>{37F8E551-9EDC-436E-81BD-20859A17B771}</Project>
       <Name>DataSupportEF</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DataSupport\DataSupport.csproj">
-      <Project>{A4C51DEF-5050-403E-B858-A543CED7E72F}</Project>
-      <Name>DataSupport</Name>
-    </ProjectReference>
     <ProjectReference Include="..\DysonSphere\DysonSphere.csproj">
       <Project>{CC68667C-3EB4-444D-BAB9-E1A4188D3934}</Project>
       <Name>DysonSphere</Name>
