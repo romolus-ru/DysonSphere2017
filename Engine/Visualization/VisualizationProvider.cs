@@ -339,7 +339,7 @@ namespace Engine.Visualization
 		/// <param name="fileName">Имя файла</param>
 		/// <param name="mode">режим. для будущего использования, чтоб можно было грузить альфу из других файлов (например *Alpha.jpg)</param>
 		/// <returns></returns>
-		public virtual Boolean LoadTextureAlpha(string textureName, string fileName, int mode = 0)
+		public virtual bool LoadTextureAlpha(string textureName, string fileName, int mode = 0)
 		{ return false; }
 
 		/// <summary>
@@ -348,7 +348,7 @@ namespace Engine.Visualization
 		/// <param name="textureName">Имя текстуры</param>
 		/// <param name="fileName">Имя файла</param>
 		/// <returns></returns>
-		public virtual Boolean LoadTexture(string textureName, string fileName)
+		public virtual bool LoadTexture(string textureName, string fileName)
 		{ return false; }
 
 		/// <summary>

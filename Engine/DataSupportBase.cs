@@ -1,5 +1,4 @@
-﻿using DataSupport.Data;
-using Engine.Data;
+﻿using Engine.Data;
 using Engine.Utils;
 using System;
 using System.Collections.Generic;
@@ -7,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DataSupport
+namespace Engine
 {
 	/// <summary>
 	/// Основной класс. Организует доступ к данным

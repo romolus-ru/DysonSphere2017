@@ -59,6 +59,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AtlasManager.cs" />
     <Compile Include="FormOpenGL4.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -67,6 +68,7 @@
     </Compile>
     <Compile Include="OpenGLInput.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Texture.cs" />
     <Compile Include="VisualizationOpenGL4.cs" />
   </ItemGroup>
   <ItemGroup>
