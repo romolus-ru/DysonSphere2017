@@ -571,23 +571,20 @@ namespace VisualizationOpenGL
 
 			float x1a = xtex;
 			float x2a = xtex + width;
-			float y1a = ytex;
-			float y2a = ytex + height;
+			float y1a = textureHeight - ytex;
+			float y2a = textureHeight - ytex - height;
 
 			float x1 = x1a / textureWidth;
 			float x2 = x2a / textureWidth;
 			float y1 = y1a / textureHeight;
 			float y2 = y2a / textureHeight;
 
-			var blWd2 = width;
-			var blHd2 = height;
-
 			gl.Begin(GL.QUADS);
 			// указываем поочередно вершины и текстурные координаты
+			gl.TexCoord2f(x1, y1); gl.Vertex3d(0, 0, z);
 			gl.TexCoord2f(x2, y1); gl.Vertex3d(width, 0, z);
 			gl.TexCoord2f(x2, y2); gl.Vertex3d(width, height, z);
 			gl.TexCoord2f(x1, y2); gl.Vertex3d(0, height, z);
-			gl.TexCoord2f(x1, y1); gl.Vertex3d(0, 0, z);
 
 			gl.End();
 

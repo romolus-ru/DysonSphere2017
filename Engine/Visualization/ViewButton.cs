@@ -82,16 +82,30 @@ namespace Engine.Visualization
 				visualizationProvider.Print(X + 10, Y + Height + 5 - f, Hint);
 			}
 			if (_btnTexture != null) {
-				//visualizationProvider.DrawTexture(X + 300, Y + 300, "btn0");
-				//visualizationProvider.DrawTexture2(X, Y, "btn0", 0, 0, 10, 10);
-				visualizationProvider.DrawTexturePart(X, Y, "btn0", 0, 0, 10, 10);
+				var tw = 30;
+				var th = 30;
+
+				visualizationProvider.DrawTexture(X + 100, Y-50, _btnTexture);
+
+				// углы
+				visualizationProvider.DrawTexturePart(X, Y, _btnTexture, 0, 0, 10, 10);
+				visualizationProvider.DrawTexturePart(X + Width - 10, Y, _btnTexture, tw - 10, 0, 10, 10);
+				visualizationProvider.DrawTexturePart(X + Width - 10, Y + Height - 10, _btnTexture, tw - 10, th - 10, 10, 10);
+				visualizationProvider.DrawTexturePart(X, Y + Height - 10, _btnTexture, 0, th - 10, 10, 10);
+				// стороны
+				visualizationProvider.DrawTexturePart(X + 10, Y, _btnTexture, 10, 0, 10, 10);
+				visualizationProvider.DrawTexturePart(X + 10, Y + Height - 10, _btnTexture, 10, th - 10, 10, 10);
+				visualizationProvider.DrawTexturePart(X, Y + 10, _btnTexture, 0, 10, 10, 10);
+				visualizationProvider.DrawTexturePart(X + Width - 10, Y + 10, _btnTexture, tw - 10, 10, 10, 10);
+				// центр
+				visualizationProvider.DrawTexturePart(X + 10, Y+10, _btnTexture, 10, 10, 10, 10);
 			}
 		}
 
 		public void InitTexture(string textureName)
 		{
 			_btnTexture = textureName;
-			VisualizationProvider.LoadTexture(_btnTexture, @"..\_files\_graph\btn01.png");
+			VisualizationProvider.LoadTexture(_btnTexture, @"..\_files\_graph\btn00a.png");
 		}
 
 
