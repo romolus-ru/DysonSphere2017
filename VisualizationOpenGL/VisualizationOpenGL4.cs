@@ -562,6 +562,8 @@ namespace VisualizationOpenGL
 			gl.Enable(GL.BLEND);
 			gl.BlendFunc(texInfo.BlendParam, GL.ONE);
 			gl.BindTexture(GL.TEXTURE_2D, texInfo.Num);
+			gl.TexParameteri(GL.TEXTURE_2D, GL.TEXTURE_WRAP_S, GL.REPEAT);
+			gl.TexParameteri(GL.TEXTURE_2D, GL.TEXTURE_WRAP_T, GL.REPEAT);
 
 
 			// сохраняем состояние матрицы 
@@ -898,8 +900,7 @@ namespace VisualizationOpenGL
 		private readonly Dictionary<String, TexStruct> _textures = new Dictionary<string, TexStruct>();
 
 
-		// создание текстуры в панями openGL (орфография иногда сохранена 
-		// как и у оригинала, ввиду непонятности написанного)
+		// создание текстуры в памяти openGL
 		private static uint MakeGlTexture(int format, IntPtr pixels, int w, int h)
 		{
 			// идентификатор текстурного объекта 
@@ -911,8 +912,8 @@ namespace VisualizationOpenGL
 			// создаем привязку к только что созданной текстуре 
 			gl.BindTexture(GL.TEXTURE_2D, texObject);
 			// устанавливаем режим фильтрации и повторения текстуры 
-			gl.TexParameteri(GL.TEXTURE_2D, GL.TEXTURE_WRAP_S, GL.CLAMP);
-			gl.TexParameteri(GL.TEXTURE_2D, GL.TEXTURE_WRAP_T, GL.CLAMP);
+			gl.TexParameteri(GL.TEXTURE_2D, GL.TEXTURE_WRAP_S, GL.REPEAT);// .CLAMP);
+			gl.TexParameteri(GL.TEXTURE_2D, GL.TEXTURE_WRAP_T, GL.REPEAT);// .CLAMP);
 			gl.TexParameteri(GL.TEXTURE_2D, GL.TEXTURE_MAG_FILTER, GL.NEAREST);
 			gl.TexParameteri(GL.TEXTURE_2D, GL.TEXTURE_MIN_FILTER, GL.NEAREST);
 			gl.TexEnvf(GL.TEXTURE_ENV, GL.TEXTURE_ENV_MODE, GL.REPLACE);

@@ -43,8 +43,6 @@
     <Compile Include="DataSupportBase.cs" />
     <Compile Include="Data\AchieveDescription.cs" />
     <Compile Include="Data\AchieveKeep.cs" />
-    <Compile Include="Data\AtlasFiles.cs" />
-    <Compile Include="Data\AtlasInfo.cs" />
     <Compile Include="Data\Battle.cs" />
     <Compile Include="Data\BattleDescription.cs" />
     <Compile Include="Data\BattleInfoRace.cs" />

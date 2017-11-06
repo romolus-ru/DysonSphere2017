@@ -85,8 +85,6 @@ namespace Engine.Visualization
 				var tw = 30;
 				var th = 30;
 
-				visualizationProvider.DrawTexture(X + 100, Y-50, _btnTexture);
-
 				// углы
 				visualizationProvider.DrawTexturePart(X, Y, _btnTexture, 0, 0, 10, 10);
 				visualizationProvider.DrawTexturePart(X + Width - 10, Y, _btnTexture, tw - 10, 0, 10, 10);
