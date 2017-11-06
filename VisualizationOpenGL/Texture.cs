@@ -9,7 +9,7 @@ namespace VisualizationProviderOpenGL
 	/// <summary>
 	/// Описание текстуры из атласа
 	/// </summary>
-	internal class Texture
+	public class Texture
 	{
 		public uint TextureCode;
 		public int AtlasWidth;

@@ -18,7 +18,7 @@ namespace VisualizationProviderOpenGL
 		private LogSystem _log;
 		private string LogTag = "AtlasManager";
 
-		private Dictionary<string, List<Texture>> _atlasTextures = new Dictionary<string, List<Texture>>();
+		private Dictionary<string, Texture> _atlasTextures = new Dictionary<string, Texture>();
 
 		public AtlasManager(DataSupportBase data, LogSystem log)
 		{
@@ -36,6 +36,15 @@ namespace VisualizationProviderOpenGL
 			// TODO тут
 			// загружаем атлас и сохраняем её имя чтоб вернуть. загружаем данные о текстурах и сохраняем текстуру под кодом "AtlasName.TextureName"
 			// и логируем случаи когда обращаемся к несуществующей текстуре
+			return null;
+		}
+
+		public Texture GetTextureInfo(string textureName)
+		{
+			if (_atlasTextures.ContainsKey(textureName)) {
+				return _atlasTextures[textureName];
+			}
+			_log.AddLog(LogTag, "текстура не обнаружена " + textureName);
 			return null;
 		}
 	}

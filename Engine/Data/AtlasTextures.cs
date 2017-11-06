@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Engine.Data
 {
-    public class AtlasTexture:EventBase
+    public class AtlasTextures:EventBase
     {
         public long IdAtlasLink { get; set; }
         public long AtlasFileId { get; set; }

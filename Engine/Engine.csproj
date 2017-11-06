@@ -46,7 +46,7 @@
   <ItemGroup>
     <Compile Include="DataSupportBase.cs" />
     <Compile Include="Data\AtlasFiles.cs" />
-    <Compile Include="Data\AtlasTexture.cs" />
+    <Compile Include="Data\AtlasTextures.cs" />
     <Compile Include="Data\CollectClass.cs" />
     <Compile Include="Data\AchieveDescription.cs" />
     <Compile Include="Data\AchieveKeep.cs" />
