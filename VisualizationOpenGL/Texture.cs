@@ -18,5 +18,8 @@ namespace VisualizationProviderOpenGL
 		public int P1Y;
 		public int P2X;
 		public int P2Y;
+		public string AtlasName;
+		public string TextureName;
+		public string Description;
 	}
 }

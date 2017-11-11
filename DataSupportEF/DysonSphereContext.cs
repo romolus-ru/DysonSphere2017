@@ -26,6 +26,7 @@ namespace DataSupportEF
 
 		// Отражение таблиц базы данных на свойства с типом DbSet
 		public DbSet<AtlasFiles> AtlasFiles { get; set; }
+		public DbSet<AtlasTextures> AtlasTextures { get; set; }
 		public DbSet<CollectClass> CollectClasses { get; set; }
 		public DbSet<_Settings> Settings { get; set; }
 

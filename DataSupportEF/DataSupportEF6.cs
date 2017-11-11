@@ -38,6 +38,17 @@ namespace DataSupportEF
 			return a;
 		}
 
+		public override AtlasFiles GetAtlasFile(string atlasName)
+		{
+			return ds.AtlasFiles.Where(obj => obj.AtlasName == atlasName).ToList().FirstOrDefault();
+		}
+
+		public override List<AtlasTextures> GetAtlasTextures(long atlasId)
+		{
+			var list = ds.AtlasTextures.Where(obj => obj.AtlasFileId == atlasId).ToList();
+			return list;
+		}
+
 		public override List<CollectClass> GetCollectClasses()
 		{
 			return ds.CollectClasses.ToList();

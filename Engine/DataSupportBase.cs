@@ -32,6 +32,26 @@ namespace Engine
 			return null;
 		}
 
+		/// <summary>
+		/// Получить основную информацию об атласе
+		/// </summary>
+		/// <param name="atlasName"></param>
+		/// <returns></returns>
+		public virtual AtlasFiles GetAtlasFile(string atlasName)
+		{
+			return null;
+		}
+
+		/// <summary>
+		/// Получить информацию о текстурах в атласе
+		/// </summary>
+		/// <param name="atlasName"></param>
+		/// <returns></returns>
+		public virtual List<AtlasTextures> GetAtlasTextures(long atlasId)
+		{
+			return null;
+		}
+
 		public virtual void SetLog(Action<string> log1)
 		{
 

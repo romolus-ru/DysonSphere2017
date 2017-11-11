@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace VisualizationProviderOpenGL
 {
 	/// <summary>
-	/// Управление атласами. в основном для VisualizationProvider
+	/// Управление атласами. в основном для VisualizationProvider for OpenGL (из-за того что нужен UInt)
 	/// </summary>
 	public class AtlasManager
 	{
@@ -26,17 +26,45 @@ namespace VisualizationProviderOpenGL
 			_log = log;
 		}
 
+		public AtlasFiles GetAtlasFile(string atlasName)
+		{
+			var atlasInfo = _data.GetAtlasFile(atlasName);
+			if (atlasInfo == null) _log.AddLog(LogTag, "Атлас не найден " + atlasName);
+			return atlasInfo;
+		}
 		/// <summary>
-		/// Загружаем атлас из базы и возвращаем имя файла который надо загрузить
+		/// Загружаем атлас из базы и возвращаем имя файла, который надо загрузить
 		/// </summary>
 		/// <param name="atlasName"></param>
 		/// <returns></returns>
-		public string LoadAtlas(string atlasName)
+		public void InitAtlasTextures(AtlasFiles atlas, uint textureId)
 		{
-			// TODO тут
-			// загружаем атлас и сохраняем её имя чтоб вернуть. загружаем данные о текстурах и сохраняем текстуру под кодом "AtlasName.TextureName"
-			// и логируем случаи когда обращаемся к несуществующей текстуре
-			return null;
+			// загружаем атлас и сохраняем его имя чтоб вернуть. загружаем данные о текстурах и сохраняем текстуру под кодом "AtlasName.TextureName"
+			var list = _data.GetAtlasTextures(atlas.IdAtlasFile);
+			if (list == null) return;
+			foreach (var t in list) {
+				var tn = new Texture
+				{
+					TextureCode = textureId,
+					AtlasWidth = (int)atlas.Width,
+					AtlasHeight = (int)atlas.Height,
+					P1X = (int)t.P1X,
+					P1Y = (int)t.P1Y,
+					P2X = (int)t.P2X,
+					P2Y = (int)t.P2Y,
+					AtlasName = atlas.AtlasName,
+					TextureName = t.Name,
+					Description = t.Description
+				};
+				var name = atlas.AtlasName + "." + t.Name;
+				if (_atlasTextures.ContainsKey(name)) {
+					_log.AddLog(LogTag, "Текстура " + t.Name + " уже проинициализирована для атласа " + atlas.AtlasName);
+					continue;
+				}
+				_atlasTextures.Add(name, tn);
+			}
+
+			return;
 		}
 
 		public Texture GetTextureInfo(string textureName)
