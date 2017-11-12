@@ -9,14 +9,16 @@ using Tao.DevIl;
 using Tao.Platform.Windows;
 using OpenGL4NET;
 using Engine.Visualization;
+using Engine.Utils;
 
 namespace VisualizationOpenGL
 {
 	class VisualizationOpenGL4 : VisualizationProvider
 	{
 		private FormOpenGL4 _formOpenGl;
+		private AtlasManager _atlasManager;
 
-		public override void InitVisualization(int width, int height, bool fullScreen)
+		public override void InitVisualization(DataSupportBase data, LogSystem log,int width, int height, bool fullScreen)
 		{
 			// пригодится в дальнейшем.
 			//if (w <= h) {
@@ -36,6 +38,8 @@ namespace VisualizationOpenGL
 			_formOpenGl.MouseWheel += MouseWheel;
 			_formOpenGl.Focus();
 			_formOpenGl.BringToFront();
+
+			_atlasManager = new AtlasManager(data, log);
 
 			Il.ilInit();
 			Il.ilEnable(Il.IL_ORIGIN_SET);
@@ -371,11 +375,10 @@ namespace VisualizationOpenGL
 			_formOpenGl.ShowDialog();
 		}
 
-		public override bool LoadTexture(string textureName, string fileName)
+		public override bool LoadAtlas(string atlasName)
 		{
-			// если текстура уже есть то выходим
-			// но перед выходом неплохо бы посмотреть количество ссылок и изменить их количество
-			if (_textures.ContainsKey(textureName)) return false;
+			var atlasFile = _atlasManager.GetAtlasFile(atlasName);
+			if (atlasFile==null) return false;
 
 			bool opacity = true;
 			// идентификатор текстуры
@@ -387,12 +390,8 @@ namespace VisualizationOpenGL
 			// делаем изображение текущим
 			Il.ilBindImage(imageId);
 
-			// адрес изображения
-			string url = fileName;
-
-			// пробуем загрузить изображение);
-			if (Il.ilLoadImage(url))
-			{
+			// пробуем загрузить изображение
+			if (Il.ilLoadImage(atlasFile.AtlasFile)) {
 				// если загрузка прошла успешно
 				// сохраняем размеры изображения
 				int width = Il.ilGetInteger(Il.IL_IMAGE_WIDTH);
@@ -401,24 +400,21 @@ namespace VisualizationOpenGL
 				// определяем число бит на пиксель
 				int bitspp = Il.ilGetInteger(Il.IL_IMAGE_BITS_PER_PIXEL);
 
-				TexStruct mGlTextureObject = new TexStruct();
+				uint textureCode = 0;
 				switch (bitspp) // в зависимости от полученного результата
 				{
 					// создаем текстуру используя режим GL_RGB или GL_RGBA
 					case 24:
 						//case 8:
 						//case 16:
-						mGlTextureObject.Num = MakeGlTexture(GL.RGB, Il.ilGetData(), width, height);
+						textureCode = MakeGlTexture(GL.RGB, Il.ilGetData(), width, height);
 						break;
 					case 32:
-						mGlTextureObject.Num = MakeGlTexture(GL.RGBA, Il.ilGetData(), width, height);
+						textureCode = MakeGlTexture(GL.RGBA, Il.ilGetData(), width, height);
 						break;
 				}
-				mGlTextureObject.Height = height;
-				mGlTextureObject.Width = width;
-				mGlTextureObject.BlendParam = opacity ? GL.SRC_ALPHA : GL.ONE;
-				mGlTextureObject.refs = 1;// временно! для подсчета количества ссылок на текстуру
-				_textures.Add(textureName, mGlTextureObject);
+				var blendParam = opacity ? GL.SRC_ALPHA : GL.ONE;
+				_atlasManager.InitAtlasTextures(atlasFile, textureCode, blendParam);
 
 				// активируем флаг, сигнализирующий успешную загрузку текстуры
 				r = true;
@@ -431,11 +427,10 @@ namespace VisualizationOpenGL
 
 		protected override void _DrawTexture(int x, int y, string textureName, float scale = 1)
 		{
-			// проверяем, есть ли текстура. в крайнем случае можно выдать ошибку тут
-			if (!_textures.ContainsKey(textureName)) return;
+			var texInfo = _atlasManager.GetTextureInfo(textureName);
+			if (texInfo==null) return;
 			gl.LoadIdentity();
 			int z = 0;
-			TexStruct texInfo = _textures[textureName];
 			gl.PushAttrib(GL.ALPHA_TEST);		// Save the current GL_ALPHA_TEST
 			gl.Enable(GL.ALPHA_TEST);
 			gl.PushAttrib(GL.TEXTURE_2D);
@@ -445,9 +440,9 @@ namespace VisualizationOpenGL
 			gl.Enable(GL.BLEND);
 			//gl.BlendFunc(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA);// непрозрачно
 			gl.BlendFunc(GL.SRC_ALPHA, GL.ONE);// прозрачно, как в DrawTexturePart
-			gl.BindTexture(GL.TEXTURE_2D, texInfo.Num);
-			int h = (int)(scale * texInfo.Height);// по идее это можно узнать с помощью GL_TEXTURE_WIDTH и HEIGHT
-			int w = (int)(scale * texInfo.Width);// но наврядли быстрее - счас без обращения к видеокарте
+			gl.BindTexture(GL.TEXTURE_2D, texInfo.TextureCode);
+			int h = (int)(scale * texInfo.AtlasHeight);
+			int w = (int)(scale * texInfo.AtlasWidth);
 
 			// сохраняем состояние матрицы 
 			gl.PushMatrix();
@@ -479,20 +474,19 @@ namespace VisualizationOpenGL
 			if (blockWidth == 0) return;
 			if (blockHeight == 0) return;
 
-			// проверяем, есть ли текстура. в крайнем случае можно выдать ошибку тут
-			if (!_textures.ContainsKey(textureName)) return;
+			var texInfo = _atlasManager.GetTextureInfo(textureName);
+			if (texInfo == null) return;
 			gl.LoadIdentity();
 			int z = 0;
-			TexStruct texInfo = _textures[textureName];
 			gl.PushAttrib(GL.TEXTURE_2D);
 			// включаем режим текстурирования 
 			gl.Enable(GL.TEXTURE_2D);
 			gl.PushAttrib(GL.BLEND);
 			gl.Enable(GL.BLEND);
 			gl.BlendFunc(texInfo.BlendParam, GL.ONE);
-			gl.BindTexture(GL.TEXTURE_2D, texInfo.Num);
-			int textureHeight = texInfo.Height;// по идее это можно узнать с помощью GL_TEXTURE_WIDTH и HEIGHT
-			int textureWidth = texInfo.Width;// но наврядли быстрее - счас без обращения к видеокарте
+			gl.BindTexture(GL.TEXTURE_2D, texInfo.TextureCode);
+			int textureHeight = texInfo.AtlasHeight;// по идее это можно узнать с помощью GL_TEXTURE_WIDTH и HEIGHT
+			int textureWidth = texInfo.AtlasWidth;// но наврядли быстрее - счас без обращения к видеокарте
 
 			// сохраняем состояние матрицы 
 			gl.PushMatrix();
@@ -545,13 +539,12 @@ namespace VisualizationOpenGL
 			if (width < 1) return;
 			if (height < 1) return;
 
-			// проверяем, есть ли текстура. в крайнем случае можно выдать ошибку тут
-			if (!_textures.ContainsKey(textureName)) return;
+			var texInfo = _atlasManager.GetTextureInfo(textureName);
+			if (texInfo == null) return;
 			gl.LoadIdentity();
 			int z = 0;
-			TexStruct texInfo = _textures[textureName];
-			int textureHeight = texInfo.Height;// по идее это можно узнать с помощью GL_TEXTURE_WIDTH и HEIGHT
-			int textureWidth = texInfo.Width;// но наврядли быстрее - счас без обращения к видеокарте
+			int textureHeight = texInfo.AtlasHeight;// по идее это можно узнать с помощью GL_TEXTURE_WIDTH и HEIGHT
+			int textureWidth = texInfo.AtlasWidth;// но наврядли быстрее - счас без обращения к видеокарте
 			if (textureHeight < ytex + height) return;// выходим за рамки текстуры
 			if (textureWidth < xtex + width) return;// выходим за рамки текстуры
 
@@ -561,7 +554,7 @@ namespace VisualizationOpenGL
 			gl.PushAttrib(GL.BLEND);
 			gl.Enable(GL.BLEND);
 			gl.BlendFunc(texInfo.BlendParam, GL.ONE);
-			gl.BindTexture(GL.TEXTURE_2D, texInfo.Num);
+			gl.BindTexture(GL.TEXTURE_2D, texInfo.TextureCode);
 			gl.TexParameteri(GL.TEXTURE_2D, GL.TEXTURE_WRAP_S, GL.REPEAT);
 			gl.TexParameteri(GL.TEXTURE_2D, GL.TEXTURE_WRAP_T, GL.REPEAT);
 
@@ -601,20 +594,21 @@ namespace VisualizationOpenGL
 
 		protected override void _DrawTextureMasked(int x, int y, string textureName, string textureMaskName)
 		{
-			// в целом уже ненужна эта функция. потому что PNG прекрасно содержит и прозрачность и почти всё остальное
-			TexStruct texInfo = _textures[textureMaskName];
-			int h = texInfo.Height;
-			int w = texInfo.Width;
+			var texInfoMask = _atlasManager.GetTextureInfo(textureMaskName);
+			if (texInfoMask == null) return;
+			var texInfoNormal = _atlasManager.GetTextureInfo(textureName);
+			if (texInfoNormal == null) return;
+			int h = texInfoMask.AtlasHeight;
+			int w = texInfoMask.AtlasWidth;
 
 			gl.PushAttrib(GL.BLEND);
 			gl.PushAttrib(GL.DEPTH_TEST);
 			gl.Disable(GL.DEPTH_TEST);
 			gl.Enable(GL.BLEND);
-			// почти.
 			// http://www.opengl.org/archives/resources/faq/technical/transparency.htm
 			//Gl.glBlendFunc(Gl.GL_SRC_ALPHA, Gl.GL_ONE_MINUS_SRC_ALPHA);		// Blend Screen Color With Zero (Black)
 			gl.BlendFunc(GL.DST_COLOR, GL.ZERO);		// Blend Screen Color With Zero (Black)
-			gl.BindTexture(GL.TEXTURE_2D, texInfo.Num);	// Select The First Mask Texture
+			gl.BindTexture(GL.TEXTURE_2D, texInfoMask.TextureCode);	// Select The First Mask Texture
 			gl.Begin(GL.QUADS);							// Start Drawing A Textured Quad
 			gl.TexCoord2f(1, 0); gl.Vertex3d(x + h, y + w, 0);
 			gl.TexCoord2f(1, 1); gl.Vertex3d(x + h, y, 0);
@@ -622,13 +616,12 @@ namespace VisualizationOpenGL
 			gl.TexCoord2f(0, 0); gl.Vertex3d(x, y + w, 0);
 			gl.End();											// Done Drawing The Quad
 
-			texInfo = _textures[textureName];
-			h = texInfo.Height;
-			w = texInfo.Width;
+			h = texInfoNormal.AtlasHeight;
+			w = texInfoNormal.AtlasWidth;
 
 			gl.BlendFunc(GL.ONE, GL.ONE);				// Copy Image 1 Color To The Screen
 			//Gl.glBlendFunc(Gl.GL_ONE, Gl.GL_ONE);				// Copy Image 1 Color To The Screen
-			gl.BindTexture(GL.TEXTURE_2D, texInfo.Num);	// Select The First Image Texture
+			gl.BindTexture(GL.TEXTURE_2D, texInfoNormal.TextureCode);	// Select The First Image Texture
 			gl.Begin(GL.QUADS);							// Start Drawing A Textured Quad
 			gl.TexCoord2f(1, 0); gl.Vertex3d(x + h, y + w, 0);
 			gl.TexCoord2f(1, 1); gl.Vertex3d(x + h, y, 0);
@@ -639,7 +632,7 @@ namespace VisualizationOpenGL
 			gl.PopAttrib();// GL_BLEND
 
 			/*
-			// мультитиnекстурирование
+			// мультититекстурирование
 			glActiveTextureARB(GL_TEXTURE0_ARB);
 			glEnable(GL_TEXTURE_2D);
 			glBindTexture(GL_TEXTURE_2D,texNames[0]);
@@ -873,32 +866,6 @@ namespace VisualizationOpenGL
 			Gdi.SelectObject(dc, oldfont);
 		}
 
-		/// <summary>
-		/// структура описатель текстуры
-		/// </summary>
-		private struct TexStruct
-		{
-			public int Width;
-			public int Height;
-			/// <summary>
-			/// номер от опенГЛ
-			/// </summary>
-			public uint Num;
-			/// <summary>
-			/// Смешивание. иногда на что то влияет
-			/// </summary>
-			public int BlendParam;
-			/// <summary>
-			/// количество ссылок на текстуру
-			/// </summary>
-			public int refs;
-		}
-
-		/// <summary>
-		/// словарь текстур
-		/// </summary>
-		private readonly Dictionary<String, TexStruct> _textures = new Dictionary<string, TexStruct>();
-
 
 		// создание текстуры в памяти openGL
 		private static uint MakeGlTexture(int format, IntPtr pixels, int w, int h)
@@ -957,28 +924,19 @@ namespace VisualizationOpenGL
 
 		protected override void _CopyToTexture(string textureName)
 		{
-			if (!_textures.ContainsKey(textureName)) return;
+			var texInfo = _atlasManager.GetTextureInfo(textureName);
+			if (texInfo == null) return;
 			base._CopyToTexture(textureName);
-			TexStruct texInfo = _textures[textureName];
 			// До копирования экрана в текстуру нужно указать её вызовом glBindTexture()
-			gl.BindTexture(GL.TEXTURE_2D, texInfo.Num);
+			gl.BindTexture(GL.TEXTURE_2D, texInfo.TextureCode);
 
 			// Настал момент, которого мы ждали - мы рендерим экран в текстуру.
 			// Передаем тип текстуры, детализацию, формат пиксела, x и y позицию старта,
 			// ширину и высоту для захвата, и границу. Если вы хотите сохранить только часть
 			// экрана, это легко сделать изменением передаваемых параметров.
-			gl.CopyTexImage2D(GL.TEXTURE_2D, 0, GL.RGB, 0, 0, texInfo.Width, texInfo.Width, 0);
+			gl.CopyTexImage2D(GL.TEXTURE_2D, 0, GL.RGB, 0, 0, texInfo.AtlasWidth, texInfo.AtlasWidth, 0);
 		}
 
-		protected override void _DeleteTexture(string textureName)
-		{
-			if (!_textures.ContainsKey(textureName)) return;
-			base._DeleteTexture(textureName);
-			// проверяем, есть ли текстура. в крайнем случае можно выдать ошибку тут
-			TexStruct texInfo = _textures[textureName];
-			gl.DeleteTexture(texInfo.Num);
-			_textures.Remove(textureName);
-		}
 	}
 
 }

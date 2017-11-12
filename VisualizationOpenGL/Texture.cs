@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace VisualizationProviderOpenGL
+namespace VisualizationOpenGL
 {
 	/// <summary>
 	/// Описание текстуры из атласа
@@ -12,6 +12,7 @@ namespace VisualizationProviderOpenGL
 	public class Texture
 	{
 		public uint TextureCode;
+		public int BlendParam;
 		public int AtlasWidth;
 		public int AtlasHeight;
 		public int P1X;

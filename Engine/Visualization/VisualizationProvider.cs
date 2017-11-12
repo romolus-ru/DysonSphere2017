@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Engine.Utils;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -40,7 +41,7 @@ namespace Engine.Visualization
 		/// <summary>
 		/// Инициализация визуализации. Создание формы и установка нужных размеров. или узнать размеры экрана и использовать в fullscreen
 		/// </summary>
-		public virtual void InitVisualization(int width, int height, bool fullScreen)
+		public virtual void InitVisualization(DataSupportBase data, LogSystem log, int width, int height, bool fullScreen)
 		{
 		}
 
@@ -339,6 +340,7 @@ namespace Engine.Visualization
 		/// <param name="fileName">Имя файла</param>
 		/// <param name="mode">режим. для будущего использования, чтоб можно было грузить альфу из других файлов (например *Alpha.jpg)</param>
 		/// <returns></returns>
+		[Obsolete]
 		public virtual bool LoadTextureAlpha(string textureName, string fileName, int mode = 0)
 		{ return false; }
 
@@ -348,7 +350,16 @@ namespace Engine.Visualization
 		/// <param name="textureName">Имя текстуры</param>
 		/// <param name="fileName">Имя файла</param>
 		/// <returns></returns>
+		[Obsolete]
 		public virtual bool LoadTexture(string textureName, string fileName)
+		{ return false; }
+
+		/// <summary>
+		/// Загрузить атлас
+		/// </summary>
+		/// <param name="atlasName">Имя атласа</param>
+		/// <returns></returns>
+		public virtual bool LoadAtlas(string atlasName)
 		{ return false; }
 
 		/// <summary>
@@ -414,9 +425,10 @@ namespace Engine.Visualization
 
 		protected virtual void _CopyToTexture(String textureName) { }
 
+		[Obsolete]
 		public void DeleteTexture(String textureName)
 		{ _DeleteTexture(textureName); }
-
+		[Obsolete]
 		protected virtual void _DeleteTexture(String textureName) { }
 
 
