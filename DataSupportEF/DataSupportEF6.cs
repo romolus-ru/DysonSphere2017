@@ -49,6 +49,34 @@ namespace DataSupportEF
 			return list;
 		}
 
+		public override void AddAtlasFile(AtlasFiles atlasFile)
+		{
+			ds.Entry(atlasFile).State = atlasFile.IdAtlasFile == 0 ?
+					   EntityState.Added :
+					   EntityState.Modified;
+			ds.SaveChanges();
+		}
+
+		public override void DeleteAtlasFile(AtlasFiles atlasFile)
+		{
+			ds.Entry(atlasFile).State = EntityState.Deleted;
+			ds.SaveChanges();
+		}
+
+		public override void AddAtlasTexture(AtlasTextures atlasTexture)
+		{
+			ds.Entry(atlasTexture).State = atlasTexture.IdAtlasLink == 0 ?
+					   EntityState.Added :
+					   EntityState.Modified;
+			ds.SaveChanges();
+		}
+
+		public override void DeleteAtlasTexture(AtlasTextures atlasTexture)
+		{
+			ds.Entry(atlasTexture).State = EntityState.Deleted;
+			ds.SaveChanges();
+		}
+
 		public override List<CollectClass> GetCollectClasses()
 		{
 			return ds.CollectClasses.ToList();

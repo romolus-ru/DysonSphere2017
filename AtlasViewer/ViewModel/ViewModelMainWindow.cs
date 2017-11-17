@@ -23,7 +23,7 @@ namespace AtlasViewer.ViewModel
 		/// </summary>
 		// TODO переделать на DataSupportEF
 		// TODO сделать каскадное удаление атласа средствами DataSupport
-		private DysonSphereContext _db = null;
+		private DataSupportEF6 _db = null;
 
 		#region AtlasFiles
 		private ObservableCollection<AtlasFiles> _viewAtlasFiles;
@@ -87,7 +87,7 @@ namespace AtlasViewer.ViewModel
 		public ViewModelMainWindow()
 		{
 			// создаём соединение с базой
-			//_db = new DysonSphereContext(dbPath);
+			_db = new DataSupportEF6();
 
 			AtlasFileAddNewCommand = new RelayCommand(arg => AtlasFilesAddNew());
 			AtlasFileEditCommand = new RelayCommand(arg => AtlasFilesEdit());
@@ -110,7 +110,7 @@ namespace AtlasViewer.ViewModel
 		private void RefreshViewAtlasFiles()
 		{
 			ViewAtlasFiles.Clear();
-			var atlasFiles = _db.AtlasFiles;
+			var atlasFiles = _db.AtlasFilesGetAll();
 			foreach (var cl1 in atlasFiles) {
 				ViewAtlasFiles.Add(cl1);
 			}
@@ -123,30 +123,29 @@ namespace AtlasViewer.ViewModel
 			var vmAtlasFilesEdit = new ViewModelAtlasFileEdit(newAtlasFile);
 			var dr = ViewService.RunAtlasFileEdit(vmAtlasFilesEdit);
 			if (!dr) return;// иначе сохраняем
-			_db.AtlasFiles.Add(newAtlasFile);
-			_db.SaveChanges();
+			_db.AddAtlasFile(newAtlasFile);
 			ViewAtlasFiles.Add(newAtlasFile);
 		}
+
 		public void AtlasFilesEdit()
 		{
 			if (SelectedAtlasFile == null) return;
 			var vmAtlasFileEdit = new ViewModelAtlasFileEdit(SelectedAtlasFile);
 			var dr = ViewService.RunAtlasFilesEdit(vmAtlasFileEdit);
 			if (!dr) return;// иначе сохраняем
-			_db.SaveChanges();
+			_db.AddAtlasFile(SelectedAtlasFile);
 		}
 
 		public void AtlasFilesDelete()
 		{
 			if (SelectedAtlasFile == null) return;
-			_db.AtlasFiles.Remove(SelectedAtlasFile);
-			_db.SaveChanges();
+			_db.DeleteAtlasFile(SelectedAtlasFile);
 			ViewAtlasFiles.Remove(SelectedAtlasFile);
 			SelectedAtlasFile = null;
 		}
 
 		/// <summary>
-		/// Обновляем список заказов если поменялся клиент
+		/// Обновляем список текстур если поменялся атлас
 		/// </summary>
 		private void AtlasFilesSelectionChanged()
 		{
@@ -163,7 +162,7 @@ namespace AtlasViewer.ViewModel
 		{
 			ViewAtlasTextures.Clear();
 			if (SelectedAtlasFile == null) return;
-			var atlasTextures = _db.AtlasTextures.Where(e => e.AtlasFileId == SelectedAtlasFile.IdAtlasFile);
+			var atlasTextures = _db.GetAtlasTextures(SelectedAtlasFile.IdAtlasFile);
 			foreach (var od1 in atlasTextures) {
 				ViewAtlasTextures.Add(od1);
 			}
@@ -178,8 +177,7 @@ namespace AtlasViewer.ViewModel
 			var dr = ViewService.RunAtlasTextureEdit(vmAtlasTextureEdit);
 			if (!dr) return;// иначе сохраняем
 			newAtlasTexture.AtlasFileId = SelectedAtlasFile.IdAtlasFile;
-			_db.AtlasTextures.Add(newAtlasTexture);
-			_db.SaveChanges();
+			_db.AddAtlasTexture(newAtlasTexture);
 			ViewAtlasTextures.Add(newAtlasTexture);
 		}
 
@@ -190,15 +188,14 @@ namespace AtlasViewer.ViewModel
 			var vmAtlasTextureEdit = new ViewModelAtlasTextureEdit(SelectedAtlasTexture, SelectedAtlasFile);
 			var dr = ViewService.RunAtlasTextureEdit(vmAtlasTextureEdit);
 			if (!dr) return;// иначе сохраняем
-			_db.SaveChanges();
+			_db.AddAtlasTexture(SelectedAtlasTexture);
 		}
 
 		public void AtlasTextureDelete()
 		{
 			if (SelectedAtlasTexture == null) return;
 
-			_db.AtlasTextures.Remove(SelectedAtlasTexture);
-			_db.SaveChanges();
+			_db.DeleteAtlasTexture(SelectedAtlasTexture);
 			ViewAtlasTextures.Remove(SelectedAtlasTexture);
 			SelectedAtlasTexture = null;
 		}

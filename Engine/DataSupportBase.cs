@@ -52,6 +52,26 @@ namespace Engine
 			return null;
 		}
 
+		public virtual void AddAtlasFile(AtlasFiles atlasFile)
+		{
+
+		}
+
+		public virtual void DeleteAtlasFile(AtlasFiles atlasFile)
+		{
+
+		}
+
+		public virtual void AddAtlasTexture(AtlasTextures atlasTexture)
+		{
+
+		}
+
+		public virtual void DeleteAtlasTexture(AtlasTextures atlasTexture)
+		{
+
+		}
+
 		public virtual void SetLog(Action<string> log1)
 		{
 
