@@ -2,27 +2,62 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:AtlasViewer"
+        xmlns:local="clr-namespace:AtlasViewer"        
+        xmlns:local2="clr-namespace:AtlasViewer.ViewModel"
         mc:Ignorable="d"
         Name="MainWindow1" Title="MainWindow" Height="800" Width="1200" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
+    <Window.DataContext>
+        <local2:ViewModelMainWindow />
+    </Window.DataContext>
     <Grid ShowGridLines="True">
         <Grid.RowDefinitions>
             <RowDefinition Height="20"/>
             <RowDefinition/>
             <RowDefinition Height="30"/>
         </Grid.RowDefinitions>
+        <ToolBarPanel Name="TopPanel" Orientation="Horizontal"/>
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"></ColumnDefinition>
                 <ColumnDefinition Width="*"></ColumnDefinition>
             </Grid.ColumnDefinitions>
-            <ScrollViewer VerticalScrollBarVisibility="Auto">
-                <TreeView x:Name="treeView"/>
-            </ScrollViewer>
+
+            <DockPanel Grid.Column="0" LastChildFill="True">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <DataGrid x:Name="AtlasFilesGrid"
+                  AutoGenerateColumns="False"
+                  ItemsSource="{Binding ViewAtlasFiles, Mode=TwoWay}"
+                  SelectedItem="{Binding SelectedAtlasFile}"
+                  SelectionMode="Single" SelectionUnit="FullRow"
+                  HorizontalAlignment="Center" Margin="10,10,0,0" IsReadOnly="True"
+                  GridLinesVisibility="Horizontal" VerticalAlignment="Top">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Название текстуры" Binding="{Binding AtlasName}" Width="auto" />
+                            <DataGridTextColumn Header="Адрес текстуры" Binding="{Binding AtlasFile}" Width="auto" />
+                        </DataGrid.Columns>
+                        <DataGrid.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Редактировать атлас" Command="{Binding AtlasFileEditCommand}" />
+                                <MenuItem Header="Удалить атлас" Command="{Binding AtlasFileDeleteCommand}"/>
+                            </ContextMenu>
+                        </DataGrid.ContextMenu>
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="SelectionChanged">
+                                <i:InvokeCommandAction Command="{Binding AtlasFileSelectionChangedCommand}" />
+                            </i:EventTrigger>
+                            <i:EventTrigger EventName="MouseDoubleClick">
+                                <i:InvokeCommandAction Command="{Binding AtlasFileEditCommand}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </DataGrid>
+                </ScrollViewer>
+            </DockPanel>
+
+
             <Image x:Name="image" Grid.Column="2"/>
         </Grid>
-        <ToolBarPanel Name="TopPanel" Orientation="Horizontal"/>
         <StackPanel Name="Bottom" Grid.Row="2" Style="{DynamicResource StackPanelStyle1}">
             <StackPanel.Resources>
                 <Style x:Key="StackPanelStyle1" TargetType="{x:Type StackPanel}">

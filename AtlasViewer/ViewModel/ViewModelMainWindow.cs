@@ -131,7 +131,7 @@ namespace AtlasViewer.ViewModel
 		{
 			if (SelectedAtlasFile == null) return;
 			var vmAtlasFileEdit = new ViewModelAtlasFileEdit(SelectedAtlasFile);
-			var dr = ViewService.RunAtlasFilesEdit(vmAtlasFileEdit);
+			var dr = ViewService.RunAtlasFileEdit(vmAtlasFileEdit);
 			if (!dr) return;// иначе сохраняем
 			_db.AddAtlasFile(SelectedAtlasFile);
 		}
@@ -171,24 +171,24 @@ namespace AtlasViewer.ViewModel
 
 		public void AtlasTexturesAddNew()
 		{
-			if (SelectedAtlasFile == null) return;
+			/*if (SelectedAtlasFile == null) return;
 			var newAtlasTexture = new AtlasTextures();
 			var vmAtlasTextureEdit = new ViewModelAtlasTextureEdit(newAtlasTexture, SelectedAtlasFile);
 			var dr = ViewService.RunAtlasTextureEdit(vmAtlasTextureEdit);
 			if (!dr) return;// иначе сохраняем
 			newAtlasTexture.AtlasFileId = SelectedAtlasFile.IdAtlasFile;
 			_db.AddAtlasTexture(newAtlasTexture);
-			ViewAtlasTextures.Add(newAtlasTexture);
+			ViewAtlasTextures.Add(newAtlasTexture);*/
 		}
 
 		public void AtlasTextureEdit()
 		{
-			if (SelectedAtlasTexture == null) return;
+			/*if (SelectedAtlasTexture == null) return;
 			if (SelectedAtlasFile == null) return;
 			var vmAtlasTextureEdit = new ViewModelAtlasTextureEdit(SelectedAtlasTexture, SelectedAtlasFile);
 			var dr = ViewService.RunAtlasTextureEdit(vmAtlasTextureEdit);
 			if (!dr) return;// иначе сохраняем
-			_db.AddAtlasTexture(SelectedAtlasTexture);
+			_db.AddAtlasTexture(SelectedAtlasTexture);*/
 		}
 
 		public void AtlasTextureDelete()

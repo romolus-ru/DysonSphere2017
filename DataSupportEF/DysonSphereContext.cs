@@ -33,6 +33,7 @@ namespace DataSupportEF
 		protected override void OnModelCreating(DbModelBuilder modelBuilder)
 		{
 			modelBuilder.Entity<AtlasFiles>().HasKey(u => u.IdAtlasFile);
+			modelBuilder.Entity<AtlasTextures>().HasKey(u => u.IdAtlasLink);
 			modelBuilder.Entity<CollectClass>()
 				.ToTable("_FilesClasses")
 				.HasKey(u => u.Id)
