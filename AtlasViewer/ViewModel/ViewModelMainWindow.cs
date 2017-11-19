@@ -1,4 +1,10 @@
-﻿using DataSupportEF;
+﻿// TODO сделать добавление текстуры
+// TODO сделать на форме редактирования текстуры вывод атласа и координат текстуры
+// TODO сделать визуализацию положения текстур на атласе
+// TODO сделать каскадное удаление атласа средствами DataSupport
+
+using AtlasViewer.Model.Entities;
+using DataSupportEF;
 using Engine.Data;
 using System;
 using System.Collections.Generic;
@@ -7,9 +13,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
-
-// экран разделен на 2 части - слева дерево файлов, справа сам файл картинкой
-// при нажатии или раскрытии подгружаются список текстур и каждая из них выводится на атласе прямоугольником
 
 namespace AtlasViewer.ViewModel
 {
@@ -21,19 +24,18 @@ namespace AtlasViewer.ViewModel
 		/// <summary>
 		/// Соединение с БД
 		/// </summary>
-		// TODO переделать на DataSupportEF
-		// TODO сделать каскадное удаление атласа средствами DataSupport
 		private DataSupportEF6 _db = null;
 
 		#region AtlasFiles
-		private ObservableCollection<AtlasFiles> _viewAtlasFiles;
-		public ObservableCollection<AtlasFiles> ViewAtlasFiles {
+		private List<AtlasFiles> _atlasFiles;// для хранения всех атласов из БД
+		private ObservableCollection<ModelAtlasFile> _viewAtlasFiles;// хранение атласов для вывода на экран
+		public ObservableCollection<ModelAtlasFile> ViewAtlasFiles {
 			get { return _viewAtlasFiles; }
 			set { _viewAtlasFiles = value; OnPropertyChanged("ViewAtlasFiles"); }
 		}
 
-		private AtlasFiles _selectedAtlasFile;
-		public AtlasFiles SelectedAtlasFile {
+		private ModelAtlasFile _selectedAtlasFile;
+		public ModelAtlasFile SelectedAtlasFile {
 			get { return _selectedAtlasFile; }
 			set {
 				_selectedAtlasFile = value;
@@ -93,7 +95,8 @@ namespace AtlasViewer.ViewModel
 			AtlasFileEditCommand = new RelayCommand(arg => AtlasFilesEdit());
 			AtlasFileDeleteCommand = new RelayCommand(arg => AtlasFilesDelete());
 			AtlasFileSelectionChangedCommand = new RelayCommand(arg => AtlasFilesSelectionChanged());
-			ViewAtlasFiles = new ObservableCollection<AtlasFiles>();
+			ViewAtlasFiles = new ObservableCollection<ModelAtlasFile>();
+			_atlasFiles = _db.AtlasFilesGetAll();
 			RefreshViewAtlasFiles();
 
 			AtlasTextureAddNewCommand = new RelayCommand(arg => AtlasTexturesAddNew());
@@ -110,9 +113,9 @@ namespace AtlasViewer.ViewModel
 		private void RefreshViewAtlasFiles()
 		{
 			ViewAtlasFiles.Clear();
-			var atlasFiles = _db.AtlasFilesGetAll();
-			foreach (var cl1 in atlasFiles) {
-				ViewAtlasFiles.Add(cl1);
+			foreach (var cl1 in _atlasFiles) {
+				var maf = new ModelAtlasFile(cl1);
+				ViewAtlasFiles.Add(maf);
 			}
 			SelectedAtlasFile = null;
 		}
@@ -124,24 +127,27 @@ namespace AtlasViewer.ViewModel
 			var dr = ViewService.RunAtlasFileEdit(vmAtlasFilesEdit);
 			if (!dr) return;// иначе сохраняем
 			_db.AddAtlasFile(newAtlasFile);
-			ViewAtlasFiles.Add(newAtlasFile);
+			_atlasFiles.Add(newAtlasFile);
+			RefreshViewAtlasFiles();
 		}
 
 		public void AtlasFilesEdit()
 		{
 			if (SelectedAtlasFile == null) return;
-			var vmAtlasFileEdit = new ViewModelAtlasFileEdit(SelectedAtlasFile);
+			var vmAtlasFileEdit = new ViewModelAtlasFileEdit(SelectedAtlasFile.AtlasFileData);
 			var dr = ViewService.RunAtlasFileEdit(vmAtlasFileEdit);
 			if (!dr) return;// иначе сохраняем
-			_db.AddAtlasFile(SelectedAtlasFile);
+			_db.AddAtlasFile(SelectedAtlasFile.AtlasFileData);
+			RefreshViewAtlasFiles();
 		}
 
 		public void AtlasFilesDelete()
 		{
 			if (SelectedAtlasFile == null) return;
-			_db.DeleteAtlasFile(SelectedAtlasFile);
+			_db.DeleteAtlasFile(SelectedAtlasFile.AtlasFileData);
 			ViewAtlasFiles.Remove(SelectedAtlasFile);
 			SelectedAtlasFile = null;
+			RefreshViewAtlasFiles();
 		}
 
 		/// <summary>
@@ -162,7 +168,7 @@ namespace AtlasViewer.ViewModel
 		{
 			ViewAtlasTextures.Clear();
 			if (SelectedAtlasFile == null) return;
-			var atlasTextures = _db.GetAtlasTextures(SelectedAtlasFile.IdAtlasFile);
+			var atlasTextures = _db.GetAtlasTextures(SelectedAtlasFile.AtlasFileData.IdAtlasFile);
 			foreach (var od1 in atlasTextures) {
 				ViewAtlasTextures.Add(od1);
 			}

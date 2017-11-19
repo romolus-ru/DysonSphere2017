@@ -1,8 +1,4 @@
-﻿// TODO кнопка выбора файла
-// TODO превью выбранной картинки
-// TODO кнопка обновления информации о размерах картинки - сделать статический метод, он будет вызываться и из MainWindow
-// TODO объекты модели переделать - они должны быть обертками над настоящими классами, и уметь обновлять поля на форме если они изменились
-using Engine.Data;
+﻿using Engine.Data;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
@@ -14,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media.Imaging;
 
 namespace AtlasViewer.ViewModel
 {
@@ -41,8 +38,26 @@ namespace AtlasViewer.ViewModel
 				_atlasFile = value;
 				OnPropertyChanged("AtlasFile");
 				OnPropertyChanged("AtlasFileToView");
+				GetAtlasSize();
+				OnPropertyChanged("AtlasSize");
 			}
 		}
+
+		private void GetAtlasSize()
+		{
+			try {
+				var file = GetAtlasFileFullPath(AtlasFile);
+				var a = new BitmapImage(new Uri(file));
+				if (a != null) {
+					_atlasWidth = a.PixelWidth;
+					_atlasHeight = a.PixelHeight;
+				}
+			}
+			catch (Exception) {
+				
+			}
+		}
+
 		public string AtlasFileToView { get {
 				var f = GetAtlasFileFullPath(AtlasFile);
 				Debug.WriteLine("ff = " + f);
@@ -50,6 +65,13 @@ namespace AtlasViewer.ViewModel
 				return f;
 			}
 		}
+
+		private int _atlasWidth { get; set; }
+		private int _atlasHeight { get; set; }
+		public string AtlasSize {
+			get { return "размер " + _atlasWidth + ":" + _atlasHeight; }
+		}
+
 		public string Size { get; set; }
 
 		public ICommand StoreChangesCommand { get; set; }
@@ -78,8 +100,8 @@ namespace AtlasViewer.ViewModel
 
 		public static string GetAtlasFileShortPath(string filePath)
 		{
-			var path = GetAtlasFilePath();
-			if (!filePath.StartsWith(path)) return "";
+			var path = GetAtlasFilePath().ToUpper();
+			if (!filePath.ToUpper().StartsWith(path)) return "";
 			if (filePath.Contains("..")) return "";
 			var pathLenght = path.Length;
 			if (pathLenght >= filePath.Length) return "";
@@ -104,7 +126,6 @@ namespace AtlasViewer.ViewModel
 			}
 			openFileDialog = null;
 			if (!string.IsNullOrEmpty(file)) {
-				Thread.Sleep(100);
 				this.AtlasFile = file;
 				RequestRefreshWindow(this, new EventArgs());
 			}
@@ -115,9 +136,13 @@ namespace AtlasViewer.ViewModel
 		{
 			var changes =
 				_editingAtlasFile.AtlasName != AtlasName ||
+				_editingAtlasFile.Width != _atlasWidth ||
+				_editingAtlasFile.Height != _atlasHeight ||
 				_editingAtlasFile.AtlasFile != AtlasFile;
 			if (changes) {
 				_editingAtlasFile.AtlasName = AtlasName;
+				_editingAtlasFile.Width = _atlasWidth;
+				_editingAtlasFile.Height = _atlasHeight;
 				_editingAtlasFile.AtlasFile = AtlasFile;
 				DialogResult = "Changed";
 			}

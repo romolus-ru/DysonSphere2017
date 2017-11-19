@@ -28,10 +28,13 @@
                 <TextBox Margin="5" Text="{Binding AtlasName}" />
                 <Label x:Name="label2" Content="Файл"/>
                 <TextBox Margin="5" Text="{Binding AtlasFile}" />
+                <Label x:Name="sizeLabel" Content="{Binding AtlasSize}"/>
                 <Button x:Name="btnSelectFile" Content="Выбрать файл" Width="150" Command="{Binding SelectFileCommand}"/>
             </StackPanel>
             <StackPanel Orientation="Vertical" Grid.Column="1">
-                <Image x:Name="image" Width="100" Height="100" Source="{Binding AtlasFileToView}"/>
+                <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                    <Image x:Name="image" Source="{Binding AtlasFileToView}" Stretch="None"/>
+                </ScrollViewer>
             </StackPanel>
         </Grid>
         <Grid Grid.Row="1">

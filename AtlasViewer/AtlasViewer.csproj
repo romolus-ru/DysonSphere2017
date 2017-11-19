@@ -65,6 +65,8 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Model\Entities\EntityWithNotify.cs" />
+    <Compile Include="Model\Entities\ModelAtlasFile.cs" />
+    <Compile Include="Model\Entities\ModelAtlasTexture.cs" />
     <Compile Include="ViewModel\RelayCommand.cs" />
     <Compile Include="ViewModel\ViewModelAtlasFileEdit.cs" />
     <Compile Include="ViewModel\ViewModelBase.cs" />

@@ -24,8 +24,8 @@
                 <ColumnDefinition Width="*"></ColumnDefinition>
             </Grid.ColumnDefinitions>
 
-            <DockPanel Grid.Column="0" LastChildFill="True">
-                <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel Grid.Column="0">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" Height="150">
                     <DataGrid x:Name="AtlasFilesGrid"
                   AutoGenerateColumns="False"
                   ItemsSource="{Binding ViewAtlasFiles, Mode=TwoWay}"
@@ -34,11 +34,13 @@
                   HorizontalAlignment="Center" Margin="10,10,0,0" IsReadOnly="True"
                   GridLinesVisibility="Horizontal" VerticalAlignment="Top">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Название текстуры" Binding="{Binding AtlasName}" Width="auto" />
-                            <DataGridTextColumn Header="Адрес текстуры" Binding="{Binding AtlasFile}" Width="auto" />
+                            <DataGridTextColumn Header="Название атласа" Binding="{Binding AtlasName}" Width="auto" />
+                            <DataGridTextColumn Header="Адрес файла атласа" Binding="{Binding AtlasFile}" Width="auto" />
                         </DataGrid.Columns>
                         <DataGrid.ContextMenu>
                             <ContextMenu>
+                                <MenuItem Header="Добавить атлас" Command="{Binding AtlasFileAddNewCommand}" />
+                                <MenuItem Header="Добавить файл-текстуру (атлас из 1 текстуры)"/>
                                 <MenuItem Header="Редактировать атлас" Command="{Binding AtlasFileEditCommand}" />
                                 <MenuItem Header="Удалить атлас" Command="{Binding AtlasFileDeleteCommand}"/>
                             </ContextMenu>
@@ -53,7 +55,38 @@
                         </i:Interaction.Triggers>
                     </DataGrid>
                 </ScrollViewer>
-            </DockPanel>
+
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <DataGrid x:Name="AtlasTexturesGrid"
+                  AutoGenerateColumns="False"
+                  ItemsSource="{Binding ViewAtlasFiles, Mode=TwoWay}"
+                  SelectedItem="{Binding SelectedAtlasFile}"
+                  SelectionMode="Single" SelectionUnit="FullRow"
+                  HorizontalAlignment="Center" Margin="10,10,0,0" IsReadOnly="True"
+                  GridLinesVisibility="Horizontal" VerticalAlignment="Top">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Название текстуры" Binding="{Binding AtlasName}" Width="auto" />
+                            <DataGridTextColumn Header="Адрес текстуры" Binding="{Binding AtlasFile}" Width="auto" />
+                        </DataGrid.Columns>
+                        <DataGrid.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Добавить атлас" Command="{Binding AtlasFileAddNewCommand}" />
+                                <MenuItem Header="Добавить файл-текстуру"/>
+                                <MenuItem Header="Редактировать атлас" Command="{Binding AtlasFileEditCommand}" />
+                                <MenuItem Header="Удалить атлас" Command="{Binding AtlasFileDeleteCommand}"/>
+                            </ContextMenu>
+                        </DataGrid.ContextMenu>
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="SelectionChanged">
+                                <i:InvokeCommandAction Command="{Binding AtlasFileSelectionChangedCommand}" />
+                            </i:EventTrigger>
+                            <i:EventTrigger EventName="MouseDoubleClick">
+                                <i:InvokeCommandAction Command="{Binding AtlasFileEditCommand}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </DataGrid>
+                </ScrollViewer>
+            </StackPanel>
 
 
             <Image x:Name="image" Grid.Column="2"/>
