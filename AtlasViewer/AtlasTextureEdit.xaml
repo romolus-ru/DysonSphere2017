@@ -1,12 +1,51 @@
-﻿<Window x:Class="AtlasViewer.AtlasTextureEdit"
+﻿<Window x:Class="AtlasViewer.AtlasFileEdit"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AtlasViewer"
+        xmlns:local2="clr-namespace:AtlasViewer.ViewModel"
         mc:Ignorable="d"
-        Title="AtlasTextureEdit" Height="300" Width="300">
-    <Grid>
-        
+        Title="Редактирование основной информации об атласе" 
+        Height="300" Width="450"
+        WindowStartupLocation="CenterScreen">
+    <Window.DataContext>
+        <local2:ViewModelAtlasFileEdit />
+    </Window.DataContext>
+
+    <Grid Background="#FFD5D6D1">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="30"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <StackPanel Orientation="Vertical">
+                <Label x:Name="label1" Content="Имя тестуры"/>
+                <TextBox Margin="5" Text="{Binding AtlasName}" />
+                <Label x:Name="label2" Content="Файл"/>
+                <TextBox Margin="5" Text="{Binding AtlasFile}" />
+                <Label x:Name="sizeLabel" Content="{Binding AtlasSize}"/>
+                <Button x:Name="btnSelectFile" Content="Выбрать файл" Width="150" Command="{Binding SelectFileCommand}"/>
+            </StackPanel>
+            <StackPanel Orientation="Vertical" Grid.Column="1">
+                <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                    <Image x:Name="image" Source="{Binding AtlasFileToView}" Stretch="None"/>
+                </ScrollViewer>
+            </StackPanel>
+        </Grid>
+        <Grid Grid.Row="1">
+            <StackPanel Name="Info1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Button x:Name="btnOk" Content="Сохранить" 
+                HorizontalAlignment="Stretch" Height="22" Margin="2,2,0,0" VerticalAlignment="Stretch" Width="150"
+                IsCancel="True" Command="{Binding StoreChangesCommand}" />
+                <Button x:Name="btnCalcel" Content="Отменить" 
+                HorizontalAlignment="Stretch" Height="22" Margin="2,2,0,0" VerticalAlignment="Stretch" Width="150"
+                IsCancel="True" />
+            </StackPanel>
+        </Grid>
     </Grid>
 </Window>

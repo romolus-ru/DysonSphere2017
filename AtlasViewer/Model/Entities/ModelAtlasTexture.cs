@@ -20,9 +20,30 @@ namespace AtlasViewer.Model.Entities
 			set { AtlasTextureData.Description = value; OnPropertyChanged(""); }
 		}
 
+		public long P1X {
+			get { return AtlasTextureData.P1X; }
+			set { AtlasTextureData.P1X = value; OnPropertyChanged(""); }
+		}
+
+		public long P1Y {
+			get { return AtlasTextureData.P1Y; }
+			set { AtlasTextureData.P1Y = value; OnPropertyChanged(""); }
+		}
+
+		public long P2X {
+			get { return AtlasTextureData.P2X; }
+			set { AtlasTextureData.P2X = value; OnPropertyChanged(""); }
+		}
+
+		public long P2Y {
+			get { return AtlasTextureData.P2Y; }
+			set { AtlasTextureData.P2Y = value; OnPropertyChanged(""); }
+		}
+
 		public ModelAtlasTexture(AtlasTextures atlasTexture)
 		{
 			AtlasTextureData = atlasTexture;
 		}
+
 	}
 }
