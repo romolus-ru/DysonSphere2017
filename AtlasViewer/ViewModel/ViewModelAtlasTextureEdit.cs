@@ -12,11 +12,12 @@ using System.Windows.Media.Imaging;
 
 namespace AtlasViewer.ViewModel
 {
-	тут. и форму для текстур тоже - там всё должно остаться (вывод атласа точно) и поверх отображаются координаты редактируемой текстуры
+	//тут. и форму для текстур тоже - там всё должно остаться (вывод атласа точно) и поверх отображаются координаты редактируемой текстуры
 	class ViewModelAtlasTextureEdit : ViewModelBase
 	{
 		public string DialogResult = "None";
-		private AtlasFiles _editingAtlasFile;
+		private AtlasFiles _viewAtlasFile;
+		private AtlasTextures _editingAtlasFile;
 
 		/// <summary>
 		/// Для закрытия вспомогательных окон
@@ -28,51 +29,24 @@ namespace AtlasViewer.ViewModel
 		/// </summary>
 		public event EventHandler RequestRefreshWindow;
 
-		public string AtlasName { get; set; }
-		private string _atlasFile;
-		public string AtlasFile {
-			get { return _atlasFile; }
-			set {
-				if (_atlasFile == value) return;
-				_atlasFile = value;
-				OnPropertyChanged("AtlasFile");
-				OnPropertyChanged("AtlasFileToView");
-				GetAtlasSize();
-				OnPropertyChanged("AtlasSize");
-			}
-		}
-
-		private void GetAtlasSize()
-		{
-			try {
-				var file = GetAtlasFileFullPath(AtlasFile);
-				var a = new BitmapImage(new Uri(file));
-				if (a != null) {
-					_atlasWidth = a.PixelWidth;
-					_atlasHeight = a.PixelHeight;
-				}
-			}
-			catch (Exception) {
-
-			}
-		}
-
+		public string TextureName { get; set; }
+		public string TextureDesctiption { get; set; }
+		public int P1X { get; set; }
+		public int P1Y { get; set; }
+		public int P2X { get; set; }
+		public int P2Y { get; set; }
+		тут добавить события
 		public string AtlasFileToView {
 			get {
-				var f = GetAtlasFileFullPath(AtlasFile);
+				var f = GetAtlasFileFullPath(_viewAtlasFile.AtlasFile);
 				Debug.WriteLine("ff = " + f);
 				if (!f.EndsWith(".png")) return "";
 				return f;
 			}
 		}
 
-		private int _atlasWidth { get; set; }
-		private int _atlasHeight { get; set; }
-		public string AtlasSize {
-			get { return "размер " + _atlasWidth + ":" + _atlasHeight; }
-		}
 
-		public string Size { get; set; }
+
 
 		public ICommand StoreChangesCommand { get; set; }
 		public ICommand CancelChangesCommand { get; set; }
