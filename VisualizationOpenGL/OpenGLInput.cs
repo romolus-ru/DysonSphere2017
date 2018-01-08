@@ -14,10 +14,10 @@ namespace VisualizationOpenGL
 		/// <summary>
 		/// Стандартная обработка мышки и клавиатуры для Windows
 		/// </summary>
-		/// <remarks>Тут в основном ничего не делаем - конструктор используется от TInput</remarks>
+		/// <remarks>Тут в основном ничего не делаем - конструктор используется от Input</remarks>
 		public OpenGLInput() { }
 
-		[DllImport("User32.dll")]
+		[DllImport("user32.dll")]
 		[return: MarshalAs(UnmanagedType.Bool)]
 		internal static extern bool GetKeyboardState(byte[] lpKeyState);
 
@@ -33,7 +33,7 @@ namespace VisualizationOpenGL
 		   int cchBuff, uint wFlags, IntPtr dwhkl);
 
 		/// <summary>
-		/// массив с нажатыми кнопками. никому недоступен
+		/// массив с нажатыми кнопками. никому не доступен
 		/// </summary>
 		private byte[] _keys = new byte[256];
 
@@ -41,7 +41,7 @@ namespace VisualizationOpenGL
 		/// Установить какие кнопки нажаты
 		/// </summary>
 		/// <returns>Нажата ли хоть 1 клавиша</returns>
-		protected override bool SetKeyboard()
+		protected override bool UpdateKeyboardState()
 		{
 			bool ret = false;
 			GetKeyboardState(_keys);
@@ -88,7 +88,6 @@ namespace VisualizationOpenGL
 		public override bool IsKeyPressed(Keys key)
 		{
 			// проверяем установлен ли старший бит. если установлен возвращаем true
-			// и заодно переводим переданный код к типу целое число
 			return (_keys[(int)key] & 0x80) != 0;
 		}
 
@@ -96,7 +95,7 @@ namespace VisualizationOpenGL
 		/// Установить новые координаты курсора
 		/// </summary>
 		/// <returns></returns>
-		protected override bool SetCursor()
+		protected override bool UpdateCursorState()
 		{
 			bool ret = false;
 			var newCur = Cursor.Position;// экранные координаты курсора
@@ -121,12 +120,13 @@ namespace VisualizationOpenGL
 		public override string KeysToUnicode()
 		{
 			var s = "";
-			//foreach (Keys key in Enum.GetValues(typeof(Keys)))// getvalues не повзращает уникальные значения, они могут повторяться
-			for (uint keyUInt = 0; keyUInt < 256; keyUInt++)
+			//foreach (Keys key in Enum.GetValues(typeof(Keys)))// getvalues не возвращает уникальные значения, они могут повторяться
+			for (uint keyUInt = 32; keyUInt < 256; keyUInt++)
 			{
 				Keys key = (Keys) keyUInt;
 				if (!IsKeyPressed(key)) continue;
-				if (key == Keys.Back) continue;
+				if (key == Keys.Back)
+					continue;
 				var s1 = KeysToUnicode(keyUInt);
 				s += s1;
 			}

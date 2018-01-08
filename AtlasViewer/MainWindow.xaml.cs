@@ -23,6 +23,7 @@ namespace AtlasViewer
 		public MainWindow()
 		{
 			InitializeComponent();
+			ViewService.mainWindow = this;
 		}
 	}
 }

@@ -68,6 +68,7 @@
     <Compile Include="Model\Entities\ModelAtlasFile.cs" />
     <Compile Include="Model\Entities\ModelAtlasTexture.cs" />
     <Compile Include="ViewModel\RelayCommand.cs" />
+    <Compile Include="ViewModel\Utils.cs" />
     <Compile Include="ViewModel\ViewModelAtlasFileEdit.cs" />
     <Compile Include="ViewModel\ViewModelAtlasTextureEdit.cs" />
     <Compile Include="ViewModel\ViewModelBase.cs" />

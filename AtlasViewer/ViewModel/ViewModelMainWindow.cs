@@ -6,6 +6,7 @@
 using AtlasViewer.Model.Entities;
 using DataSupportEF;
 using Engine.Data;
+using Engine.Utils;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -13,11 +14,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using System.Windows.Media.Imaging;
 
 namespace AtlasViewer.ViewModel
 {
 	public class ViewModelMainWindow : ViewModelBase
 	{
+		//удалить лишнее. 
+		// доделать вызов редактирования
+			//перенести выделение текстуры в редактор текстур
+			//доделать выделение у текстур на главной форме
+			
+			//попробовать взять отсюда пример
+			//https://stackoverflow.com/questions/6059894/how-draw-rectangle-in-wpf
 
 		private Random _rnd = new Random();
 
@@ -42,6 +51,30 @@ namespace AtlasViewer.ViewModel
 				OnPropertyChanged("SelectedAtlasFile");
 				OnPropertyChanged("EnableAtlasTextureButtons");
 				OnPropertyChanged("EnableAtlasTextureMenuButtons");
+				OnPropertyChanged("AtlasFileToView");
+				OnPropertyChanged("AtlasFileToViewWidth");
+				OnPropertyChanged("AtlasFileToViewHeight");
+			}
+		}
+
+		public string AtlasFileToView {
+			get {
+				var f = AtlasUtils.GetAtlasFileFullPath(_selectedAtlasFile.AtlasFileData.AtlasFile);
+				if (!f.EndsWith(".png")) return "";
+				return f;
+			}
+		}
+
+		public long AtlasFileToViewWidth {
+			get {
+				if (_selectedAtlasFile == null) return 0;
+				return (long)(_selectedAtlasFile.AtlasFileData.Width / Utils.PixelSize);
+			}
+		}
+		public long AtlasFileToViewHeight {
+			get {
+				if (_selectedAtlasFile == null) return 0;
+				return (long)(_selectedAtlasFile.AtlasFileData.Height / Utils.PixelSize);
 			}
 		}
 
@@ -63,6 +96,7 @@ namespace AtlasViewer.ViewModel
 			get { return _selectedAtlasTexture; }
 			set {
 				_selectedAtlasTexture = value;
+				ViewService.ShowAtlasTextures(ViewAtlasTextures.ToList(), _selectedAtlasTexture);
 				OnPropertyChanged("SelectedAtlasTexture");
 				OnPropertyChanged("EnableAtlasTextureMenuButtons");
 			}
@@ -173,28 +207,29 @@ namespace AtlasViewer.ViewModel
 				ViewAtlasTextures.Add(od1);
 			}
 			SelectedAtlasTexture = null;
+			ViewService.ShowAtlasTextures(ViewAtlasTextures.ToList());
 		}
 
 		public void AtlasTexturesAddNew()
 		{
-			/*if (SelectedAtlasFile == null) return;
+			if (SelectedAtlasFile == null) return;
 			var newAtlasTexture = new AtlasTextures();
-			var vmAtlasTextureEdit = new ViewModelAtlasTextureEdit(newAtlasTexture, SelectedAtlasFile);
+			var vmAtlasTextureEdit = new ViewModelAtlasTextureEdit(SelectedAtlasFile.AtlasFileData, newAtlasTexture);
 			var dr = ViewService.RunAtlasTextureEdit(vmAtlasTextureEdit);
 			if (!dr) return;// иначе сохраняем
-			newAtlasTexture.AtlasFileId = SelectedAtlasFile.IdAtlasFile;
+			newAtlasTexture.AtlasFileId = SelectedAtlasFile.AtlasFileData.IdAtlasFile;
 			_db.AddAtlasTexture(newAtlasTexture);
-			ViewAtlasTextures.Add(newAtlasTexture);*/
+			ViewAtlasTextures.Add(newAtlasTexture);
 		}
 
 		public void AtlasTextureEdit()
 		{
-			/*if (SelectedAtlasTexture == null) return;
+			if (SelectedAtlasTexture == null) return;
 			if (SelectedAtlasFile == null) return;
-			var vmAtlasTextureEdit = new ViewModelAtlasTextureEdit(SelectedAtlasTexture, SelectedAtlasFile);
+			var vmAtlasTextureEdit = new ViewModelAtlasTextureEdit(SelectedAtlasFile.AtlasFileData, SelectedAtlasTexture);
 			var dr = ViewService.RunAtlasTextureEdit(vmAtlasTextureEdit);
 			if (!dr) return;// иначе сохраняем
-			_db.AddAtlasTexture(SelectedAtlasTexture);*/
+			_db.AddAtlasTexture(SelectedAtlasTexture);
 		}
 
 		public void AtlasTextureDelete()

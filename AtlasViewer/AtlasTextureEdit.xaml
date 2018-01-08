@@ -1,4 +1,4 @@
-﻿<Window x:Class="AtlasViewer.AtlasFileEdit"
+﻿<Window x:Class="AtlasViewer.AtlasTextureEdit"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -6,11 +6,11 @@
         xmlns:local="clr-namespace:AtlasViewer"
         xmlns:local2="clr-namespace:AtlasViewer.ViewModel"
         mc:Ignorable="d"
-        Title="Редактирование основной информации об атласе" 
-        Height="300" Width="450"
+        Title="Редактирование основной информации о текстуре атласа" 
+        Height="271.715" Width="450"
         WindowStartupLocation="CenterScreen">
     <Window.DataContext>
-        <local2:ViewModelAtlasFileEdit />
+        <local2:ViewModelAtlasTextureEdit />
     </Window.DataContext>
 
     <Grid Background="#FFD5D6D1">
@@ -25,11 +25,21 @@
             </Grid.ColumnDefinitions>
             <StackPanel Orientation="Vertical">
                 <Label x:Name="label1" Content="Имя тестуры"/>
-                <TextBox Margin="5" Text="{Binding AtlasName}" />
-                <Label x:Name="label2" Content="Файл"/>
-                <TextBox Margin="5" Text="{Binding AtlasFile}" />
-                <Label x:Name="sizeLabel" Content="{Binding AtlasSize}"/>
-                <Button x:Name="btnSelectFile" Content="Выбрать файл" Width="150" Command="{Binding SelectFileCommand}"/>
+                <TextBox Margin="5" Text="{Binding TextureName}" />
+                <Label x:Name="label2" Content="Описание текстуры"/>
+                <TextBox Margin="5" Text="{Binding TextureDesctiption}" />
+                <StackPanel Orientation="Horizontal">
+                    <Label x:Name="P1X" Content="P1X"/>
+                    <TextBox Margin="5" Text="{Binding P1X}" Width="50"/>
+                    <Label x:Name="P1Y" Content="P1Y"/>
+                    <TextBox Margin="5" Text="{Binding P1Y}" Width="50"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label x:Name="P2X" Content="P2X"/>
+                    <TextBox Margin="5" Text="{Binding P2X}" Width="50"/>
+                    <Label x:Name="P2Y" Content="P2Y"/>
+                    <TextBox Margin="5" Text="{Binding P2Y}" Width="50"/>
+                </StackPanel>
             </StackPanel>
             <StackPanel Orientation="Vertical" Grid.Column="1">
                 <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">

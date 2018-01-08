@@ -9,7 +9,7 @@ namespace Engine.Visualization
 	/// <summary>
 	/// Компонент управления
 	/// </summary>
-	public class ViewComponent :ViewObject
+	public class ViewComponent : ViewObject
 	{
 		#region Основные переменные
 
@@ -19,23 +19,29 @@ namespace Engine.Visualization
 		protected Input Input;
 		public string Name { get; protected set; }
 
+		private int _x;
+		private int _y;
+		private int _z;
+		protected int _xScreen;// for mouse operations
+		protected int _yScreen;// for mouse operations
+		protected int _zScreen;// for mouse operations
+
 		/// <summary>
 		/// Координата X объекта
 		/// </summary>
-		public int X { get; protected set; }
+		public int X { get { return _x; } protected set { _x = value; RecalcScreenX(); } }
 
 		/// <summary>
 		/// Координата Y объекта
 		/// </summary>
-		public int Y { get; protected set; }
+		public int Y { get { return _y; } protected set { _y = value; RecalcScreenY(); } }
 
 		/// <summary>
 		/// Координата Z объекта
 		/// </summary>
-		public int Z { get; protected set; }
+		public int Z { get { return _z; } protected set { _z = value; RecalcScreenZ(); } }
 
 		public bool CanDraw { get; private set; }
-		protected bool IsModal;
 		protected bool IsDraging;
 
 		/// <summary>
@@ -54,7 +60,7 @@ namespace Engine.Visualization
 		/// <summary>
 		/// Покинул ли курсор пределы объекта (что бы лишний раз не сбрасывать состояние)
 		/// </summary>
-		protected Boolean CursorOverOffed;
+		protected bool CursorOverOffed;
 
 		#endregion
 
@@ -157,9 +163,12 @@ namespace Engine.Visualization
 		/// Добавить объект к списку компонентов
 		/// </summary>
 		/// <param name="component"></param>
-		public void AddComponent(ViewComponent component)
+		public void AddComponent(ViewComponent component, bool toTop = false)
 		{
-			Components.Add(component);
+			if (toTop)
+				Components.Insert(0, component);
+			else
+				Components.Add(component);
 			component.Parent = this;
 			component.Show();
 			component.Init(VisualizationProvider, Input);
@@ -212,13 +221,21 @@ namespace Engine.Visualization
 
 		#region Cursor
 
+		private static bool overedOne = false;
 		/// <summary>
 		/// Стандартное распределение обработки события курсора
 		/// </summary>
 		public void CursorHandler(int cursorX, int cursorY)
 		{
+			overedOne = false;
+			CursorHandlerLocal(cursorX, cursorY);
+		}
+
+		protected void CursorHandlerLocal(int cursorX, int cursorY)
+		{
+			if (overedOne) return;// если уже есть объект (с вложенными) у которого выставлено over - у остальных не устанавливаем
 			if (!CanDraw) return;
-			if (!InRange(cursorX,cursorY)) {
+			if (!InRange(cursorX, cursorY)) {
 				CursorOverOff(); // сбрасываем выделение, в том числе и у вложенных контролов
 				return;
 			}
@@ -228,12 +245,15 @@ namespace Engine.Visualization
 				CursorOverOffed = false;
 				foreach (var component in Components) {
 					component.CursorOverOff();
-					if (!component.InRange(cursorX - X, cursorY - Y)) {
+					var curX = cursorX - _xScreen + X;
+					var curY = cursorY - _yScreen + Y;
+					if (!component.InRange(curX, curY)) {
 						component.CursorOverOff();
 						continue; // компонент не в точке нажатия
 					}
 					// смещаем курсор и передаём контролу смещенные координаты
-					component.CursorHandler(cursorX - X, cursorY - Y);
+					component.CursorHandlerLocal(curX, curY);
+					if (component.CursorOver) overedOne = true;
 				}
 			}
 		}
@@ -306,6 +326,9 @@ namespace Engine.Visualization
 		/// <summary>
 		/// Сбрасываем CursorOver, в том числе и у всех вложенных компонентов
 		/// </summary>
+		/// <remarks>Можно сделать этот метод частью CursorHandler - он будет сбрасывать 
+		/// один раз состояние всех объектов. возможно будет меньше операций чем постоянный вызов
+		/// </remarks>
 		protected void CursorOverOff()
 		{
 			CursorOver = false;
@@ -325,8 +348,8 @@ namespace Engine.Visualization
 		public virtual bool InRange(int x, int y)
 		{
 			if (!CanDraw) return false; // компонент не рисуется - значит не проверяем дальше
-			if ((X < x) && (x < X + Width)) {
-				if ((Y < y) && (y < Y + Height)) {
+			if ((_xScreen < x) && (x < _xScreen + Width)) {
+				if ((_yScreen < y) && (y < _yScreen + Height)) {
 					return true;
 				}
 			}
@@ -364,18 +387,6 @@ namespace Engine.Visualization
 			Name = name;
 		}
 
-		public void ModalStart()
-		{
-			Input.ModalStart(this);
-			IsModal = true;
-		}
-
-		public void ModalStop()
-		{
-			IsModal = false;
-			Input.ModalStop(this);
-		}
-
 		/// <summary>
 		/// Отладка. Получить список всех объектов отображения с отступами
 		/// </summary>
@@ -392,7 +403,8 @@ namespace Engine.Visualization
 		private void GetObjectsView(List<string> list, ViewComponent component, int deep)
 		{
 			if (!component.CanDraw) return;
-			list.Add("".PadLeft((deep - 1), ' ') + ":" + component.Name + "(" + component.GetType().Name + ")");
+			var mover = component.CursorOver ? " mouse over" : "";
+			list.Add("".PadLeft((deep - 1), ' ') + "|" + component.Name + "(" + component.GetType().Name + ")" + mover);
 			foreach (var cntrl in component.Components) {
 				GetObjectsView(list, cntrl, deep + 1);
 			}
@@ -404,5 +416,29 @@ namespace Engine.Visualization
 			SetCoordinates(x, y);
 			SetSize(width, height);
 		}
+
+		private void RecalcScreenX()
+		{
+			int x = 0;
+			var p = Parent;
+			while (p != null) { x += p.X; p = p.Parent; }
+			_xScreen = x + X;
+		}
+
+		private void RecalcScreenY()
+		{
+			int y = 0;
+			var p = Parent;
+			while (p != null) { y += p.Y; p = p.Parent; }
+			_yScreen = y + Y;
+		}
+		private void RecalcScreenZ()
+		{
+			int z = 0;
+			var p = Parent;
+			while (p != null) { z += p.Z; p = p.Parent; }
+			_zScreen = z + Z;
+		}
+
 	}
 }

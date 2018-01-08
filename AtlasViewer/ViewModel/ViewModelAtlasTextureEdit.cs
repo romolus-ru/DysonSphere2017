@@ -12,12 +12,11 @@ using System.Windows.Media.Imaging;
 
 namespace AtlasViewer.ViewModel
 {
-	//тут. и форму для текстур тоже - там всё должно остаться (вывод атласа точно) и поверх отображаются координаты редактируемой текстуры
-	class ViewModelAtlasTextureEdit : ViewModelBase
+	public class ViewModelAtlasTextureEdit : ViewModelBase
 	{
 		public string DialogResult = "None";
 		private AtlasFiles _viewAtlasFile;
-		private AtlasTextures _editingAtlasFile;
+		private AtlasTextures _editingAtlasTexture;
 
 		/// <summary>
 		/// Для закрытия вспомогательных окон
@@ -31,11 +30,10 @@ namespace AtlasViewer.ViewModel
 
 		public string TextureName { get; set; }
 		public string TextureDesctiption { get; set; }
-		public int P1X { get; set; }
-		public int P1Y { get; set; }
-		public int P2X { get; set; }
-		public int P2Y { get; set; }
-		тут добавить события
+		public long P1X { get; set; }
+		public long P1Y { get; set; }
+		public long P2X { get; set; }
+		public long P2Y { get; set; }
 		public string AtlasFileToView {
 			get {
 				var f = GetAtlasFileFullPath(_viewAtlasFile.AtlasFile);
@@ -45,23 +43,24 @@ namespace AtlasViewer.ViewModel
 			}
 		}
 
-
-
-
 		public ICommand StoreChangesCommand { get; set; }
 		public ICommand CancelChangesCommand { get; set; }
-		public ICommand SelectFileCommand { get; set; }
 		public ViewModelAtlasTextureEdit()
 		{
 		}
 
-		public ViewModelAtlasTextureEdit(AtlasFiles atlasFile)
+		public ViewModelAtlasTextureEdit(AtlasFiles atlasFile, AtlasTextures atlasTexture)
 		{
-			_editingAtlasFile = atlasFile;
-			AtlasName = atlasFile.AtlasName;
-			this.AtlasFile = atlasFile.AtlasFile;
+			_viewAtlasFile = atlasFile;
+			_editingAtlasTexture = atlasTexture;
+			TextureName = _editingAtlasTexture.Name;
+			TextureDesctiption = _editingAtlasTexture.Description;
+			P1X = _editingAtlasTexture.P1X;
+			P1Y = _editingAtlasTexture.P1Y;
+			P2X = _editingAtlasTexture.P2X;
+			P2Y = _editingAtlasTexture.P2Y;
+
 			StoreChangesCommand = new RelayCommand(arg => StoreChanges());
-			SelectFileCommand = new RelayCommand(arg => SelectFile());
 		}
 
 		public static string GetAtlasFilePath()
@@ -77,9 +76,9 @@ namespace AtlasViewer.ViewModel
 			var path = GetAtlasFilePath().ToUpper();
 			if (!filePath.ToUpper().StartsWith(path)) return "";
 			if (filePath.Contains("..")) return "";
-			var pathLenght = path.Length;
-			if (pathLenght >= filePath.Length) return "";
-			return filePath.Substring(pathLenght + 1);
+			var pathLength = path.Length;
+			if (pathLength >= filePath.Length) return "";
+			return filePath.Substring(pathLength + 1);
 		}
 
 		public static string GetAtlasFileFullPath(string file)
@@ -87,37 +86,22 @@ namespace AtlasViewer.ViewModel
 			return Path.Combine(GetAtlasFilePath(), file);
 		}
 
-		private void SelectFile()
-		{
-			OpenFileDialog openFileDialog = new OpenFileDialog();
-			openFileDialog.Multiselect = false;
-			openFileDialog.InitialDirectory = GetAtlasFilePath();
-			openFileDialog.Filter = "All files (*.*)|*.*";
-			var file = "";
-			if (openFileDialog.ShowDialog() == true) {
-				var fl = openFileDialog.FileName;
-				file = GetAtlasFileShortPath(fl);
-			}
-			openFileDialog = null;
-			if (!string.IsNullOrEmpty(file)) {
-				this.AtlasFile = file;
-				RequestRefreshWindow(this, new EventArgs());
-			}
-
-		}
-
 		public void StoreChanges()
 		{
 			var changes =
-				_editingAtlasFile.AtlasName != AtlasName ||
-				_editingAtlasFile.Width != _atlasWidth ||
-				_editingAtlasFile.Height != _atlasHeight ||
-				_editingAtlasFile.AtlasFile != AtlasFile;
+				_editingAtlasTexture.Name != TextureName ||
+				_editingAtlasTexture.Description != TextureDesctiption ||
+				_editingAtlasTexture.P1X != P1X ||
+				_editingAtlasTexture.P1Y != P1Y ||
+				_editingAtlasTexture.P2X != P2X ||
+				_editingAtlasTexture.P2Y != P2Y;
 			if (changes) {
-				_editingAtlasFile.AtlasName = AtlasName;
-				_editingAtlasFile.Width = _atlasWidth;
-				_editingAtlasFile.Height = _atlasHeight;
-				_editingAtlasFile.AtlasFile = AtlasFile;
+				_editingAtlasTexture.Name = TextureName;
+				_editingAtlasTexture.Description = TextureDesctiption;
+				_editingAtlasTexture.P1X = P1X;
+				_editingAtlasTexture.P1Y = P1Y;
+				_editingAtlasTexture.P2X = P2X;
+				_editingAtlasTexture.P2Y = P2Y;
 				DialogResult = "Changed";
 			}
 			RequestClose(this, new EventArgs());

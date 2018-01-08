@@ -4,83 +4,28 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace Engine.Visualization
 {
-	public class ViewButton : ViewComponent
+	/// <summary>
+	/// Окно
+	/// </summary>
+	public class ViewWindow : ViewPanel
 	{
-		/// <summary>
-		/// Генерируемое сообщение 
-		/// </summary>
-		public Action OnClick;
-
 		private string _btnTexture = null;
-		private string _btnTextureOver = null;
 		private int _btnTextureBorder = 0;
 
 		/// <summary>
-		/// Получили сообщение что нажали - определяем местоположение
-		/// </summary>
-		public void ClickedOnScreen()
-		{
-			if (InRange(Input.CursorX, Input.CursorY))
-				Press();
-		}
-
-		public void KeyPressed()
-		{
-			Press();
-		}
-		/// <summary>
-		/// Заголовок кнопки
+		/// Заголовок окна
 		/// </summary>
 		protected string Caption;
 
-		/// <summary>
-		/// Заголовок кнопки
-		/// </summary>
-		protected string Hint;
-
-		public ViewButton() { }
-
-		/// <summary>
-		/// Жмём на кнопку
-		/// </summary>
-		protected virtual void Press()
-		{
-			OnClick?.Invoke();
-		}
-
-		public void InitButton(Action click, string caption, string hint, params Keys[] keys)
-		{
-			OnClick += click;
-			Input.AddKeyActionSticked(KeyPressed, keys);
-			Input.AddKeyActionSticked(ClickedOnScreen, Keys.LButton);
-			Caption = caption;
-			Hint = hint;
-			Name = caption;
-		}
+		public ViewWindow() { }
 
 		public override void DrawObject(VisualizationProvider visualizationProvider)
 		{
-			string txt;
-			Color color;
-			if (CursorOver) {
-				txt = "[" + Caption + "]"; color = Color.Red;
-			} else {
-				txt = " " + Caption + " "; color = Color.White;
-			}
-			var f = visualizationProvider.FontHeightGet() / 2;
-
-			visualizationProvider.SetColor(color);
-			visualizationProvider.Print(X + 4, Y + Height / 2 - f - 3, txt);
 			var texture = _btnTexture;
-			if (Hint != "" && CursorOver) {
-				visualizationProvider.Print(X + 10, Y + Height + 5 - f, Hint);
-				texture = _btnTextureOver;
-			}
-			if (texture != null) {
+			if (!string.IsNullOrEmpty(texture)) {
 				// углы
 				visualizationProvider.DrawTexturePart(X, Y, texture + ".t1", _btnTextureBorder, _btnTextureBorder);
 				visualizationProvider.DrawTexturePart(X + Width - 10, Y, texture + ".t3", _btnTextureBorder, _btnTextureBorder);
@@ -94,19 +39,19 @@ namespace Engine.Visualization
 				// центр
 				visualizationProvider.DrawTexturePart(X + 10, Y + 10, texture + ".t5", Width - _btnTextureBorder * 2, Height - _btnTextureBorder * 2);
 			} else {
-				visualizationProvider.SetColor(color);
+				var color = CursorOver ? Color.DarkOliveGreen : Color.Green;
+				visualizationProvider.SetColor(color, 75);
+				visualizationProvider.Box(X, Y, Width, Height);
+				visualizationProvider.SetColor(Color.Red);
 				visualizationProvider.Rectangle(X, Y, Width, Height);
 			}
 		}
 
-		public void InitTexture(string textureName, string textureNameOver, int textureBorder)
+		public void InitTexture(string textureName, int textureBorder)
 		{
 			_btnTexture = textureName;
-			_btnTextureOver = textureNameOver;
 			_btnTextureBorder = textureBorder;
 			VisualizationProvider.LoadAtlas(_btnTexture);
-			VisualizationProvider.LoadAtlas(_btnTextureOver);
 		}
-
 	}
 }

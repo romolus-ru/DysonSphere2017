@@ -44,6 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Constants.cs" />
     <Compile Include="DataSupportBase.cs" />
     <Compile Include="Data\AtlasFiles.cs" />
     <Compile Include="Data\AtlasTextures.cs" />
@@ -105,24 +106,31 @@
     <Compile Include="EventSystem\FileArchieve.cs" />
     <Compile Include="GameInitializer.cs" />
     <Compile Include="Input.cs" />
+    <Compile Include="InputKeyStatePause.cs" />
     <Compile Include="Model.cs" />
     <Compile Include="ModelMain.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Settings.cs" />
     <Compile Include="TCPNet\TCPConnector.cs" />
     <Compile Include="TCPNet\TCPEngineConnector.cs" />
     <Compile Include="TCPNet\TCPMessage.cs" />
     <Compile Include="TCPNet\TCPServer.cs" />
+    <Compile Include="Utils\AtlasUtils.cs" />
     <Compile Include="Utils\Collector.cs" />
     <Compile Include="Utils\LogData.cs" />
     <Compile Include="Utils\LogSystem.cs" />
+    <Compile Include="Utils\Query\Dynamic.cs" />
     <Compile Include="Visualization\View.cs" />
     <Compile Include="Visualization\ViewButton.cs" />
     <Compile Include="Visualization\ViewComponent.cs" />
     <Compile Include="Visualization\ViewCursor.cs" />
+    <Compile Include="Visualization\ViewInput.cs" />
     <Compile Include="Visualization\ViewManager.cs" />
+    <Compile Include="Visualization\ViewModalWindow.cs" />
     <Compile Include="Visualization\ViewObject.cs" />
     <Compile Include="Visualization\ViewPanel.cs" />
     <Compile Include="Visualization\ViewSystem.cs" />
+    <Compile Include="Visualization\ViewWindow.cs" />
     <Compile Include="Visualization\VisualizationProvider.cs" />
   </ItemGroup>
   <ItemGroup />

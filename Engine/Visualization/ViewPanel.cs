@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Engine.Visualization
 {
-	public class ViewPanel:ViewComponent
+	public class ViewPanel : ViewComponent
 	{
 		public override void DrawObject(VisualizationProvider visualizationProvider)
 		{

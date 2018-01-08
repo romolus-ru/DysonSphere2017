@@ -14,6 +14,7 @@ namespace Engine.Visualization
 	/// <remarks>Умеет только рисовать</remarks>
 	public class VisualizationProvider
 	{
+		public virtual void Exit() { }
 
 		//protected Controller _controller;
 
@@ -176,9 +177,7 @@ namespace Engine.Visualization
 		/// <param name="height"></param>
 		public void Rectangle(int x, int y, int width, int height)
 		{
-			//_Rectangle(x + curOffsetX, y + curOffsetY, width, height);
-			// TODO раньше был curOffset, но без него работает лучше
-			_Rectangle(x, y, width, height);
+			_Rectangle(x, y, width, height);// TODO заменить на вызов Line напрямую
 		}
 
 		protected virtual void _Rectangle(int x, int y, int width, int height)
@@ -369,7 +368,7 @@ namespace Engine.Visualization
 		/// <param name="y">Координата У</param>
 		/// <param name="textureName">Имя текстуры</param>
 		/// <param name="scale">Увеличение размера текстуры</param>
-		public void DrawTexture(int x, int y, String textureName, float scale = 1)
+		public void DrawTexture(int x, int y, string textureName, float scale = 1)
 		{ _DrawTexture(x + curOffsetX, y + curOffsetY, textureName, scale); }
 
 		protected virtual void _DrawTexture(int x, int y, String textureName, float scale = 1) { }
@@ -383,7 +382,7 @@ namespace Engine.Visualization
 		/// <param name="blockWidth">Ширина одного блока в текстуре</param>
 		/// <param name="blockHeight">Высота одного блока в текстуре</param>
 		/// <param name="num">Номер с нуля блока, выводимого на экран</param>
-		public void DrawTexturePart(int x, int y, String textureName, int blockWidth, int blockHeight, int num)
+		public void DrawTexturePart(int x, int y, string textureName, int blockWidth, int blockHeight, int num)
 		{ _DrawTexturePart(x + curOffsetX, y + curOffsetY, textureName, blockWidth, blockHeight, num); }
 
 		protected virtual void _DrawTexturePart(int x, int y, String textureName, int blockWidth, int blockHeight, int num) { }
@@ -395,14 +394,14 @@ namespace Engine.Visualization
 		/// <param name="x">Координата вывода на экран</param>
 		/// <param name="y"></param>
 		/// <param name="textureName">Имя текстуры</param>
-		/// <param name="xtex">Координата на текстуре откуда выводить</param>
-		/// <param name="ytex">Координата на текстуре откуда выводить</param>
+		/// <param name="placeWidth">Координата на текстуре откуда выводить</param>
+		/// <param name="placeHeight">Координата на текстуре откуда выводить</param>
 		/// <param name="width">Ширина выводимой области</param>
 		/// <param name="height">Высота выводимой области</param>
-		public void DrawTexturePart(int x, int y, String textureName, int xtex, int ytex, int width, int height)
-		{ _DrawTexturePart(x, y, textureName, xtex, ytex, width, height); }
+		public void DrawTexturePart(int x, int y, string textureName, int placeWidth, int placeHeight)
+		{ _DrawTexturePart(x + curOffsetX, y + curOffsetY, textureName, placeWidth, placeHeight); }
 
-		protected virtual void _DrawTexturePart(int x, int y, String textureName, int xtex, int ytex, int width, int height) { }
+		protected virtual void _DrawTexturePart(int x, int y, String textureName, int placeWidth, int placeHeight) { }
 
 		/// <summary>
 		/// Вывести на экран текстуру с маской (почти аналог LoadTextureAlpha)
@@ -585,5 +584,24 @@ namespace Engine.Visualization
 			curOffsetX = offsets.Pop();
 		}
 
+		public void SetClipPlane(int x1, int y1, int x2, int y2)
+		{ _SetClipPlane(x1, y1, x2, y2); }
+
+		protected virtual void _SetClipPlane(int x1, int y1, int x2, int y2) { }
+
+		public void ClipPlaneOff()
+		{ _ClipPlaneOff(); }
+
+		protected virtual void _ClipPlaneOff() { }
+
+		public void SetStencilArea(int x1, int y1, int x2, int y2)
+		{ _SetStencilArea(x1, y1, x2, y2); }
+
+		protected virtual void _SetStencilArea(int x1, int y1, int x2, int y2) { }
+
+		public void StensilAreaOff()
+		{ _StencilAreaOff(); }
+
+		protected virtual void _StencilAreaOff() { }
 	}
 }

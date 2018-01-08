@@ -12,24 +12,44 @@ namespace Engine.Visualization
 	public class ViewManager
 	{
 		private VisualizationProvider _provider;
+		private Input _input;
 		private ViewSystem _viewSystem;
 		private ViewCursor _viewCursor;
 
 		public ViewManager(VisualizationProvider provider, Input input)
 		{
 			_provider = provider;
+			_input = input;
 			_viewSystem = new ViewSystem();
+			_viewSystem.SetParams(0, 0, provider.CanvasWidth, provider.CanvasHeight, "ViewSystem");
 			_viewSystem.Init(_provider, input);
+			_input.AddCursorAction(_viewSystem.CursorHandler);
 			_viewCursor = new ViewCursor();
 			_viewCursor.Init(_provider, input);
 		}
 
-		public void AddView(ViewComponent view)
+		public void AddView(ViewComponent view, bool toTop = false)
 		{
-			_viewSystem.AddComponent(view);
+			_viewSystem.AddComponent(view, toTop);
 		}
 
-		int a = 1;
+		public void RemoveView(ViewComponent view)
+		{
+			_viewSystem.RemoveComponent(view);
+		}
+
+		public void AddViewModal(ViewComponent view)
+		{
+			_input.ModalStateStart();
+			AddView(view, true);
+		}
+
+		public void RemoveViewModal(ViewComponent view)
+		{
+			_input.ModalStateStop();
+			RemoveView(view);
+		}		
+		
 		/// <summary>
 		/// Визуализируем имеющиеся данные
 		/// </summary>
@@ -38,13 +58,6 @@ namespace Engine.Visualization
 			_provider.BeginDraw();
 
 			_viewSystem.Draw(_provider);
-			// TODO сделать простую визуализацию чтоб показывать таймер сохраненный на сервере
-
-			//_provider.SetColor(System.Drawing.Color.Teal);
-			//_provider.Box(10, 10, 1660, 1030);
-			//a++;if (a > 1600) a = 0;
-			//_provider.SetColor(System.Drawing.Color.Indigo);
-			//_provider.Box(a, 100, 200, 300);
 
 			_viewCursor.Draw(_provider);
 			_provider.FlushDrawing();

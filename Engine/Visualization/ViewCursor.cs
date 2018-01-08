@@ -22,7 +22,7 @@ namespace Engine.Visualization
 		protected override void InitObject(VisualizationProvider visualizationProvider, Input input)
 		{
 			base.InitObject(visualizationProvider, input);
-			input.AddCursorAction(Cursor);
+			input.AddCursorAction(Cursor, true);
 		}
 
 		public override void DrawObject(VisualizationProvider provider)

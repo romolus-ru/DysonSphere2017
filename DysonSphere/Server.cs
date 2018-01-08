@@ -35,6 +35,8 @@ namespace DysonSphere
 			_stopwatch = Stopwatch.StartNew();
 			// сохраняем объект для работы с данными
 			_datasupport = dataSupport;
+			// инициализируем настройки
+			Settings.Init();
 			// сохраняем обработчик логов
 			_logsystem = logSystem;
 
@@ -70,14 +72,23 @@ namespace DysonSphere
 
 			var btn1 = new ViewButton();
 			pnl.AddComponent(btn1);
-			btn1.InitButton(MsgToModel, "caption", "hint", Keys.Y);
-			btn1.SetParams(120, 200, 40, 40, "btn1");
-			btn1.InitTexture("btn0");
+			btn1.InitButton(MsgToModel, "c", "hint", Keys.Y);
+			btn1.SetParams(20, 20, 40, 40, "btn1");
+			//btn1.InitTexture("btn0");
 
 			var btn2 = new ViewButton();
 			pnl.AddComponent(btn2);
-			btn2.InitButton(MsgToModel, "caption", "hint", Keys.U);
-			btn2.SetParams(170, 200, 40, 40, "btn2");
+			btn2.InitButton(RunModalWindow, "c", "hint", Keys.U);
+			btn2.SetParams(70, 20, 40, 40, "btn2");
+			btn2.InitTexture("testbutton2", "testbutton2a", 10);
+
+			var btnClose = new ViewButton();
+			_viewManager.AddView(btnClose);
+			btnClose.InitButton(Close, "exit", "hint", Keys.LMenu, Keys.X);
+			btnClose.SetParams(1651, 0, 20, 20, "btn2");
+
+			var debugView = new DebugView();
+			_viewManager.AddView(debugView);
 
 			// создаётся объект для работы с пользователями (мат модель работы с пользователями)
 			// создаётся объект для работы с играми (мат модель запуска серверов игр)
@@ -86,10 +97,55 @@ namespace DysonSphere
 			Log("Сервер работает");
 		}
 
+		private void Close()
+		{
+			_visualization.Exit();
+		}
+
 		private void MsgToModel()
 		{
 			var a = 1;
 		}
+
+		private ViewModalWindow win;
+		private void RunModalWindow()
+		{
+			win = new ViewModalWindow();
+			_viewManager.AddViewModal(win);
+			win.SetParams(150, 150, 500, 150, "win");
+			win.InitTexture("", 10);
+
+			var btn1 = new ViewButton();
+			win.AddComponent(btn1);
+			btn1.InitButton(Entered, "ok", "Согласен", Keys.Enter);
+			btn1.SetParams(20, 110, 40, 25, "btn1");
+			btn1.InitTexture("testbutton2", "testbutton2a", 10);
+
+			var btn2 = new ViewButton();
+			win.AddComponent(btn2);
+			btn2.InitButton(CloseModalWindow, "Cancel", "Отмена", Keys.Escape);
+			btn2.SetParams(70, 110, 40, 25, "btn2");
+			btn2.InitTexture("testbutton2", "testbutton2a", 10);
+
+			var field = new ViewInput();
+			win.AddComponent(field);
+			field.SetParams(30, 30, 200, 40, "inputField");
+			win.InitInputDialog(field);
+		}
+
+		private void Entered()
+		{
+			CloseModalWindow();
+		}
+
+		private void CloseModalWindow()
+		{
+			if (win == null) return;
+			_viewManager.RemoveViewModal(win);
+			win = null;
+		}
+
+
 
 		/// <summary>
 		/// Инициализируем и запускаем игру по коду
@@ -120,7 +176,7 @@ namespace DysonSphere
 		/// </summary>
 		private void MainTimerRun(object sender, EventArgs eventArgs)
 		{
-			_input.GetInput();// обработка устройств ввода
+			_input.ProcessInput();
 			// обработка сетевого взаимодействия (получение обновления)
 			_model.Tick();
 			_viewManager.Draw();

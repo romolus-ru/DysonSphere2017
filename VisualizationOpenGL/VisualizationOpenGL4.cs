@@ -63,7 +63,7 @@ namespace VisualizationOpenGL
 			//LoadTextureModify("clear", "Resources/clear256x256.tga", new TPTRounded(), Color.Empty, Color.Empty);
 		}
 
-		private void Exit(object sender, EventArgs eventArgs)
+		public override void Exit()
 		{
 			_formOpenGl.Close();
 		}
@@ -154,7 +154,6 @@ namespace VisualizationOpenGL
 
 		protected override void _Line(int x1, int y1, int x2, int y2)
 		{
-			gl.Disable(GL.BLEND);
 			gl.Enable(GL.LINE_SMOOTH);
 			gl.Disable(GL.TEXTURE_2D); // Turn off textures
 			gl.Enable(GL.BLEND);
@@ -225,7 +224,6 @@ namespace VisualizationOpenGL
 
 		protected override void _Box(int x, int y, int width, int height)
 		{
-			gl.Disable(GL.BLEND);
 			gl.Enable(GL.LINE_SMOOTH);
 			gl.Disable(GL.TEXTURE_2D); // Turn off textures
 			gl.Enable(GL.BLEND);
@@ -311,7 +309,6 @@ namespace VisualizationOpenGL
 
 		protected override void _Quad(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4)
 		{
-			gl.Disable(GL.BLEND);
 			gl.Enable(GL.LINE_SMOOTH);
 			gl.Disable(GL.TEXTURE_2D); // Turn off textures
 			gl.Enable(GL.BLEND);
@@ -335,7 +332,6 @@ namespace VisualizationOpenGL
 			double x = radius;//we start at angle = 0 
 			double y = 0;
 
-			gl.Disable(GL.BLEND);
 			gl.Enable(GL.LINE_SMOOTH);
 			gl.Disable(GL.TEXTURE_2D); // Turn off textures
 			gl.Enable(GL.BLEND);
@@ -391,7 +387,8 @@ namespace VisualizationOpenGL
 			Il.ilBindImage(imageId);
 
 			// пробуем загрузить изображение
-			if (Il.ilLoadImage(atlasFile.AtlasFile)) {
+			var fileName = AtlasUtils.GetAtlasFileFullPath(atlasFile.AtlasFile);
+			if (Il.ilLoadImage(fileName)) {
 				// если загрузка прошла успешно
 				// сохраняем размеры изображения
 				int width = Il.ilGetInteger(Il.IL_IMAGE_WIDTH);
@@ -534,17 +531,21 @@ namespace VisualizationOpenGL
 			gl.BlendFunc(GL.ONE, GL.ONE);
 		}
 
-		protected override void _DrawTexturePart(int x, int y, String textureName, int xtex, int ytex, int width, int height)
+		protected override void _DrawTexturePart(int x, int y, string textureName, int xtex1, int ytex1)
 		{
+			var texInfo = _atlasManager.GetTextureInfo(textureName);
+			if (texInfo == null) return;
+			int xtex = texInfo.P1X;
+			int ytex = texInfo.P1Y;
+			int width = texInfo.P2X - texInfo.P1X;
+			int height = texInfo.P2Y - texInfo.P1Y;
 			if (width < 1) return;
 			if (height < 1) return;
 
-			var texInfo = _atlasManager.GetTextureInfo(textureName);
-			if (texInfo == null) return;
 			gl.LoadIdentity();
 			int z = 0;
-			int textureHeight = texInfo.AtlasHeight;// по идее это можно узнать с помощью GL_TEXTURE_WIDTH и HEIGHT
-			int textureWidth = texInfo.AtlasWidth;// но наврядли быстрее - счас без обращения к видеокарте
+			int textureHeight = texInfo.AtlasHeight;
+			int textureWidth = texInfo.AtlasWidth;
 			if (textureHeight < ytex + height) return;// выходим за рамки текстуры
 			if (textureWidth < xtex + width) return;// выходим за рамки текстуры
 
@@ -573,13 +574,15 @@ namespace VisualizationOpenGL
 			float x2 = x2a / textureWidth;
 			float y1 = y1a / textureHeight;
 			float y2 = y2a / textureHeight;
+			width += 15;
+			height += 5;
 
 			gl.Begin(GL.QUADS);
 			// указываем поочередно вершины и текстурные координаты
 			gl.TexCoord2f(x1, y1); gl.Vertex3d(0, 0, z);
-			gl.TexCoord2f(x2, y1); gl.Vertex3d(width, 0, z);
-			gl.TexCoord2f(x2, y2); gl.Vertex3d(width, height, z);
-			gl.TexCoord2f(x1, y2); gl.Vertex3d(0, height, z);
+			gl.TexCoord2f(x2, y1); gl.Vertex3d(xtex1, 0, z);
+			gl.TexCoord2f(x2, y2); gl.Vertex3d(xtex1, ytex1, z);
+			gl.TexCoord2f(x1, y2); gl.Vertex3d(0, ytex1, z);
 
 			gl.End();
 
@@ -632,7 +635,7 @@ namespace VisualizationOpenGL
 			gl.PopAttrib();// GL_BLEND
 
 			/*
-			// мультититекстурирование
+			// мультитекстурирование
 			glActiveTextureARB(GL_TEXTURE0_ARB);
 			glEnable(GL_TEXTURE_2D);
 			glBindTexture(GL_TEXTURE_2D,texNames[0]);
@@ -709,41 +712,17 @@ namespace VisualizationOpenGL
 			gl.PushAttrib(GL.ALPHA_TEST);		// Save the current GL_ALPHA_TEST
 			gl.PushAttrib(GL.BLEND);		    // Save the current GL_BLEND
 			gl.Disable(GL.DEPTH_TEST);			// Turn off depth testing (otherwise we get no FPS)
-			//Gl.glBindTexture(Gl.GL_TEXTURE_2D, _textures[TextureFont].Num);
-			gl.Disable(GL.TEXTURE_2D);			// Включаем текстурирование, текстурный текст
+			gl.Disable(GL.TEXTURE_2D);			// Выключаем текстурирование, текстурный текст
 			gl.Enable(GL.ALPHA_TEST);
 			gl.Enable(GL.BLEND);
 
-			gl.MatrixMode(GL.PROJECTION);		// Switch to the projection matrix
-			gl.PushMatrix();						// Save current projection matrix
-			gl.LoadIdentity();
-
-			gl.Ortho(0, _formOpenGl.Width, _formOpenGl.Height, 0, -1, 1);
-			gl.MatrixMode(GL.MODELVIEW);		// Return to the modelview matrix
-			gl.PushMatrix();						// Save the current modelview matrix
-			gl.LoadIdentity();
-
-			// к тексту можно добавить поворот gl.Rotated(_angle, 0.0f, 0.0f, 1.0f);
-			//Gl.glTranslated(x, y, 0);
 			gl.WindowPos2iARB(x, _formOpenGl.Height - y - 16);
-			gl.PushAttrib(GL.LIST_BIT);		// Save's the current base list
-			//Gl.glEnable(Gl.GL_COLOR_MATERIAL);
-
-			//Gl.glBlendFunc(Gl.GL_SRC_ALPHA, Gl.GL_ONE_MINUS_SRC_COLOR);
+			gl.PushAttrib(GL.LIST_BIT);     // Save's the current base list
 			gl.BlendFunc(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA);
-			//Gl.glBlendColor(1.0f, 1.0f, 0.0f, 1.0f);
-			//Gl.glBlendFunc(Gl.GL_SRC_ALPHA, Gl.GL_ONE_MINUS_SRC_ALPHA);
-			//Gl.glColor4f(colorR, colorG, colorB, colorA);
-
-			gl.ListBase((uint)_fontBasePtr);			// Set the base list to our character list
+			gl.ListBase((uint)_fontBasePtr);            // Set the base list to our character list
 			gl.CallLists(w1251Bytes.Length, GL.UNSIGNED_BYTE, w1251Bytes); // Display the text
+			gl.PopAttrib();                     // Restore the old base list
 
-			gl.PopAttrib();						// Restore the old base list
-
-			gl.MatrixMode(GL.PROJECTION);		//Switch to projection matrix
-			gl.PopMatrix();						// Restore the old projection matrix
-			gl.MatrixMode(GL.MODELVIEW);		// Return to modelview matrix
-			gl.PopMatrix();	// Restore old modelview matrix
 			gl.PopAttrib();	// Restore GL_BLEND
 			gl.PopAttrib();	// Restore GL_ALPHA_TEST
 			gl.PopAttrib();	// Restore GL_TEXTURE_2D
@@ -935,6 +914,52 @@ namespace VisualizationOpenGL
 			// ширину и высоту для захвата, и границу. Если вы хотите сохранить только часть
 			// экрана, это легко сделать изменением передаваемых параметров.
 			gl.CopyTexImage2D(GL.TEXTURE_2D, 0, GL.RGB, 0, 0, texInfo.AtlasWidth, texInfo.AtlasWidth, 0);
+		}
+
+		protected override void _SetClipPlane(int x1, int y1, int x2, int y2)
+		{
+			gl.ClipPlane(GL.CLIP_PLANE0, new double[] { 0, 1, 0, -y1 });
+			gl.Enable(GL.CLIP_PLANE0);
+			gl.ClipPlane(GL.CLIP_PLANE1, new double[] { 0, -1, 0, y2 });
+			gl.Enable(GL.CLIP_PLANE1);
+
+			gl.ClipPlane(GL.CLIP_PLANE2, new double[] { 1, 0, 0, -x1 });
+			gl.Enable(GL.CLIP_PLANE2);
+			gl.ClipPlane(GL.CLIP_PLANE3, new double[] { -1, 0, 0, x2 });
+			gl.Enable(GL.CLIP_PLANE3);
+		}
+
+		protected override void _ClipPlaneOff()
+		{
+			gl.Disable(GL.CLIP_PLANE0);
+			gl.Disable(GL.CLIP_PLANE1);
+			gl.Disable(GL.CLIP_PLANE2);
+			gl.Disable(GL.CLIP_PLANE3);
+		}
+
+		protected override void _SetStencilArea(int x1, int y1, int x2, int y2)
+		{
+			gl.Clear(GL.STENCIL_BUFFER_BIT);
+			gl.Enable(GL.STENCIL_TEST);
+			gl.StencilFunc(GL.NEVER, 1, 0);
+			gl.StencilOp(GL.REPLACE, GL.KEEP, GL.KEEP);
+			gl.Disable(GL.TEXTURE_2D);
+
+			gl.Color4f(0, 0, 0, 1);
+			gl.Begin(GL.QUADS);
+			gl.Vertex2f(x1, y1);
+			gl.Vertex2f(x2, y1);
+			gl.Vertex2f(x2, y2);
+			gl.Vertex2f(x1, y2);
+			gl.End();
+
+			gl.StencilFunc(GL.EQUAL, 1, 1);
+			gl.StencilOp(GL.KEEP, GL.KEEP, GL.KEEP);
+		}
+
+		protected override void _StencilAreaOff()
+		{
+			gl.Disable(GL.STENCIL_TEST);
 		}
 
 	}

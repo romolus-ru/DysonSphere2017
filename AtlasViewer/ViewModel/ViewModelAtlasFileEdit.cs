@@ -1,4 +1,5 @@
 ﻿using Engine.Data;
+using Engine.Utils;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
@@ -46,7 +47,7 @@ namespace AtlasViewer.ViewModel
 		private void GetAtlasSize()
 		{
 			try {
-				var file = GetAtlasFileFullPath(AtlasFile);
+				var file = AtlasUtils.GetAtlasFileFullPath(AtlasFile);
 				var a = new BitmapImage(new Uri(file));
 				if (a != null) {
 					_atlasWidth = a.PixelWidth;
@@ -59,8 +60,7 @@ namespace AtlasViewer.ViewModel
 		}
 
 		public string AtlasFileToView { get {
-				var f = GetAtlasFileFullPath(AtlasFile);
-				Debug.WriteLine("ff = " + f);
+				var f = AtlasUtils.GetAtlasFileFullPath(AtlasFile);
 				if (!f.EndsWith(".png")) return "";
 				return f;
 			}
@@ -85,44 +85,21 @@ namespace AtlasViewer.ViewModel
 		{
 			_editingAtlasFile = atlasFile;
 			AtlasName = atlasFile.AtlasName;
-			this.AtlasFile = atlasFile.AtlasFile;
+			AtlasFile = atlasFile.AtlasFile;
 			StoreChangesCommand = new RelayCommand(arg => StoreChanges());
 			SelectFileCommand = new RelayCommand(arg => SelectFile());
-		}
-
-		public static string GetAtlasFilePath()
-		{
-			var path = Directory.GetCurrentDirectory();
-			path = Path.GetDirectoryName(path);
-			path = Path.Combine(path, "_files");
-			return path;
-		}
-
-		public static string GetAtlasFileShortPath(string filePath)
-		{
-			var path = GetAtlasFilePath().ToUpper();
-			if (!filePath.ToUpper().StartsWith(path)) return "";
-			if (filePath.Contains("..")) return "";
-			var pathLenght = path.Length;
-			if (pathLenght >= filePath.Length) return "";
-			return filePath.Substring(pathLenght + 1);
-		}
-
-		public static string GetAtlasFileFullPath(string file)
-		{
-			return Path.Combine(GetAtlasFilePath(), file);
 		}
 
 		private void SelectFile()
 		{
 			OpenFileDialog openFileDialog = new OpenFileDialog();
 			openFileDialog.Multiselect = false;
-			openFileDialog.InitialDirectory = GetAtlasFilePath();
+			openFileDialog.InitialDirectory = AtlasUtils.GetAtlasFilePath();
 			openFileDialog.Filter = "All files (*.*)|*.*";
 			var file = "";
 			if (openFileDialog.ShowDialog() == true) {
 				var fl= openFileDialog.FileName;
-				file = GetAtlasFileShortPath(fl);
+				file = AtlasUtils.GetAtlasFileShortPath(fl);
 			}
 			openFileDialog = null;
 			if (!string.IsNullOrEmpty(file)) {
