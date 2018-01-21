@@ -53,7 +53,7 @@ namespace DysonSphere
 			var inputId = _datasupport.ServerSettingsGetValue("input");
 			_input = _collector.GetObject(inputId) as Input;
 
-			// создаётся объект для вывода на экран
+			// 3 создаётся объект для вывода на экран
 			var visualizationId = _datasupport.ServerSettingsGetValue("visualization");
 			_visualization = _collector.GetObject(visualizationId) as VisualizationProvider;
 			_visualization.InitVisualization(_datasupport, _logsystem, 500, 500, true);
@@ -90,9 +90,13 @@ namespace DysonSphere
 			var debugView = new DebugView();
 			_viewManager.AddView(debugView);
 
-			// создаётся объект для работы с пользователями (мат модель работы с пользователями)
-			// создаётся объект для работы с играми (мат модель запуска серверов игр)
-			// создаётся обработчик соединений
+			var dragable = new ViewDragable();
+			dragable.SetParams(800, 250, 30, 30, "dragableObject");
+			_viewManager.AddView(dragable, true);
+
+			// 1 создаётся объект для работы с пользователями (мат модель работы с пользователями)
+			// 2 создаётся объект для работы с играми (мат модель запуска серверов игр)
+			// 4 создаётся обработчик соединений
 
 			Log("Сервер работает");
 		}
@@ -113,19 +117,19 @@ namespace DysonSphere
 			win = new ViewModalWindow();
 			_viewManager.AddViewModal(win);
 			win.SetParams(150, 150, 500, 150, "win");
-			win.InitTexture("", 10);
+			win.InitTexture("WindowSample", 10);
 
 			var btn1 = new ViewButton();
 			win.AddComponent(btn1);
 			btn1.InitButton(Entered, "ok", "Согласен", Keys.Enter);
 			btn1.SetParams(20, 110, 40, 25, "btn1");
-			btn1.InitTexture("testbutton2", "testbutton2a", 10);
+			btn1.InitTexture("WindowSample", "WindowSample", 10);
 
 			var btn2 = new ViewButton();
 			win.AddComponent(btn2);
 			btn2.InitButton(CloseModalWindow, "Cancel", "Отмена", Keys.Escape);
 			btn2.SetParams(70, 110, 40, 25, "btn2");
-			btn2.InitTexture("testbutton2", "testbutton2a", 10);
+			btn2.InitTexture("WindowSample", "WindowSample", 10);
 
 			var field = new ViewInput();
 			win.AddComponent(field);

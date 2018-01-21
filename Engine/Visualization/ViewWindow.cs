@@ -14,6 +14,9 @@ namespace Engine.Visualization
 	{
 		private string _btnTexture = null;
 		private int _btnTextureBorder = 0;
+		private ViewDragable _dragHeader = null;
+		private ViewDragable _resizer = null;
+		protected List<ViewComponent> _inputs = null;
 
 		/// <summary>
 		/// Заголовок окна
@@ -22,6 +25,59 @@ namespace Engine.Visualization
 
 		public ViewWindow() { }
 
+		public override void AddComponent(ViewComponent component, bool toTop = false)
+		{
+			base.AddComponent(component, toTop);
+			if (component is ViewInput) {
+				if (_inputs == null) _inputs = new List<ViewComponent>();
+				_inputs.Add(component);
+			}
+		}
+
+		public override void RemoveComponent(ViewComponent component)
+		{
+			base.RemoveComponent(component);
+			if (_inputs != null) {
+				_inputs.Remove(component);
+				if (_inputs.Count == 0) _inputs = null;
+			}
+		}
+
+		protected override void InitObject(VisualizationProvider visualizationProvider, Input input)
+		{
+			base.InitObject(visualizationProvider, input);
+			_dragHeader = new ViewDragable();
+			this.AddComponent(_dragHeader);
+			_dragHeader.SetParams(10, 0, 30, 10,"dragHeader");
+			_dragHeader.MoveObjectRelative += HeadMove;
+			_resizer = new ViewDragable();
+			this.AddComponent(_resizer);
+			_resizer.SetParams(50, 50, 15, 10, "resizer");
+			_resizer.MoveObjectRelative += Resize;
+		}
+
+		private void HeadMove(int rx, int ry)
+		{
+			this.SetCoordinatesRelative(rx, ry, 0);
+		}
+
+		private void Resize(int rx, int ry)
+		{
+			// TODO менять надо только когда курсор ниже и правее начальной точки
+			if (rx != 0) {
+				Width += rx;
+				if (Width < 10) Width = 10;
+			}
+			if (ry != 0) {
+				Height += ry;
+				if (Height < 10) Height = 10;
+			}
+		}
+
+		protected override void Resized()
+		{
+			_resizer.SetCoordinates(Width, Height);
+		}
 		public override void DrawObject(VisualizationProvider visualizationProvider)
 		{
 			var texture = _btnTexture;
@@ -49,9 +105,12 @@ namespace Engine.Visualization
 
 		public void InitTexture(string textureName, int textureBorder)
 		{
+			if (VisualizationProvider == null) throw new NullReferenceException("need start init before init texture");
 			_btnTexture = textureName;
 			_btnTextureBorder = textureBorder;
 			VisualizationProvider.LoadAtlas(_btnTexture);
+			_dragHeader.InitTexture(textureName, 6);
+			_resizer.InitTexture(textureName, 6);
 		}
 	}
 }

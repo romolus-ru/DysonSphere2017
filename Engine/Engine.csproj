@@ -124,6 +124,7 @@
     <Compile Include="Visualization\ViewButton.cs" />
     <Compile Include="Visualization\ViewComponent.cs" />
     <Compile Include="Visualization\ViewCursor.cs" />
+    <Compile Include="Visualization\ViewDragable.cs" />
     <Compile Include="Visualization\ViewInput.cs" />
     <Compile Include="Visualization\ViewManager.cs" />
     <Compile Include="Visualization\ViewModalWindow.cs" />

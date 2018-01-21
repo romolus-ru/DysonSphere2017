@@ -67,17 +67,31 @@ namespace Engine
 		}
 
 
-
+		/// <summary>
+		/// Добавить обычный получатель события
+		/// </summary>
+		/// <param name="action"></param>
+		/// <param name="keyCombination"></param>
 		public void AddKeyAction(Action action, params Keys[] keyCombination)
 		{
 			AddKeyActionDict(_keyAction, action, keyCombination);
 		}
 
+		/// <summary>
+		/// Удалить обычный получатель события
+		/// </summary>
+		/// <param name="action"></param>
+		/// <param name="keyCombination"></param>
 		public void RemoveKeyAction(Action action, params Keys[] keyCombination)
 		{
 			RemoveKeyActionDict(_keyAction, action, keyCombination);
 		}
 
+		/// <summary>
+		/// Добавить обычный получатель события курсора
+		/// </summary>
+		/// <param name="action"></param>
+		/// <param name="isSystem"></param>
 		public void AddCursorAction(Action<int, int> action, bool isSystem = false)
 		{
 			if (isSystem)
@@ -86,6 +100,10 @@ namespace Engine
 				_cursorMoved += action;
 		}
 
+		/// <summary>
+		/// Удалить обычный получатель события курсора
+		/// </summary>
+		/// <param name="action"></param>
 		public void RemoveCursorAction(Action<int, int> action)
 		{
 			_cursorMoved -= action;
@@ -112,13 +130,22 @@ namespace Engine
 
 
 
-
+		/// <summary>
+		/// Добавить получатель события с паузой
+		/// </summary>
+		/// <param name="action"></param>
+		/// <param name="keyCombination"></param>
 		public void AddKeyActionPaused(Action action, params Keys[] keyCombination)
 		{
 			AddKeyActionDict(_keyActionPaused, action, keyCombination);
 		}
 
-		public void RemoveKeyActionPAused(Action action, params Keys[] keyCombination)
+		/// <summary>
+		/// Удалить получатель события с паузой
+		/// </summary>
+		/// <param name="action"></param>
+		/// <param name="keyCombination"></param>
+		public void RemoveKeyActionPaused(Action action, params Keys[] keyCombination)
 		{
 			RemoveKeyActionDict(_keyActionPaused, action, keyCombination);
 		}
@@ -189,12 +216,19 @@ namespace Engine
 
 
 
-
+		/// <summary>
+		/// Добавить получатель строки нажатых кнопок
+		/// </summary>
+		/// <param name="action"></param>
 		public void AddInputStringAction(Action<string> action)
 		{
 			_setStringInput += action;
 		}
 
+		/// <summary>
+		/// Удалить получатель строки нажатых кнопок
+		/// </summary>
+		/// <param name="action"></param>
 		public void RemoveInputStringAction(Action<string> action)
 		{
 			_setStringInput -= action;
@@ -233,12 +267,21 @@ namespace Engine
 
 
 
-
+		/// <summary>
+		/// Добавить получатель события отпускания кнопки
+		/// </summary>
+		/// <param name="action"></param>
+		/// <param name="keyCombination"></param>
 		public void AddKeyActionSticked(Action action, params Keys[] keyCombination)
 		{
 			AddKeyActionDict(_keyActionSticked, action, keyCombination);
 		}
 
+		/// <summary>
+		/// Удалить получатель события отпускания кнопки
+		/// </summary>
+		/// <param name="action"></param>
+		/// <param name="keyCombination"></param>
 		public void RemoveKeyActionSticked(Action action, params Keys[] keyCombination)
 		{
 			RemoveKeyActionDict(_keyActionSticked, action, keyCombination);
@@ -249,6 +292,7 @@ namespace Engine
 		/// </summary>
 		private void GetInputSticked()
 		{
+			Action start = null;
 			foreach (var keyComb in _keyActionSticked.Keys) {
 				var keyFounded = true;
 				foreach (var k1 in keyComb) {
@@ -261,12 +305,13 @@ namespace Engine
 						_listKeySticked.Add(keyComb);// save
 				} else {
 					if (_listKeySticked.Contains(keyComb)) {
-						_listKeySticked.Remove(keyComb);// remove
+						_listKeySticked.Remove(keyComb);// remove														
 						if (!_isAnyKeyPressed)
-							_keyActionSticked[keyComb]();// запустить событие если ничего больше не нажато
+							start += _keyActionSticked[keyComb];// запустить событие если ничего больше не нажато
 					}
 				}
 			}
+			start?.Invoke();
 		}
 
 
@@ -277,7 +322,7 @@ namespace Engine
 		/// </summary>
 		/// <param name="key"></param>
 		/// <returns></returns>
-		public virtual bool IsKeyPressed(Keys key) { return false; }
+		protected virtual bool IsKeyPressed(Keys key) { return false; }
 
 		/// <summary>
 		/// Установить состояние кнопок клавиатуры и мыши
@@ -339,7 +384,7 @@ namespace Engine
 			ProcessInput();
 		}
 
-		public void AddKeyActionDict(Dictionary<List<Keys>, Action> dict, Action action, params Keys[] keyCombination)
+		private void AddKeyActionDict(Dictionary<List<Keys>, Action> dict, Action action, params Keys[] keyCombination)
 		{
 			var keyComb = new List<Keys>(keyCombination);
 			var dictKey = GetDictKey(dict, keyComb);
@@ -349,7 +394,7 @@ namespace Engine
 				dict[dictKey] += action;
 		}
 
-		public void RemoveKeyActionDict(Dictionary<List<Keys>, Action> dict, Action action, params Keys[] keyCombination)
+		private void RemoveKeyActionDict(Dictionary<List<Keys>, Action> dict, Action action, params Keys[] keyCombination)
 		{
 			var keyComb = new List<Keys>(keyCombination);
 			var dictKey = GetDictKey(dict, keyComb);

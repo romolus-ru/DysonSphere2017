@@ -42,7 +42,6 @@ namespace Engine.Visualization
 		public int Z { get { return _z; } protected set { _z = value; RecalcScreenZ(); } }
 
 		public bool CanDraw { get; private set; }
-		protected bool IsDraging;
 
 		/// <summary>
 		/// Флаг, находится ли курсор над компонентом
@@ -66,15 +65,17 @@ namespace Engine.Visualization
 
 		#region Размеры объекта
 
+		private int _height;
 		/// <summary>
 		/// Высота объекта
 		/// </summary>
-		public int Height { get; protected set; }
+		public int Height { get { return _height; } protected set { _height = value;Resized(); } }
 
+		private int _width;
 		/// <summary>
 		/// Ширина объекта
 		/// </summary>
-		public int Width { get; protected set; }
+		public int Width { get { return _width; } protected set { _width = value; Resized();  } }
 
 		/// <summary>
 		/// Установить размеры объекта
@@ -104,10 +105,6 @@ namespace Engine.Visualization
 				Components = null;
 				_disposed = true;
 				VisualizationProvider = null;
-				X = -99000;
-				Y = -99000;
-				Width = 0;
-				Height = 0;
 			}
 		}
 
@@ -142,8 +139,24 @@ namespace Engine.Visualization
 		protected virtual void InitObject(VisualizationProvider visualizationProvider, Input input) { }
 
 		/// <summary>
-		/// В данном случае надо показать и компоненты
+		/// подготовка к удалению объекта, удаление вспомогательных объектов, удаление обработчиков событий и т.п.
 		/// </summary>
+		/// <param name="visualizationProvider"></param>
+		public void Clear()
+		{
+			ClearObject();
+			VisualizationProvider = null;
+			Input = null;
+		}
+
+		/// <summary>
+		/// переопределяемая подготовка к удалению объекта, удаление вспомогательных объектов, удаление обработчиков событий и т.п.
+		/// </summary>
+		protected virtual void ClearObject() { }
+		
+		/// <summary>
+		/// /// В данном случае надо показать и компоненты
+		/// /// </summary>
 		public void Show()
 		{
 			CanDraw = true;
@@ -163,7 +176,7 @@ namespace Engine.Visualization
 		/// Добавить объект к списку компонентов
 		/// </summary>
 		/// <param name="component"></param>
-		public void AddComponent(ViewComponent component, bool toTop = false)
+		public virtual void AddComponent(ViewComponent component, bool toTop = false)
 		{
 			if (toTop)
 				Components.Insert(0, component);
@@ -178,8 +191,9 @@ namespace Engine.Visualization
 		/// Удалить объект
 		/// </summary>
 		/// <param name="component"></param>
-		public void RemoveComponent(ViewComponent component)
+		public virtual void RemoveComponent(ViewComponent component)
 		{
+			component.Clear();
 			component.Hide();
 			component.Parent = null;
 			Components.Remove(component);
@@ -417,28 +431,45 @@ namespace Engine.Visualization
 			SetSize(width, height);
 		}
 
-		private void RecalcScreenX()
+		protected void RecalcScreenX()
 		{
 			int x = 0;
 			var p = Parent;
 			while (p != null) { x += p.X; p = p.Parent; }
 			_xScreen = x + X;
+			foreach (var component in Components) {
+				component.RecalcScreenX();
+			}
 		}
 
-		private void RecalcScreenY()
+		protected void RecalcScreenY()
 		{
 			int y = 0;
 			var p = Parent;
 			while (p != null) { y += p.Y; p = p.Parent; }
 			_yScreen = y + Y;
+			foreach (var component in Components) {
+				component.RecalcScreenY();
+			}
 		}
-		private void RecalcScreenZ()
+
+		protected void RecalcScreenZ()
 		{
 			int z = 0;
 			var p = Parent;
 			while (p != null) { z += p.Z; p = p.Parent; }
 			_zScreen = z + Z;
+			foreach (var component in Components) {
+				component.RecalcScreenZ();
+			}
 		}
+
+		/// <summary>
+		/// Изменились размеры компонента
+		/// </summary>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		protected virtual void Resized() { }
 
 	}
 }

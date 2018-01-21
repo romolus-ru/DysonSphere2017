@@ -85,7 +85,7 @@ namespace VisualizationOpenGL
 		/// </summary>
 		/// <param name="key"></param>
 		/// <returns></returns>
-		public override bool IsKeyPressed(Keys key)
+		protected override bool IsKeyPressed(Keys key)
 		{
 			// проверяем установлен ли старший бит. если установлен возвращаем true
 			return (_keys[(int)key] & 0x80) != 0;

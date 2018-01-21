@@ -24,6 +24,7 @@ namespace Engine.Visualization
 		/// </summary>
 		public void ClickedOnScreen()
 		{
+			if (!CursorOver) return;
 			if (InRange(Input.CursorX, Input.CursorY))
 				Press();
 		}
@@ -55,6 +56,7 @@ namespace Engine.Visualization
 		public void InitButton(Action click, string caption, string hint, params Keys[] keys)
 		{
 			OnClick += click;
+			if (Input == null) throw new NullReferenceException("Input must be initialized first - use AddComponent before Init Button");
 			Input.AddKeyActionSticked(KeyPressed, keys);
 			Input.AddKeyActionSticked(ClickedOnScreen, Keys.LButton);
 			Caption = caption;
@@ -76,7 +78,7 @@ namespace Engine.Visualization
 			visualizationProvider.SetColor(color);
 			visualizationProvider.Print(X + 4, Y + Height / 2 - f - 3, txt);
 			var texture = _btnTexture;
-			if (Hint != "" && CursorOver) {
+			if (!string.IsNullOrEmpty(Hint) && CursorOver) {
 				visualizationProvider.Print(X + 10, Y + Height + 5 - f, Hint);
 				texture = _btnTextureOver;
 			}

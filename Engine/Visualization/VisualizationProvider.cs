@@ -394,8 +394,8 @@ namespace Engine.Visualization
 		/// <param name="x">Координата вывода на экран</param>
 		/// <param name="y"></param>
 		/// <param name="textureName">Имя текстуры</param>
-		/// <param name="placeWidth">Координата на текстуре откуда выводить</param>
-		/// <param name="placeHeight">Координата на текстуре откуда выводить</param>
+		/// <param name="placeWidth">Ширина выводимой части текстуры</param>
+		/// <param name="placeHeight">Высота выводимой части текстуры</param>
 		/// <param name="width">Ширина выводимой области</param>
 		/// <param name="height">Высота выводимой области</param>
 		public void DrawTexturePart(int x, int y, string textureName, int placeWidth, int placeHeight)
@@ -529,7 +529,7 @@ namespace Engine.Visualization
 		/// Переопределено должно быть в потомках
 		/// выводит текст в указанных координатах
 		/// цвет уже установлен в других функциях, тут это не должно требоваться</remarks>
-		protected virtual void PrintOnly(int x, int y, String text) { }
+		protected virtual void PrintOnly(int x, int y, string text) { }
 
 		#endregion
 
