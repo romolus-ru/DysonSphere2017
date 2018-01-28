@@ -9,37 +9,24 @@ using System.Threading.Tasks;
 
 namespace DysonSphere.DebugViewModules
 {
-	public class ComponentsView:ViewWindow
+	public class EventsView : ViewWindow
 	{
 		private List<string> _list = new List<string>();
-		private ViewComponent _root = null;
-
-		protected override void InitObject(VisualizationProvider visualizationProvider, Input input)
-		{
-			base.InitObject(visualizationProvider, input);
-			_root = GetRoot(Parent);
-		}
-
-		private ViewComponent GetRoot(ViewComponent parent)
-		{
-			if (parent != null) {
-				if (parent.Parent != null) return GetRoot(parent.Parent);
-				return parent;
-			}
-			return null;
-		}
+		private int pause = 0;
 
 		private void RefreshList()
 		{
-			if (_root != null)
-				_list = _root.GetObjectsView();
+			pause--;
+			if (pause > 0) return;
+			pause = 10;
+			_list = Input.GetActionsLists();
 		}
-		
+
 		public override void DrawObject(VisualizationProvider visualizationProvider)
 		{
 			base.DrawObject(visualizationProvider);
 			RefreshList();
-			var y = 10;
+			var y = 0;
 			visualizationProvider.SetColor(Color.Coral);
 			foreach (var item in _list) {
 				visualizationProvider.Print(X + 10, Y + y, item);

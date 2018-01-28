@@ -99,6 +99,15 @@ namespace Engine.Visualization
 				visualizationProvider.SetColor(color);
 				visualizationProvider.Rectangle(X, Y, Width, Height);
 			}
+
+			var cx = Input.CursorX;
+			var cy = Input.CursorY;
+			var over = false;
+			if ((_xScreen < cx) && (cx < _xScreen + Width)) {
+				if ((_yScreen < cy) && (cy < _yScreen + Height)) {
+					over = true;
+				}
+			}
 		}
 
 		public void InitTexture(string textureName, string textureNameOver, int textureBorder)

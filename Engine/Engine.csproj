@@ -132,6 +132,7 @@
     <Compile Include="Visualization\ViewPanel.cs" />
     <Compile Include="Visualization\ViewSystem.cs" />
     <Compile Include="Visualization\ViewWindow.cs" />
+    <Compile Include="Visualization\ViewWindowCaption.cs" />
     <Compile Include="Visualization\VisualizationProvider.cs" />
   </ItemGroup>
   <ItemGroup />

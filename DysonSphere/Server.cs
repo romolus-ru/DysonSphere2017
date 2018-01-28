@@ -85,10 +85,11 @@ namespace DysonSphere
 			var btnClose = new ViewButton();
 			_viewManager.AddView(btnClose);
 			btnClose.InitButton(Close, "exit", "hint", Keys.LMenu, Keys.X);
-			btnClose.SetParams(1651, 0, 20, 20, "btn2");
+			btnClose.SetParams(1659, 0, 20, 20, "btnE");
 
 			var debugView = new DebugView();
 			_viewManager.AddView(debugView);
+			debugView.SetParams(1100, 0, debugView.Width, debugView.Height, "DebugView");
 
 			var dragable = new ViewDragable();
 			dragable.SetParams(800, 250, 30, 30, "dragableObject");

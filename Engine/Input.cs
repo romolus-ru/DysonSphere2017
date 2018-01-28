@@ -50,11 +50,17 @@ namespace Engine
 		private int _pauseState = Constants.PauseStateNone;
 		private string _oldInputValue = null;
 		private bool _isAnyKeyPressed;
+		private bool ModalStateChanged;
+		private List<Keys> shiftKeys = new List<Keys> {
+			Keys.ControlKey, Keys.LControlKey, Keys.LMenu, Keys.LShiftKey, Keys.LWin,
+			Keys.Menu, Keys.RControlKey, Keys.RMenu, Keys.RShiftKey, Keys.RWin, Keys.ShiftKey
+		};
 
 		public Input() { }
 
 		public void ProcessInput()
 		{
+			ModalStateChanged = false;
 			_isAnyKeyPressed = UpdateKeyboardState();
 			var curNew = UpdateCursorState();
 			if (curNew && _cursorMoved != null) _cursorMoved(CursorX, CursorY);
@@ -116,17 +122,25 @@ namespace Engine
 		private void GetInput()
 		{
 			foreach (var keyComb in _keyAction.Keys) {
+				if (ModalStateChanged) return;
 				var keyFounded = true;
 				foreach (var k1 in keyComb) {
 					if (IsKeyPressed(k1)) continue;
 					keyFounded = false;
 					break;
 				}
+				добавить обработчики двойного нажатия
+				и запускать их тут же - определять какие нужно (обычные или двойные) и запускать их
 				// кнопки есть - запускаем действие
 				if (keyFounded)
-					_keyAction[keyComb]();
+					RunEachAction(_keyAction[keyComb]);
 			}
 		}
+
+
+
+
+
 
 
 
@@ -157,6 +171,7 @@ namespace Engine
 		{
 			var listPressedCombs = new List<List<Keys>>();
 			foreach (var keyComb in _keyActionPaused.Keys) {
+				if (ModalStateChanged) return;
 				var keyFounded = true;
 				foreach (var k1 in keyComb) {
 					if (IsKeyPressed(k1)) continue;
@@ -239,6 +254,7 @@ namespace Engine
 		/// </summary>
 		private void GetInputStringPaused()
 		{
+			if (ModalStateChanged) return;
 			if (_setStringInput == null) return;
 			if (_keyPausedStates.Count > 0) return;// есть нажатые управляющие кнопки (например ctrl+C) - значит уже вводим не текст
 			var keys = KeysToUnicode();
@@ -294,11 +310,26 @@ namespace Engine
 		{
 			Action start = null;
 			foreach (var keyComb in _keyActionSticked.Keys) {
+				if (ModalStateChanged) return;
 				var keyFounded = true;
+				var keyFoundShifted = false;
 				foreach (var k1 in keyComb) {
 					if (IsKeyPressed(k1)) continue;
 					keyFounded = false;
 					break;
+				}
+				if (_listKeySticked.Contains(keyComb) && !keyFounded) {
+					// обрабатывается случай когда надо нажать ctrl + C и не обязательно ctrl отпускать. комбинация должна сработать уже при отпускании С
+					var noShiftedKeysPressed = false;
+					var shiftedKeysFound = false;
+					foreach (var k1 in keyComb) {
+						if (shiftKeys.Contains(k1)) { shiftedKeysFound = true; continue; }
+						if (IsKeyPressed(k1)) noShiftedKeysPressed = true;
+					}
+					if (shiftedKeysFound && !noShiftedKeysPressed) {
+						keyFounded = false;
+						keyFoundShifted = true;
+					}
 				}
 				if (keyFounded) {
 					if (!_listKeySticked.Contains(keyComb))
@@ -306,7 +337,7 @@ namespace Engine
 				} else {
 					if (_listKeySticked.Contains(keyComb)) {
 						_listKeySticked.Remove(keyComb);// remove														
-						if (!_isAnyKeyPressed)
+						if (!_isAnyKeyPressed || keyFoundShifted)
 							start += _keyActionSticked[keyComb];// запустить событие если ничего больше не нажато
 					}
 				}
@@ -341,6 +372,7 @@ namespace Engine
 		/// </summary>
 		public void ModalStateStart()
 		{
+			ModalStateChanged = true;
 			_keyActionStack.Push(_keyAction);
 			_keyAction = new Dictionary<List<Keys>, Action>();
 
@@ -363,6 +395,7 @@ namespace Engine
 		/// </summary>
 		public void ModalStateStop()
 		{
+			ModalStateChanged = true;
 			if (_keyActionStack.Count == 0) throw new Exception("Модальный режим не запускался");
 			_keyAction = _keyActionStack.Pop();
 
@@ -430,6 +463,96 @@ namespace Engine
 				if (dict[k1].GetInvocationList().Length == 0)
 					dict.Remove(k1);
 			}
+		}
+
+		private void RunEachAction(MulticastDelegate actions)
+		{
+			foreach (var action in actions.GetInvocationList()) {
+				if (ModalStateChanged) break;
+				action.DynamicInvoke();
+			}
+		}
+		
+		private string GetKeyList(List<Keys> keys)
+		{
+			return string.Join(";", keys);
+		}
+
+		private void GetActionList(MulticastDelegate actions, List<string> result)
+		{
+			if (actions == null) return;
+			foreach (var action in actions.GetInvocationList()) {
+				var name = "(none)";
+				var obj = action.Target as ViewComponent;
+				if (obj != null) name = obj.Name;
+				result.Add("  " + name + "." + action.Method.Name);
+			}
+		}
+
+		public List<string> GetActionsLists()
+		{
+			var ret = new List<string>();
+			foreach (var item in _keyAction) {
+				ret.Add(" keys = " + GetKeyList(item.Key));
+				GetActionList(item.Value, ret);
+			}
+			ret.Add("KA stack " + _keyActionStack.Count);
+
+			foreach (var item in _keyActionSticked) {
+				ret.Add(" keys = " + GetKeyList(item.Key));
+				GetActionList(item.Value, ret);
+			}
+			ret.Add("KASticked stack " + _keyActionStickedStack.Count);
+
+			GetActionList(_setStringInput, ret);
+			ret.Add("KAStringInput stack " + _setStringInputStack.Count);
+
+			foreach (var item in _keyActionPaused) {
+				ret.Add(" keys = " + GetKeyList(item.Key));
+				GetActionList(item.Value, ret);
+			}
+			ret.Add("KAPaused stack " + _keyActionPausedStack.Count);
+
+			GetActionList(_cursorMoved, ret);
+			ret.Add("KACursorMoved stack " + _cursorMovedStack.Count);
+
+			return ret;
+		}
+
+		public string GetCurrentKeysPressed()
+		{
+			var list = new List<Keys>();
+			var keyComb = new List<Keys> { Keys.LMenu, Keys.X };
+			var keyFounded = true;
+			var str1 = "";
+			/*foreach (var k1 in keyComb) {
+				str1 += " k " + k1 + " p=" + IsKeyPressed(k1) + " s=" + shiftKeys.Contains(k1) + " l=" + _listKeySticked.Contains(keyComb) 
+					+ " r=" + (shiftKeys.Contains(k1) && _listKeySticked.Contains(keyComb));
+				if (IsKeyPressed(k1)) continue;
+				if (shiftKeys.Contains(k1) && _listKeySticked.Contains(keyComb)) continue;
+				keyFounded = false;
+			}*/
+
+			var onlyShiftedKeysPressed = true;
+			var shiftedKeysPresentInCombination = false;
+			foreach (var k1 in keyComb) {
+				if (shiftKeys.Contains(k1)) {
+					shiftedKeysPresentInCombination = true; continue;
+				}
+				if (IsKeyPressed(k1)) onlyShiftedKeysPressed = false;
+			}
+			if (shiftedKeysPresentInCombination)
+				keyFounded = onlyShiftedKeysPressed;
+			str1 += " sk=" + shiftedKeysPresentInCombination + " onlys=" + onlyShiftedKeysPressed;
+
+
+
+			for (int i = 0; i < 255; i++) {
+				var key = (Keys)i;
+				if (IsKeyPressed(key)) list.Add(key);
+			}
+			var ret = str1 + " " + string.Join(" ", list);
+			return ret;
 		}
 
 		/////////// всё что ниже - старое. будет переноситься выше по мере необходимости. и/или переделываться

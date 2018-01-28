@@ -50,6 +50,8 @@
   <ItemGroup>
     <Compile Include="DebugView.cs" />
     <Compile Include="DebugViewModules\ComponentsView.cs" />
+    <Compile Include="DebugViewModules\EventsView.cs" />
+    <Compile Include="DebugViewModules\KeysView.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Server.cs" />

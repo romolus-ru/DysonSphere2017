@@ -41,6 +41,8 @@ namespace Engine.Visualization
 			if (IsDragMode) return;
 			if (!InRange(Input.CursorX, Input.CursorY)) return;
 			IsDragMode = true;
+			Input.ModalStateStart();
+			Input.AddKeyActionSticked(MouseUnPressed, Keys.LButton);
 			Input.AddCursorAction(CursorMove);
 			_oldX = Input.CursorX;
 			_oldY = Input.CursorY;
@@ -49,7 +51,8 @@ namespace Engine.Visualization
 		private void MouseUnPressed()
 		{
 			if (!IsDragMode) return;
-			Input.RemoveCursorAction(CursorMove);
+			Input.ModalStateStop();
+			//Input.RemoveCursorAction(CursorMove);
 			IsDragMode = false;
 		}
 
@@ -81,7 +84,6 @@ namespace Engine.Visualization
 				if (IsDragMode) color = System.Drawing.Color.BurlyWood;
 				visualizationProvider.SetColor(color);
 				visualizationProvider.Rectangle(X, Y, Width, Height);
-				visualizationProvider.Print(X, Y + 20, _xScreen + " " + _yScreen);
 			}
 		}
 

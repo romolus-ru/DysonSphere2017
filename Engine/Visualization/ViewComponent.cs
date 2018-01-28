@@ -362,8 +362,8 @@ namespace Engine.Visualization
 		public virtual bool InRange(int x, int y)
 		{
 			if (!CanDraw) return false; // компонент не рисуется - значит не проверяем дальше
-			if ((_xScreen < x) && (x < _xScreen + Width)) {
-				if ((_yScreen < y) && (y < _yScreen + Height)) {
+			if ((_xScreen <= x) && (x <= _xScreen + Width)) {
+				if ((_yScreen <= y) && (y <= _yScreen + Height)) {
 					return true;
 				}
 			}
@@ -424,7 +424,7 @@ namespace Engine.Visualization
 			}
 		}
 
-		public void SetParams(int x, int y, int width, int height, string name)
+		public virtual void SetParams(int x, int y, int width, int height, string name)
 		{
 			Name = name;
 			SetCoordinates(x, y);

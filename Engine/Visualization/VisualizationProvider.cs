@@ -515,6 +515,7 @@ namespace Engine.Visualization
 		/// <param name="text"></param>
 		public void Print(string text)
 		{
+			if (string.IsNullOrEmpty(text)) return;
 			PrintOnly(CurTxtX + curOffsetX, CurTxtY + curOffsetY, text);
 			CurTxtX += TextLength(text);
 		}

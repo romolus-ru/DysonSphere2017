@@ -14,11 +14,10 @@ namespace DysonSphere
 	public class DebugView:ViewWindow
 	{
 		private List<string> _list = new List<string>();
-		private ViewComponent _root = null;
 		private ViewButton _mainButton = null;
 		private List<ViewButton> _buttons = null;
 		private Dictionary<string, ViewWindow> _windows = null;
-		private const int btnWidth = 80;
+		private const int btnWidth = 140;
 		private const int btnHeight = 15;
 		private const int border = 2;
 
@@ -30,7 +29,6 @@ namespace DysonSphere
 			this.AddComponent(_mainButton);
 			_mainButton.SetParams(border, btnHeight, btnWidth - border, btnHeight, "MainButton");
 			_mainButton.InitButton(ViewButtons, "switch", "", Keys.None);
-			_root = GetRoot(Parent);
 			SetDebugHeight(1);
 		}
 
@@ -39,7 +37,7 @@ namespace DysonSphere
 			var row = 1;
 			if (_buttons==null) {
 				_buttons = new List<ViewButton>();
-				string[] names = { "ComponentsView", "name2" };
+				string[] names = { "ComponentsView", "EventsView", "KeysView" };
 				ViewButton btn;
 				foreach (var name in names) {
 					row++;
@@ -66,11 +64,22 @@ namespace DysonSphere
 					window = new ComponentsView();
 				}
 			}
+			if (name == "EventsView") {
+				if (_windows == null || !_windows.ContainsKey(name)) {
+					window = new EventsView();
+				}
+			}
+			if (name == "KeysView") {
+				if (_windows == null || !_windows.ContainsKey(name)) {
+					window = new KeysView();
+				}
+			}
 
 			if (window != null) {
 				if (_windows == null) _windows = new Dictionary<string, ViewWindow>();
 				this.Parent.AddComponent(window);
-				window.SetParams(700, 100, 200, 200, name);
+				window.SetParams(700, 100, 400, 400, name);
+				window.SetName(name);
 				window.InitTexture("WindowSample", 10);
 				_windows.Add(name, window);
 			} else {
@@ -87,33 +96,5 @@ namespace DysonSphere
 			Height = 14 + border + (btnHeight + 2) * rowCount;
 		}
 
-		private ViewComponent GetRoot(ViewComponent parent)
-		{
-
-			if (parent != null) {
-				if (parent.Parent != null) return GetRoot(parent.Parent);
-				return parent;
-			}
-			return null;
-		}
-
-		private void RefreshList()
-		{
-			if (_root != null)
-				_list = _root.GetObjectsView();
-		}
-
-
-		public override void DrawObject(VisualizationProvider visualizationProvider)
-		{
-			base.DrawObject(visualizationProvider);
-			RefreshList();
-			var y = 0;
-			visualizationProvider.SetColor(Color.Coral);
-			foreach (var item in _list) {
-				visualizationProvider.Print(10, y, item);
-				y += 16;
-			}
-		}
 	}
 }

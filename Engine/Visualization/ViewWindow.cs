@@ -46,9 +46,9 @@ namespace Engine.Visualization
 		protected override void InitObject(VisualizationProvider visualizationProvider, Input input)
 		{
 			base.InitObject(visualizationProvider, input);
-			_dragHeader = new ViewDragable();
+			_dragHeader = new ViewWindowCaption();
 			this.AddComponent(_dragHeader);
-			_dragHeader.SetParams(10, 0, 30, 10,"dragHeader");
+			_dragHeader.SetParams(10, 0, 50, 10, "dragHeader");
 			_dragHeader.MoveObjectRelative += HeadMove;
 			_resizer = new ViewDragable();
 			this.AddComponent(_resizer);
@@ -63,21 +63,38 @@ namespace Engine.Visualization
 
 		private void Resize(int rx, int ry)
 		{
-			// TODO менять надо только когда курсор ниже и правее начальной точки
 			if (rx != 0) {
-				Width += rx;
-				if (Width < 10) Width = 10;
+				if (rx > 0 && Input.CursorX >= _xScreen + _resizer.X) {
+					Width += rx;
+				}
+				if (rx < 0 && Input.CursorX <= _xScreen + _resizer.X + _resizer.Width) {
+					Width += rx;
+					if (Width < 10) Width = 10;
+				}
 			}
 			if (ry != 0) {
-				Height += ry;
-				if (Height < 10) Height = 10;
+				if (ry > 0 && Input.CursorY >= _yScreen + _resizer.Y) {
+					Height += ry;
+				}
+				if (ry < 0 && Input.CursorY <= _yScreen + _resizer.Y + _resizer.Height) {
+					Height += ry;
+					if (Height < 10) Height = 10;
+				}
 			}
 		}
 
 		protected override void Resized()
 		{
-			_resizer.SetCoordinates(Width, Height);
+			_resizer.SetCoordinates(Width - _resizer.Width, Height - _resizer.Height);
+			_dragHeader.SetSize(Width - _dragHeader.X - 15, _dragHeader.Height);
 		}
+
+		public override void SetParams(int x, int y, int width, int height, string name)
+		{
+			base.SetParams(x, y, width, height, name);
+			_dragHeader.SetName(name);
+		}
+
 		public override void DrawObject(VisualizationProvider visualizationProvider)
 		{
 			var texture = _btnTexture;
