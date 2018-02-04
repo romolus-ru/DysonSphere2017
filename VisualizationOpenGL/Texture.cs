@@ -15,10 +15,10 @@ namespace VisualizationOpenGL
 		public int BlendParam;
 		public int AtlasWidth;
 		public int AtlasHeight;
-		public int P1X;
-		public int P1Y;
-		public int P2X;
-		public int P2Y;
+		public int X;
+		public int Y;
+		public int Width;
+		public int Height;
 		public string AtlasName;
 		public string TextureName;
 		public string Description;

@@ -535,10 +535,10 @@ namespace VisualizationOpenGL
 		{
 			var texInfo = _atlasManager.GetTextureInfo(textureName);
 			if (texInfo == null) return;
-			int xtex = texInfo.P1X;
-			int ytex = texInfo.P1Y;
-			int width = texInfo.P2X - texInfo.P1X;
-			int height = texInfo.P2Y - texInfo.P1Y;
+			int xtex = texInfo.X;
+			int ytex = texInfo.Y;
+			int width = texInfo.Width;
+			int height = texInfo.Height;
 			if (width < 1) return;
 			if (height < 1) return;
 
@@ -676,8 +676,8 @@ namespace VisualizationOpenGL
 		private int TextLength(byte[] text)
 		{
 			// 1.22 выявлена опытным путём, в дальнейшем может быть изменена
-			float len = text.Sum(с => (_glyphMetrics[с].gmfCellIncX * FontHeight * 1.22f));
-			return (int)(len);// + 0.5f);
+			int len = text.Sum(с => ((int)(_glyphMetrics[с].gmfCellIncX * FontHeight * 1.22f + 0.5f)));
+			return len;
 		}
 
 		public override int TextLength(string text)
@@ -962,6 +962,11 @@ namespace VisualizationOpenGL
 			gl.Disable(GL.STENCIL_TEST);
 		}
 
+		public override Size GetTextureSize(string textureName)
+		{
+			var texInfo = _atlasManager.GetTextureInfo(textureName);
+			if (texInfo == null) return Size.Empty;
+			return new Size(texInfo.Width, texInfo.Height);
+		}
 	}
-
 }

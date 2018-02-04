@@ -67,12 +67,16 @@
     <Compile Include="Model\Entities\EntityWithNotify.cs" />
     <Compile Include="Model\Entities\ModelAtlasFile.cs" />
     <Compile Include="Model\Entities\ModelAtlasTexture.cs" />
+    <Compile Include="SplitCount.xaml.cs">
+      <DependentUpon>SplitCount.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ViewModel\RelayCommand.cs" />
     <Compile Include="ViewModel\Utils.cs" />
     <Compile Include="ViewModel\ViewModelAtlasFileEdit.cs" />
     <Compile Include="ViewModel\ViewModelAtlasTextureEdit.cs" />
     <Compile Include="ViewModel\ViewModelBase.cs" />
     <Compile Include="ViewModel\ViewModelMainWindow.cs" />
+    <Compile Include="ViewModel\ViewModelSplitCount.cs" />
     <Compile Include="ViewService.cs" />
     <Page Include="AtlasFileEdit.xaml">
       <SubType>Designer</SubType>
@@ -100,6 +104,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="SplitCount.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">

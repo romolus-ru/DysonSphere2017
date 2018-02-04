@@ -1,0 +1,29 @@
+﻿<Window x:Class="AtlasViewer.SplitCount"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:AtlasViewer"
+        mc:Ignorable="d"
+        Title="Разделение атласа на равные текстуры" Height="169.231" Width="381.197" WindowStartupLocation="CenterScreen">
+    <Grid>
+        <StackPanel>
+            <StackPanel Orientation="Vertical">
+                <Label x:Name="label1" Content="количество по ширине"/>
+                <TextBox Margin="5" Text="{Binding ByWidth}" />
+                <Label x:Name="label2" Content="количество по высоте"/>
+                <TextBox Margin="5" Text="{Binding ByHeight}" />
+            </StackPanel>
+            <StackPanel>
+                <StackPanel Name="Info1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Button x:Name="btnOk" Content="Сохранить" 
+                HorizontalAlignment="Stretch" Height="22" Margin="2,2,0,0" VerticalAlignment="Stretch" Width="150"
+                IsCancel="True" Command="{Binding StoreChangesCommand}" />
+                    <Button x:Name="btnCalcel" Content="Отменить" 
+                HorizontalAlignment="Stretch" Height="22" Margin="2,2,0,0" VerticalAlignment="Stretch" Width="150"
+                IsCancel="True" />
+                </StackPanel>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Window>

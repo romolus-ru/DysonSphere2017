@@ -42,6 +42,7 @@
                                 <MenuItem Header="Добавить атлас" Command="{Binding AtlasFileAddNewCommand}" />
                                 <MenuItem Header="Добавить файл-текстуру (атлас из 1 текстуры)"/>
                                 <MenuItem Header="Редактировать атлас" Command="{Binding AtlasFileEditCommand}" />
+                                <MenuItem Header="Разделить атлас на части WxH" Command="{Binding AtlasFileSplitCommand}" />
                                 <MenuItem Header="Удалить атлас" Command="{Binding AtlasFileDeleteCommand}"/>
                             </ContextMenu>
                         </DataGrid.ContextMenu>
@@ -65,8 +66,8 @@
                   HorizontalAlignment="Center" Margin="10,10,0,0" IsReadOnly="True"
                   GridLinesVisibility="Horizontal" VerticalAlignment="Top">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Название текстуры" Binding="{Binding Name}" Width="auto" />
-                            <DataGridTextColumn Header="Описание текстуры" Binding="{Binding Description}" Width="auto" />
+                            <DataGridTextColumn Header="Название текстуры" Binding="{Binding NameDescription}" Width="auto" />
+                            <DataGridTextColumn Header="Описание текстуры" Binding="{Binding Size}" Width="auto" />
                         </DataGrid.Columns>
                         <DataGrid.ContextMenu>
                             <ContextMenu>

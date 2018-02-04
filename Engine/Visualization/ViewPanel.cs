@@ -14,5 +14,12 @@ namespace Engine.Visualization
 			visualizationProvider.Rectangle(X, Y, Width, Height);// если текстуры будут то они замаскируют этот прямоугольник
 
 		}
+
+		protected override void DrawComponents(VisualizationProvider visualizationProvider)
+		{
+			visualizationProvider.SetStencilArea(X, Y, X + Width, Y + Height);
+			base.DrawComponents(visualizationProvider);
+			visualizationProvider.StensilAreaOff();
+		}
 	}
 }

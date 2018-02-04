@@ -371,7 +371,7 @@ namespace Engine.Visualization
 		public void DrawTexture(int x, int y, string textureName, float scale = 1)
 		{ _DrawTexture(x + curOffsetX, y + curOffsetY, textureName, scale); }
 
-		protected virtual void _DrawTexture(int x, int y, String textureName, float scale = 1) { }
+		protected virtual void _DrawTexture(int x, int y, string textureName, float scale = 1) { }
 
 		/// <summary>
 		/// Вывести на экран часть разбитой на блоки текстуры
@@ -385,7 +385,7 @@ namespace Engine.Visualization
 		public void DrawTexturePart(int x, int y, string textureName, int blockWidth, int blockHeight, int num)
 		{ _DrawTexturePart(x + curOffsetX, y + curOffsetY, textureName, blockWidth, blockHeight, num); }
 
-		protected virtual void _DrawTexturePart(int x, int y, String textureName, int blockWidth, int blockHeight, int num) { }
+		protected virtual void _DrawTexturePart(int x, int y, string textureName, int blockWidth, int blockHeight, int num) { }
 
 
 		/// <summary>
@@ -401,7 +401,7 @@ namespace Engine.Visualization
 		public void DrawTexturePart(int x, int y, string textureName, int placeWidth, int placeHeight)
 		{ _DrawTexturePart(x + curOffsetX, y + curOffsetY, textureName, placeWidth, placeHeight); }
 
-		protected virtual void _DrawTexturePart(int x, int y, String textureName, int placeWidth, int placeHeight) { }
+		protected virtual void _DrawTexturePart(int x, int y, string textureName, int placeWidth, int placeHeight) { }
 
 		/// <summary>
 		/// Вывести на экран текстуру с маской (почти аналог LoadTextureAlpha)
@@ -410,25 +410,25 @@ namespace Engine.Visualization
 		/// <param name="y"></param>
 		/// <param name="textureName"></param>
 		/// <param name="textureMaskName"></param>
-		public void DrawTextureMasked(int x, int y, String textureName, String textureMaskName)
+		public void DrawTextureMasked(int x, int y, string textureName, string textureMaskName)
 		{ _DrawTextureMasked(x + curOffsetX, y + curOffsetY, textureName, textureMaskName); }
 
-		protected virtual void _DrawTextureMasked(int x, int y, String textureName, String textureMaskName) { }
+		protected virtual void _DrawTextureMasked(int x, int y, string textureName, string textureMaskName) { }
 
 		/// <summary>
 		/// скопировать изображение с экрана в текстуру
 		/// </summary>
 		/// <param name="textureName"></param>
-		public void CopyToTexture(String textureName)
+		public void CopyToTexture(string textureName)
 		{ _CopyToTexture(textureName); }
 
-		protected virtual void _CopyToTexture(String textureName) { }
+		protected virtual void _CopyToTexture(string textureName) { }
 
 		[Obsolete]
-		public void DeleteTexture(String textureName)
+		public void DeleteTexture(string textureName)
 		{ _DeleteTexture(textureName); }
 		[Obsolete]
-		protected virtual void _DeleteTexture(String textureName) { }
+		protected virtual void _DeleteTexture(string textureName) { }
 
 
 		///// <summary>
@@ -478,13 +478,13 @@ namespace Engine.Visualization
 		/// Установить 
 		/// </summary>
 		/// <param name="fontCodeName"></param>
-		public virtual void SetFont(String fontCodeName) { }
+		public virtual void SetFont(string fontCodeName) { }
 		/// <summary>
 		/// Вычисление длины текста
 		/// </summary>
 		/// <param name="text"></param>
 		/// <returns></returns>
-		public virtual int TextLength(String text) { return 0; }
+		public virtual int TextLength(string text) { return 0; }
 
 		/// <summary>
 		/// Координата текста Х
@@ -502,7 +502,7 @@ namespace Engine.Visualization
 		/// <param name="x"></param>
 		/// <param name="y"></param>
 		/// <param name="text"></param>
-		public void Print(int x, int y, String text)
+		public void Print(int x, int y, string text)
 		{
 			CurTxtX = x;
 			CurTxtY = y;
@@ -604,5 +604,10 @@ namespace Engine.Visualization
 		{ _StencilAreaOff(); }
 
 		protected virtual void _StencilAreaOff() { }
+
+		public virtual Size GetTextureSize(string textureName)
+		{
+			return Size.Empty;
+		}
 	}
 }

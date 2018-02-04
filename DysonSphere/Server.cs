@@ -74,13 +74,13 @@ namespace DysonSphere
 			pnl.AddComponent(btn1);
 			btn1.InitButton(MsgToModel, "c", "hint", Keys.Y);
 			btn1.SetParams(20, 20, 40, 40, "btn1");
-			//btn1.InitTexture("btn0");
+			btn1.InitTexture("textRB", "textRB");
 
 			var btn2 = new ViewButton();
 			pnl.AddComponent(btn2);
 			btn2.InitButton(RunModalWindow, "c", "hint", Keys.U);
-			btn2.SetParams(70, 20, 40, 40, "btn2");
-			btn2.InitTexture("testbutton2", "testbutton2a", 10);
+			btn2.SetParams(70, 20, 240, 40, "btn2");
+			btn2.InitTexture("textRB", "textRB");
 
 			var btnClose = new ViewButton();
 			_viewManager.AddView(btnClose);
@@ -109,7 +109,7 @@ namespace DysonSphere
 
 		private void MsgToModel()
 		{
-			var a = 1;
+			new LoginWindow().InitWindow(_viewManager, null, null);
 		}
 
 		private ViewModalWindow win;
@@ -117,25 +117,25 @@ namespace DysonSphere
 		{
 			win = new ViewModalWindow();
 			_viewManager.AddViewModal(win);
-			win.SetParams(150, 150, 500, 150, "win");
+			win.SetParams(150, 150, 500, 150, "Окно");
 			win.InitTexture("WindowSample", 10);
 
 			var btn1 = new ViewButton();
 			win.AddComponent(btn1);
 			btn1.InitButton(Entered, "ok", "Согласен", Keys.Enter);
 			btn1.SetParams(20, 110, 40, 25, "btn1");
-			btn1.InitTexture("WindowSample", "WindowSample", 10);
+			btn1.InitTexture("WindowSample", "WindowSample");
 
 			var btn2 = new ViewButton();
 			win.AddComponent(btn2);
 			btn2.InitButton(CloseModalWindow, "Cancel", "Отмена", Keys.Escape);
 			btn2.SetParams(70, 110, 40, 25, "btn2");
-			btn2.InitTexture("WindowSample", "WindowSample", 10);
+			btn2.InitTexture("WindowSample", "WindowSample");
 
 			var field = new ViewInput();
 			win.AddComponent(field);
 			field.SetParams(30, 30, 200, 40, "inputField");
-			win.InitInputDialog(field);
+			field.IsFocused = true;
 		}
 
 		private void Entered()

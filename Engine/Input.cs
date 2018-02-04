@@ -32,6 +32,9 @@ namespace Engine
 		private Dictionary<List<Keys>, Action> _keyAction = new Dictionary<List<Keys>, Action>();
 		private Stack<Dictionary<List<Keys>, Action>> _keyActionStack = new Stack<Dictionary<List<Keys>, Action>>();
 
+		private Dictionary<List<Keys>, Action> _keyActionDouble = new Dictionary<List<Keys>, Action>();
+		private Stack<Dictionary<List<Keys>, Action>> _keyActionDoubleStack = new Stack<Dictionary<List<Keys>, Action>>();
+
 		private Dictionary<List<Keys>, Action> _keyActionSticked = new Dictionary<List<Keys>, Action>();
 		private Stack<Dictionary<List<Keys>, Action>> _keyActionStickedStack = new Stack<Dictionary<List<Keys>, Action>>();
 		private List<List<Keys>> _listKeySticked = new List<List<Keys>>();
@@ -51,9 +54,20 @@ namespace Engine
 		private string _oldInputValue = null;
 		private bool _isAnyKeyPressed;
 		private bool ModalStateChanged;
+
+		/// <summary>
+		/// Кнопки в комбинациях, которые можно держать нажатыми, но комбинация будет считаться сработавшей
+		/// </summary>
 		private List<Keys> shiftKeys = new List<Keys> {
 			Keys.ControlKey, Keys.LControlKey, Keys.LMenu, Keys.LShiftKey, Keys.LWin,
 			Keys.Menu, Keys.RControlKey, Keys.RMenu, Keys.RShiftKey, Keys.RWin, Keys.ShiftKey
+		};
+
+		/// <summary>
+		/// Кнопки для которых разрешено событие двойного нажатия
+		/// </summary>
+		private List<Keys> clickKeys = new List<Keys> {
+			Keys.LButton, Keys.RButton, Keys.MButton,
 		};
 
 		public Input() { }
@@ -94,6 +108,27 @@ namespace Engine
 		}
 
 		/// <summary>
+		/// Добавить получатель события двойного клика
+		/// </summary>
+		/// <param name="action"></param>
+		/// <param name="keyCombination"></param>
+		public void AddKeyActionDouble(Action action, params Keys[] keyCombination)
+		{
+			if (keyCombination.Length != 1 && !clickKeys.Contains(keyCombination[0])) return;
+			AddKeyActionDict(_keyActionDouble, action, keyCombination);
+		}
+
+		/// <summary>
+		/// Удалить получатель события двойного клика
+		/// </summary>
+		/// <param name="action"></param>
+		/// <param name="keyCombination"></param>
+		public void RemoveKeyActionDouble(Action action, params Keys[] keyCombination)
+		{
+			RemoveKeyActionDict(_keyActionDouble, action, keyCombination);
+		}
+
+		/// <summary>
 		/// Добавить обычный получатель события курсора
 		/// </summary>
 		/// <param name="action"></param>
@@ -129,20 +164,10 @@ namespace Engine
 					keyFounded = false;
 					break;
 				}
-				добавить обработчики двойного нажатия
-				и запускать их тут же - определять какие нужно (обычные или двойные) и запускать их
-				// кнопки есть - запускаем действие
 				if (keyFounded)
 					RunEachAction(_keyAction[keyComb]);
 			}
 		}
-
-
-
-
-
-
-
 
 		/// <summary>
 		/// Добавить получатель события с паузой
@@ -435,14 +460,13 @@ namespace Engine
 				var dictValue = dict[dictKey];
 				var countBefore = dictValue.GetInvocationList().Length;
 				dict[dictKey] -= action;
-				var countAfter= dictValue.GetInvocationList().Length;
+				var countAfter = dict[dictKey]?.GetInvocationList()?.Length ?? 0;
 				if (countAfter == countBefore) {
-					// LOG "в словаре по ключу нету такого метода. возомжно из-за модального режима"
+					// LOG "в словаре по ключу нету такого метода. возможно из-за модального режима"
 				}
 			} else {
 				// LOG "в словаре не обнаружен ключ. возможно из-за модального режима"
 			}
-			ShrinkDict(dict);
 		}
 
 		private List<Keys> GetDictKey(Dictionary<List<Keys>, Action> dict, List<Keys> keyComb)
@@ -454,15 +478,6 @@ namespace Engine
 				}
 			}
 			return dictKey;
-		}
-
-		private void ShrinkDict(Dictionary<List<Keys>, Action> dict)
-		{
-			var keys = dict.Keys.ToList();
-			foreach (var k1 in keys) {
-				if (dict[k1].GetInvocationList().Length == 0)
-					dict.Remove(k1);
-			}
 		}
 
 		private void RunEachAction(MulticastDelegate actions)
@@ -516,6 +531,9 @@ namespace Engine
 			GetActionList(_cursorMoved, ret);
 			ret.Add("KACursorMoved stack " + _cursorMovedStack.Count);
 
+			GetActionList(_cursorMovedSystem, ret);
+			ret.Add("KACursorMovedSystem stack nope");
+
 			return ret;
 		}
 
@@ -555,9 +573,6 @@ namespace Engine
 			return ret;
 		}
 
-		/////////// всё что ниже - старое. будет переноситься выше по мере необходимости. и/или переделываться
-
-
 		/// <summary>
 		/// Координата курсора X. Клиентская
 		/// </summary>
@@ -567,111 +582,6 @@ namespace Engine
 		/// Координата курсора Y. Клиентская
 		/// </summary>
 		public int CursorY { get; protected set; }
-
-		/// <summary>
-		/// Смещение колеса мыши
-		/// </summary>
-		public int CursorDelta { get; protected set; }
-
-		private int _cursorDeltaState = 0;
-		/// <summary>
-		/// флаг очистки событий клавиатуры. работает некоторое время, потом отменяется
-		/// </summary>
-		public bool KeyboardCleared { get; protected set; }
-
-		/// <summary>
-		/// Для определения отпускания кнопки. кнопки не нажаты, но перед этим были нажаты и генерируется событие, что что то нажато
-		/// </summary>
-		/// <remarks></remarks>
-		private bool _lastKeyPressed = false;
-
-		/// <summary>
-		/// Завершение блокировки клавиатуры
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		private void KeyboardClearEndEH(object sender, EventArgs e)
-		{
-			KeyboardCleared = false;
-		}
-
-		/// <summary>
-		/// Заблокировать на небольшое время события от клавиатуры
-		/// </summary>
-		/// <remarks>Нужно часто при нажатии на кнопки мыши, что бы событие дальше не распространялось некоторое время</remarks>
-		public void KeyboardClear(object sender, EventArgs e)
-		{
-			KeyboardCleared = true;
-		}
-
-		/// <summary>
-		/// Получаем вращение колеса мыши
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="integerEventArgs"></param>
-		private void CursorDeltaEH(object sender, EventArgs integerEventArgs)
-		{
-			// сохраняем значение вращения колеса
-			//CursorDelta = integerEventArgs.Value;
-			_cursorDeltaState = 1;
-		}
-
-		/// <summary>
-		/// Передаём координаты курсора по запросу
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="pointEventArgs"></param>
-		private void CursorGetEH(object sender, EventArgs pointEventArgs)
-		{
-			// меняем точку на текущую, независимо от того что передали
-			//pointEventArgs.SetCoord(new Point(CursorX, CursorY));
-		}
-
-		/// <summary>
-		/// получить информацию о клавишах и мышке
-		/// </summary>
-		public virtual void GetInputOld()
-		{
-			var keyNew = UpdateKeyboardState(); // устанавливаем состояния устройств ввода
-			if (!keyNew) {// если кнопка не нажата
-				if (!_lastKeyPressed) {// если до этого что то нажимали
-					_lastKeyPressed = true; // запоминаем что теперь это было последнее нажатие, пользователь отпустил все кнопки
-					keyNew = true; // устанавливаем флаг принудительно, что бы отправить событие без нажатий
-				}
-			} else {
-				_lastKeyPressed = false;
-			} // фиксируем что пользователь ещё нажимает какую то кнопку
-
-			var curNew = UpdateCursorState();
-
-			if (_cursorDeltaState != 0) {
-				if (_cursorDeltaState == 2) {// состояние 2
-					_cursorDeltaState = 0;
-					CursorDelta = 0; // сбрасываем всё
-				}
-				if (_cursorDeltaState == 1) {// ничего не делаем, но переходим в состояние 2
-					_cursorDeltaState = 2;
-					// активируем событие от клавиатуры, 
-					//чтоб обработчики получили вращение колеса
-					keyNew = true;
-				}
-			}
-
-			if (curNew) {// запускаем событие обработки изменения положения курсора
-						 //Controller.StartEvent("Cursor", this, PointEventArgs.Set(CursorX, CursorY));
-			}
-
-			if (keyNew) {// запускаем событие обработки клавиатуры и мышки
-				if (!KeyboardCleared) {
-					//Controller.StartEvent("Keyboard", this, InputEventArgs.SetInput(this));
-				}
-			}
-		}
-
-
-
-
-
 
 		/// <summary>
 		/// Преобразовывает код нажатой клавиши на клавиатуре в код с учётом текущей раскладки клавиатуры

@@ -11,5 +11,9 @@ namespace Engine
 		public const int PauseStateNone = 0;
 		public const int PauseStatePauseFirst = 1;
 		public const int PauseStatePause = 2;
+
+		public const int PauseDoubleClick = 200;
+
+		public const int CursorFrequency = 20;
 	}
 }

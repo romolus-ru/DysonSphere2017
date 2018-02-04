@@ -105,6 +105,7 @@
     <Compile Include="EventSystem\Event\MessageString.cs" />
     <Compile Include="EventSystem\FileArchieve.cs" />
     <Compile Include="GameInitializer.cs" />
+    <Compile Include="Helpers\InputHelper.cs" />
     <Compile Include="Input.cs" />
     <Compile Include="InputKeyStatePause.cs" />
     <Compile Include="Model.cs" />
@@ -120,6 +121,7 @@
     <Compile Include="Utils\LogData.cs" />
     <Compile Include="Utils\LogSystem.cs" />
     <Compile Include="Utils\Query\Dynamic.cs" />
+    <Compile Include="Visualization\LoginWindow.cs" />
     <Compile Include="Visualization\View.cs" />
     <Compile Include="Visualization\ViewButton.cs" />
     <Compile Include="Visualization\ViewComponent.cs" />
@@ -133,6 +135,7 @@
     <Compile Include="Visualization\ViewSystem.cs" />
     <Compile Include="Visualization\ViewWindow.cs" />
     <Compile Include="Visualization\ViewWindowCaption.cs" />
+    <Compile Include="Helpers\GUIHelper.cs" />
     <Compile Include="Visualization\VisualizationProvider.cs" />
   </ItemGroup>
   <ItemGroup />

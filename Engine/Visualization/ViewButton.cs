@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Engine.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -17,7 +18,6 @@ namespace Engine.Visualization
 
 		private string _btnTexture = null;
 		private string _btnTextureOver = null;
-		private int _btnTextureBorder = 0;
 
 		/// <summary>
 		/// Получили сообщение что нажали - определяем местоположение
@@ -82,39 +82,13 @@ namespace Engine.Visualization
 				visualizationProvider.Print(X + 10, Y + Height + 5 - f, Hint);
 				texture = _btnTextureOver;
 			}
-			if (texture != null) {
-				// углы
-				visualizationProvider.DrawTexturePart(X, Y, texture + ".t1", _btnTextureBorder, _btnTextureBorder);
-				visualizationProvider.DrawTexturePart(X + Width - 10, Y, texture + ".t3", _btnTextureBorder, _btnTextureBorder);
-				visualizationProvider.DrawTexturePart(X, Y + Height - 10, texture + ".t7", _btnTextureBorder, _btnTextureBorder);
-				visualizationProvider.DrawTexturePart(X + Width - 10, Y + Height - 10, texture + ".t9", _btnTextureBorder, _btnTextureBorder);
-				// стороны
-				visualizationProvider.DrawTexturePart(X + 10, Y, texture + ".t2", Width - _btnTextureBorder * 2, _btnTextureBorder);
-				visualizationProvider.DrawTexturePart(X, Y + 10, texture + ".t4", _btnTextureBorder, Height - _btnTextureBorder * 2);
-				visualizationProvider.DrawTexturePart(X + Width - 10, Y + 10, texture + ".t6", _btnTextureBorder, Height - _btnTextureBorder * 2);
-				visualizationProvider.DrawTexturePart(X + 10, Y + Height - 10, texture + ".t8", Width - _btnTextureBorder * 2, _btnTextureBorder);
-				// центр
-				visualizationProvider.DrawTexturePart(X + 10, Y + 10, texture + ".t5", Width - _btnTextureBorder * 2, Height - _btnTextureBorder * 2);
-			} else {
-				visualizationProvider.SetColor(color);
-				visualizationProvider.Rectangle(X, Y, Width, Height);
-			}
-
-			var cx = Input.CursorX;
-			var cy = Input.CursorY;
-			var over = false;
-			if ((_xScreen < cx) && (cx < _xScreen + Width)) {
-				if ((_yScreen < cy) && (cy < _yScreen + Height)) {
-					over = true;
-				}
-			}
+			GUIHelper.ViewGUIRectangle(visualizationProvider, this, texture);
 		}
 
-		public void InitTexture(string textureName, string textureNameOver, int textureBorder)
+		public void InitTexture(string textureName, string textureNameOver)
 		{
 			_btnTexture = textureName;
 			_btnTextureOver = textureNameOver;
-			_btnTextureBorder = textureBorder;
 			VisualizationProvider.LoadAtlas(_btnTexture);
 			VisualizationProvider.LoadAtlas(_btnTextureOver);
 		}

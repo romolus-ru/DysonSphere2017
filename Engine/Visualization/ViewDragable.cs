@@ -13,7 +13,7 @@ namespace Engine.Visualization
 	public class ViewDragable : ViewComponent
 	{
 		/// <summary>
-		/// Присылаются координаты относительного перемеремещения объекта
+		/// Присылаются координаты относительного перемещения объекта
 		/// </summary>
 		public Action<int, int> MoveObjectRelative;
 		protected bool IsDragMode = false;

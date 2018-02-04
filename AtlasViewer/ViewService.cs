@@ -10,6 +10,7 @@ using System.Windows.Media;
 using System.Windows.Shapes;
 using System;
 using System.Windows.Threading;
+using AtlasViewer.Model.Entities;
 
 namespace AtlasViewer
 {
@@ -53,7 +54,7 @@ namespace AtlasViewer
 		private static Rectangle _selectedRect;
 		private static Dispatcher _dispatcher;
 
-		public static void ShowAtlasTextures(List<AtlasTextures> textures, AtlasTextures selected=null)
+		public static void ShowAtlasTextures(List<ModelAtlasTexture> textures, ModelAtlasTexture selected=null)
 		{
 			_selectedRect = null;
 			if (_timer != null) { _timer.Stop(); _timer = null; }
@@ -104,6 +105,15 @@ namespace AtlasViewer
 				Canvas.SetTop(box, texture.P1Y);
 				canvas.Children.Add(box);
 			}*/
+		}
+
+		internal static object RunSplitCount(ViewModelSplitCount vmSplitCount)
+		{
+			var f = new SplitCount();
+			vmSplitCount.RequestClose += (s, e) => f.Close();
+			f.DataContext = vmSplitCount;
+			var dr = f.ShowDialog();
+			return vmSplitCount.DialogResult == "Changed";
 		}
 	}
 }
