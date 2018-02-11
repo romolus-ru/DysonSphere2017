@@ -15,5 +15,10 @@ namespace Engine
 		public const int PauseDoubleClick = 200;
 
 		public const int CursorFrequency = 20;
+
+		/// <summary>
+		/// Там хранятся архивы с JSON файлами в которых данные из БД хранятся
+		/// </summary>
+		public const string PlayerDBPath = "/data/";
 	}
 }

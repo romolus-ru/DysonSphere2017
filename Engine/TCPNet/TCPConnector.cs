@@ -49,7 +49,7 @@ namespace Engine.TCPNet
 		/// <summary>
 		/// Присланные необработанные данные
 		/// </summary>
-		public List<byte[]> DataLoaded = new List<byte[]>();
+		protected List<byte[]> DataLoaded = new List<byte[]>();
 
 		public void ConnectToServer(string server, int serverPort)
 		{

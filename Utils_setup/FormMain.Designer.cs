@@ -28,6 +28,7 @@
 		private void InitializeComponent()
 		{
 			this.panel1 = new System.Windows.Forms.Panel();
+			this.btnSetInput = new System.Windows.Forms.Button();
 			this.btnSetVisualization = new System.Windows.Forms.Button();
 			this.button1 = new System.Windows.Forms.Button();
 			this.btnAddChecked = new System.Windows.Forms.Button();
@@ -37,13 +38,14 @@
 			this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.btnSetInput = new System.Windows.Forms.Button();
+			this.btnDBtoJSON = new System.Windows.Forms.Button();
 			this.panel1.SuspendLayout();
 			this.panel2.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// panel1
 			// 
+			this.panel1.Controls.Add(this.btnDBtoJSON);
 			this.panel1.Controls.Add(this.btnSetInput);
 			this.panel1.Controls.Add(this.btnSetVisualization);
 			this.panel1.Controls.Add(this.button1);
@@ -54,6 +56,16 @@
 			this.panel1.Name = "panel1";
 			this.panel1.Size = new System.Drawing.Size(1095, 53);
 			this.panel1.TabIndex = 0;
+			// 
+			// btnSetInput
+			// 
+			this.btnSetInput.Location = new System.Drawing.Point(703, 12);
+			this.btnSetInput.Name = "btnSetInput";
+			this.btnSetInput.Size = new System.Drawing.Size(173, 30);
+			this.btnSetInput.TabIndex = 4;
+			this.btnSetInput.Text = "Установить Input";
+			this.btnSetInput.UseVisualStyleBackColor = true;
+			this.btnSetInput.Click += new System.EventHandler(this.btnSetInput_Click);
 			// 
 			// btnSetVisualization
 			// 
@@ -138,15 +150,15 @@
 			this.columnHeader3.Text = "Class";
 			this.columnHeader3.Width = 306;
 			// 
-			// btnSetInput
+			// btnDBtoJSON
 			// 
-			this.btnSetInput.Location = new System.Drawing.Point(703, 12);
-			this.btnSetInput.Name = "btnSetInput";
-			this.btnSetInput.Size = new System.Drawing.Size(173, 30);
-			this.btnSetInput.TabIndex = 4;
-			this.btnSetInput.Text = "Установить Input";
-			this.btnSetInput.UseVisualStyleBackColor = true;
-			this.btnSetInput.Click += new System.EventHandler(this.btnSetInput_Click);
+			this.btnDBtoJSON.Location = new System.Drawing.Point(882, 12);
+			this.btnDBtoJSON.Name = "btnDBtoJSON";
+			this.btnDBtoJSON.Size = new System.Drawing.Size(139, 30);
+			this.btnDBtoJSON.TabIndex = 5;
+			this.btnDBtoJSON.Text = "Сохранить БД в JSON";
+			this.btnDBtoJSON.UseVisualStyleBackColor = true;
+			this.btnDBtoJSON.Click += new System.EventHandler(this.btnDBtoJSON_Click);
 			// 
 			// FormMain
 			// 
@@ -176,6 +188,7 @@
 		private System.Windows.Forms.Button button1;
 		private System.Windows.Forms.Button btnSetVisualization;
 		private System.Windows.Forms.Button btnSetInput;
+		private System.Windows.Forms.Button btnDBtoJSON;
 	}
 }
 

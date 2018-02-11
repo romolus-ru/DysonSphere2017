@@ -57,6 +57,8 @@
     <Compile Include="TestClass_DBTests01.cs" />
     <Compile Include="TestClass_CreateServer.cs" />
     <Compile Include="TestClass_Evaluate.cs" />
+    <Compile Include="TestClass_Files.cs" />
+    <Compile Include="TestClass_Crypt.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DataSupportEF\DataSupportEF.csproj">

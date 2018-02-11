@@ -14,6 +14,10 @@ namespace Engine.Visualization
 	/// <remarks>Умеет только рисовать</remarks>
 	public class VisualizationProvider
 	{
+		/// <summary>
+		/// Посылается всем при закрытии основного окна
+		/// </summary>
+		public Action ExitMessage;
 		public virtual void Exit() { }
 
 		//protected Controller _controller;

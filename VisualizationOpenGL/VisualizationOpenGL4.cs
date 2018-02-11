@@ -31,6 +31,9 @@ namespace VisualizationOpenGL
 			_formOpenGl.Size = fullScreen ?
 				Screen.PrimaryScreen.Bounds.Size : 
 				_formOpenGl.Size = new Size(width, height);
+			_formOpenGl.WindowState = fullScreen ?
+				FormWindowState.Maximized :
+				FormWindowState.Normal;
 			_formOpenGl.KeyPreview = true;
 
 			_formOpenGl.Text = @"OpenGL4";
@@ -38,6 +41,7 @@ namespace VisualizationOpenGL
 			_formOpenGl.MouseWheel += MouseWheel;
 			_formOpenGl.Focus();
 			_formOpenGl.BringToFront();
+			_formOpenGl.FormClosed += FormClosed;
 
 			_atlasManager = new AtlasManager(data, log);
 
@@ -63,8 +67,14 @@ namespace VisualizationOpenGL
 			//LoadTextureModify("clear", "Resources/clear256x256.tga", new TPTRounded(), Color.Empty, Color.Empty);
 		}
 
+		private void FormClosed(object sender, FormClosedEventArgs e)
+		{
+			ExitMessage?.Invoke();
+		}
+
 		public override void Exit()
 		{
+			ExitMessage?.Invoke();
 			_formOpenGl.Close();
 		}
 
@@ -365,7 +375,7 @@ namespace VisualizationOpenGL
 		public override void Run()
 		{
 			base.Run();
-			_formOpenGl.WindowState = FormWindowState.Maximized;
+			//_formOpenGl.WindowState = FormWindowState.Maximized;
 			_formOpenGl.BringToFront();
 			_formOpenGl.Focus();
 			_formOpenGl.ShowDialog();

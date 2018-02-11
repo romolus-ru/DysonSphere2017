@@ -27,6 +27,8 @@ namespace Engine.TCPNet
         public AuthPlayerDelegate AuthPlayer;
 
         public Collector collector;
+		private static int _counterPlayer = -1;
+		public List<TCPMessage> RecievedMessages = new List<TCPMessage>();
 
         public delegate void LOGGING(string LogMsg);
         public LOGGING ToLog;
@@ -56,7 +58,9 @@ namespace Engine.TCPNet
             // End the operation and display the received data on the console.
             TcpClient client = listener.EndAcceptTcpClient(ar);
 
+			_counterPlayer++;
             var client1 = new TCPEngineConnector();
+			client1.playerId = _counterPlayer;
             client1.Init(client);
             client1.SetCollector(collector);
             AuthPlayer?.Invoke(client1);
@@ -66,7 +70,7 @@ namespace Engine.TCPNet
             //LOG("Client connected completed");
         }
 
-        public void StartServer(string server, int serverPort)
+        public void StartServer(string server= "", int serverPort= -1)
         {
             var sa = server == "" ? ServerAddress : server;
             var sp = serverPort == -1 ? ServerPort : serverPort;
@@ -80,16 +84,23 @@ namespace Engine.TCPNet
         }
 
         /// <summary>
-        /// Обрабатываем каждого клиента и сохраняем что ему прислали в RecievedData
+        /// Обрабатываем каждого клиента и сохраняем что ему прислали в RecievedMessages
         /// </summary>
         public void ProcessData()
         {
+			List<TCPMessage> messages = null;
             foreach (var client1 in _clientsInfo)
             {
                 var client = client1.Client;
                 if (client.Available == 0) continue;// нету доступных данных
-                client1.ProcessData();
+				var msgs = client1.ProcessData();
+				if (msgs == null) continue;
+				if (messages == null) messages = new List<TCPMessage>();
+				messages.AddRange(msgs);
             }
+			if (messages != null)
+				lock (RecievedMessages)
+					RecievedMessages.AddRange(messages);
 
             // принимаем соединение
             if (listener.Pending()) DoBeginAcceptTcpClient(listener);

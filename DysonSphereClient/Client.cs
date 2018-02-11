@@ -9,22 +9,22 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using Timer = System.Windows.Forms.Timer;
 
-namespace DysonSphere
+namespace DysonSphereClient
 {
 	/// <summary>
 	/// Сервер
 	/// </summary>
-	public class Server
+	public class Client
 	{
-		private string _solt = "vsbNM37SD8FBv46jf6jf";
+		private string _solt = "";
 		private Stopwatch _stopwatch;
 		private DataSupportBase _datasupport;
 		private LogSystem _logsystem;
 		private Collector _collector;
 		private Input _input;
 		private VisualizationProvider _visualization;
-		private string LogTag = "Server";
-		private ModelServer _model;
+		private string LogTag = "Client";
+		private ModelClient _model;
 		private ViewManager _viewManager;
 		private Timer _timer;
 
@@ -33,7 +33,7 @@ namespace DysonSphere
 		/// </summary>
 		public static int TimerInterval = 1000 / 60;
 
-		public Server(DataSupportBase dataSupport, LogSystem logSystem)
+		public Client(DataSupportBase dataSupport, LogSystem logSystem)
 		{
 			_stopwatch = Stopwatch.StartNew();
 			// сохраняем объект для работы с данными
@@ -59,24 +59,21 @@ namespace DysonSphere
 			// 3 создаётся объект для вывода на экран
 			var visualizationId = _datasupport.ServerSettingsGetValue("visualization");
 			_visualization = _collector.GetObject(visualizationId) as VisualizationProvider;
-			_visualization.InitVisualization(_datasupport, _logsystem, 800, 600, false);
+			_visualization.InitVisualization(_datasupport, _logsystem, 500, 500, true);
 
 			// 1 создаётся объект для работы с пользователями (мат модель работы с пользователями)
-			_model = new ModelServer(_collector);
+			_model = new ModelClient(_collector);
 			_visualization.ExitMessage += _model.Stop;
 			var modelPlayers = new ModelPlayers(_datasupport, _solt);
 			_model.AddModel(modelPlayers);
-			_model.TCPServer.RegisterPlayer += modelPlayers.RegisterUser;
-
-
 
 
 			_viewManager = new ViewManager(_visualization, _input);
 			// соединяем модели, формируем основные пути передачи информации
 			// вынести в отдельный метод. делать что то наподобие serverInitializer нету смысла - надо будет передавать много параметров, а они уникальные
-			var serverView = new ServerView();
-			serverView.SetTimerInfo(_stopwatch);
-			_viewManager.AddView(serverView);
+			var clientView = new ClientView();
+			clientView.SetTimerInfo(_stopwatch);
+			_viewManager.AddView(clientView);
 
 			var pnl = new ViewPanel();
 			_viewManager.AddView(pnl);
@@ -99,9 +96,9 @@ namespace DysonSphere
 			btnClose.InitButton(Close, "exit", "hint", Keys.LMenu, Keys.X);
 			btnClose.SetParams(1659, 0, 20, 20, "btnE");
 
-			var debugView = new DebugView();
-			_viewManager.AddView(debugView);
-			debugView.SetParams(1100, 0, debugView.Width, debugView.Height, "DebugView");
+			//var debugView = new DebugView();
+			//_viewManager.AddView(debugView);
+			//debugView.SetParams(1100, 0, debugView.Width, debugView.Height, "DebugView");
 
 			var dragable = new ViewDragable();
 			dragable.SetParams(800, 250, 30, 30, "dragableObject");
@@ -174,7 +171,8 @@ namespace DysonSphere
 			gi.InitGame(_model, _viewManager, _visualization, _logsystem, _input);
 		}
 
-		private void Log(string msg) {
+		private void Log(string msg)
+		{
 			_logsystem?.AddLog(LogTag, msg, 1);
 		}
 

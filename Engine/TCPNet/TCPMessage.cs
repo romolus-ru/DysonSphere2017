@@ -1,4 +1,5 @@
-﻿using Engine.EventSystem.Event;
+﻿using Engine.Enums;
+using Engine.EventSystem.Event;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +17,8 @@ namespace Engine.TCPNet
         /// <summary>
         /// Код операции
         /// </summary>
-        public uint opCode = 0;
+        public TCPOperations opCode = 0;
+		public int PlayerId = -1;
         public EventBase _msg = null;
     }
 }

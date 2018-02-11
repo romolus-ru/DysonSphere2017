@@ -111,5 +111,8 @@ namespace Engine
 		{
 
 		}
+
+		public virtual UserRegistration UserStatus { get; set; }
+
 	}
 }

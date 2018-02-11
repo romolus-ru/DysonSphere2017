@@ -14,6 +14,8 @@ using Engine;
 using Engine.Data;
 using Engine.Visualization;
 using DataSupportEF;
+using Newtonsoft.Json;
+using Engine.Helpers;
 
 namespace Utils_setup
 {
@@ -174,12 +176,30 @@ namespace Utils_setup
 		private void btnSetVisualization_Click(object sender, EventArgs e)
 		{
 			SetObjectSettings("visualization", typeof(VisualizationProvider));
-
 		}
 
 		private void btnSetInput_Click(object sender, EventArgs e)
 		{
 			SetObjectSettings("input", typeof(Input));
+		}
+
+		private void btnDBtoJSON_Click(object sender, EventArgs e)
+		{
+			var dataDB = new DysonSphereContext();
+			var values=dataDB.CollectClasses.ToList();
+			var data = JsonConvert.SerializeObject(values);
+			FileUtils.SaveString(DataSupportFileHelper.CollectClassesFile, DataSupportFileHelper.CollectClassesData, data);
+
+			var settings = new Dictionary<string, int>();
+			// пока добавляем серверные. потом эти настройки надо сделать полностью автономными
+			var sts = dataDB.Settings.Where(s => s.TargetSys == "Server").ToList();
+			foreach (var item in sts) {
+				if (!settings.ContainsKey(item.TargetSubSys)) {
+					settings.Add(item.TargetSubSys, item.ClassId);
+				}
+			}
+			data = JsonConvert.SerializeObject(settings);
+			FileUtils.SaveString(DataSupportFileHelper.SettingsFile, DataSupportFileHelper.SettingsData, data);
 		}
 	}
 }
