@@ -2,10 +2,12 @@
 using Engine.Data;
 using Engine.Enums;
 using Engine.Models;
+using Engine.TCPNet;
 using Engine.Utils;
 using Engine.Visualization;
 using System;
 using System.Diagnostics;
+using System.Drawing;
 using System.Windows.Forms;
 using Timer = System.Windows.Forms.Timer;
 
@@ -27,6 +29,8 @@ namespace DysonSphereClient
 		private ModelClient _model;
 		private ViewManager _viewManager;
 		private Timer _timer;
+		private ModelPlayer _mplayer;
+		private UserRegistration _rplayer;
 
 		/// <summary>
 		/// Значение времени для рассчёта количества кадров в секунду
@@ -47,6 +51,10 @@ namespace DysonSphereClient
 			_timer.Interval = TimerInterval;
 			_timer.Tick += MainTimerRun;
 
+			// создать игрока и добавить его к игрокам
+			// сформировать соединение и прописать метод для его запуска
+			// у игрока сделать 2 метода - регистрация и логин
+
 			// коллектор получает необходимые классы из ДЛЛ через базу
 			var classesList = _datasupport.GetCollectClasses();
 			_collector = new Collector();
@@ -55,6 +63,7 @@ namespace DysonSphereClient
 			// создаётся объект для работы с пользовательским вводом
 			var inputId = _datasupport.ServerSettingsGetValue("input");
 			_input = _collector.GetObject(inputId) as Input;
+			_input.OnGetWindowPos += ClientGetWindowPos;
 
 			// 3 создаётся объект для вывода на экран
 			var visualizationId = _datasupport.ServerSettingsGetValue("visualization");
@@ -64,7 +73,11 @@ namespace DysonSphereClient
 			// 1 создаётся объект для работы с пользователями (мат модель работы с пользователями)
 			_model = new ModelClient(_collector);
 			_visualization.ExitMessage += _model.Stop;
-			var modelPlayers = new ModelPlayers(_datasupport, _solt);
+			var modelPlayers = new ModelPlayers(_datasupport);
+			_rplayer = _datasupport.UserStatus;// загружаем данные игрока (основные)
+			var clientConnection = new TCPClient();
+			_mplayer = new ModelPlayer(_rplayer.UserGUID, _rplayer.NickName, clientConnection);
+			modelPlayers.AddClient(_mplayer);// добавляем игрока для обработки в матмоделях
 			_model.AddModel(modelPlayers);
 
 
@@ -91,6 +104,12 @@ namespace DysonSphereClient
 			btn2.SetParams(70, 20, 240, 40, "btn2");
 			btn2.InitTexture("textRB", "textRB");
 
+			var btn3 = new ViewButton();
+			pnl.AddComponent(btn3);
+			btn3.InitButton(Connect, "y", "hint", Keys.U);
+			btn3.SetParams(70, 35, 240, 40, "btn2");
+			btn3.InitTexture("textRB", "textRB");
+
 			var btnClose = new ViewButton();
 			_viewManager.AddView(btnClose);
 			btnClose.InitButton(Close, "exit", "hint", Keys.LMenu, Keys.X);
@@ -108,6 +127,16 @@ namespace DysonSphereClient
 			// 4 создаётся обработчик соединений
 
 			Log("Сервер работает");
+		}
+
+		private void Connect()
+		{
+			_model.TCPClientModel.Connect("", -1);
+		}
+
+		private Point ClientGetWindowPos()
+		{
+			return _visualization.WindowLocation;
 		}
 
 		private void Close()

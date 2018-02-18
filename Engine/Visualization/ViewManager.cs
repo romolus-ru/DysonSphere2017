@@ -62,5 +62,10 @@ namespace Engine.Visualization
 			_viewCursor.Draw(_provider);
 			_provider.FlushDrawing();
 		}
+
+		public void WindowPosChanged(int windowPosX, int windowPosY)
+		{
+			_viewSystem.SetScreenPos(windowPosX, windowPosY);
+		}
 	}
 }

@@ -5,19 +5,17 @@ using System.Text;
 using System.Threading.Tasks;
 using Engine.Models;
 using Engine.Utils;
-using Engine.Enums;
-using Engine.TCPNet;
 
 namespace Engine
 {
 	public class ModelServer : ModelMain
 	{
-		public TCPServerModel TCPServer { get; private set; }
+		public TCPServerModel TCPServerModel { get; private set; }
 		public ModelServer(Collector collector)
 		{
-			TCPServer = new TCPServerModel(collector);
-			TCPServer.Init();
-			AddModel(TCPServer);
+			TCPServerModel = new TCPServerModel(collector);
+			TCPServerModel.Init();
+			AddModel(TCPServerModel);
 		}
 	}
 }

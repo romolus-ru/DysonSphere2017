@@ -14,5 +14,11 @@ namespace Engine.Visualization
 		public ViewSystem() : base()
 		{
 		}
+
+		public void SetScreenPos(int newScreenPosX, int newScreenPosY)
+		{
+			_xScreen = newScreenPosX;
+			_yScreen = newScreenPosY;
+		}
 	}
 }

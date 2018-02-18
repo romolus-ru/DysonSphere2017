@@ -18,6 +18,11 @@ namespace Engine.Visualization
 		/// Посылается всем при закрытии основного окна
 		/// </summary>
 		public Action ExitMessage;
+		/// <summary>
+		/// Посылается при изменении/инициализации окна
+		/// </summary>
+		public Action<int, int> OnResizeWindow;
+
 		public virtual void Exit() { }
 
 		//protected Controller _controller;
@@ -613,5 +618,7 @@ namespace Engine.Visualization
 		{
 			return Size.Empty;
 		}
+
+		public virtual Point WindowLocation { get { return Point.Empty; } }
 	}
 }

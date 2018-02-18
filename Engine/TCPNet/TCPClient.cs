@@ -8,17 +8,17 @@ namespace Engine.TCPNet
 {
 	public class TCPClient : TCPEngineConnector
 	{
-		public List<TCPMessage> RecievedMessages = new List<TCPMessage>();
+		public bool HasNewMessages = false;
 
 		/// <summary>
 		/// Получаем данные от сервера и сохраняем их в RecievedMessages
 		/// </summary>
 		public new void ProcessData()
 		{
-			var messages = (this as TCPEngineConnector).ProcessData();
-			if (messages != null)
-				lock (RecievedMessages)
-					RecievedMessages.AddRange(messages);
+			var messages = base.ProcessData();
+			if (messages == -1) return;
+			lock (this)
+				HasNewMessages = true;
 		}
 	}
 }

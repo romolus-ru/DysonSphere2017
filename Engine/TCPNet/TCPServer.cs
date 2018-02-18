@@ -15,20 +15,13 @@ namespace Engine.TCPNet
         //private void LOG(string msg){Action<string> action = LOG;if (InvokeRequired) Invoke(action, msg);else lbLog.Items.Insert(0, msg);}
 
         /// <summary>
-        /// Аутентификация пользователя. там создаётся объект player с идентификацией и соответственно заполняются при необходимости поля для авторизации разрешенных действий
+        /// Создаём модель игрока с которым установлено соединение
         /// </summary>
-        /// <param name="login"></param>
-        /// <param name="pass"></param>
-        /// <returns></returns>
-        public delegate int AuthPlayerDelegate(TCPEngineConnector conn);
-        /// <summary>
-        /// Авторизовываем игрока с которым установлено соединение
-        /// </summary>
-        public AuthPlayerDelegate AuthPlayer;
+        public Action<TCPEngineConnector> OnClientConnected;
 
         public Collector collector;
-		private static int _counterPlayer = -1;
-		public List<TCPMessage> RecievedMessages = new List<TCPMessage>();
+		private static int _counterPlayer = 0;// 1, 2, 3 and so on
+		public HashSet<int> PlayersWithMessages = new HashSet<int>();
 
         public delegate void LOGGING(string LogMsg);
         public LOGGING ToLog;
@@ -53,24 +46,36 @@ namespace Engine.TCPNet
         public void DoAcceptTcpClientCallback(IAsyncResult ar)
         {
             // Get the listener that handles the client request.
-            TcpListener listener = (TcpListener)ar.AsyncState;
+            TcpListener localListener = (TcpListener)ar.AsyncState;
 
             // End the operation and display the received data on the console.
-            TcpClient client = listener.EndAcceptTcpClient(ar);
+            TcpClient client = localListener.EndAcceptTcpClient(ar);
+			if (!IsAcceptConnection(client)) return;
 
 			_counterPlayer++;
             var client1 = new TCPEngineConnector();
 			client1.playerId = _counterPlayer;
             client1.Init(client);
             client1.SetCollector(collector);
-            AuthPlayer?.Invoke(client1);
             lock (_clientsInfo) _clientsInfo.Add(client1);
-            // Process the connection here. (Add the client to a server table, read data, etc.)
-            //client1.SendMsg(client1.MSGHello());
-            //LOG("Client connected completed");
-        }
+			OnClientConnected?.Invoke(client1);
+			// Process the connection here. (Add the client to a server table, read data, etc.)
+			//client1.SendMsg(client1.MSGHello());
+			//LOG("Client connected completed");
+		}
 
-        public void StartServer(string server= "", int serverPort= -1)
+		/// <summary>
+		/// Проверяем разрешено ли соединение
+		/// </summary>
+		/// <param name="client"></param>
+		/// <returns></returns>
+		private bool IsAcceptConnection(TcpClient client)
+		{
+			// Например проверяем не в чёрном ли списке, количество и время соединений, частота соединений, есть ли возможность соединиться и т.п.
+			return true;
+		}
+
+		public void StartServer(string server= "", int serverPort= -1)
         {
             var sa = server == "" ? ServerAddress : server;
             var sp = serverPort == -1 ? ServerPort : serverPort;
@@ -88,19 +93,20 @@ namespace Engine.TCPNet
         /// </summary>
         public void ProcessData()
         {
-			List<TCPMessage> messages = null;
+			HashSet<int> playersId = null;
             foreach (var client1 in _clientsInfo)
             {
                 var client = client1.Client;
                 if (client.Available == 0) continue;// нету доступных данных
-				var msgs = client1.ProcessData();
-				if (msgs == null) continue;
-				if (messages == null) messages = new List<TCPMessage>();
-				messages.AddRange(msgs);
+				var playerId = client1.ProcessData();
+				if (playerId == -1) continue;
+				if (playersId == null) playersId = new HashSet<int>();
+				if (playersId.Contains(playerId)) continue;// уже есть
+				playersId.Add(playerId);
             }
-			if (messages != null)
-				lock (RecievedMessages)
-					RecievedMessages.AddRange(messages);
+			if (playersId != null)
+				lock (PlayersWithMessages)
+					PlayersWithMessages.UnionWith(playersId);
 
             // принимаем соединение
             if (listener.Pending()) DoBeginAcceptTcpClient(listener);

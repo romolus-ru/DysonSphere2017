@@ -1,4 +1,6 @@
 ﻿using Engine.Data;
+using Engine.DataPlus;
+using Engine.Enums;
 using Engine.Utils;
 using System;
 using System.Collections.Generic;
@@ -114,5 +116,9 @@ namespace Engine
 
 		public virtual UserRegistration UserStatus { get; set; }
 
+
+		public virtual ErrorType RegisterUser(UserRegistration userRegistration){ return ErrorType.NoError; }
+
+		public virtual UserRegistration LoginUser(LoginData loginData) { return null; }
 	}
 }

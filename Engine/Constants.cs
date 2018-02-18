@@ -20,5 +20,9 @@ namespace Engine
 		/// Там хранятся архивы с JSON файлами в которых данные из БД хранятся
 		/// </summary>
 		public const string PlayerDBPath = "/data/";
+		/// <summary>
+		/// Соль для паролей. а название в честь фильма где ангелина джоли играла роль тома круза
+		/// </summary>
+		internal const string Solt = "vsbNM37SD8FBv46jf6jf";
 	}
 }

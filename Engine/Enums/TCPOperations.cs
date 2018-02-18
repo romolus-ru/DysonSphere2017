@@ -13,6 +13,10 @@ namespace Engine.Enums
 		/// </summary>
 		ConnectEstablishing,
 		/// <summary>
+		/// Сообщения об ошибках, например неправильный пароль
+		/// </summary>
+		ErrorMessage,
+		/// <summary>
 		/// Отмена всех операций
 		/// </summary>
 		AbortOperations,

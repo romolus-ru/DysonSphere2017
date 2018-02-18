@@ -29,6 +29,7 @@ namespace DataSupportEF
 		public DbSet<AtlasTextures> AtlasTextures { get; set; }
 		public DbSet<CollectClass> CollectClasses { get; set; }
 		public DbSet<_Settings> Settings { get; set; }
+		public DbSet<UserRegistration> UserRegistration { get; set; }
 
 		protected override void OnModelCreating(DbModelBuilder modelBuilder)
 		{
@@ -39,6 +40,7 @@ namespace DataSupportEF
 				.HasKey(u => u.Id)
 				.Property(u => u.Id).HasColumnName("IdFilesClasses");
 			modelBuilder.Entity<_Settings>().HasKey(u => u.IdSettings);
+			modelBuilder.Entity<UserRegistration>().HasKey(u => u.UserId);
 		}
 
 	}

@@ -1,16 +1,7 @@
-﻿//тут 
-//onmouseOver должна корректно проверять кто over - скорее всего надо возвращать есть ли уже over и если есть - дальше уже не смотреть у внешних объектов
-//добавить окну 2 кнопки, добавить элемент ввода и заблокировать остальные события (скорее всего сделать метод у ViewMAnager что бы активировать модальный режим
-//	событие focus - элемент может быть неактивен, но при клике на нем он получает фокус и принимает/подписывается на события ввода текста
-//	или при клике вне его области оно теряет фокус (но наверно не теряет если не выбран другой элемент ввода)
-//	добавить флаг focused - и чтоб компоненты могли сами следить за своим  состоянием
-
-	//сделать чтоб при нажатии кнопки все остальные события блокировались, запускалось отдельное модальное окно с двумя кнопками
-	//и после закрытия кнопка получала ту надпись которую ввели
-
-using Engine.Visualization;
+﻿using Engine.Visualization;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -26,6 +17,7 @@ namespace Engine
 	/// 2 Обработка с паузой между нажатиями - ввод текста
 	/// 3 Залипание - отправка события только после отпускания кнопки (если будут нажаты ещё другие кнопки, то событие не отправится)
 	/// Так же будут обработчики дополнительных режимов - перемещение и модальный
+	/// двойной клик можно сделать как helper. возможно перемещение тоже будет перенесено в хелпер
 	/// </remarks> 
 	public class Input
 	{
@@ -54,6 +46,12 @@ namespace Engine
 		private string _oldInputValue = null;
 		private bool _isAnyKeyPressed;
 		private bool ModalStateChanged;
+		private int _cursorX;
+		private int _cursorY;
+		private int _windowPosX;
+		private int _windowPosY;
+		private bool _initWinPos = true;
+		public Func<Point> OnGetWindowPos;
 
 		/// <summary>
 		/// Кнопки в комбинациях, которые можно держать нажатыми, но комбинация будет считаться сработавшей
@@ -74,6 +72,7 @@ namespace Engine
 
 		public void ProcessInput()
 		{
+			if (_initWinPos) InitWindowPos();
 			ModalStateChanged = false;
 			_isAnyKeyPressed = UpdateKeyboardState();
 			var curNew = UpdateCursorState();
@@ -86,6 +85,15 @@ namespace Engine
 			GetInputSticked();// обработка отпускания кнопок
 		}
 
+		private void InitWindowPos()
+		{
+			if (OnGetWindowPos != null) {
+				var pos = OnGetWindowPos();
+				_windowPosX = pos.X;
+				_windowPosY = pos.Y;
+			}
+			_initWinPos = false;
+		}
 
 		/// <summary>
 		/// Добавить обычный получатель события
@@ -487,7 +495,7 @@ namespace Engine
 				action.DynamicInvoke();
 			}
 		}
-		
+
 		private string GetKeyList(List<Keys> keys)
 		{
 			return string.Join(";", keys);
@@ -576,12 +584,12 @@ namespace Engine
 		/// <summary>
 		/// Координата курсора X. Клиентская
 		/// </summary>
-		public int CursorX { get; protected set; }
+		public int CursorX { get { return _cursorX - _windowPosX; } protected set { _cursorX = value; } }
 
 		/// <summary>
 		/// Координата курсора Y. Клиентская
 		/// </summary>
-		public int CursorY { get; protected set; }
+		public int CursorY { get { return _cursorY - _windowPosY; } protected set { _cursorY = value; } }
 
 		/// <summary>
 		/// Преобразовывает код нажатой клавиши на клавиатуре в код с учётом текущей раскладки клавиатуры
@@ -591,5 +599,6 @@ namespace Engine
 		{
 			return string.Empty;
 		}
+
 	}
 }

@@ -18,7 +18,7 @@ namespace VisualizationOpenGL
 		private FormOpenGL4 _formOpenGl;
 		private AtlasManager _atlasManager;
 
-		public override void InitVisualization(DataSupportBase data, LogSystem log,int width, int height, bool fullScreen)
+		public override void InitVisualization(DataSupportBase data, LogSystem log, int width, int height, bool fullScreen)
 		{
 			// пригодится в дальнейшем.
 			//if (w <= h) {
@@ -29,7 +29,7 @@ namespace VisualizationOpenGL
 
 			_formOpenGl = new FormOpenGL4();
 			_formOpenGl.Size = fullScreen ?
-				Screen.PrimaryScreen.Bounds.Size : 
+				Screen.PrimaryScreen.Bounds.Size :
 				_formOpenGl.Size = new Size(width, height);
 			_formOpenGl.WindowState = fullScreen ?
 				FormWindowState.Maximized :
@@ -48,9 +48,9 @@ namespace VisualizationOpenGL
 			Il.ilInit();
 			Il.ilEnable(Il.IL_ORIGIN_SET);
 			// очиcтка окна
-			gl.ClearDepth(1.0f);		// Depth Buffer Setup
-			gl.Disable(GL.DEPTH_TEST);	// Disable Depth Buffer было enable, но почему то из-за этого не выводились текстуры
-			gl.DepthFunc(GL.LESS);		// The Type Of Depth Test To Do
+			gl.ClearDepth(1.0f);        // Depth Buffer Setup
+			gl.Disable(GL.DEPTH_TEST);  // Disable Depth Buffer было enable, но почему то из-за этого не выводились текстуры
+			gl.DepthFunc(GL.LESS);      // The Type Of Depth Test To Do
 			gl.Enable(GL.ALPHA_TEST);
 			ResizeGlScene(_formOpenGl.Width, _formOpenGl.Height);
 			LoadFont("default", "Consolas", 12);
@@ -62,10 +62,13 @@ namespace VisualizationOpenGL
 			//LoadFont("default2", "Calibri", 14);
 			//_controller.AddEventHandler("setHeader", (o, args) => SetHeader(o, args as MessageEventArgs));
 			//_controller.AddEventHandler("systemExit", Exit);
+			var c = _formOpenGl.PointToClient(Point.Empty);
 			LoadTexture("WTBGRound", "Resources/round.png");
 			LoadTexture("WTCursor", "Resources/cursor.png");
 			//LoadTextureModify("clear", "Resources/clear256x256.tga", new TPTRounded(), Color.Empty, Color.Empty);
 		}
+
+		public override Point WindowLocation { get { return _formOpenGl.DesktopLocation; } }
 
 		private void FormClosed(object sender, FormClosedEventArgs e)
 		{
@@ -102,6 +105,7 @@ namespace VisualizationOpenGL
 
 		private void ResizeGlScene(int width, int height)
 		{
+
 			// задаётся размер экрана, влияет на искажение вида, поэтому  надо пересчитать размеры
 			gl.Viewport(0, 0, width, height);
 			gl.MatrixMode(GL.PROJECTION);
@@ -187,7 +191,7 @@ namespace VisualizationOpenGL
 		{
 			Line(x + radius, y, x + width - radius, y);
 			Line(x + width, y + radius, x + width, y + height - radius);
-			Line(x + width-radius, y + height, x+radius, y + height);
+			Line(x + width - radius, y + height, x + radius, y + height);
 			Line(x, y + height - radius, x, y + radius);
 			_drawArc(x + radius, y + radius, radius, 270, 360, 10);
 			_drawArc(x + width - radius, y + radius, radius, 0, 90, 10);
@@ -207,18 +211,18 @@ namespace VisualizationOpenGL
 			if (radius < 400) st = 3;
 
 			var p1 = RoundPoints[a1];
-			var x1 = (int) (p1.X*rd + cx);
-			var y1 = (int) (p1.Y*rd + cy);
+			var x1 = (int)(p1.X * rd + cx);
+			var y1 = (int)(p1.Y * rd + cy);
 
 			int i;
 			int x2;
 			int y2;
 
-			for (i = a1+stepA; i <= a2; i+=st){
+			for (i = a1 + stepA; i <= a2; i += st) {
 				p1 = RoundPoints[i];
-				x2 = (int) (p1.X*rd + cx);
-				y2 = (int) (p1.Y*rd + cy);
-				Line(x1,y1,x2,y2);
+				x2 = (int)(p1.X * rd + cx);
+				y2 = (int)(p1.Y * rd + cy);
+				Line(x1, y1, x2, y2);
 				x1 = x2;
 				y1 = y2;
 			}
@@ -251,7 +255,7 @@ namespace VisualizationOpenGL
 		{
 			_Line(x + radius, y, x + width - radius, y);
 			_Line(x + width, y + radius, x + width, y + height - radius);
-			_Line(x + width-radius, y + height, x+radius, y + height);
+			_Line(x + width - radius, y + height, x + radius, y + height);
 			_Line(x, y + height - radius, x, y + radius);
 			var p1 = _getArcPoints(x + radius, y + radius, radius, 270, 360, 10);
 			var p2 = _getArcPoints(x + width - radius, y + radius, radius, 0, 90, 10);
@@ -265,9 +269,9 @@ namespace VisualizationOpenGL
 			gl.BlendFunc(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA);
 
 			gl.Begin(GL.POLYGON);
-			foreach (var f in p1){gl.Vertex2f(f.X,f.Y);}
-			gl.Vertex2f(x+radius, y);
-			gl.Vertex2f(x + width-radius, y);
+			foreach (var f in p1) { gl.Vertex2f(f.X, f.Y); }
+			gl.Vertex2f(x + radius, y);
+			gl.Vertex2f(x + width - radius, y);
 			foreach (var f in p2) { gl.Vertex2f(f.X, f.Y); }
 
 			gl.Vertex2f(x + width, y + radius);
@@ -277,7 +281,7 @@ namespace VisualizationOpenGL
 			gl.Vertex2f(x + width - radius, y + height);
 			gl.Vertex2f(x + radius, y + height);
 			foreach (var f in p4) { gl.Vertex2f(f.X, f.Y); }
-			
+
 			gl.Vertex2f(x, y + height - radius);
 			gl.Vertex2f(x, y + radius);
 
@@ -300,8 +304,8 @@ namespace VisualizationOpenGL
 			PointF p1;
 			int x2;
 			int y2;
-			
-			for (i = a1 + stepA; i <= a2; i += st){
+
+			for (i = a1 + stepA; i <= a2; i += st) {
 				p1 = RoundPoints[i];
 				x2 = (int)(p1.X * rd + cx);
 				y2 = (int)(p1.Y * rd + cy);
@@ -337,8 +341,8 @@ namespace VisualizationOpenGL
 		protected override void _Circle(int cx, int cy, int radius)
 		{
 			double theta = 2 * Math.PI / num_segments;
-			double tangetialFactor = Math.Tan(theta);//calculate the tangential factor 
-			double radialFactor = Math.Cos(theta);//calculate the radial factor 
+			double tangentialFactor = Math.Tan(theta);
+			double radialFactor = Math.Cos(theta);
 			double x = radius;//we start at angle = 0 
 			double y = 0;
 
@@ -348,8 +352,7 @@ namespace VisualizationOpenGL
 			gl.BlendFunc(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA);
 
 			gl.Begin(GL.LINE_LOOP);
-			for (int ii = 0; ii < num_segments; ii++)
-			{
+			for (int ii = 0; ii < num_segments; ii++) {
 				gl.Vertex2d(x + cx, y + cy); //output vertex 
 
 				//calculate the tangential vector 
@@ -361,8 +364,8 @@ namespace VisualizationOpenGL
 
 				//add the tangential vector 
 
-				x += tx * tangetialFactor;
-				y += ty * tangetialFactor;
+				x += tx * tangentialFactor;
+				y += ty * tangentialFactor;
 
 				//correct using the radial factor 
 
@@ -384,7 +387,7 @@ namespace VisualizationOpenGL
 		public override bool LoadAtlas(string atlasName)
 		{
 			var atlasFile = _atlasManager.GetAtlasFile(atlasName);
-			if (atlasFile==null) return false;
+			if (atlasFile == null) return false;
 
 			bool opacity = true;
 			// идентификатор текстуры
@@ -435,10 +438,10 @@ namespace VisualizationOpenGL
 		protected override void _DrawTexture(int x, int y, string textureName, float scale = 1)
 		{
 			var texInfo = _atlasManager.GetTextureInfo(textureName);
-			if (texInfo==null) return;
+			if (texInfo == null) return;
 			gl.LoadIdentity();
 			int z = 0;
-			gl.PushAttrib(GL.ALPHA_TEST);		// Save the current GL_ALPHA_TEST
+			gl.PushAttrib(GL.ALPHA_TEST);       // Save the current GL_ALPHA_TEST
 			gl.Enable(GL.ALPHA_TEST);
 			gl.PushAttrib(GL.TEXTURE_2D);
 			// включаем режим текстурирования 
@@ -467,7 +470,7 @@ namespace VisualizationOpenGL
 			gl.End();
 
 			gl.Rotated(-_angle, 0.0f, 0.0f, 1.0f);// вращаем всё назад
-			// возвращаем матрицу 
+												  // возвращаем матрицу 
 			gl.PopMatrix();
 			// возвращаем всё в исходное состояние
 			gl.PopAttrib();//Gl.GL_BLEND
@@ -533,7 +536,7 @@ namespace VisualizationOpenGL
 			gl.End();
 
 			gl.Rotated(-_angle, 0.0f, 0.0f, 1.0f);// вращаем всё назад
-			// возвращаем матрицу 
+												  // возвращаем матрицу 
 			gl.PopMatrix();
 			// возвращаем всё в исходное состояние
 			gl.PopAttrib();//Gl.GL_BLEND
@@ -597,7 +600,7 @@ namespace VisualizationOpenGL
 			gl.End();
 
 			gl.Rotated(-_angle, 0.0f, 0.0f, 1.0f);// вращаем всё назад
-			// возвращаем матрицу 
+												  // возвращаем матрицу 
 			gl.PopMatrix();
 			// возвращаем всё в исходное состояние
 			gl.PopAttrib();//Gl.GL_BLEND
@@ -620,22 +623,22 @@ namespace VisualizationOpenGL
 			gl.Enable(GL.BLEND);
 			// http://www.opengl.org/archives/resources/faq/technical/transparency.htm
 			//Gl.glBlendFunc(Gl.GL_SRC_ALPHA, Gl.GL_ONE_MINUS_SRC_ALPHA);		// Blend Screen Color With Zero (Black)
-			gl.BlendFunc(GL.DST_COLOR, GL.ZERO);		// Blend Screen Color With Zero (Black)
-			gl.BindTexture(GL.TEXTURE_2D, texInfoMask.TextureCode);	// Select The First Mask Texture
-			gl.Begin(GL.QUADS);							// Start Drawing A Textured Quad
+			gl.BlendFunc(GL.DST_COLOR, GL.ZERO);        // Blend Screen Color With Zero (Black)
+			gl.BindTexture(GL.TEXTURE_2D, texInfoMask.TextureCode); // Select The First Mask Texture
+			gl.Begin(GL.QUADS);                         // Start Drawing A Textured Quad
 			gl.TexCoord2f(1, 0); gl.Vertex3d(x + h, y + w, 0);
 			gl.TexCoord2f(1, 1); gl.Vertex3d(x + h, y, 0);
 			gl.TexCoord2f(0, 1); gl.Vertex3d(x, y, 0);
 			gl.TexCoord2f(0, 0); gl.Vertex3d(x, y + w, 0);
-			gl.End();											// Done Drawing The Quad
+			gl.End();                                           // Done Drawing The Quad
 
 			h = texInfoNormal.AtlasHeight;
 			w = texInfoNormal.AtlasWidth;
 
-			gl.BlendFunc(GL.ONE, GL.ONE);				// Copy Image 1 Color To The Screen
-			//Gl.glBlendFunc(Gl.GL_ONE, Gl.GL_ONE);				// Copy Image 1 Color To The Screen
-			gl.BindTexture(GL.TEXTURE_2D, texInfoNormal.TextureCode);	// Select The First Image Texture
-			gl.Begin(GL.QUADS);							// Start Drawing A Textured Quad
+			gl.BlendFunc(GL.ONE, GL.ONE);               // Copy Image 1 Color To The Screen
+														//Gl.glBlendFunc(Gl.GL_ONE, Gl.GL_ONE);				// Copy Image 1 Color To The Screen
+			gl.BindTexture(GL.TEXTURE_2D, texInfoNormal.TextureCode);   // Select The First Image Texture
+			gl.Begin(GL.QUADS);                         // Start Drawing A Textured Quad
 			gl.TexCoord2f(1, 0); gl.Vertex3d(x + h, y + w, 0);
 			gl.TexCoord2f(1, 1); gl.Vertex3d(x + h, y, 0);
 			gl.TexCoord2f(0, 1); gl.Vertex3d(x, y, 0);
@@ -717,12 +720,12 @@ namespace VisualizationOpenGL
 			byte[] w1251Bytes = ConvertEncoding(text);
 
 			// вывод текста
-			gl.PushAttrib(GL.DEPTH_TEST);		// Save the current Depth test settings (Used for blending )
-			gl.PushAttrib(GL.TEXTURE_2D);		// Save the current GL_TEXTURE_2D
-			gl.PushAttrib(GL.ALPHA_TEST);		// Save the current GL_ALPHA_TEST
-			gl.PushAttrib(GL.BLEND);		    // Save the current GL_BLEND
-			gl.Disable(GL.DEPTH_TEST);			// Turn off depth testing (otherwise we get no FPS)
-			gl.Disable(GL.TEXTURE_2D);			// Выключаем текстурирование, текстурный текст
+			gl.PushAttrib(GL.DEPTH_TEST);       // Save the current Depth test settings (Used for blending )
+			gl.PushAttrib(GL.TEXTURE_2D);       // Save the current GL_TEXTURE_2D
+			gl.PushAttrib(GL.ALPHA_TEST);       // Save the current GL_ALPHA_TEST
+			gl.PushAttrib(GL.BLEND);            // Save the current GL_BLEND
+			gl.Disable(GL.DEPTH_TEST);          // Turn off depth testing (otherwise we get no FPS)
+			gl.Disable(GL.TEXTURE_2D);          // Выключаем текстурирование, текстурный текст
 			gl.Enable(GL.ALPHA_TEST);
 			gl.Enable(GL.BLEND);
 
@@ -733,10 +736,10 @@ namespace VisualizationOpenGL
 			gl.CallLists(w1251Bytes.Length, GL.UNSIGNED_BYTE, w1251Bytes); // Display the text
 			gl.PopAttrib();                     // Restore the old base list
 
-			gl.PopAttrib();	// Restore GL_BLEND
-			gl.PopAttrib();	// Restore GL_ALPHA_TEST
-			gl.PopAttrib();	// Restore GL_TEXTURE_2D
-			gl.PopAttrib();	// Restore GL_DEPTH_TEST
+			gl.PopAttrib(); // Restore GL_BLEND
+			gl.PopAttrib(); // Restore GL_ALPHA_TEST
+			gl.PopAttrib(); // Restore GL_TEXTURE_2D
+			gl.PopAttrib(); // Restore GL_DEPTH_TEST
 			_textCursorX = x + TextLength(w1251Bytes);
 			_textCursorY = y;
 
@@ -775,7 +778,7 @@ namespace VisualizationOpenGL
 		/// указатель на шрифт в памяти, наверное
 		/// </summary>
 		private int _fontBasePtr = -1;
-		
+
 		/// <summary>
 		/// Словарь ссылок на шрифт в памяти
 		/// </summary>
@@ -796,7 +799,7 @@ namespace VisualizationOpenGL
 		// хранит шрифты, созданные построителем шрифтов
 		private Dictionary<string, IntPtr> _fonts = new Dictionary<string, IntPtr>();
 
-		private void BuildFont(string fontCodeName,string fontName, int fontHeight)
+		private void BuildFont(string fontCodeName, string fontName, int fontHeight)
 		{
 			IntPtr font;
 			IntPtr oldfont;
@@ -849,7 +852,7 @@ namespace VisualizationOpenGL
 			var font = _fonts[fontCodeName];
 
 			IntPtr dc = Wgl.wglGetCurrentDC();
-			IntPtr oldfont = Gdi.SelectObject(dc, font); 
+			IntPtr oldfont = Gdi.SelectObject(dc, font);
 			//Wgl.wglUseFontOutlinesA(dc, 0, 256, _fontBasePtr, 0, 0f, Wgl.WGL_FONT_POLYGONS, _glyphMetrics);
 			Wgl.wglUseFontBitmapsA(dc, 0, 256, _fontBasePtr);
 			Gdi.SelectObject(dc, oldfont);
@@ -874,7 +877,7 @@ namespace VisualizationOpenGL
 			gl.TexParameteri(GL.TEXTURE_2D, GL.TEXTURE_MIN_FILTER, GL.NEAREST);
 			gl.TexEnvf(GL.TEXTURE_ENV, GL.TEXTURE_ENV_MODE, GL.REPLACE);
 			// создаем RGB или RGBA текстуру 
-			switch (format){
+			switch (format) {
 				case GL.RGB:
 					gl.TexImage2D(GL.TEXTURE_2D, 0, GL.RGB, w, h, 0, GL.RGB, GL.UNSIGNED_BYTE, pixels);
 					break;

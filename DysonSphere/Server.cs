@@ -8,6 +8,7 @@ using System;
 using System.Diagnostics;
 using System.Windows.Forms;
 using Timer = System.Windows.Forms.Timer;
+using System.Drawing;
 
 namespace DysonSphere
 {
@@ -16,7 +17,6 @@ namespace DysonSphere
 	/// </summary>
 	public class Server
 	{
-		private string _solt = "vsbNM37SD8FBv46jf6jf";
 		private Stopwatch _stopwatch;
 		private DataSupportBase _datasupport;
 		private LogSystem _logsystem;
@@ -55,6 +55,7 @@ namespace DysonSphere
 			// создаётся объект для работы с пользовательским вводом
 			var inputId = _datasupport.ServerSettingsGetValue("input");
 			_input = _collector.GetObject(inputId) as Input;
+			_input.OnGetWindowPos += ServerGetWindowPos;
 
 			// 3 создаётся объект для вывода на экран
 			var visualizationId = _datasupport.ServerSettingsGetValue("visualization");
@@ -64,14 +65,14 @@ namespace DysonSphere
 			// 1 создаётся объект для работы с пользователями (мат модель работы с пользователями)
 			_model = new ModelServer(_collector);
 			_visualization.ExitMessage += _model.Stop;
-			var modelPlayers = new ModelPlayers(_datasupport, _solt);
+			var modelPlayers = new ModelPlayers(_datasupport);
 			_model.AddModel(modelPlayers);
-			_model.TCPServer.RegisterPlayer += modelPlayers.RegisterUser;
-
-
+			_model.TCPServerModel.OnPlayerConnected += modelPlayers.CreatePlayer;
+			_model.TCPServerModel.OnServerProcessPlayers += modelPlayers.ProcessMessagesServer;
 
 
 			_viewManager = new ViewManager(_visualization, _input);
+			//_viewManager.WindowPosChanged(p.X, p.Y);
 			// соединяем модели, формируем основные пути передачи информации
 			// вынести в отдельный метод. делать что то наподобие serverInitializer нету смысла - надо будет передавать много параметров, а они уникальные
 			var serverView = new ServerView();
@@ -111,6 +112,11 @@ namespace DysonSphere
 			// 4 создаётся обработчик соединений
 
 			Log("Сервер работает");
+		}
+
+		private Point ServerGetWindowPos()
+		{
+			return _visualization.WindowLocation;
 		}
 
 		private void Close()

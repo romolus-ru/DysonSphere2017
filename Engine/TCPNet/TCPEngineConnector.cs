@@ -17,10 +17,11 @@ namespace Engine.TCPNet
 	/// </summary>
 	public class TCPEngineConnector : TCPConnector
 	{
+		private const int NoPlayerId = -1;
 		/// <summary>
 		/// Идентификатор пользователя в системе сетевого соединения
 		/// </summary>
-		public int playerId = -1;
+		public int playerId = NoPlayerId;
 		public bool Authorized = false;
 		// Код операции ushort
 		private const int LengthCodeOperation = 2;
@@ -28,6 +29,7 @@ namespace Engine.TCPNet
 		private const int LengthCodeClass = 2;
 		// Длина информации ushort
 		private const int LengthRecievedData = 2;
+		public List<TCPMessage> Messages = new List<TCPMessage>();
 
 		// (2 байта) код типа команды от пользователя или от сервера пользователю
 		//    пункт назначения передаваемой информации
@@ -54,7 +56,7 @@ namespace Engine.TCPNet
 		/// преобразуем объект в массив байт
 		/// </summary>
 		/// <returns></returns>
-		public byte[] ConvertToBytes(ushort opCode, ushort classId, EventBase obj)
+		public byte[] ConvertToBytes(TCPOperations opCode, ushort classId, EventBase obj)
 		{
 			byte[] result = null;
 			using (var ms = new MemoryStream()) {
@@ -65,7 +67,7 @@ namespace Engine.TCPNet
 				if (ms.Length > ushort.MaxValue) throw new Exception("Большая длина передаваемых данных " + ms.Length + " байт для объекта с кодом "
 					+ classId.ToString() + " класс " + obj.GetType().ToString());
 				var len = (ushort)ms.Length;
-				result = BitConverter.GetBytes(opCode) //2
+				result = BitConverter.GetBytes((ushort)opCode) //2
 					.Concat(BitConverter.GetBytes(classId)) //2
 					.Concat(BitConverter.GetBytes(len)) // 2
 					.Concat(bytes)
@@ -123,10 +125,10 @@ namespace Engine.TCPNet
 		/// <summary>
 		/// Получаем присланные данные и сохраняем в RecievedData
 		/// </summary>
-		public List<TCPMessage> ProcessData()
+		public int ProcessData()
 		{
 			GetData();
-			if (DataLoaded.Count < 1) return null;
+			if (DataLoaded.Count < 1) return NoPlayerId;
 			List<byte[]> data1;
 			lock (DataLoaded) {
 				data1 = new List<byte[]>(DataLoaded);
@@ -149,10 +151,11 @@ namespace Engine.TCPNet
 					offset += len + LengthCodeClass + LengthCodeOperation + LengthRecievedData;
 				} while (offset < bytes.Length);
 			}
-			return msgs;
+			lock (Messages) Messages.AddRange(msgs);
+			return playerId;
 		}
 
-		public void SendMSGData(ushort opCode, EventBase msg)
+		public void SendMSGData(TCPOperations opCode, EventBase msg)
 		{
 			var classId = _collector.GetClassID(msg);
 			var bytes = ConvertToBytes(opCode, classId, msg);

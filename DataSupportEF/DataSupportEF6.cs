@@ -8,6 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Engine;
 using Engine.Data;
+using Engine.DataPlus;
+using Engine.Enums;
 
 namespace DataSupportEF
 {
@@ -133,6 +135,23 @@ namespace DataSupportEF
 					   EntityState.Modified;
 			ds.SaveChanges();
 			ServerSettingsGetAll();
+		}
+
+		public override ErrorType RegisterUser(UserRegistration userRegistration)
+		{
+			var user=ds.UserRegistration.Where(ur => ur.UserGUID == userRegistration.UserGUID && ur.HSPassword == userRegistration.HSPassword).FirstOrDefault();
+			if (user != null) return ErrorType.UserAlreadyRegistered;
+			// не нашли такого пользователя - создаём
+			ds.Entry(userRegistration).State = EntityState.Added;
+			ds.SaveChanges();
+			return ErrorType.NoError;
+		}
+
+		public override UserRegistration LoginUser(LoginData loginData)
+		{
+			var user = ds.UserRegistration.Where(ur => ur.UserGUID == loginData.UserGUID && ur.HSPassword == loginData.HSPassword).FirstOrDefault();
+			if (user == null) return null;
+			return user;
 		}
 
 	}

@@ -1,5 +1,7 @@
 ﻿using Engine.Data;
+using Engine.Enums;
 using Engine.Helpers;
+using Engine.TCPNet;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,30 +15,54 @@ namespace Engine.Models
 	/// </summary>
 	public class ModelPlayers:Model
 	{
-		private List<UserRegistration> _players = new List<UserRegistration>();
+		private Dictionary<int, ModelPlayer> _players = new Dictionary<int, ModelPlayer>();
 		private DataSupportBase _db;
-		/// <summary>
-		/// Соль для паролей. а название в честь фильма где ангелина джоли играла роль тома круза
-		/// </summary>
-		private string _solt;
-		public ModelPlayers(DataSupportBase db, string solt) : base()
+
+		public ModelPlayers(DataSupportBase db) : base()
 		{
 			_db = db;
 		}
 
-		public override void Tick()
+		public void CreatePlayer(TCPEngineConnector playerConnection)
 		{
-			base.Tick();
+			var playerId = playerConnection.playerId;
+			var player = new ModelPlayer(null, null, playerConnection);
+			_players.Add(playerId, player);
+			player.OnRegistrationUser += _db.RegisterUser;
+			player.OnLogin += _db.LoginUser;
 		}
 
-		public void RegisterUser(int playerTCPId, UserRegistration user)
+		/// <summary>
+		/// Обработать присланные сообщения (сервер)
+		/// </summary>
+		/// <param name="playersIds"></param>
+		public void ProcessMessagesServer(HashSet<int> playersIds)
 		{
-			var pass1 = user.HSPassword;
-			pass1 = CryptoHelper.CalculateHash(pass1 + _solt + user.UserGUID);
-			user.HSPassword = pass1;
-			user.UserRole = Enums.Role.Player;
-			// проверяем есть ли в базе такой и сохраняем его там
+			foreach (var playerId in playersIds) {
+				if (!_players.ContainsKey(playerId)) continue;
+				_players[playerId].ProcessMessages();
+			}
+		}
 
+		// TODO Наверно всё таки разделить надо будет на клиента и сервера - а то вызовут добавление клиента
+		private bool _playerAdded = false;
+		/// <summary>
+		/// Добавить клиента в список игроков. при запуске игры
+		/// </summary>
+		public void AddClient(ModelPlayer player)
+		{
+			if (_playerAdded) return;
+			_playerAdded = true;
+			_players.Add(0, player);
+		}
+
+		/// <summary>
+		/// Обработать присланные сообщения (клиент)
+		/// </summary>
+		/// <remarks>Идентификатор у локального клиента должен быть 0</remarks>
+		public void ProcessMessagesClient()
+		{
+			_players[0].ProcessMessages();
 		}
 	}
 }

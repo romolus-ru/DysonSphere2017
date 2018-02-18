@@ -69,7 +69,7 @@ namespace Engine.TCPNet
 			}
 		}
 
-		public void GetData()
+		protected void GetData()
 		{
 			var st = Client.GetStream();
 			if (!st.DataAvailable) return;
@@ -86,7 +86,7 @@ namespace Engine.TCPNet
 		/// Записать массив байт в поток для передачи
 		/// </summary>
 		/// <param name="data"></param>
-		public async void SendMsg(byte[] data)
+		protected async void SendMsg(byte[] data)
 		{
 			var st = Client.GetStream();
 			await st.WriteAsync(data, 0, data.Length);
