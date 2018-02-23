@@ -40,7 +40,7 @@ namespace DataSupportEF
 				.HasKey(u => u.Id)
 				.Property(u => u.Id).HasColumnName("IdFilesClasses");
 			modelBuilder.Entity<_Settings>().HasKey(u => u.IdSettings);
-			modelBuilder.Entity<UserRegistration>().HasKey(u => u.UserId);
+			modelBuilder.Entity<UserRegistration>().HasKey(u => u.IdUser);
 		}
 
 	}

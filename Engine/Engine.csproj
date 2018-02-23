@@ -110,12 +110,13 @@
     <Compile Include="Data\TimerDate.cs" />
     <Compile Include="Data\UserRegistration.cs" />
     <Compile Include="Data\_Settings.cs" />
+    <Compile Include="Enums\Client\LoginState.cs" />
+    <Compile Include="Enums\Client\RegistrationState.cs" />
     <Compile Include="Enums\ErrorType.cs" />
     <Compile Include="Enums\Role.cs" />
     <Compile Include="Enums\TCPOperations.cs" />
     <Compile Include="EventSystem\Event\EventBase.cs" />
     <Compile Include="EventSystem\Event\MessageString.cs" />
-    <Compile Include="EventSystem\FileArchieve.cs" />
     <Compile Include="GameInitializer.cs" />
     <Compile Include="Helpers\CryptoHelper.cs" />
     <Compile Include="Helpers\DataSupportFileHelper.cs" />
@@ -124,15 +125,20 @@
     <Compile Include="Input.cs" />
     <Compile Include="InputKeyStatePause.cs" />
     <Compile Include="Models\Model.cs" />
-    <Compile Include="Models\ModelClient.cs" />
+    <Compile Include="Models\ModelMainClient.cs" />
     <Compile Include="Models\ModelMain.cs" />
     <Compile Include="Models\ModelPlayer.cs" />
+    <Compile Include="Models\ModelPlayerClient.cs" />
     <Compile Include="Models\ModelPlayers.cs" />
-    <Compile Include="Models\ModelServer.cs" />
+    <Compile Include="Models\ModelPlayersClient.cs" />
+    <Compile Include="Models\ModelPlayerServer.cs" />
+    <Compile Include="Models\ModelPlayersServer.cs" />
+    <Compile Include="Models\ModelMainServer.cs" />
     <Compile Include="Models\TCPClientModel.cs" />
     <Compile Include="Models\TCPServerModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings.cs" />
+    <Compile Include="StateClient.cs" />
     <Compile Include="TCPNet\TCPClient.cs" />
     <Compile Include="TCPNet\TCPConnector.cs" />
     <Compile Include="TCPNet\TCPEngineConnector.cs" />
@@ -144,6 +150,11 @@
     <Compile Include="Utils\LogData.cs" />
     <Compile Include="Utils\LogSystem.cs" />
     <Compile Include="Utils\Query\Dynamic.cs" />
+    <Compile Include="Visualization\Debug\Modules\StateClientView.cs" />
+    <Compile Include="Visualization\Debug\Modules\ComponentsView.cs" />
+    <Compile Include="Visualization\Debug\DebugView.cs" />
+    <Compile Include="Visualization\Debug\Modules\EventsView.cs" />
+    <Compile Include="Visualization\Debug\Modules\KeysView.cs" />
     <Compile Include="Visualization\LoginWindow.cs" />
     <Compile Include="Visualization\View.cs" />
     <Compile Include="Visualization\ViewButton.cs" />
@@ -164,6 +175,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

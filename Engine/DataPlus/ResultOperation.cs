@@ -11,6 +11,7 @@ namespace Engine.DataPlus
 	/// <summary>
 	/// Результат выполнения операции
 	/// </summary>
+	[Serializable]
 	public class ResultOperation : EventBase
 	{
 		public TCPOperations OperationType;

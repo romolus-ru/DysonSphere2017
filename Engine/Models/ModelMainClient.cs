@@ -8,10 +8,10 @@ using Engine.Utils;
 
 namespace Engine
 {
-	public class ModelClient : ModelMain
+	public class ModelMainClient : ModelMain
 	{
 		public TCPClientModel TCPClientModel { get; private set; }
-		public ModelClient(Collector collector)
+		public ModelMainClient(Collector collector)
 		{
 			TCPClientModel = new TCPClientModel(collector);
 			TCPClientModel.Init();

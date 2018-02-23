@@ -23,7 +23,7 @@ namespace Engine.Helpers
 				bytes[i] = dtBytes[i];
 			}
 
-			bytes[4] = _counter;
+			bytes[4] = _counter;// пригодится только или еслибудет сервис или несколько раз подряд будет генерироваться на одном компе
 			bytes[5] = 1;// type of operation system
 			bytes[6] = 1;// OS version 
 			for (int i = 7; i < totalLength; i++) {
@@ -31,7 +31,7 @@ namespace Engine.Helpers
 			}
 			var full = Convert.ToBase64String(bytes);
 			var part = full.Replace("/", "").Replace("+", "");
-			var res = part.Substring(0, 7) + "><" + part.Substring(9, 12);
+			var res = part.Substring(0, 7) + /*"><" +*/ part.Substring(9, 12);
 
 			return res;
 		}

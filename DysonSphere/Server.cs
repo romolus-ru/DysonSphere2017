@@ -24,7 +24,7 @@ namespace DysonSphere
 		private Input _input;
 		private VisualizationProvider _visualization;
 		private string LogTag = "Server";
-		private ModelServer _model;
+		private ModelMainServer _model;
 		private ViewManager _viewManager;
 		private Timer _timer;
 
@@ -63,9 +63,9 @@ namespace DysonSphere
 			_visualization.InitVisualization(_datasupport, _logsystem, 800, 600, false);
 
 			// 1 создаётся объект для работы с пользователями (мат модель работы с пользователями)
-			_model = new ModelServer(_collector);
+			_model = new ModelMainServer(_collector);
 			_visualization.ExitMessage += _model.Stop;
-			var modelPlayers = new ModelPlayers(_datasupport);
+			var modelPlayers = new ModelPlayersServer(_datasupport);
 			_model.AddModel(modelPlayers);
 			_model.TCPServerModel.OnPlayerConnected += modelPlayers.CreatePlayer;
 			_model.TCPServerModel.OnServerProcessPlayers += modelPlayers.ProcessMessagesServer;

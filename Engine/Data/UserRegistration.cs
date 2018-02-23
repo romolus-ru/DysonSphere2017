@@ -5,9 +5,10 @@ using System.Collections.Generic;
 
 namespace Engine.Data
 {
+	[Serializable]
 	public partial class UserRegistration : EventBase
 	{
-		public long UserId { get; set; }
+		public long IdUser { get; set; }
 		/// <summary>
 		/// Создаётся автоматически для пользователя при первом запуске игры
 		/// </summary>

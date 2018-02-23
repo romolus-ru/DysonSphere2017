@@ -13,7 +13,6 @@ namespace Engine.TCPNet
 		/// <summary>
 		/// Для клиентского приложения передаём null, иначе при создании сервером он ему передаст настроенного клиента
 		/// </summary>
-		/// <param name="createClient"></param>
 		public void Init(TcpClient client = null)
 		{
 			IsClient = false;

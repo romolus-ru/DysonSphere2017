@@ -8,10 +8,10 @@ using Engine.Utils;
 
 namespace Engine
 {
-	public class ModelServer : ModelMain
+	public class ModelMainServer : ModelMain
 	{
 		public TCPServerModel TCPServerModel { get; private set; }
-		public ModelServer(Collector collector)
+		public ModelMainServer(Collector collector)
 		{
 			TCPServerModel = new TCPServerModel(collector);
 			TCPServerModel.Init();

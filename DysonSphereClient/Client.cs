@@ -1,10 +1,13 @@
 ﻿using Engine;
 using Engine.Data;
+using Engine.DataPlus;
 using Engine.Enums;
+using Engine.Enums.Client;
 using Engine.Models;
 using Engine.TCPNet;
 using Engine.Utils;
 using Engine.Visualization;
+using Engine.Visualization.Debug;
 using System;
 using System.Diagnostics;
 using System.Drawing;
@@ -26,10 +29,10 @@ namespace DysonSphereClient
 		private Input _input;
 		private VisualizationProvider _visualization;
 		private string LogTag = "Client";
-		private ModelClient _model;
+		private ModelMainClient _model;
 		private ViewManager _viewManager;
 		private Timer _timer;
-		private ModelPlayer _mplayer;
+		private ModelPlayerClient _mplayer;
 		private UserRegistration _rplayer;
 
 		/// <summary>
@@ -46,6 +49,7 @@ namespace DysonSphereClient
 			Settings.Init();
 			// сохраняем обработчик логов
 			_logsystem = logSystem;
+			StateClient.InitState();
 
 			_timer = new Timer();
 			_timer.Interval = TimerInterval;
@@ -71,15 +75,15 @@ namespace DysonSphereClient
 			_visualization.InitVisualization(_datasupport, _logsystem, 500, 500, true);
 
 			// 1 создаётся объект для работы с пользователями (мат модель работы с пользователями)
-			_model = new ModelClient(_collector);
+			_model = new ModelMainClient(_collector);
 			_visualization.ExitMessage += _model.Stop;
-			var modelPlayers = new ModelPlayers(_datasupport);
 			_rplayer = _datasupport.UserStatus;// загружаем данные игрока (основные)
 			var clientConnection = new TCPClient();
-			_mplayer = new ModelPlayer(_rplayer.UserGUID, _rplayer.NickName, clientConnection);
-			modelPlayers.AddClient(_mplayer);// добавляем игрока для обработки в матмоделях
+			_mplayer = new ModelPlayerClient(_rplayer.UserGUID, _rplayer.NickName, clientConnection);
+			var modelPlayers = new ModelPlayersClient(_mplayer, _datasupport);
 			_model.AddModel(modelPlayers);
-
+			_model.TCPClientModel.OnProcessPlayers += modelPlayers.ProcessMessagesClient;
+			modelPlayers.OnRegistrationResult += RegisterResult;
 
 			_viewManager = new ViewManager(_visualization, _input);
 			// соединяем модели, формируем основные пути передачи информации
@@ -110,14 +114,20 @@ namespace DysonSphereClient
 			btn3.SetParams(70, 35, 240, 40, "btn2");
 			btn3.InitTexture("textRB", "textRB");
 
+			var btn4 = new ViewButton();
+			pnl.AddComponent(btn4);
+			btn4.InitButton(Register, "r", "hint", Keys.I);
+			btn4.SetParams(70, 50, 240, 40, "btn2");
+			btn4.InitTexture("textRB", "textRB");
+
 			var btnClose = new ViewButton();
 			_viewManager.AddView(btnClose);
 			btnClose.InitButton(Close, "exit", "hint", Keys.LMenu, Keys.X);
 			btnClose.SetParams(1659, 0, 20, 20, "btnE");
 
-			//var debugView = new DebugView();
-			//_viewManager.AddView(debugView);
-			//debugView.SetParams(1100, 0, debugView.Width, debugView.Height, "DebugView");
+			var debugView = new DebugView();
+			_viewManager.AddView(debugView);
+			debugView.SetParams(1100, 0, debugView.Width, debugView.Height, "DebugView");
 
 			var dragable = new ViewDragable();
 			dragable.SetParams(800, 250, 30, 30, "dragableObject");
@@ -134,6 +144,29 @@ namespace DysonSphereClient
 			_model.TCPClientModel.Connect("", -1);
 		}
 
+		private void Register()
+		{
+			StateClient.RegistrationState = RegistrationState.RegistrationRequest;
+			_rplayer.NickName = "nick";
+			_rplayer.OfficialName = "oname";
+			_rplayer.Mail = "a@a.a";
+			_model.TCPClientModel.SendMessage(TCPOperations.Registration, _rplayer);
+		}
+
+		private void RegisterResult(ResultOperation result)
+		{
+			if (result.Result == ErrorType.NoError) {
+				StateClient.RegistrationState = RegistrationState.Registered;
+				return;
+			}
+			if (result.Result == ErrorType.UserAlreadyRegistered) {
+				StateClient.RegistrationState = RegistrationState.RegistrationRejected;
+				StateClient.RegistrationMessage = result.Message;
+				return;
+			}
+			StateClient.RegistrationState = RegistrationState.NotRegistered;
+		}
+
 		private Point ClientGetWindowPos()
 		{
 			return _visualization.WindowLocation;
@@ -141,6 +174,8 @@ namespace DysonSphereClient
 
 		private void Close()
 		{
+			_datasupport.UserStatus = _rplayer;
+			StateClient.SaveState();
 			_visualization.Exit();
 		}
 

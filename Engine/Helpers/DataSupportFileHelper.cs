@@ -9,7 +9,11 @@ namespace Engine.Helpers
 	public static class DataSupportFileHelper
 	{
 		/// <summary>
-		/// Расширение дляфайлов с данными
+		/// Расширение для временных файлов с данными
+		/// </summary>
+		public const string TMPDataFileExtension = ".tmpdata";
+		/// <summary>
+		/// Расширение для файлов с данными
 		/// </summary>
 		public const string DataFileExtension = ".data";
 		/// <summary>
@@ -27,6 +31,8 @@ namespace Engine.Helpers
 		public const string SettingsData = MainData;
 		public const string UserRegistrationFile = DataFileDirectory + "UserRegistration" + DataFileExtension;
 		public const string UserRegistrationData = MainData;
+		public const string StateClientFile = DataFileDirectory + "StateClient" + TMPDataFileExtension;
+		public const string StateClientData = MainData;
 
 	}
 }
