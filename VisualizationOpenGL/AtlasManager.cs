@@ -12,7 +12,7 @@ namespace VisualizationOpenGL
 	/// <summary>
 	/// Управление атласами. в основном для VisualizationProvider for OpenGL (из-за того что нужен UInt)
 	/// </summary>
-	public class AtlasManager
+	internal class AtlasManager
 	{
 		private DataSupportBase _data;
 		private LogSystem _log;
@@ -43,7 +43,6 @@ namespace VisualizationOpenGL
 		/// <summary>
 		/// Загружаем атлас из базы и возвращаем имя файла, который надо загрузить
 		/// </summary>
-		/// <param name="atlasName"></param>
 		/// <returns></returns>
 		public void InitAtlasTextures(AtlasFiles atlas, uint textureId, int blendParam)
 		{

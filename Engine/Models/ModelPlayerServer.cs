@@ -31,7 +31,7 @@ namespace Engine.Models
 			loginData.HSPassword = RecalcPass(loginData.HSPassword, loginData.UserGUID);
 		}
 
-		public void AceptLoginData(UserRegistration ur)
+		public void AcceptLoginData(UserRegistration ur)
 		{
 			this.UserRole = ur.UserRole;
 			this.PlayerGUID = ur.UserGUID;

@@ -12,14 +12,8 @@ namespace Engine.Models
 	/// </summary>
 	public class ModelPlayerClient : ModelPlayer
 	{
-		public ModelPlayerClient(string playerGUID, string nickName, TCPEngineConnector connection) : base(playerGUID, nickName, connection)
+		public ModelPlayerClient(string playerGUID, string nickName) : base(playerGUID, nickName, null)
 		{
 		}
-
-		/// <summary>
-		/// Залогирован ли на сервере игрок
-		/// </summary>
-		public bool LoggedIn { get; private set; }
-
 	}
 }

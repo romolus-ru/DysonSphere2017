@@ -19,6 +19,15 @@ namespace Engine
 	public class StateClient
 	{
 		/// <summary>
+		/// Состояние соединения с сервером
+		/// </summary>
+		public static bool ConnectionState = false;
+		/// <summary>
+		/// Сообщение от системы соединения с сервером
+		/// </summary>
+		public static string ConnectionMessage = null;
+
+		/// <summary>
 		/// Состояние регистрации пользователя
 		/// </summary>
 		public static RegistrationState RegistrationState = RegistrationState.NotRegistered;
@@ -30,6 +39,10 @@ namespace Engine
 		/// Состояние логина
 		/// </summary>
 		public static LoginState LoginState = LoginState.NotLogedIn;
+		/// <summary>
+		/// Сообщение от сервера в случае какой-либо ошибки
+		/// </summary>
+		public static string LoginMessage = null;
 
 		private StateClient() { }
 		/// <summary>

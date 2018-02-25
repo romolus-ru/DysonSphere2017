@@ -13,6 +13,7 @@ namespace Engine.Models
 	{
 		private ModelPlayerClient _player = null;
 		public Action<ResultOperation> OnRegistrationResult;
+		public Action<ResultOperation> OnLoginResult;
 		/// <summary>
 		/// Обработка операций
 		/// </summary>
@@ -21,15 +22,15 @@ namespace Engine.Models
 		{
 			_player = player;
 			Operate = new Dictionary<TCPOperations, Action<ModelPlayerClient, TCPMessage>>();
-			Operate[TCPOperations.Registration] = RegistrationResult;
+			Operate[TCPOperations.Registration] = RegistrationResultRequest;
+			Operate[TCPOperations.Login] = LoginResultRequest;
 		}
 
 		/// <summary>
 		/// Обработать присланные сообщения (клиент)
 		/// </summary>
-		public void ProcessMessagesClient()
+		public void ProcessMessagesClient(List<TCPMessage> messages)
 		{
-			var messages = _player.GetMessages();
 			if (messages == null) return;
 			foreach (var msg in messages) {
 				var opcode = msg.opCode;
@@ -38,9 +39,15 @@ namespace Engine.Models
 			}
 		}
 
-		private void RegistrationResult(ModelPlayerClient player, TCPMessage msg)
+		private void RegistrationResultRequest(ModelPlayerClient player, TCPMessage msg)
 		{
 			OnRegistrationResult?.Invoke(msg._msg as ResultOperation);
 		}
+
+		private void LoginResultRequest(ModelPlayerClient player, TCPMessage msg)
+		{
+			OnLoginResult?.Invoke(msg._msg as ResultOperation);
+		}
+
 	}
 }

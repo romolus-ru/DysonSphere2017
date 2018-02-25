@@ -37,6 +37,7 @@ namespace Engine.Visualization.Debug.Modules
 		
 		public override void DrawObject(VisualizationProvider visualizationProvider)
 		{
+			BorderCutOffStart();
 			base.DrawObject(visualizationProvider);
 			RefreshList();
 			var y = 10;
@@ -45,6 +46,7 @@ namespace Engine.Visualization.Debug.Modules
 				visualizationProvider.Print(X + 10, Y + y, item);
 				y += 14;
 			}
+			BorderCutOffEnd();
 		}
 	}
 }

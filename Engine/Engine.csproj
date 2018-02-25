@@ -156,12 +156,15 @@
     <Compile Include="Visualization\Debug\Modules\EventsView.cs" />
     <Compile Include="Visualization\Debug\Modules\KeysView.cs" />
     <Compile Include="Visualization\LoginWindow.cs" />
+    <Compile Include="Visualization\RegistrationWindow.cs" />
     <Compile Include="Visualization\View.cs" />
     <Compile Include="Visualization\ViewButton.cs" />
     <Compile Include="Visualization\ViewComponent.cs" />
     <Compile Include="Visualization\ViewCursor.cs" />
     <Compile Include="Visualization\ViewDragable.cs" />
     <Compile Include="Visualization\ViewInput.cs" />
+    <Compile Include="Visualization\ViewLabel.cs" />
+    <Compile Include="Visualization\ViewLabelSimple.cs" />
     <Compile Include="Visualization\ViewManager.cs" />
     <Compile Include="Visualization\ViewModalWindow.cs" />
     <Compile Include="Visualization\ViewObject.cs" />

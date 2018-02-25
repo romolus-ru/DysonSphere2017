@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace Engine.DataPlus
 {
+	[Serializable]
 	public class LoginData:EventBase
 	{
 		public string UserGUID;

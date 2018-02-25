@@ -25,6 +25,10 @@ namespace Engine.Helpers
 		/// </summary>
 		public const string MainData = "main";
 
+		public const string AtlasFilesFile = DataFileDirectory + "AtlasFiles" + DataFileExtension;
+		public const string AtlasFilesData = MainData;
+		public const string AtlasTexturesFile = DataFileDirectory + "AtlasTextures" + DataFileExtension;
+		public const string AtlasTexturesData = MainData;
 		public const string CollectClassesFile = DataFileDirectory + "CollectClasses" + DataFileExtension;
 		public const string CollectClassesData = MainData;
 		public const string SettingsFile = DataFileDirectory + "Settings" + DataFileExtension;

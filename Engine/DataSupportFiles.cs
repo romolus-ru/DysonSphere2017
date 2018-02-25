@@ -83,5 +83,51 @@ namespace Engine
 			}
 			return _settings[valueName];
 		}
+
+		private List<AtlasFiles> _atlasFile = null;
+		private List<AtlasTextures> _atlasTextures = null;
+		public override List<AtlasFiles> AtlasFilesGetAll()
+		{
+			if (_atlasFile == null) {
+				string data;
+				FileUtils.LoadString(DataSupportFileHelper.AtlasFilesFile, DataSupportFileHelper.AtlasFilesData, out data);
+				if (string.IsNullOrEmpty(data)) {
+					Log("нету информации о текстурах " +
+						DataSupportFileHelper.AtlasFilesFile + " " +
+						DataSupportFileHelper.AtlasFilesData);
+				} else {
+					_atlasFile = JsonConvert.DeserializeObject<List<AtlasFiles>>(data);
+				}
+			}
+			return _atlasFile;
+		}
+
+		private List<AtlasTextures> AtlasTexturesGetAll()
+		{
+			if (_atlasTextures == null) {
+				string data;
+				FileUtils.LoadString(DataSupportFileHelper.AtlasTexturesFile, DataSupportFileHelper.AtlasTexturesData, out data);
+				if (string.IsNullOrEmpty(data)) {
+					Log("нету информации о текстурах " +
+						DataSupportFileHelper.AtlasTexturesFile + " " +
+						DataSupportFileHelper.AtlasTexturesData);
+				} else {
+					_atlasTextures = JsonConvert.DeserializeObject<List<AtlasTextures>>(data);
+				}
+			}
+			return _atlasTextures;
+		}
+
+		public override AtlasFiles GetAtlasFile(string atlasName)
+		{
+			if (_atlasFile == null) AtlasFilesGetAll();
+			return _atlasFile.Where(f => f.AtlasName == atlasName).FirstOrDefault();
+		}
+
+		public override List<AtlasTextures> GetAtlasTextures(long atlasId)
+		{
+			if (_atlasTextures == null) AtlasTexturesGetAll();
+			return _atlasTextures.Where(t => t.AtlasFileId == atlasId).ToList();
+		}
 	}
 }

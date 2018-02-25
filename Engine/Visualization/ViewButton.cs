@@ -39,9 +39,14 @@ namespace Engine.Visualization
 		protected string Caption;
 
 		/// <summary>
-		/// Заголовок кнопки
+		/// Подсказка кнопки
 		/// </summary>
 		protected string Hint;
+
+		/// <summary>
+		/// Подказка комбинации кнопок
+		/// </summary>
+		protected string HintKeys;
 
 		public ViewButton() { }
 
@@ -61,6 +66,7 @@ namespace Engine.Visualization
 			Input.AddKeyActionSticked(ClickedOnScreen, Keys.LButton);
 			Caption = caption;
 			Hint = hint;
+			HintKeys = InputHelper.KeyCombinationToString(keys);
 			Name = caption;
 		}
 
@@ -73,13 +79,18 @@ namespace Engine.Visualization
 			} else {
 				txt = " " + Caption + " "; color = Color.White;
 			}
-			var f = visualizationProvider.FontHeightGet() / 2;
+			var f = visualizationProvider.FontHeight / 2;
 
 			visualizationProvider.SetColor(color);
 			visualizationProvider.Print(X + 4, Y + Height / 2 - f - 3, txt);
 			var texture = _btnTexture;
 			if (!string.IsNullOrEmpty(Hint) && CursorOver) {
+				visualizationProvider.SetColor(GUIHelper.ButtonHintColor);
 				visualizationProvider.Print(X + 10, Y + Height + 5 - f, Hint);
+				if (!string.IsNullOrEmpty(HintKeys)) {
+					visualizationProvider.SetColor(GUIHelper.ButtonHintKeysColor);
+					visualizationProvider.Print(" "+HintKeys);
+				}
 				texture = _btnTextureOver;
 			}
 			GUIHelper.ViewGUIRectangle(visualizationProvider, this, texture);
@@ -92,6 +103,5 @@ namespace Engine.Visualization
 			VisualizationProvider.LoadAtlas(_btnTexture);
 			VisualizationProvider.LoadAtlas(_btnTextureOver);
 		}
-
 	}
 }

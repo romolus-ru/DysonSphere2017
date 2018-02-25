@@ -32,7 +32,6 @@ namespace DysonSphereClient
 		private ModelMainClient _model;
 		private ViewManager _viewManager;
 		private Timer _timer;
-		private ModelPlayerClient _mplayer;
 		private UserRegistration _rplayer;
 
 		/// <summary>
@@ -75,15 +74,11 @@ namespace DysonSphereClient
 			_visualization.InitVisualization(_datasupport, _logsystem, 500, 500, true);
 
 			// 1 создаётся объект для работы с пользователями (мат модель работы с пользователями)
-			_model = new ModelMainClient(_collector);
-			_visualization.ExitMessage += _model.Stop;
 			_rplayer = _datasupport.UserStatus;// загружаем данные игрока (основные)
-			var clientConnection = new TCPClient();
-			_mplayer = new ModelPlayerClient(_rplayer.UserGUID, _rplayer.NickName, clientConnection);
-			var modelPlayers = new ModelPlayersClient(_mplayer, _datasupport);
-			_model.AddModel(modelPlayers);
-			_model.TCPClientModel.OnProcessPlayers += modelPlayers.ProcessMessagesClient;
-			modelPlayers.OnRegistrationResult += RegisterResult;
+			_model = new ModelMainClient(_datasupport, _collector, _rplayer.UserGUID, _rplayer.NickName);
+			_visualization.ExitMessage += _model.Stop;
+			_model.OnRegistrationResult += RegisterResult;
+			_model.OnLoginResult += LoginResult;
 
 			_viewManager = new ViewManager(_visualization, _input);
 			// соединяем модели, формируем основные пути передачи информации
@@ -104,21 +99,27 @@ namespace DysonSphereClient
 
 			var btn2 = new ViewButton();
 			pnl.AddComponent(btn2);
-			btn2.InitButton(RunModalWindow, "c", "hint", Keys.U);
-			btn2.SetParams(70, 20, 240, 40, "btn2");
+			btn2.InitButton(RunModalWindow, "Тестовое модальное окно", "hint", Keys.U);
+			btn2.SetParams(70, 20, 240, 23, "btn2");
 			btn2.InitTexture("textRB", "textRB");
 
 			var btn3 = new ViewButton();
 			pnl.AddComponent(btn3);
-			btn3.InitButton(Connect, "y", "hint", Keys.U);
-			btn3.SetParams(70, 35, 240, 40, "btn2");
+			btn3.InitButton(Connect, "Соединиться с сервером", "hint", Keys.U);
+			btn3.SetParams(70, 45, 240, 23, "btn2");
 			btn3.InitTexture("textRB", "textRB");
 
 			var btn4 = new ViewButton();
 			pnl.AddComponent(btn4);
-			btn4.InitButton(Register, "r", "hint", Keys.I);
-			btn4.SetParams(70, 50, 240, 40, "btn2");
+			btn4.InitButton(RegistrationWindow, "Регистрация", "hint", Keys.I);
+			btn4.SetParams(70, 70, 240, 23, "btn2");
 			btn4.InitTexture("textRB", "textRB");
+
+			var btn5 = new ViewButton();
+			pnl.AddComponent(btn5);
+			btn5.InitButton(Login, "Залогиниться", "login", Keys.L);
+			btn5.SetParams(70, 95, 240, 23, "btn2");
+			btn5.InitTexture("textRB", "textRB");
 
 			var btnClose = new ViewButton();
 			_viewManager.AddView(btnClose);
@@ -141,7 +142,21 @@ namespace DysonSphereClient
 
 		private void Connect()
 		{
-			_model.TCPClientModel.Connect("", -1);
+			_model.Connect("", -1);
+		}
+
+		private RegistrationWindow rwin;
+		private void RegistrationWindow()
+		{
+			if (StateClient.RegistrationState == RegistrationState.Registered) return;
+			new RegistrationWindow().InitWindow(_viewManager, _rplayer, null, null);
+			/*rwin = new RegistrationWindow(_rplayer);
+			_viewManager.AddViewModal(rwin);
+			rwin.SetParams(350, 200, 500, 150, "Регистрация игрока");
+			rwin.InitTexture("WindowSample", 10);
+			//rwin.OnRegistration += RegistrationWindowClose;
+			rwin.OnClose += RegistrationWindowClose;
+			*/
 		}
 
 		private void Register()
@@ -150,7 +165,8 @@ namespace DysonSphereClient
 			_rplayer.NickName = "nick";
 			_rplayer.OfficialName = "oname";
 			_rplayer.Mail = "a@a.a";
-			_model.TCPClientModel.SendMessage(TCPOperations.Registration, _rplayer);
+			_rplayer.HSPassword = Engine.Helpers.CryptoHelper.CalculateHash("111");
+			_model.SendMessage(TCPOperations.Registration, _rplayer);
 		}
 
 		private void RegisterResult(ResultOperation result)
@@ -161,6 +177,29 @@ namespace DysonSphereClient
 			}
 			if (result.Result == ErrorType.UserAlreadyRegistered) {
 				StateClient.RegistrationState = RegistrationState.RegistrationRejected;
+				StateClient.RegistrationMessage = result.Message;
+				return;
+			}
+			StateClient.RegistrationState = RegistrationState.NotRegistered;
+		}
+
+		private void Login()
+		{
+			StateClient.LoginState = LoginState.LogInRequest;
+			var login = new LoginData();
+			login.UserGUID = _rplayer.UserGUID;
+			login.HSPassword = _rplayer.HSPassword;
+			_model.SendMessage(TCPOperations.Login, login);
+		}
+
+		private void LoginResult(ResultOperation result)
+		{
+			if (result.Result == ErrorType.NoError) {
+				StateClient.LoginState = LoginState.LogIn;
+				return;
+			}
+			if (result.Result == ErrorType.LoginFailed) {
+				StateClient.LoginState = LoginState.NotLogedIn;
 				StateClient.RegistrationMessage = result.Message;
 				return;
 			}

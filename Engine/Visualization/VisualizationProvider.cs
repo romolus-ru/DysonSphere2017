@@ -461,13 +461,7 @@ namespace Engine.Visualization
 		/// <summary>
 		/// Высота шрифта. по умолчанию = 16
 		/// </summary>
-		protected int FontHeight = 16;
-
-		/// <summary>
-		/// Получить высоту шрифта. в C#5 можно будет объединить с объявлением переменной, сейчас нельзя из-за инициализации переменной сделать обычный get set
-		/// </summary>
-		/// <returns></returns>
-		public int FontHeightGet() { return FontHeight; }
+		public int FontHeight { get; protected set; } = 16;
 
 		/// <summary>
 		/// Загрузить шрифт по имени 

@@ -25,7 +25,7 @@ namespace Engine.Visualization
 		protected override void ClearObject()
 		{
 			Input.RemoveKeyActionPaused(PressEnter, Keys.Enter);
-			Input.RemoveKeyActionPaused(TabInputs);
+			Input.RemoveKeyActionPaused(TabInputs, Keys.Tab);
 			base.ClearObject();
 		}
 
@@ -78,9 +78,9 @@ namespace Engine.Visualization
 
 		private void Entered()
 		{
-			if (string.IsNullOrEmpty(_field1.Txt) || string.IsNullOrEmpty(_field2.Txt))
+			if (string.IsNullOrEmpty(_field1.Text) || string.IsNullOrEmpty(_field2.Text))
 				return;
-			_toLogin?.Invoke(_field1.Txt, _field2.Txt);
+			_toLogin?.Invoke(_field1.Text, _field2.Text);
 			CloseWindow();
 		}
 

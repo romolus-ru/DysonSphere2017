@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace Engine.Helpers
 {
@@ -11,5 +12,10 @@ namespace Engine.Helpers
 	/// </summary>
 	public static class InputHelper
 	{
+		public static string KeyCombinationToString(params Keys[] keys)
+		{
+			if (keys == null) return null;
+			return string.Join("+", keys);
+		}
 	}
 }

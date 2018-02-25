@@ -8,7 +8,7 @@ namespace Engine.Data
 	[Serializable]
 	public partial class UserRegistration : EventBase
 	{
-		public long IdUser { get; set; }
+		public int IdUser { get; set; }
 		/// <summary>
 		/// Создаётся автоматически для пользователя при первом запуске игры
 		/// </summary>

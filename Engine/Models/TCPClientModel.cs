@@ -15,11 +15,11 @@ namespace Engine.Models
 	public class TCPClientModel : Model
 	{
 		private TCPClient _tcpClient;
-		private bool _stopTCPClient = false;        
+		private bool _stopTCPClient = false;
 		/// <summary>
 		/// Обработать клиентов, у которых есть необработанные данные
 		/// </summary>
-		public Action OnProcessPlayers;
+		public Action<List<TCPMessage>> OnProcessPlayer;
 		/// <summary>
 		/// Установлено ли соединение с сервером
 		/// </summary>
@@ -36,6 +36,7 @@ namespace Engine.Models
 			_tcpClient.Init();
 			_tcpClient.ConnectToServer(server, serverPort);
 			IsConnected = true;
+			StateClient.ConnectionState = true;
 			new Thread(() => ProcessData()).Start();
 		}
 
@@ -47,11 +48,14 @@ namespace Engine.Models
 		private HashSet<int> PlayerId = new HashSet<int>();
 		public override void Tick()
 		{
+			List<TCPMessage> messages = null;
 			lock (_tcpClient.Messages) {
 				if (_tcpClient.Messages.Count == 0) return;
+				messages = new List<TCPMessage>(_tcpClient.Messages);
+				_tcpClient.Messages.Clear();
 			}
 			// отправляем на обработку
-			OnProcessPlayers?.Invoke();
+			OnProcessPlayer?.Invoke(messages);
 		}
 
 		public override void Stop()

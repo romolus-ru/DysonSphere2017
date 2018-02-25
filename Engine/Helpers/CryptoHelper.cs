@@ -44,7 +44,7 @@ namespace Engine.Helpers
 		public static string CalculateHash(string pass)
 		{
 			using (SHA256 sha = SHA256.Create()) {
-				// step 1, calculate MD5 hash from input
+				// step 1, calculate SHA256 hash from input
 				byte[] inputBytes = Encoding.ASCII.GetBytes(pass);
 				byte[] hash = sha.ComputeHash(inputBytes);
 				// step 2, convert byte array to hex string

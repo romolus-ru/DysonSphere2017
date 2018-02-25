@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Engine.Enums
 {
-	public enum Role : byte
+	public enum Role
 	{
 		/// <summary>
 		/// Взломщик

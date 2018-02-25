@@ -20,7 +20,6 @@ namespace Engine.Models
 		protected Dictionary<TCPOperations, Action<ModelPlayerServer, TCPMessage>> Operate;
 
 		private Dictionary<int, ModelPlayerServer> _players = new Dictionary<int, ModelPlayerServer>();
-		public Func<LoginData, UserRegistration> OnLogin;
 
 		public ModelPlayersServer(DataSupportBase db) : base(db)
 		{
@@ -93,7 +92,7 @@ namespace Engine.Models
 				//LogErrors?.Invoke(this, ErrorType.LoginFailed, "intruder");
 				return;
 			}
-			player.AceptLoginData(ur);
+			player.AcceptLoginData(ur);
 			result.Result = ErrorType.NoError;
 			player.SendMSG(TCPOperations.Login, result);
 			//LogErrors?.Invoke(this, ErrorType.NoError, "login");

@@ -16,10 +16,12 @@ namespace Engine.Helpers
 		public static Color DefaultMissingTextureColor = Color.Red;
 		public static Color CursorLightColor = Color.Aqua;
 		public static Color CursorDarkColor = Color.Beige;
+		public static Color ButtonHintColor = Color.ForestGreen;
+		public static Color ButtonHintKeysColor = Color.LawnGreen;
 
 		public static void ViewGUIRectangle(VisualizationProvider visualizationProvider, ViewComponent component, string textureName)
 		{
-			var f = visualizationProvider.FontHeightGet() / 2;
+			var f = visualizationProvider.FontHeight / 2;
 
 			if (textureName != null) {
 				var size = visualizationProvider.GetTextureSize(textureName + ".t1");

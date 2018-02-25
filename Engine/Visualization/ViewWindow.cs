@@ -16,7 +16,7 @@ namespace Engine.Visualization
 		private int _btnTextureBorder = 0;
 		private ViewDragable _dragHeader = null;
 		private ViewDragable _resizer = null;
-		protected List<ViewComponent> _inputs = null;
+		protected List<ViewInput> _inputs = null;
 
 		/// <summary>
 		/// Заголовок окна
@@ -29,8 +29,8 @@ namespace Engine.Visualization
 		{
 			base.AddComponent(component, toTop);
 			if (component is ViewInput) {
-				if (_inputs == null) _inputs = new List<ViewComponent>();
-				_inputs.Add(component);
+				if (_inputs == null) _inputs = new List<ViewInput>();
+				_inputs.Add((ViewInput)component);
 			}
 		}
 
@@ -38,7 +38,7 @@ namespace Engine.Visualization
 		{
 			base.RemoveComponent(component);
 			if (_inputs != null) {
-				_inputs.Remove(component);
+				_inputs.Remove((ViewInput)component);
 				if (_inputs.Count == 0) _inputs = null;
 			}
 		}
@@ -128,6 +128,22 @@ namespace Engine.Visualization
 			VisualizationProvider.LoadAtlas(_btnTexture);
 			_dragHeader.InitTexture(textureName, 6);
 			_resizer.InitTexture(textureName, 6);
+		}
+
+		/// <summary>
+		/// Включить удаление прорисовки за пределами окна
+		/// </summary>
+		protected void BorderCutOffStart()
+		{
+			VisualizationProvider.SetStencilArea(X, Y, X + Width, Y + Height);
+		}
+
+		/// <summary>
+		/// Выключить удаление прорисовки за пределами окна
+		/// </summary>
+		protected void BorderCutOffEnd()
+		{
+			VisualizationProvider.StensilAreaOff();
 		}
 	}
 }

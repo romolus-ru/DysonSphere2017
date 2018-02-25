@@ -200,6 +200,14 @@ namespace Utils_setup
 			}
 			data = JsonConvert.SerializeObject(settings);
 			FileUtils.SaveString(DataSupportFileHelper.SettingsFile, DataSupportFileHelper.SettingsData, data);
+
+			var atlasTextures = dataDB.AtlasTextures.ToList();
+			data = JsonConvert.SerializeObject(atlasTextures);
+			FileUtils.SaveString(DataSupportFileHelper.AtlasTexturesFile, DataSupportFileHelper.AtlasTexturesData, data);
+
+			var atlasFiles = dataDB.AtlasFiles.ToList();
+			data = JsonConvert.SerializeObject(atlasFiles);
+			FileUtils.SaveString(DataSupportFileHelper.AtlasFilesFile, DataSupportFileHelper.AtlasFilesData, data);
 		}
 	}
 }
