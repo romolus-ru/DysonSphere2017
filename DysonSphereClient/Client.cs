@@ -3,6 +3,7 @@ using Engine.Data;
 using Engine.DataPlus;
 using Engine.Enums;
 using Engine.Enums.Client;
+using Engine.Helpers;
 using Engine.Models;
 using Engine.TCPNet;
 using Engine.Utils;
@@ -21,7 +22,6 @@ namespace DysonSphereClient
 	/// </summary>
 	public class Client
 	{
-		private string _solt = "";
 		private Stopwatch _stopwatch;
 		private DataSupportBase _datasupport;
 		private LogSystem _logsystem;
@@ -134,15 +134,29 @@ namespace DysonSphereClient
 			dragable.SetParams(800, 250, 30, 30, "dragableObject");
 			_viewManager.AddView(dragable, true);
 
+			var gv = new GameView();
+			_viewManager.AddView(gv);
+			gv.SetParams(0, 0, _visualization.CanvasWidth, _visualization.CanvasHeight, "game view");
+
+
 			// 2 создаётся объект для работы с играми (мат модель запуска серверов игр)
 			// 4 создаётся обработчик соединений
 
-			Log("Сервер работает");
+			Log("Клиент работает");
 		}
 
+		private WaitWindow _waitWindow = null;
 		private void Connect()
 		{
-			_model.Connect("", -1);
+			_waitWindow = new WaitWindow();
+			_model.ConnectAsync(ConnectionResult, server: "", serverPort: -1);
+			_waitWindow.InitWindow(_viewManager, "MESSAGE", null, "bigFont");
+		}
+
+		private void ConnectionResult(bool result)
+		{
+			_waitWindow.CloseWindow();
+			_waitWindow = null;
 		}
 
 		private RegistrationWindow rwin;

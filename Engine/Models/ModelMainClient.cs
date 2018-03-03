@@ -8,6 +8,7 @@ using Engine.Utils;
 using Engine.Enums;
 using Engine.EventSystem.Event;
 using Engine.DataPlus;
+using System.Threading;
 
 namespace Engine
 {
@@ -18,6 +19,11 @@ namespace Engine
 		protected ModelPlayerClient Player { get; private set; }
 		public Action<ResultOperation> OnRegistrationResult;
 		public Action<ResultOperation> OnLoginResult;
+		/// <summary>
+		/// Признак попытки соединиться
+		/// </summary>
+		private bool IsAttemptConnection = false;
+		private Thread _threadConnect = null;
 
 		public ModelMainClient(DataSupportBase db, Collector collector, string playerGUID, string nickName)
 		{
@@ -44,14 +50,28 @@ namespace Engine
 			OnRegistrationResult?.Invoke(result);
 		}
 
-		public void Connect(string server, int serverPort)
-		{
-			TCPClientModel.Connect(server, serverPort);
-		}
-
 		public void SendMessage(TCPOperations opCode, EventBase msg)
 		{
 			TCPClientModel.SendMessage(opCode, msg);
+		}
+
+		public void ConnectAsync(Action<bool> connectionResult, string server, int serverPort)
+		{
+			_threadConnect = new Thread(() =>
+			{
+				try {
+					IsAttemptConnection = true;
+					StateClient.ConnectionState = false;
+					TCPClientModel.Connect(server, serverPort);
+					StateClient.ConnectionState = true;
+					connectionResult?.Invoke(true);
+				}
+				catch (Exception ex) {
+					connectionResult?.Invoke(false);
+				}
+			}
+			);
+			_threadConnect.Start();
 		}
 	}
 }

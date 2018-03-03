@@ -14,16 +14,19 @@ namespace Engine.Visualization
 	{
 		public Color Color;
 		public string Text;
+		public string FontName;
 
-		public static ViewLabelSimple Create(Color color, string text)
+		public static ViewLabelSimple Create(Color color, string text, string fontName = null)
 		{
-			return new ViewLabelSimple { Color = color, Text = text };
+			return new ViewLabelSimple { Color = color, Text = text, FontName = fontName };
 		}
 
 		public override void DrawObject(VisualizationProvider visualizationProvider)
 		{
+			if (FontName != null) { visualizationProvider.SetFont(FontName); }
 			visualizationProvider.SetColor(Color);
 			visualizationProvider.Print(Text);
+			if (FontName != null) { visualizationProvider.SetFont("default"); }
 		}
 	}
 }

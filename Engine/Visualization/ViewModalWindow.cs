@@ -12,16 +12,25 @@ namespace Engine.Visualization
 	/// </summary>
 	public class ViewModalWindow : ViewWindow
 	{
+		private ViewFadeScreen _fadeScreen;
 		protected override void InitObject(VisualizationProvider visualizationProvider, Input input)
 		{
 			base.InitObject(visualizationProvider, input);
 			Input.AddCursorAction(CursorHandler, true);
+			_fadeScreen = new ViewFadeScreen();
+			_fadeScreen.Init(visualizationProvider, input);
 		}
 
 		protected override void ClearObject()
 		{
 			Input.RemoveCursorAction(CursorHandler);
 			base.ClearObject();
+		}
+
+		public override void DrawObject(VisualizationProvider visualizationProvider)
+		{
+			_fadeScreen.DrawObject(visualizationProvider);
+			base.DrawObject(visualizationProvider);
 		}
 	}
 }

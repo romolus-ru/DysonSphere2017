@@ -13,6 +13,7 @@ namespace Engine.Helpers
 	/// </summary>
 	public static class GUIHelper
 	{
+		public static Color BackgroundFadeColor = Color.FromArgb(170, Color.Black);
 		public static Color DefaultMissingTextureColor = Color.Red;
 		public static Color CursorLightColor = Color.Aqua;
 		public static Color CursorDarkColor = Color.Beige;

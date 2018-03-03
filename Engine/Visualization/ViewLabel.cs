@@ -12,9 +12,9 @@ namespace Engine.Visualization
 	/// </summary>
 	public class ViewLabel : ViewLabelSimple
 	{
-		public static ViewLabel Create(int x, int y, Color color, string text)
+		public static ViewLabel Create(int x, int y, Color color, string text, string fontName = null)
 		{
-			return new ViewLabel { Color = color, Text = text, X = x, Y = y };
+			return new ViewLabel { Color = color, Text = text, FontName = fontName, X = x, Y = y };
 		}
 
 		public override void DrawObject(VisualizationProvider visualizationProvider)
