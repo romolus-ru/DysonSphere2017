@@ -22,7 +22,6 @@ namespace DysonSphereClient
 	/// </summary>
 	public class Client
 	{
-		private Stopwatch _stopwatch;
 		private DataSupportBase _datasupport;
 		private LogSystem _logsystem;
 		private Collector _collector;
@@ -33,6 +32,7 @@ namespace DysonSphereClient
 		private ViewManager _viewManager;
 		private Timer _timer;
 		private UserRegistration _rplayer;
+		private ModelClientManager _modelClientManager;
 
 		/// <summary>
 		/// Значение времени для рассчёта количества кадров в секунду
@@ -41,7 +41,6 @@ namespace DysonSphereClient
 
 		public Client(DataSupportBase dataSupport, LogSystem logSystem)
 		{
-			_stopwatch = Stopwatch.StartNew();
 			// сохраняем объект для работы с данными
 			_datasupport = dataSupport;
 			// инициализируем настройки
@@ -54,6 +53,7 @@ namespace DysonSphereClient
 			_timer.Interval = TimerInterval;
 			_timer.Tick += MainTimerRun;
 
+			отсюда всё перенести в ModelClientManage и/или в ModelMenu ViewMenu
 			// создать игрока и добавить его к игрокам
 			// сформировать соединение и прописать метод для его запуска
 			// у игрока сделать 2 метода - регистрация и логин
@@ -83,9 +83,6 @@ namespace DysonSphereClient
 			_viewManager = new ViewManager(_visualization, _input);
 			// соединяем модели, формируем основные пути передачи информации
 			// вынести в отдельный метод. делать что то наподобие serverInitializer нету смысла - надо будет передавать много параметров, а они уникальные
-			var clientView = new ClientView();
-			clientView.SetTimerInfo(_stopwatch);
-			_viewManager.AddView(clientView);
 
 			var pnl = new ViewPanel();
 			_viewManager.AddView(pnl);
@@ -121,23 +118,21 @@ namespace DysonSphereClient
 			btn5.SetParams(70, 95, 240, 23, "btn2");
 			btn5.InitTexture("textRB", "textRB");
 
-			var btnClose = new ViewButton();
-			_viewManager.AddView(btnClose);
-			btnClose.InitButton(Close, "exit", "hint", Keys.LMenu, Keys.X);
-			btnClose.SetParams(1659, 0, 20, 20, "btnE");
-
-			var debugView = new DebugView();
+			/*var debugView = new DebugView();// keep - example
 			_viewManager.AddView(debugView);
-			debugView.SetParams(1100, 0, debugView.Width, debugView.Height, "DebugView");
+			debugView.SetParams(1100, 0, debugView.Width, debugView.Height, "DebugView");*/
 
 			var dragable = new ViewDragable();
 			dragable.SetParams(800, 250, 30, 30, "dragableObject");
 			_viewManager.AddView(dragable, true);
 
-			var gv = new GameView();
+			/*var gv = new GameView();
 			_viewManager.AddView(gv);
-			gv.SetParams(0, 0, _visualization.CanvasWidth, _visualization.CanvasHeight, "game view");
+			gv.SetParams(0, 0, _visualization.CanvasWidth, _visualization.CanvasHeight, "game view");*/
 
+			_modelClientManager = new ModelClientManager();
+			_modelClientManager.OnExit += OnExit;
+			_modelClientManager.Start(_model, _viewManager);
 
 			// 2 создаётся объект для работы с играми (мат модель запуска серверов игр)
 			// 4 создаётся обработчик соединений
@@ -145,14 +140,23 @@ namespace DysonSphereClient
 			Log("Клиент работает");
 		}
 
+		private void OnExit()
+		{
+			_datasupport.UserStatus = _rplayer;
+		}
+
 		private WaitWindow _waitWindow = null;
 		private void Connect()
 		{
 			_waitWindow = new WaitWindow();
 			_model.ConnectAsync(ConnectionResult, server: "", serverPort: -1);
-			_waitWindow.InitWindow(_viewManager, "MESSAGE", null, "bigFont");
+			_waitWindow.InitWindow(_viewManager, "MESSAGE", ConnectionCancel, "bigFont");
 		}
 
+		private void ConnectionCancel()
+		{
+			_model.ConnectionCancel();
+		}
 		private void ConnectionResult(bool result)
 		{
 			_waitWindow.CloseWindow();
@@ -223,13 +227,6 @@ namespace DysonSphereClient
 		private Point ClientGetWindowPos()
 		{
 			return _visualization.WindowLocation;
-		}
-
-		private void Close()
-		{
-			_datasupport.UserStatus = _rplayer;
-			StateClient.SaveState();
-			_visualization.Exit();
 		}
 
 		private void MsgToModel()

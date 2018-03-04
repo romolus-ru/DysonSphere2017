@@ -11,21 +11,21 @@ namespace Engine.Visualization
 	/// </summary>
 	public class ViewManager
 	{
-		private VisualizationProvider _provider;
+		public VisualizationProvider Provider { get; private set; }
 		private Input _input;
 		private ViewSystem _viewSystem;
 		private ViewCursor _viewCursor;
 
 		public ViewManager(VisualizationProvider provider, Input input)
 		{
-			_provider = provider;
+			Provider = provider;
 			_input = input;
 			_viewSystem = new ViewSystem();
 			_viewSystem.SetParams(0, 0, provider.CanvasWidth, provider.CanvasHeight, "ViewSystem");
-			_viewSystem.Init(_provider, input);
+			_viewSystem.Init(Provider, input);
 			_input.AddCursorAction(_viewSystem.CursorHandler);
 			_viewCursor = new ViewCursor();
-			_viewCursor.Init(_provider, input);
+			_viewCursor.Init(Provider, input);
 		}
 
 		public void AddView(ViewComponent view, bool toTop = false)
@@ -55,12 +55,12 @@ namespace Engine.Visualization
 		/// </summary>
 		public void Draw()
 		{
-			_provider.BeginDraw();
+			Provider.BeginDraw();
 
-			_viewSystem.Draw(_provider);
+			_viewSystem.Draw(Provider);
 
-			_viewCursor.Draw(_provider);
-			_provider.FlushDrawing();
+			_viewCursor.Draw(Provider);
+			Provider.FlushDrawing();
 		}
 
 		public void WindowPosChanged(int windowPosX, int windowPosY)

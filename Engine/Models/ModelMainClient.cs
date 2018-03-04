@@ -9,6 +9,8 @@ using Engine.Enums;
 using Engine.EventSystem.Event;
 using Engine.DataPlus;
 using System.Threading;
+using System.Net.Sockets;
+using Engine.Exceptions;
 
 namespace Engine
 {
@@ -67,11 +69,21 @@ namespace Engine
 					connectionResult?.Invoke(true);
 				}
 				catch (Exception ex) {
-					connectionResult?.Invoke(false);
+					if (ex is NoConnectionException)
+						connectionResult?.Invoke(false);
+					// но если поток прервали то никаких сообщений
 				}
 			}
 			);
 			_threadConnect.Start();
+		}
+
+		/// <summary>
+		/// Отменить попытку соединения с сервером (вызовется ConnectionResult(false))
+		/// </summary>
+		public void ConnectionCancel()
+		{
+			_threadConnect.Abort();
 		}
 	}
 }

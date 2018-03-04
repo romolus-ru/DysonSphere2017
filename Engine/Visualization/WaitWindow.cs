@@ -50,7 +50,7 @@ namespace Engine.Visualization
 			btn2.SetParams(20, wh - 25, 220, 20, "btnCancel");
 			btn2.InitTexture("textRB", "textRB");
 		}
-
+		
 		public void CloseWindow()
 		{
 			_viewManager.RemoveViewModal(this);

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Engine.Exceptions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -64,7 +65,7 @@ namespace Engine.TCPNet
 			catch (SocketException se) {
 				var txt = se.Message;
 				if (se.ErrorCode == 10013) txt = "Скорее всего сервер не запущен по адресу " + ipAddress.ToString() + " " + txt;
-				throw new Exception(txt);
+				throw new NoConnectionException(se, txt);
 			}
 		}
 

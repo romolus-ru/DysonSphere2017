@@ -16,6 +16,15 @@ namespace Engine
 	/// <remarks>Умеет подключать классы модели к обработке</remarks>
 	public class ModelMain:Model
 	{
+		/// <summary>
+		/// Модели для добавления
+		/// </summary>
+		private List<Model> _addModel = new List<Model>();
+		/// <summary>
+		/// Модели для удаления
+		/// </summary>
+		private List<Model> _delModel = new List<Model>();
+		private bool IsNeedRefresh = false;
 		private List<Model> _models = new List<Model>();
 		public ModelMain()
 		{
@@ -23,7 +32,14 @@ namespace Engine
 
 		public void AddModel(Model model)
 		{
-			_models.Add(model);
+			_addModel.Add(model);
+			IsNeedRefresh = true;
+		}
+
+		public void DelModel(Model model)
+		{
+			_delModel.Add(model);
+			IsNeedRefresh = true;
 		}
 
 		/// <summary>
@@ -31,6 +47,15 @@ namespace Engine
 		/// </summary>
 		public override void Tick()
 		{
+			if (IsNeedRefresh) {
+				IsNeedRefresh = false;
+				_models.AddRange(_addModel);
+				_addModel.Clear();
+				foreach (var model in _delModel) {
+					_models.Remove(model);
+				}
+				_delModel.Clear();
+			}
 			foreach (var md in _models) {
 				md.Tick();
 			}

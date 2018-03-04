@@ -54,7 +54,8 @@ namespace VisualizationOpenGL
 			gl.Enable(GL.ALPHA_TEST);
 			ResizeGlScene(_formOpenGl.Width, _formOpenGl.Height);
 			LoadFont("default", "Consolas", 12);
-			LoadFont("bigFont", "Consolas", 24);
+			LoadFont("bigFont", "Segoe UI", 24);
+			SetFont("default");
 			//LoadFont("default", "Book Antiqua", 14);
 			//LoadFont("default2", "Book Antiqua", 10);
 			//LoadFont("default", "Impact обычный", 12);

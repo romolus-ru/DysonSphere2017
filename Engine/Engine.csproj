@@ -117,6 +117,7 @@
     <Compile Include="Enums\TCPOperations.cs" />
     <Compile Include="EventSystem\Event\EventBase.cs" />
     <Compile Include="EventSystem\Event\MessageString.cs" />
+    <Compile Include="Exceptions\NoConnectionException.cs" />
     <Compile Include="GameInitializer.cs" />
     <Compile Include="Helpers\CryptoHelper.cs" />
     <Compile Include="Helpers\DataSupportFileHelper.cs" />
@@ -171,6 +172,7 @@
     <Compile Include="Visualization\ViewModalWindow.cs" />
     <Compile Include="Visualization\ViewObject.cs" />
     <Compile Include="Visualization\ViewPanel.cs" />
+    <Compile Include="Visualization\ViewProgressBar.cs" />
     <Compile Include="Visualization\ViewSystem.cs" />
     <Compile Include="Visualization\ViewWindow.cs" />
     <Compile Include="Visualization\ViewWindowCaption.cs" />
