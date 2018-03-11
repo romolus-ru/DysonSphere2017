@@ -32,8 +32,8 @@ namespace Engine.Visualization
 		protected override void ClearObject()
 		{
 			base.ClearObject();
-			Input.RemoveKeyAction(MousePressed);
-			Input.RemoveKeyActionSticked(MouseUnPressed);
+			Input.RemoveKeyAction(MousePressed, Keys.LButton);
+			Input.RemoveKeyActionSticked(MouseUnPressed, Keys.LButton);
 		}
 
 		private void MousePressed()

@@ -22,9 +22,9 @@ namespace Engine
 		public Action<ResultOperation> OnRegistrationResult;
 		public Action<ResultOperation> OnLoginResult;
 		/// <summary>
-		/// Признак попытки соединиться
+		/// Признак попытки соединиться с сервером
 		/// </summary>
-		private bool IsAttemptConnection = false;
+		public bool IsAttemptConnection = false;
 		private Thread _threadConnect = null;
 
 		public ModelMainClient(DataSupportBase db, Collector collector, string playerGUID, string nickName)
@@ -72,6 +72,9 @@ namespace Engine
 					if (ex is NoConnectionException)
 						connectionResult?.Invoke(false);
 					// но если поток прервали то никаких сообщений
+				}
+				finally {
+					IsAttemptConnection = false;
 				}
 			}
 			);

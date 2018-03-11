@@ -1,4 +1,5 @@
-﻿using Engine;
+﻿using DysonSphereClient.Game;
+using Engine;
 using Engine.Data;
 using Engine.DataPlus;
 using Engine.Enums;
@@ -32,7 +33,7 @@ namespace DysonSphereClient
 		private ViewManager _viewManager;
 		private Timer _timer;
 		private UserRegistration _rplayer;
-		private ModelClientManager _modelClientManager;
+		private ModelViewManager _modelClientManager;
 
 		/// <summary>
 		/// Значение времени для рассчёта количества кадров в секунду
@@ -53,7 +54,7 @@ namespace DysonSphereClient
 			_timer.Interval = TimerInterval;
 			_timer.Tick += MainTimerRun;
 
-			отсюда всё перенести в ModelClientManage и/или в ModelMenu ViewMenu
+			//отсюда всё перенести в ModelClientManage и/или в ModelMenu ViewMenu
 			// создать игрока и добавить его к игрокам
 			// сформировать соединение и прописать метод для его запуска
 			// у игрока сделать 2 метода - регистрация и логин
@@ -84,40 +85,6 @@ namespace DysonSphereClient
 			// соединяем модели, формируем основные пути передачи информации
 			// вынести в отдельный метод. делать что то наподобие serverInitializer нету смысла - надо будет передавать много параметров, а они уникальные
 
-			var pnl = new ViewPanel();
-			_viewManager.AddView(pnl);
-			pnl.SetParams(100, 100, 600, 400, "Pnl");
-
-			var btn1 = new ViewButton();
-			pnl.AddComponent(btn1);
-			btn1.InitButton(MsgToModel, "c", "hint", Keys.Y);
-			btn1.SetParams(20, 20, 40, 40, "btn1");
-			btn1.InitTexture("textRB", "textRB");
-
-			var btn2 = new ViewButton();
-			pnl.AddComponent(btn2);
-			btn2.InitButton(RunModalWindow, "Тестовое модальное окно", "hint", Keys.U);
-			btn2.SetParams(70, 20, 240, 23, "btn2");
-			btn2.InitTexture("textRB", "textRB");
-
-			var btn3 = new ViewButton();
-			pnl.AddComponent(btn3);
-			btn3.InitButton(Connect, "Соединиться с сервером", "hint", Keys.U);
-			btn3.SetParams(70, 45, 240, 23, "btn2");
-			btn3.InitTexture("textRB", "textRB");
-
-			var btn4 = new ViewButton();
-			pnl.AddComponent(btn4);
-			btn4.InitButton(RegistrationWindow, "Регистрация", "hint", Keys.I);
-			btn4.SetParams(70, 70, 240, 23, "btn2");
-			btn4.InitTexture("textRB", "textRB");
-
-			var btn5 = new ViewButton();
-			pnl.AddComponent(btn5);
-			btn5.InitButton(Login, "Залогиниться", "login", Keys.L);
-			btn5.SetParams(70, 95, 240, 23, "btn2");
-			btn5.InitTexture("textRB", "textRB");
-
 			/*var debugView = new DebugView();// keep - example
 			_viewManager.AddView(debugView);
 			debugView.SetParams(1100, 0, debugView.Width, debugView.Height, "DebugView");*/
@@ -130,9 +97,9 @@ namespace DysonSphereClient
 			_viewManager.AddView(gv);
 			gv.SetParams(0, 0, _visualization.CanvasWidth, _visualization.CanvasHeight, "game view");*/
 
-			_modelClientManager = new ModelClientManager();
+			_modelClientManager = new ModelViewManager();
 			_modelClientManager.OnExit += OnExit;
-			_modelClientManager.Start(_model, _viewManager);
+			_modelClientManager.Start(_model, _viewManager, _rplayer);
 
 			// 2 создаётся объект для работы с играми (мат модель запуска серверов игр)
 			// 4 создаётся обработчик соединений
@@ -145,47 +112,9 @@ namespace DysonSphereClient
 			_datasupport.UserStatus = _rplayer;
 		}
 
-		private WaitWindow _waitWindow = null;
-		private void Connect()
-		{
-			_waitWindow = new WaitWindow();
-			_model.ConnectAsync(ConnectionResult, server: "", serverPort: -1);
-			_waitWindow.InitWindow(_viewManager, "MESSAGE", ConnectionCancel, "bigFont");
-		}
 
-		private void ConnectionCancel()
-		{
-			_model.ConnectionCancel();
-		}
-		private void ConnectionResult(bool result)
-		{
-			_waitWindow.CloseWindow();
-			_waitWindow = null;
-		}
 
-		private RegistrationWindow rwin;
-		private void RegistrationWindow()
-		{
-			if (StateClient.RegistrationState == RegistrationState.Registered) return;
-			new RegistrationWindow().InitWindow(_viewManager, _rplayer, null, null);
-			/*rwin = new RegistrationWindow(_rplayer);
-			_viewManager.AddViewModal(rwin);
-			rwin.SetParams(350, 200, 500, 150, "Регистрация игрока");
-			rwin.InitTexture("WindowSample", 10);
-			//rwin.OnRegistration += RegistrationWindowClose;
-			rwin.OnClose += RegistrationWindowClose;
-			*/
-		}
 
-		private void Register()
-		{
-			StateClient.RegistrationState = RegistrationState.RegistrationRequest;
-			_rplayer.NickName = "nick";
-			_rplayer.OfficialName = "oname";
-			_rplayer.Mail = "a@a.a";
-			_rplayer.HSPassword = Engine.Helpers.CryptoHelper.CalculateHash("111");
-			_model.SendMessage(TCPOperations.Registration, _rplayer);
-		}
 
 		private void RegisterResult(ResultOperation result)
 		{
@@ -201,14 +130,7 @@ namespace DysonSphereClient
 			StateClient.RegistrationState = RegistrationState.NotRegistered;
 		}
 
-		private void Login()
-		{
-			StateClient.LoginState = LoginState.LogInRequest;
-			var login = new LoginData();
-			login.UserGUID = _rplayer.UserGUID;
-			login.HSPassword = _rplayer.HSPassword;
-			_model.SendMessage(TCPOperations.Login, login);
-		}
+
 
 		private void LoginResult(ResultOperation result)
 		{
@@ -224,55 +146,10 @@ namespace DysonSphereClient
 			StateClient.RegistrationState = RegistrationState.NotRegistered;
 		}
 
-		private Point ClientGetWindowPos()
+		private System.Drawing.Point ClientGetWindowPos()
 		{
 			return _visualization.WindowLocation;
 		}
-
-		private void MsgToModel()
-		{
-			new LoginWindow().InitWindow(_viewManager, null, null);
-		}
-
-		private ViewModalWindow win;
-		private void RunModalWindow()
-		{
-			win = new ViewModalWindow();
-			_viewManager.AddViewModal(win);
-			win.SetParams(150, 150, 500, 150, "Окно");
-			win.InitTexture("WindowSample", 10);
-
-			var btn1 = new ViewButton();
-			win.AddComponent(btn1);
-			btn1.InitButton(Entered, "ok", "Согласен", Keys.Enter);
-			btn1.SetParams(20, 110, 40, 25, "btn1");
-			btn1.InitTexture("WindowSample", "WindowSample");
-
-			var btn2 = new ViewButton();
-			win.AddComponent(btn2);
-			btn2.InitButton(CloseModalWindow, "Cancel", "Отмена", Keys.Escape);
-			btn2.SetParams(70, 110, 40, 25, "btn2");
-			btn2.InitTexture("WindowSample", "WindowSample");
-
-			var field = new ViewInput();
-			win.AddComponent(field);
-			field.SetParams(30, 30, 200, 40, "inputField");
-			field.IsFocused = true;
-		}
-
-		private void Entered()
-		{
-			CloseModalWindow();
-		}
-
-		private void CloseModalWindow()
-		{
-			if (win == null) return;
-			_viewManager.RemoveViewModal(win);
-			win = null;
-		}
-
-
 
 		/// <summary>
 		/// Инициализируем и запускаем игру по коду

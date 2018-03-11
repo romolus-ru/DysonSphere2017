@@ -50,13 +50,23 @@
   <ItemGroup>
     <Compile Include="Client.cs" />
     <Compile Include="ClientView.cs" />
-    <Compile Include="ModelClientManager.cs" />
+    <Compile Include="Game\Building.cs" />
+    <Compile Include="Game\BuildingEnum.cs" />
+    <Compile Include="Game\BuildingEnumExtension.cs" />
+    <Compile Include="Game\ModelTransportGame.cs" />
+    <Compile Include="Game\QuestEnum.cs" />
+    <Compile Include="ModelViewManager.cs" />
     <Compile Include="ModelIntro.cs" />
     <Compile Include="ModelLoadResources.cs" />
     <Compile Include="ModelMenu.cs" />
+    <Compile Include="Game\Planet.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Game\Resources.cs" />
+    <Compile Include="Game\ResourcesEnum.cs" />
+    <Compile Include="Game\Ship.cs" />
     <Compile Include="ViewMenu.cs" />
+    <Compile Include="Game\ViewTransportGame.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -67,6 +77,7 @@
       <Name>Engine</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

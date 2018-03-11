@@ -65,8 +65,6 @@ namespace VisualizationOpenGL
 			//_controller.AddEventHandler("setHeader", (o, args) => SetHeader(o, args as MessageEventArgs));
 			//_controller.AddEventHandler("systemExit", Exit);
 			var c = _formOpenGl.PointToClient(Point.Empty);
-			LoadTexture("WTBGRound", "Resources/round.png");
-			LoadTexture("WTCursor", "Resources/cursor.png");
 			//LoadTextureModify("clear", "Resources/clear256x256.tga", new TPTRounded(), Color.Empty, Color.Empty);
 		}
 
@@ -546,7 +544,7 @@ namespace VisualizationOpenGL
 			gl.BlendFunc(GL.ONE, GL.ONE);
 		}
 
-		protected override void _DrawTexturePart(int x, int y, string textureName, int xtex1, int ytex1)
+		protected override void _DrawTexturePart(int x, int y, string textureName, int placeWidth, int placeHeight)
 		{
 			var texInfo = _atlasManager.GetTextureInfo(textureName);
 			if (texInfo == null) return;
@@ -595,9 +593,9 @@ namespace VisualizationOpenGL
 			gl.Begin(GL.QUADS);
 			// указываем поочередно вершины и текстурные координаты
 			gl.TexCoord2f(x1, y1); gl.Vertex3d(0, 0, z);
-			gl.TexCoord2f(x2, y1); gl.Vertex3d(xtex1, 0, z);
-			gl.TexCoord2f(x2, y2); gl.Vertex3d(xtex1, ytex1, z);
-			gl.TexCoord2f(x1, y2); gl.Vertex3d(0, ytex1, z);
+			gl.TexCoord2f(x2, y1); gl.Vertex3d(placeWidth, 0, z);
+			gl.TexCoord2f(x2, y2); gl.Vertex3d(placeWidth, placeHeight, z);
+			gl.TexCoord2f(x1, y2); gl.Vertex3d(0, placeHeight, z);
 
 			gl.End();
 
@@ -673,10 +671,6 @@ namespace VisualizationOpenGL
 
 		public override void LoadFont(string fontCodeName, string fontName, int fontHeight = 12)
 		{
-			//LoadTexture(TextureFont, @"..\resources\fonts\TNR_B.tga");
-			//LoadTexture(TextureFont, @"TNR_B.tga");
-			//LoadTexture(TextureFont, @"TNR_B.png");
-			//LoadTextureModify(TextureFont, @"TNR_B.tga", new TPTRounded(), Color.Empty, Color.Empty);
 			FontHeight = fontHeight;
 			BuildFont(fontCodeName, fontName, fontHeight);
 		}
@@ -690,9 +684,9 @@ namespace VisualizationOpenGL
 
 		private int TextLength(byte[] text)
 		{
-			// 1.22 выявлена опытным путём, в дальнейшем может быть изменена
-			int len = text.Sum(с => ((int)(_glyphMetrics[с].gmfCellIncX * FontHeight * 1.22f + 0.5f)));
-			return len;
+			//int len = text.Sum(с => ((int)(_glyphMetrics[с].gmfCellIncX * FontHeight * 1.22f + 0.5f)));
+			double len = text.Sum(c => Math.Ceiling(_glyphMetrics[c].gmfCellIncX * FontHeight + FontHeight / 8));
+			return (int)len;
 		}
 
 		public override int TextLength(string text)
@@ -734,7 +728,7 @@ namespace VisualizationOpenGL
 			gl.WindowPos2iARB(x, _formOpenGl.Height - y - 16);
 			gl.PushAttrib(GL.LIST_BIT);     // Save's the current base list
 			gl.BlendFunc(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA);
-			gl.ListBase((uint)_fontBasePtr);            // Set the base list to our character list
+			gl.ListBase((uint)_fontOpenGLList);            // Set the base list to our character list
 			gl.CallLists(w1251Bytes.Length, GL.UNSIGNED_BYTE, w1251Bytes); // Display the text
 			gl.PopAttrib();                     // Restore the old base list
 
@@ -777,14 +771,18 @@ namespace VisualizationOpenGL
 		}
 
 		/// <summary>
-		/// указатель на шрифт в памяти, наверное
+		/// код шрифта у openGL
 		/// </summary>
-		private int _fontBasePtr = -1;
-
-		/// <summary>
-		/// Словарь ссылок на шрифт в памяти
-		/// </summary>
-		private Dictionary<string, int> _fontBasePtrs = new Dictionary<string, int>();
+		private int _fontOpenGLList = -1;
+		class FontInfo
+		{
+			public int FontHeight;
+			public int FontOpenGLList;
+			public Gdi.GLYPHMETRICSFLOAT[] GlyphMetrics;
+			public IntPtr Font;
+			public int Counter;
+		}
+		private Dictionary<string, FontInfo> _fontInfos = new Dictionary<string, FontInfo>();
 
 		/// <summary>
 		/// Имя текстуры-шрифта
@@ -796,17 +794,13 @@ namespace VisualizationOpenGL
 
 		// Хранит информацию о шрифте. нужна для вычисления длины текста
 		private Gdi.GLYPHMETRICSFLOAT[] _glyphMetrics = new Gdi.GLYPHMETRICSFLOAT[256];
-		// хранит все метрики, которые были загружены в систему
-		private Dictionary<string, Gdi.GLYPHMETRICSFLOAT[]> _glyphMetricses = new Dictionary<string, Gdi.GLYPHMETRICSFLOAT[]>();
-		// хранит шрифты, созданные построителем шрифтов
-		private Dictionary<string, IntPtr> _fonts = new Dictionary<string, IntPtr>();
 
 		private void BuildFont(string fontCodeName, string fontName, int fontHeight)
 		{
 			IntPtr font;
 			IntPtr oldfont;
 
-			_fontBasePtr = (int)gl.GenLists(256);
+			_fontOpenGLList = (int)gl.GenLists(256);
 			font = Gdi.CreateFont(-fontHeight,
 								  0,
 								  0,
@@ -824,39 +818,39 @@ namespace VisualizationOpenGL
 
 			IntPtr dc = Wgl.wglGetCurrentDC();
 			oldfont = Gdi.SelectObject(dc, font);
-			Wgl.wglUseFontOutlinesA(dc, 0, 256, _fontBasePtr, 0, 0f, Wgl.WGL_FONT_POLYGONS, _glyphMetrics);
-			Wgl.wglUseFontBitmapsA(dc, 0, 256, _fontBasePtr);
+			Wgl.wglUseFontOutlinesA(dc, 0, 256, _fontOpenGLList, 0, 0f, Wgl.WGL_FONT_POLYGONS, _glyphMetrics);
+			Wgl.wglUseFontBitmapsA(dc, 0, 256, _fontOpenGLList);
 
 			Gdi.SelectObject(dc, oldfont);
-			//Gdi.DeleteObject(font);// не удаляем объект, а храним
-			if (_fontBasePtrs.ContainsKey(fontCodeName))
-				_fontBasePtrs[fontCodeName] = _fontBasePtr;
-			else
-				_fontBasePtrs.Add(fontCodeName, _fontBasePtr);
-			if (_fonts.ContainsKey(fontCodeName))
-				_fonts[fontCodeName] = font;
-			else
-				_fonts.Add(fontCodeName, font);
-			if (_glyphMetricses.ContainsKey(fontCodeName))
-				_glyphMetricses[fontCodeName] = _glyphMetrics;
-			else
-				_glyphMetricses.Add(fontCodeName, _glyphMetrics);
+
+			if (_fontInfos.ContainsKey(fontCodeName)) {
+				Gdi.DeleteObject(_fontInfos[fontCodeName].Font);
+				// TODO логировать удаление шрифта
+			} else {
+				_fontInfos.Add(fontCodeName, new FontInfo());
+			}
+			var fi = _fontInfos[fontCodeName];
+			fi.Font = font;
+			fi.FontOpenGLList = _fontOpenGLList;
+			fi.GlyphMetrics = _glyphMetrics;
+			fi.FontHeight = fontHeight;
+			fi.Counter = 0;
 		}
 
 		public override void SetFont(string fontCodeName)
 		{
-			//return;
-			var a1 = _fontBasePtrs.ContainsKey(fontCodeName);
-			if (!a1) return;// если нету то выходим
+			if (!_fontInfos.ContainsKey(fontCodeName)) return;
+			var fi = _fontInfos[fontCodeName];
+			_fontOpenGLList = fi.FontOpenGLList;
+			_glyphMetrics = fi.GlyphMetrics;
+			FontHeight = fi.FontHeight;
 
-			_fontBasePtr = _fontBasePtrs[fontCodeName];
-			_glyphMetrics = _glyphMetricses[fontCodeName];
-			var font = _fonts[fontCodeName];
+			var font = fi.Font;
 
 			IntPtr dc = Wgl.wglGetCurrentDC();
 			IntPtr oldfont = Gdi.SelectObject(dc, font);
-			//Wgl.wglUseFontOutlinesA(dc, 0, 256, _fontBasePtr, 0, 0f, Wgl.WGL_FONT_POLYGONS, _glyphMetrics);
-			Wgl.wglUseFontBitmapsA(dc, 0, 256, _fontBasePtr);
+			//Wgl.wglUseFontOutlinesA(dc, 0, 256, _fontOpenGLList, 0, 0f, Wgl.WGL_FONT_POLYGONS, _glyphMetrics);
+			Wgl.wglUseFontBitmapsA(dc, 0, 256, _fontOpenGLList);
 			Gdi.SelectObject(dc, oldfont);
 		}
 

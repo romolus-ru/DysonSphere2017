@@ -95,7 +95,7 @@ namespace Engine.Visualization
 		/// <summary>
 		/// Для блокировки дополнительных вызовов dispose
 		/// </summary>
-		private bool _disposed = !true;
+		private bool _disposed = false;
 
 		public virtual void Dispose()
 		{
@@ -141,9 +141,11 @@ namespace Engine.Visualization
 		/// <summary>
 		/// подготовка к удалению объекта, удаление вспомогательных объектов, удаление обработчиков событий и т.п.
 		/// </summary>
-		/// <param name="visualizationProvider"></param>
 		public void Clear()
 		{
+			foreach (var component in Components) {
+				component.Clear();
+			}
 			ClearObject();
 			VisualizationProvider = null;
 			Input = null;
@@ -418,7 +420,7 @@ namespace Engine.Visualization
 		{
 			if (!component.CanDraw) return;
 			var mover = component.CursorOver ? " mouse over" : "";
-			list.Add("".PadLeft((deep - 1), ' ') + "|" + component.Name + "(" + component.GetType().Name + ")" + mover);
+			list.Add("".PadLeft((deep - 1), '.') + "|" + component.Name + "(" + component.GetType().Name + ")" + mover);
 			foreach (var cntrl in component.Components) {
 				GetObjectsView(list, cntrl, deep + 1);
 			}

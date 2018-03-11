@@ -9,7 +9,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using DysonSphere.DebugViewModules;
 
-namespace DysonSphere
+namespace Engine.Visualization.DebugOld
 {
 	public class DebugView:ViewWindow
 	{

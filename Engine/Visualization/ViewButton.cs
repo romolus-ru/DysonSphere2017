@@ -18,6 +18,7 @@ namespace Engine.Visualization
 
 		private string _btnTexture = null;
 		private string _btnTextureOver = null;
+		private Keys[] _keys;
 
 		/// <summary>
 		/// Получили сообщение что нажали - определяем местоположение
@@ -60,6 +61,7 @@ namespace Engine.Visualization
 
 		public void InitButton(Action click, string caption, string hint, params Keys[] keys)
 		{
+			_keys = keys;
 			OnClick += click;
 			if (Input == null) throw new NullReferenceException("Input must be initialized first - use AddComponent before Init Button");
 			Input.AddKeyActionSticked(KeyPressed, keys);
@@ -70,6 +72,12 @@ namespace Engine.Visualization
 			Name = caption;
 		}
 
+		protected override void ClearObject()
+		{
+			base.ClearObject();
+			Input.RemoveKeyActionSticked(KeyPressed, _keys);
+			Input.RemoveKeyActionSticked(ClickedOnScreen, Keys.LButton);
+		}
 		public override void DrawObject(VisualizationProvider visualizationProvider)
 		{
 			string txt;
@@ -87,10 +95,13 @@ namespace Engine.Visualization
 			if (!string.IsNullOrEmpty(Hint) && CursorOver) {
 				visualizationProvider.SetColor(GUIHelper.ButtonHintColor);
 				visualizationProvider.Print(X + 10, Y + Height + 5 - f, Hint);
+				//var s = visualizationProvider.CurTxtX + " " + Hint + " " + visualizationProvider.TextLength(Hint) + " ";
 				if (!string.IsNullOrEmpty(HintKeys)) {
 					visualizationProvider.SetColor(GUIHelper.ButtonHintKeysColor);
 					visualizationProvider.Print(" "+HintKeys);
+					//s += " = > " + visualizationProvider.CurTxtX + "  " + HintKeys + " " + visualizationProvider.TextLength(HintKeys) + " ";
 				}
+				//visualizationProvider.SetColor(Color.White);visualizationProvider.Print(X + 10, Y + Height + 5 + 15, s);
 				texture = _btnTextureOver;
 			}
 			GUIHelper.ViewGUIRectangle(visualizationProvider, this, texture);

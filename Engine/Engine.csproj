@@ -158,7 +158,15 @@
     <Compile Include="Visualization\Debug\Modules\KeysView.cs" />
     <Compile Include="Visualization\GameView.cs" />
     <Compile Include="Visualization\LoginWindow.cs" />
+    <Compile Include="Visualization\ScreenEdge.cs" />
+    <Compile Include="Visualization\ScreenPoint.cs" />
     <Compile Include="Visualization\RegistrationWindow.cs" />
+    <Compile Include="Visualization\Maths\BezierCurve.cs" />
+    <Compile Include="Visualization\Maths\Hull.cs" />
+    <Compile Include="Visualization\Maths\Set.cs" />
+    <Compile Include="Visualization\Maths\Triangle.cs" />
+    <Compile Include="Visualization\Maths\Triangulator.cs" />
+    <Compile Include="Visualization\Maths\Vertex.cs" />
     <Compile Include="Visualization\View.cs" />
     <Compile Include="Visualization\ViewButton.cs" />
     <Compile Include="Visualization\ViewComponent.cs" />
@@ -178,6 +186,7 @@
     <Compile Include="Visualization\ViewWindowCaption.cs" />
     <Compile Include="Helpers\GUIHelper.cs" />
     <Compile Include="Visualization\VisualizationProvider.cs" />
+    <Compile Include="Visualization\VisualizationProviderExtension.cs" />
     <Compile Include="Visualization\WaitWindow.cs" />
   </ItemGroup>
   <ItemGroup>

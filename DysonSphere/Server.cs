@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using Timer = System.Windows.Forms.Timer;
 using System.Drawing;
+using Engine.Visualization.Debug;
 
 namespace DysonSphere
 {

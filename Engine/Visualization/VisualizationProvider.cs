@@ -12,7 +12,7 @@ namespace Engine.Visualization
 	/// Базовый класс для различных видов визуализации
 	/// </summary>
 	/// <remarks>Умеет только рисовать</remarks>
-	public class VisualizationProvider
+	public partial class VisualizationProvider
 	{
 		/// <summary>
 		/// Посылается всем при закрытии основного окна
@@ -24,9 +24,7 @@ namespace Engine.Visualization
 		public Action<int, int> OnResizeWindow;
 
 		public virtual void Exit() { }
-
-		//protected Controller _controller;
-
+		
 		public Version Version = new Version(0, 2);
 
 		/// <summary>
@@ -70,12 +68,12 @@ namespace Engine.Visualization
 		/// <summary>
 		/// Текущий цвет
 		/// </summary>
-		public System.Drawing.Color Color { get; private set; }
+		public Color Color { get; private set; }
 
 		/// <summary>
 		/// Фоновый цвет
 		/// </summary>
-		public System.Drawing.Color BackgroundColor { get; private set; }
+		public Color BackgroundColor { get; private set; }
 
 		/// <summary>
 		/// Установить цвет
@@ -87,21 +85,8 @@ namespace Engine.Visualization
 			SetColor(Color.R, Color.G, Color.B, Color.A);
 		}
 
-		/// <summary>
-		/// Установить цвет c прозрачностью
-		/// </summary>
-		/// <param name="color"></param>
-		/// <param name="alphaPercent"></param>
-		public void SetColor(Color color, byte alphaPercent)
-		{
-			if (alphaPercent > 100) { alphaPercent = 100; }// обрезаем до 100
-			Color = Color.FromArgb(255 * alphaPercent / 100, color);// растягиваем до 255
-			SetColor(Color.R, Color.G, Color.B, Color.A);
-		}
-
 		public virtual void SetColor(int r, int g, int b, int a)
 		{
-
 		}
 
 		/// <summary>
@@ -127,41 +112,11 @@ namespace Engine.Visualization
 
 		public virtual void SetBackgroundColor(int r, int g, int b, int a)
 		{
-
 		}
 
 		#endregion
 
 		#region Линия, прямоугольник и круг
-
-
-		public static Dictionary<int, PointF> RoundPoints = InitPoints();
-
-		public static Dictionary<int, PointF> InitPoints()
-		{
-			var ret = new Dictionary<int, PointF>();
-			int radius = 1;
-
-			int num_segments = 360;
-			double theta = 2 * Math.PI / num_segments;
-			double tangetialFactor = Math.Tan(theta);
-			double radialFactor = Math.Cos(theta);
-			double xa = 0;
-			double ya = -radius;
-			ret.Add(0, new PointF((float)xa, (float)ya));
-
-			for (int ii = 0; ii < num_segments; ii++) {
-				double tx = -ya;
-				double ty = xa;
-				xa += tx * tangetialFactor;
-				ya += ty * tangetialFactor;
-				xa *= radialFactor;
-				ya *= radialFactor;
-				ret.Add(ii + 1, new PointF((float)xa, (float)ya));
-			}
-			return ret;
-		}
-
 
 		/// <summary>
 		/// Рисовать линию
@@ -254,13 +209,13 @@ namespace Engine.Visualization
 		/// <summary>
 		/// Нарисовать круг
 		/// </summary>
-		/// <param name="x"></param>
-		/// <param name="y"></param>
+		/// <param name="cx"></param>
+		/// <param name="cy"></param>
 		/// <param name="radius"></param>
-		public virtual void Circle(int x, int y, int radius)
-		{ _Circle(x + curOffsetX, y + curOffsetY, radius); }
+		public virtual void Circle(int cx, int cy, int radius)
+		{ _Circle(cx + curOffsetX, cy + curOffsetY, radius); }
 
-		protected virtual void _Circle(int x, int y, int radius) { }
+		protected virtual void _Circle(int cx, int cy, int radius) { }
 
 		/// <summary>
 		/// Полигон по 4м точкам
@@ -281,86 +236,12 @@ namespace Engine.Visualization
 
 		protected virtual void _Quad(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4) { }
 
-		/// <summary>
-		/// Нарисовать круговой прогресс бар
-		/// </summary>
-		/// <param name="vp"></param>
-		/// <param name="cx"></param>
-		/// <param name="cy"></param>
-		/// <param name="radius"></param>
-		/// <param name="cur"></param>
-		/// <param name="max"></param>
-		public void DrawRound(int cx, int cy, int radius, int cur, int max)
-		{
-			//return;
-			{
-				const int numSegments = 360;
-
-				var curValue = (int)(1f * cur / max * numSegments);
-				var color = Color; // потом этот цвет будет меняться
-				OffsetAdd(cx, cy);
-				for (int i = 360; i > 0; i--) {
-					var c1 = (curValue - i) * 1;
-					if (c1 < 0) c1 += 360;
-					var c2 = c1 - 1;
-					if (c2 < 0) c2 += 360;
-
-					var p1 = RoundPoints[c1];
-					var p2 = RoundPoints[c2];
-					var mx1 = (int)(radius * p1.X);
-					var my1 = (int)(radius * p1.Y);
-					var nx1 = (int)((radius + 20) * p1.X);
-					var ny1 = (int)((radius + 20) * p1.Y);
-					var mx2 = (int)(radius * p2.X);
-					var my2 = (int)(radius * p2.Y);
-					var nx2 = (int)((radius + 20) * p2.X);
-					var ny2 = (int)((radius + 20) * p2.Y);
-
-					SetColor(color, (byte)(100 - i * 10 / 36f));
-					Quad(mx1, my1, mx2, my2, nx2, ny2, nx1, ny1);
-				}
-				OffsetRemove();
-			}
-
-			//{const int numSegments = 36;radius += 35;var mx1 = (int) (radius*RoundPoints[0].X + cx);var my1 = (int) (radius*RoundPoints[0].Y + cy);
-			//	var nx1 = (int) ((radius + 20)*RoundPoints[0].X + cx);var ny1 = (int) ((radius + 20)*RoundPoints[0].Y + cy);
-			//	var numSegmentsDraw = (int) (1f*cur/max*numSegments);
-			//	SetColor(Color.Peru);for (var ii = 0; ii < numSegmentsDraw + 1; ii++){
-			//		var i1 = ii*10;if (i1 > 360) i1 -= 360;
-
-			//		var mx2 = (int) (radius*RoundPoints[i1].X + cx);var my2 = (int) (radius*RoundPoints[i1].Y + cy);
-			//		var nx2 = (int) ((radius + 20)*RoundPoints[i1].X + cx);var ny2 = (int) ((radius + 20)*RoundPoints[i1].Y + cy);
-
-			//		Quad(mx1, my1, mx2, my2, nx2, ny2, nx1, ny1);mx1 = mx2;my1 = my2;nx1 = nx2;ny1 = ny2;}}
-		}
-
 		#endregion
 
 		/// <summary>
 		/// Запустить объект визуализации (окно) в модальном режиме
 		/// </summary>
 		public virtual void Run() { }
-
-		/// <summary>
-		/// Загрузка текстуры и создание в ней альфа-канала на основе серого цвета(сумма RGBсоставляющих цвета каждой отдельной точки)
-		/// </summary>
-		/// <param name="textureName">Имя текстуры</param>
-		/// <param name="fileName">Имя файла</param>
-		/// <param name="mode">режим. для будущего использования, чтоб можно было грузить альфу из других файлов (например *Alpha.jpg)</param>
-		/// <returns></returns>
-		[Obsolete]
-		public virtual bool LoadTextureAlpha(string textureName, string fileName, int mode = 0)
-		{ return false; }
-
-		/// <summary>
-		/// Загрузить текстуру из файла. Фактически текстуры грузится 24х битная, без альфа-канала
-		/// </summary>
-		/// <param name="textureName">Имя текстуры</param>
-		/// <param name="fileName">Имя файла</param>
-		/// <returns></returns>
-		[Obsolete]
-		public virtual bool LoadTexture(string textureName, string fileName)
-		{ return false; }
 
 		/// <summary>
 		/// Загрузить атлас
@@ -405,15 +286,13 @@ namespace Engine.Visualization
 		/// <param name="textureName">Имя текстуры</param>
 		/// <param name="placeWidth">Ширина выводимой части текстуры</param>
 		/// <param name="placeHeight">Высота выводимой части текстуры</param>
-		/// <param name="width">Ширина выводимой области</param>
-		/// <param name="height">Высота выводимой области</param>
 		public void DrawTexturePart(int x, int y, string textureName, int placeWidth, int placeHeight)
 		{ _DrawTexturePart(x + curOffsetX, y + curOffsetY, textureName, placeWidth, placeHeight); }
 
 		protected virtual void _DrawTexturePart(int x, int y, string textureName, int placeWidth, int placeHeight) { }
 
 		/// <summary>
-		/// Вывести на экран текстуру с маской (почти аналог LoadTextureAlpha)
+		/// Вывести на экран текстуру с маской
 		/// </summary>
 		/// <param name="x"></param>
 		/// <param name="y"></param>
@@ -500,7 +379,7 @@ namespace Engine.Visualization
 		public int CurTxtY { get; protected set; }
 
 		/// <summary>
-		/// Вывод текста на экран в координатах ХУ
+		/// Вывод текста на экран в заданных координатах
 		/// </summary>
 		/// <param name="x"></param>
 		/// <param name="y"></param>

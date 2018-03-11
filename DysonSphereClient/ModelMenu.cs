@@ -9,6 +9,7 @@ using Engine;
 using Engine.Models;
 using System.Diagnostics;
 using System.Windows.Forms;
+using Engine.Data;
 
 namespace DysonSphereClient
 {
@@ -17,33 +18,5 @@ namespace DysonSphereClient
 	/// </summary>
 	public class ModelMenu : Model
 	{
-		private ModelMain _modelMain;
-		private ViewManager _viewManager;
-		public Action OnExitPressed;
-
-		public ModelMenu(Stopwatch stopwatch, ModelMain modelMain, ViewManager viewManager)
-		{
-			_modelMain = modelMain;
-			_viewManager = viewManager;
-
-			var debugView = new DebugView();
-			_viewManager.AddView(debugView, true);
-			debugView.SetParams(1100, 0, debugView.Width, debugView.Height, "DebugView");
-
-			var clientView = new ClientView();
-			clientView.SetTimerInfo(stopwatch);
-			_viewManager.AddView(clientView);
-
-			var btnClose = new ViewButton();
-			_viewManager.AddView(btnClose);
-			btnClose.InitButton(Close, "exit", "hint", Keys.LMenu, Keys.X);
-			btnClose.SetParams(1659, 0, 20, 20, "btnE");
-
-		}
-
-		private void Close()
-		{
-			OnExitPressed();
-		}
 	}
 }
