@@ -173,6 +173,8 @@ namespace DysonSphereClient
 			_vtg.OnFindNearest += _mtg.FindNearest;
 			_vtg.OnGetRoadShort += _mtg.GetShortRoad;
 			_vtg.OnGetPath += _mtg.GetPath;
+			_vtg.OnSendShip += _mtg.SendShip;
+			_mtg.OnMoneyChanged += _vtg.MoneyChanged;
 		}
 
 	}

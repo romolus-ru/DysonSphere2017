@@ -29,5 +29,29 @@ namespace DysonSphereClient.Game
 				|| value == BuildingEnum.CraftTools
 				|| value == BuildingEnum.PopulationCamp;
 		}
+
+		public static ResourcesEnum GetResourceEnum(this BuildingEnum value)
+		{
+			switch (value) {
+				case BuildingEnum.MineMaterial:
+					return ResourcesEnum.Materials;
+				case BuildingEnum.CraftTools:
+					return ResourcesEnum.Tools;
+			}
+			return ResourcesEnum.Personal;
+		}
+
+		public static BuildingEnum GetBuildingEnum(this ResourcesEnum value)
+		{
+			switch (value) {
+				case ResourcesEnum.Materials:
+					return BuildingEnum.MineMaterial;
+				case ResourcesEnum.Tools:
+					return BuildingEnum.CraftTools;
+			}
+			return BuildingEnum.PopulationCamp;
+		}
+
+
 	}
 }

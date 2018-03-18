@@ -14,23 +14,20 @@ namespace DysonSphereClient.Game
 		/// </summary>
 		public bool IsLocked = false;
 		/// <summary>
-		/// Имеющиеся на планете ресурсы
+		/// Здание на планете. Производит или потребляет ресурсы
 		/// </summary>
-		public Resources Resources;
+		public Building Building;
 		/// <summary>
-		/// Ресурсы, необходимые для строительства
+		/// Заказ на перевозку ресурсов
 		/// </summary>
-		public Resources ToBuild = null;
-
+		public Order Order = null;
 		/// <summary>
-		/// Награда за перевозку груза
+		/// Ископаемые ресурсы
 		/// </summary>
-		public Resources Reward;
-
-		public Planet(Resources resources, Resources reward)
+		public Resources Source = null;
+		public Planet()
 		{
-			Reward = reward;
-			Resources = resources;
+			
 		}
 	}
 }

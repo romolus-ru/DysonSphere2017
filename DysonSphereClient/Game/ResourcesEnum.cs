@@ -8,8 +8,8 @@ namespace DysonSphereClient.Game
 {
 	public enum ResourcesEnum
 	{
-		Materials,
-		Tools,
-		Personal,
+		Materials=1,
+		Tools=2,
+		Personal=3,
 	}
 }

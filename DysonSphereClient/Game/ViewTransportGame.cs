@@ -5,16 +5,19 @@ using Engine;
 using Engine.Visualization.Debug;
 using System.Windows.Forms;
 using System.Drawing;
+using System.Linq;
 
 namespace DysonSphereClient.Game
 {
 	public class ViewTransportGame : ViewComponent
 	{
+		public delegate void SendShipDelegate(Planet start, Planet end);
 		public Action OnRecreatePoints;
 		public Action OnExitPressed;
 		public Func<int, int, ScreenPoint> OnFindNearest;
 		public Func<ScreenPoint, ScreenPoint, List<ScreenEdge>> OnGetRoadShort;
 		public Func<List<ScreenEdge>, ScreenPoint, List<ScreenPoint>> OnGetPath;
+		public SendShipDelegate OnSendShip;
 
 		private ViewManager _viewManager;
 		private List<Planet> _RoadPoints = new List<Planet>();
@@ -22,6 +25,7 @@ namespace DysonSphereClient.Game
 		private List<ScreenEdge> _RoadEdgesMST = new List<ScreenEdge>();
 		private List<ScreenEdge> _RoadShort = null;
 		private List<ScreenPoint> _RoadPath = null;
+		private List<Ship> _Ships = null;
 		private int _mapX = 100;
 		private int _mapY = 100;
 		private int _curX;
@@ -38,11 +42,12 @@ namespace DysonSphereClient.Game
 			_viewManager = viewManager;
 		}
 
-		public void SetPoints(List<Planet> points, List<ScreenEdge> edges, List<ScreenEdge> MST)
+		public void SetPoints(List<Planet> points, List<ScreenEdge> edges, List<ScreenEdge> MST, List<Ship> ships)
 		{
 			_RoadPoints = points;
 			_RoadEdges = edges;
 			_RoadEdgesMST = MST;
+			_Ships = ships;
 		}
 
 		protected override void InitObject(VisualizationProvider visualizationProvider, Input input)
@@ -88,9 +93,15 @@ namespace DysonSphereClient.Game
 				// иначе формируем путь
 				_RoadShort = OnGetRoadShort?.Invoke(_selected, _nearest);
 				_RoadPath = OnGetPath?.Invoke(_RoadShort, _selected);
+				OnSendShip?.Invoke((Planet)_selected, (Planet)_nearest);
 				_nearest = null;
 				_selected = null;
 			}
+		}
+
+		public void MoneyChanged(int amount)
+		{
+			_showMoney.Text = "Money " + amount;
 		}
 
 		protected override void Cursor(int cursorX, int cursorY)
@@ -113,7 +124,7 @@ namespace DysonSphereClient.Game
 			visualizationProvider.SetColor(Color.White);
 			visualizationProvider.OffsetAdd(_mapX, _mapY);
 			foreach (var p in _RoadPoints) {
-				visualizationProvider.Rectangle(p.X - 1, p.Y - 1, 3, 3);
+				DrawPlanetInfo(visualizationProvider, p);
 			}
 
 			visualizationProvider.SetColor(Color.DarkSeaGreen, 10);
@@ -144,7 +155,7 @@ namespace DysonSphereClient.Game
 			
 			if (_RoadShort != null) {
 				foreach (var e in _RoadShort) {
-					visualizationProvider.SetColor(Color.GreenYellow, 100);
+					visualizationProvider.SetColor(Color.GreenYellow, 10);
 					visualizationProvider.Print((e.A.X + e.B.X) / 2, (e.A.Y + e.B.Y) / 2, e.Weight.ToString());
 					double dy = (e.B.X - e.A.X);
 					double dx = -(e.B.Y - e.A.Y);
@@ -167,7 +178,10 @@ namespace DysonSphereClient.Game
 			}
 
 			if (_RoadPath != null) {
-				visualizationProvider.SetColor(Color.LightGoldenrodYellow , 40);
+				visualizationProvider.SetColor(Color.GreenYellow, 20);
+				var len = (int)(_RoadShort/*.Count * 20);//*/ .Sum(e => e.Weight) / 5 / _RoadShort.Count);
+				visualizationProvider.Print(_RoadPath[0].X, _RoadPath[0].Y, "rpcount=" + _RoadPath.Count.ToString() + " rcount=" + _RoadShort.Count.ToString() + " len=" + len);
+				visualizationProvider.SetColor(Color.LightGoldenrodYellow , 10);
 				ScreenPoint p1 = null;
 				foreach (var p2 in _RoadPath) {
 					if (p1 == null) { p1 = p2; continue; }
@@ -176,8 +190,42 @@ namespace DysonSphereClient.Game
 				}
 			}
 
+			if (_Ships!=null) {
+				visualizationProvider.SetColor(Color.LightCoral);
+				foreach (var ship in _Ships) {
+					if (ship.CurrentRoadPointNum < 0) continue;
+					var p = ship.CurrentRoad[ship.CurrentRoadPointNum];
+					visualizationProvider.Rectangle(p.X, p.Y, 3, 3);
+					if (ship.CurrentRoad != null) {
+						visualizationProvider.SetColor(Color.DeepSkyBlue, 10);
+						foreach (var p1 in ship.CurrentRoad) {
+							visualizationProvider.Rectangle(p1.X, p1.Y, 1, 1);
+						}
+					}
+				}
+			}
+
 			visualizationProvider.OffsetRemove();
 		}
 
+		private void DrawPlanetInfo(VisualizationProvider visualizationProvider, Planet p)
+		{
+			visualizationProvider.SetColor(Color.White);
+			visualizationProvider.Rectangle(p.X - 1, p.Y - 1, 3, 3);
+			var infoStr = "";
+			if (p.Building != null) {
+				infoStr = p.Building.BuilingType.ToString();
+			}
+
+			visualizationProvider.Print(p.X + 10, p.Y, infoStr);
+			if (p.Order != null) {
+				var s = p.Order.GetInfo();
+				var strNum = 0;
+				foreach (var str in s) {
+					strNum++;
+					visualizationProvider.Print(p.X, p.Y + strNum * 16, str);
+				}
+			}
+		}
 	}
 }

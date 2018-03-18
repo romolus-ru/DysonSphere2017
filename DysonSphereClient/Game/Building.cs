@@ -11,5 +11,6 @@ namespace DysonSphereClient.Game
 	/// </summary>
 	public class Building
 	{
+		public BuildingEnum BuilingType = BuildingEnum.Nope;
 	}
 }

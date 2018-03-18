@@ -45,5 +45,16 @@ namespace DysonSphereClient.Game
 			}
 			return res;
 		}
+
+		public string GetInfo()
+		{
+			var s = "";
+			foreach (var res in _values) {
+				if (res.Value == 0) continue;
+				s += "(" + res.Key.ToString() + "," + res.Value.ToString() + ")";
+			}
+			return s;
+		}
+
 	}
 }
