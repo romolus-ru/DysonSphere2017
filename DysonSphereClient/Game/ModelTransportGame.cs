@@ -31,7 +31,7 @@ namespace DysonSphereClient.Game
 		{
 			RoadPoints.Clear();
 			RoadEdges.Clear();
-			RoadPoints = CreateGalaxy(80, 1400, 900);
+			RoadPoints = CreateGalaxy(70, 1200, 700);
 			InitFillResources(RoadPoints);
 			var tmpPoints = new List<Vertex>();
 			foreach (var point in RoadPoints) {

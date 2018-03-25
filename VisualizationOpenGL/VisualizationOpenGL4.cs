@@ -238,6 +238,7 @@ namespace VisualizationOpenGL
 
 		protected override void _Box(int x, int y, int width, int height)
 		{
+			// TODO повторяет quads - возможно надо удалить box
 			gl.Enable(GL.LINE_SMOOTH);
 			gl.Disable(GL.TEXTURE_2D); // Turn off textures
 			gl.Enable(GL.BLEND);
@@ -976,6 +977,69 @@ namespace VisualizationOpenGL
 			var texInfo = _atlasManager.GetTextureInfo(textureName);
 			if (texInfo == null) return Size.Empty;
 			return new Size(texInfo.Width, texInfo.Height);
+		}
+
+		public static string vertexShader2Source = @"
+#version 440 core
+void main(void)
+{
+ //gl_Position = vec4( 0.25, -0.25,  0.5,  1.0);
+}";
+		public static string fragmentShader2Source = @"
+#version 440 core
+out vec4 color;
+void main(void)
+{
+ color = vec4(1.0, 0.0, 0.0, 0.3);
+}";
+		private uint _program;
+
+		public override void InitShader() {
+
+			var vertexShader = gl.CreateShader(GL.VERTEX_SHADER);
+			gl.ShaderSource(vertexShader,
+			//File.ReadAllText(@"Shaders\vertexShader.vert")
+			vertexShader2Source
+			);
+			gl.CompileShader(vertexShader);
+
+			var fragmentShader = gl.CreateShader(GL.FRAGMENT_SHADER);
+			gl.ShaderSource(fragmentShader,
+			//File.ReadAllText(@"Shaders\fragmentShader.frag")
+			fragmentShader2Source
+			);
+			gl.CompileShader(fragmentShader);
+
+			var program = gl.CreateProgram();
+			//gl.AttachShader(program, vertexShader);
+			gl.AttachShader(program, fragmentShader);
+			gl.LinkProgram(program);
+
+			gl.DetachShader(program, vertexShader);
+			gl.DetachShader(program, fragmentShader);
+			gl.DeleteShader(vertexShader);
+			gl.DeleteShader(fragmentShader);
+			_program = program;
+		}
+
+		public override void UseShader() {
+
+			gl.UseProgram(_program);
+			// получаем имя переменной
+			//int uniformLoopDuration = glGetUniformLocation(theProgram, "loopDuration");
+			// устанавливаем её значение 
+			//glUniform1f(uniformLoopDuration, 5.0f);
+			//mMVPMatrixHandle = GLES20.glGetUniformLocation(programHandle, "u_MVPMatrix");
+			//mPositionHandle = GLES20.glGetAttribLocation(programHandle, "a_Position");
+			// вон сколько их всяких
+			//gl.GetAttribLocation
+			//gl.GetFragDataLocation
+			//gl.GetProgramResourceLocation
+			//gl.GetUniformLocation
+			//gl.GetVaryingLocation
+		}
+		public override void StopShader() {
+			gl.UseProgram(0);
 		}
 	}
 }

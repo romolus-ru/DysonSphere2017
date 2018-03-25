@@ -493,5 +493,11 @@ namespace Engine.Visualization
 		}
 
 		public virtual Point WindowLocation { get { return Point.Empty; } }
+
+		public virtual void InitShader() { }
+
+		public virtual void UseShader() { }
+
+		public virtual void StopShader() { }
 	}
 }

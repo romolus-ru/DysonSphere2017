@@ -27,7 +27,7 @@ namespace DysonSphereClient.Game
 		private List<ScreenPoint> _RoadPath = null;
 		private List<Ship> _Ships = null;
 		private int _mapX = 100;
-		private int _mapY = 100;
+		private int _mapY = 250;
 		private int _curX;
 		private int _curY;
 		private int _oldCurX;
@@ -53,6 +53,7 @@ namespace DysonSphereClient.Game
 		protected override void InitObject(VisualizationProvider visualizationProvider, Input input)
 		{
 			base.InitObject(visualizationProvider, input);
+			visualizationProvider.LoadAtlas("RoundDigits");
 			SetParams(0, 0, visualizationProvider.CanvasWidth, visualizationProvider.CanvasHeight, "ViewTransportGame");
 			var debugView = new DebugView();
 			AddComponent(debugView, true);
@@ -73,6 +74,7 @@ namespace DysonSphereClient.Game
 			AddComponent(_showMoney);
 
 			Input.AddKeyActionSticked(SelectPoint, Keys.LButton);
+			visualizationProvider.InitShader();
 		}
 
 		private void RecreatePoints()
@@ -121,6 +123,13 @@ namespace DysonSphereClient.Game
 		}
 		public override void DrawObject(VisualizationProvider visualizationProvider)
 		{
+			visualizationProvider.UseShader();
+			visualizationProvider.SetColor(Color.DeepSkyBlue);
+			//visualizationProvider.Box(10, 10, 1400, 800);
+			visualizationProvider.Print(100, 100, "Текст");
+
+			visualizationProvider.StopShader();
+
 			visualizationProvider.SetColor(Color.White);
 			visualizationProvider.OffsetAdd(_mapX, _mapY);
 			foreach (var p in _RoadPoints) {
@@ -210,7 +219,10 @@ namespace DysonSphereClient.Game
 
 		private void DrawPlanetInfo(VisualizationProvider visualizationProvider, Planet p)
 		{
-			visualizationProvider.SetColor(Color.White);
+			if (p == _nearest)
+				visualizationProvider.SetColor(Color.White);
+			else
+				visualizationProvider.SetColor(Color.White, 15);
 			visualizationProvider.Rectangle(p.X - 1, p.Y - 1, 3, 3);
 			var infoStr = "";
 			if (p.Building != null) {

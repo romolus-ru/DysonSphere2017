@@ -27,9 +27,9 @@ namespace DysonSphereClient.Game
 		public List<string> GetInfo()
 		{
 			var ret = new List<string>();
-			ret.Add("Награда за рейс " + RewardRace);
-			ret.Add("Награда " + Reward);
-			ret.Add("Требуется перевезти " + Value.GetInfo());
+			ret.Add("+" + Reward + " (+" + RewardRace + " за рейс)");
+			ret.Add("Требуется перевезти");
+			ret.Add(Value.GetInfo());
 			return ret;
 		}
 	}
