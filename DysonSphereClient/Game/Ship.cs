@@ -63,6 +63,7 @@ namespace DysonSphereClient.Game
 
 			CurrentRoadPointNum++;
 			if (CurrentRoadPointNum < (CurrentRoad?.Count ?? 0)) return;
+			if (OrderEmpty()) { ShipCommand = ShipCommandEnum.ToBase; }
 
 			CurrentRoadPointNum = -1;
 			switch (ShipCommand) {
@@ -78,6 +79,13 @@ namespace DysonSphereClient.Game
 				default:
 					break;
 			}
+		}
+
+		private bool OrderEmpty()
+		{
+			var dest = (Planet)OrderPlanetDestination;
+			if (dest.Order == null || dest.Order.Value.IsEmpty()) return true;
+			return false;
 		}
 
 		/// <summary>
@@ -103,9 +111,22 @@ namespace DysonSphereClient.Game
 				CurrentTarget = OrderPlanetDestination;
 				return;
 			}
-			OnShipEndOrder?.Invoke(this);
-			ShipCommand = ShipCommandEnum.MoveToOrder;
-			ProcessMoveToOrder();
+
+			// выкладываем груз
+			var planet = (OrderPlanetDestination as Planet);
+			var planetCargo = (OrderPlanetSource as Planet);
+			var cargo = planetCargo.Building.BuilingType.GetResourceEnum();
+			var cargoCount = _cargoMax.Value(cargo);
+			var orderCount = planet.Order.Value.Value(cargo);
+			if (orderCount <= cargoCount) {
+				planet.Order.Value.Add(cargo, -orderCount);
+				OnShipEndOrder?.Invoke(this);
+			} else {
+				planet.Order.Value.Add(cargo, -cargoCount);
+				OnShipEndOrder?.Invoke(this);
+				ShipCommand = ShipCommandEnum.MoveToOrder;
+				ProcessMoveToOrder();
+			}
 		}
 
 		/// <summary>

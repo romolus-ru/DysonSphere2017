@@ -90,12 +90,25 @@ namespace DysonSphereClient.Game
 				_selected = _nearest;
 				return;
 			}
+			if (_nearest == null) return;
+			
 			if (_selected != null) {
 				if (_selected == _nearest) { _selected = null; return; }
-				// иначе формируем путь
-				_RoadShort = OnGetRoadShort?.Invoke(_selected, _nearest);
-				_RoadPath = OnGetPath?.Invoke(_RoadShort, _selected);
-				OnSendShip?.Invoke((Planet)_selected, (Planet)_nearest);
+				Planet fromPlanet, toPlanet;
+				if ((_selected as Planet).Building.BuilingType.IsSource()) {
+					fromPlanet = (Planet)_selected;
+					toPlanet = (Planet)_nearest;
+				} else {
+					toPlanet = (Planet)_selected;
+					fromPlanet = (Planet)_nearest;
+				}
+				if (!fromPlanet.Building.BuilingType.IsSource()) return;
+				if (toPlanet.Building.BuilingType != BuildingEnum.QuestBuilding) return;
+
+				// формируем путь
+				_RoadShort = OnGetRoadShort?.Invoke(fromPlanet, toPlanet);
+				_RoadPath = OnGetPath?.Invoke(_RoadShort, fromPlanet);
+				OnSendShip?.Invoke((Planet)fromPlanet, (Planet)toPlanet);
 				_nearest = null;
 				_selected = null;
 			}
@@ -127,8 +140,10 @@ namespace DysonSphereClient.Game
 			visualizationProvider.SetColor(Color.DeepSkyBlue);
 			//visualizationProvider.Box(10, 10, 1400, 800);
 			visualizationProvider.Print(100, 100, "Текст");
+			visualizationProvider.DrawTexturePart(70, 70, "RoundDigits.1", 20, 20);
 
 			visualizationProvider.StopShader();
+			visualizationProvider.DrawTexturePart(100, 70, "RoundDigits.1", 20, 20);
 
 			visualizationProvider.SetColor(Color.White);
 			visualizationProvider.OffsetAdd(_mapX, _mapY);
@@ -161,7 +176,7 @@ namespace DysonSphereClient.Game
 				visualizationProvider.SetColor(Color.Red);
 				visualizationProvider.Circle(_selected.X, _selected.Y, 15);
 			}
-			
+
 			if (_RoadShort != null) {
 				foreach (var e in _RoadShort) {
 					visualizationProvider.SetColor(Color.GreenYellow, 10);
@@ -186,11 +201,11 @@ namespace DysonSphereClient.Game
 				}
 			}
 
-			if (_RoadPath != null) {
+			if (_RoadPath != null && _RoadShort != null) {
 				visualizationProvider.SetColor(Color.GreenYellow, 20);
 				var len = (int)(_RoadShort/*.Count * 20);//*/ .Sum(e => e.Weight) / 5 / _RoadShort.Count);
 				visualizationProvider.Print(_RoadPath[0].X, _RoadPath[0].Y, "rpcount=" + _RoadPath.Count.ToString() + " rcount=" + _RoadShort.Count.ToString() + " len=" + len);
-				visualizationProvider.SetColor(Color.LightGoldenrodYellow , 10);
+				visualizationProvider.SetColor(Color.LightGoldenrodYellow, 10);
 				ScreenPoint p1 = null;
 				foreach (var p2 in _RoadPath) {
 					if (p1 == null) { p1 = p2; continue; }
@@ -199,14 +214,14 @@ namespace DysonSphereClient.Game
 				}
 			}
 
-			if (_Ships!=null) {
+			if (_Ships != null) {
 				visualizationProvider.SetColor(Color.LightCoral);
 				foreach (var ship in _Ships) {
 					if (ship.CurrentRoadPointNum < 0) continue;
 					var p = ship.CurrentRoad[ship.CurrentRoadPointNum];
 					visualizationProvider.Rectangle(p.X, p.Y, 3, 3);
 					if (ship.CurrentRoad != null) {
-						visualizationProvider.SetColor(Color.DeepSkyBlue, 10);
+						visualizationProvider.SetColor(Color.DeepSkyBlue, 90);
 						foreach (var p1 in ship.CurrentRoad) {
 							visualizationProvider.Rectangle(p1.X, p1.Y, 1, 1);
 						}
@@ -222,10 +237,10 @@ namespace DysonSphereClient.Game
 			if (p == _nearest)
 				visualizationProvider.SetColor(Color.White);
 			else
-				visualizationProvider.SetColor(Color.White, 15);
+				visualizationProvider.SetColor(Color.White, 75);
 			visualizationProvider.Rectangle(p.X - 1, p.Y - 1, 3, 3);
 			var infoStr = "";
-			if (p.Building != null) {
+			if (p.Building != null && p.Building.BuilingType != BuildingEnum.Nope) {
 				infoStr = p.Building.BuilingType.ToString();
 			}
 

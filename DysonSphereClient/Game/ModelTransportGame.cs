@@ -64,6 +64,7 @@ namespace DysonSphereClient.Game
 		{
 			//заполнить вспомогательный массив нужным количеством зданий (гараж, 3 ресурса и заказы. дополнительно 3 заказа должны быть очень большими)
 			//и при выполнении каждого заказа обновлять информацию по выбранному заказу
+			foreach (var point in roadPoints) point.Building = new Building() { BuilingType = BuildingEnum.Nope };
 			roadPoints[0].Building = new Building() { BuilingType = BuildingEnum.ShipDepot };
 			
 			// TODO генерируем все возможные виды строек (пока одна будет)
@@ -74,11 +75,10 @@ namespace DysonSphereClient.Game
 			order.RewardRace = 3;
 			order.Reward = 100;
 			_Orders.Add(order);
-			
+
 			// добавляем начальные ордера
-			for (int i = 1; i < roadPoints.Count-3; i++) {
-				roadPoints[i].Order = _Orders[0];
-			}
+			//for (int i = 1; i < roadPoints.Count-3; i++) {roadPoints[i].Order = _Orders[0];}
+			CreateRandomOrder();
 
 			// добавляем ресурсные базы
 			for (int i = 0; i < 3; i++) {
@@ -226,12 +226,37 @@ namespace DysonSphereClient.Game
 			ship.MoveToOrder(start, end);
 		}
 
-		private void ShipEndOrder(Ship ship)
+		/// <summary>
+		/// Корабль прилетел к планете назначению и выгрузил груз
+		/// </summary>
+		/// <param name="shipEndOrder"></param>
+		private void ShipEndOrder(Ship shipEndOrder)
 		{
-			var order = ((Planet)ship.OrderPlanetDestination).Order;
+			var planet = ((Planet)shipEndOrder.OrderPlanetDestination);
+			var order = planet.Order;
 			if (order == null) return;
-			Money += order.RewardRace;
+			if (order.Value.IsEmpty()) {
+				Money += order.Reward;
+				planet.Order = null;
+				planet.Building.BuilingType = BuildingEnum.Nope;
+				CreateRandomOrder();
+				foreach (var ship in _Ships) {
+					//корабли и сами вернутся, если нету заказа. но если заказ будет на той же планете то не вернутся
+					ship.ShipCommand = ShipCommandEnum.ToBase;
+				}
+			} else {
+				Money += order.RewardRace;
+				order.Reward -= order.RewardRace;
+				if (order.Reward <= 0) order.Reward = 0;
+			}
 			OnMoneyChanged?.Invoke(Money);
+		}
+
+		private void CreateRandomOrder()
+		{
+			var num = RandomHelper.Random(RoadPoints.Count - 4) + 3;
+			RoadPoints[num].Order = new Order(_Orders[0]);
+			RoadPoints[num].Building = new Building() { BuilingType = BuildingEnum.QuestBuilding };
 		}
 
 		/// <summary>

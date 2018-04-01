@@ -24,6 +24,18 @@ namespace DysonSphereClient.Game
 		/// </summary>
 		public int RewardRace;
 
+		public Order() { }
+		/// <summary>
+		/// Создаём копию заказа что бы оригинальный заказ не трогать
+		/// </summary>
+		/// <param name="copyOrder"></param>
+		public Order(Order copyOrder)
+		{
+			Reward = copyOrder.Reward;
+			RewardRace = copyOrder.RewardRace;
+			Value = copyOrder.Value.GetCopy();
+		}
+
 		public List<string> GetInfo()
 		{
 			var ret = new List<string>();

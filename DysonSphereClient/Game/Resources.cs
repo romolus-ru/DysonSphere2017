@@ -30,6 +30,11 @@ namespace DysonSphereClient.Game
 			}
 		}
 
+		public int Value(ResourcesEnum resource) {
+			if (!_values.ContainsKey(resource)) return 0;
+			return _values[resource];
+		}
+
 		/// <summary>
 		/// Проверяем что ресурсов больше чем передали для проверки
 		/// </summary>
@@ -54,6 +59,19 @@ namespace DysonSphereClient.Game
 				s += "(" + res.Key.ToString() + "," + res.Value.ToString() + ")";
 			}
 			return s;
+		}
+
+		/// <summary>
+		/// Получить копию ресурсов
+		/// </summary>
+		/// <returns></returns>
+		public Resources GetCopy()
+		{
+			var res = new Resources();
+			foreach (var res1 in _values) {
+				res.Add(res1.Key, res1.Value);
+			}
+			return res;
 		}
 
 	}
