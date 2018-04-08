@@ -4,6 +4,7 @@ using Engine.Data;
 using Engine.DataPlus;
 using Engine.Enums;
 using Engine.Enums.Client;
+using Engine.EventSystem;
 using Engine.Helpers;
 using Engine.Models;
 using Engine.TCPNet;
@@ -112,10 +113,6 @@ namespace DysonSphereClient
 			_datasupport.UserStatus = _rplayer;
 		}
 
-
-
-
-
 		private void RegisterResult(ResultOperation result)
 		{
 			if (result.Result == ErrorType.NoError) {
@@ -129,8 +126,6 @@ namespace DysonSphereClient
 			}
 			StateClient.RegistrationState = RegistrationState.NotRegistered;
 		}
-
-
 
 		private void LoginResult(ResultOperation result)
 		{
@@ -181,6 +176,7 @@ namespace DysonSphereClient
 		/// </summary>
 		private void MainTimerRun(object sender, EventArgs eventArgs)
 		{
+			Checkers.CheckOnce();
 			_input.ProcessInput();
 			// обработка сетевого взаимодействия (получение обновления)
 			_model.Tick();

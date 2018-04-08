@@ -25,7 +25,7 @@ namespace DysonSphereClient.Game
 		private List<ScreenEdge> _RoadEdgesMST = new List<ScreenEdge>();
 		private List<ScreenEdge> _RoadShort = null;
 		private List<ScreenPoint> _RoadPath = null;
-		private List<Ship> _Ships = null;
+		private List<Ship> _ships = null;
 		private int _mapX = 100;
 		private int _mapY = 250;
 		private int _curX;
@@ -36,6 +36,8 @@ namespace DysonSphereClient.Game
 		private ScreenPoint _selected = null;
 		private int Money = 0;
 		private ViewLabel _showMoney = null;
+		private ViewShipsPanel _shipsPanel = null;
+		private ViewShipPanel _shipPanel = null;
 
 		public void InitTransportGame(ViewManager viewManager)
 		{
@@ -47,7 +49,9 @@ namespace DysonSphereClient.Game
 			_RoadPoints = points;
 			_RoadEdges = edges;
 			_RoadEdgesMST = MST;
-			_Ships = ships;
+			_ships = ships;
+			if (_ships?.Count>0)
+				_shipsPanel.SetShips(_ships);
 		}
 
 		protected override void InitObject(VisualizationProvider visualizationProvider, Input input)
@@ -64,6 +68,12 @@ namespace DysonSphereClient.Game
 			btnRecreatePoints.InitButton(RecreatePoints, "RecreatePoints", "hint", Keys.Y);
 			btnRecreatePoints.SetParams(20, 120, 140, 30, "RecreatePoints");
 			btnRecreatePoints.InitTexture("textRB", "textRB");
+
+			_shipsPanel = new ViewShipsPanel();
+			AddComponent(_shipsPanel);
+
+			_shipPanel = new ViewShipPanel();
+			AddComponent(_shipPanel);
 
 			var btnClose = new ViewButton();
 			AddComponent(btnClose);
@@ -214,10 +224,10 @@ namespace DysonSphereClient.Game
 				}
 			}
 
-			if (_Ships != null) {
+			if (_ships != null) {
 				visualizationProvider.SetColor(Color.LightCoral);
-				foreach (var ship in _Ships) {
-					if (ship.CurrentRoadPointNum < 0) continue;
+				foreach (var ship in _ships) {
+					if (ship.CurrentRoadPointNum <= 0) continue;
 					var p = ship.CurrentRoad[ship.CurrentRoadPointNum];
 					visualizationProvider.Rectangle(p.X, p.Y, 3, 3);
 					if (ship.CurrentRoad != null) {
@@ -226,6 +236,28 @@ namespace DysonSphereClient.Game
 							visualizationProvider.Rectangle(p1.X, p1.Y, 1, 1);
 						}
 					}
+					ScreenPoint sp;
+
+					sp = ship.CurrentTarget;
+					visualizationProvider.SetColor(Color.Red);
+					visualizationProvider.Circle(sp.X, sp.Y, 20);
+					visualizationProvider.Print(sp.X, sp.Y, "        current");
+
+					sp = ship.OrderPlanetSource;
+					visualizationProvider.SetColor(Color.Green);
+					visualizationProvider.Circle(sp.X, sp.Y, 15);
+					visualizationProvider.Print(sp.X, sp.Y, "  s");
+
+					sp = ship.OrderPlanetDestination;
+					visualizationProvider.SetColor(Color.Blue);
+					visualizationProvider.Circle(sp.X, sp.Y, 15);
+					visualizationProvider.Print(sp.X, sp.Y, "  d");
+					
+					sp = ship.Base;
+					visualizationProvider.SetColor(Color.Yellow);
+					visualizationProvider.Circle(sp.X, sp.Y, 15);
+					visualizationProvider.Print(sp.X, sp.Y, "  b");
+
 				}
 			}
 

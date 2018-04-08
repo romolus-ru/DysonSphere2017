@@ -55,8 +55,11 @@
     <Compile Include="Game\BuildingEnumExtension.cs" />
     <Compile Include="Game\ModelTransportGame.cs" />
     <Compile Include="Game\Order.cs" />
+    <Compile Include="Game\Orders.cs" />
     <Compile Include="Game\QuestEnum.cs" />
     <Compile Include="Game\ShipCommandEnum.cs" />
+    <Compile Include="Game\ViewShipPanel.cs" />
+    <Compile Include="Game\ViewShipsPanel.cs" />
     <Compile Include="ModelViewManager.cs" />
     <Compile Include="ModelIntro.cs" />
     <Compile Include="ModelLoadResources.cs" />

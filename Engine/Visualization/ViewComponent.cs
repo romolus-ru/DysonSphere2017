@@ -130,7 +130,7 @@ namespace Engine.Visualization
 			VisualizationProvider = visualizationProvider;// сохраняем для будущего использования
 			Input = input;
 			InitObject(VisualizationProvider, input);
-			Show();
+			Show(); 
 		}
 
 		/// <summary>
@@ -155,10 +155,16 @@ namespace Engine.Visualization
 		/// переопределяемая подготовка к удалению объекта, удаление вспомогательных объектов, удаление обработчиков событий и т.п.
 		/// </summary>
 		protected virtual void ClearObject() { }
-		
+
+		public void SetVisible(bool visibility)
+		{
+			if (visibility) Show();
+			else Hide();
+		}
+
 		/// <summary>
-		/// /// В данном случае надо показать и компоненты
-		/// /// </summary>
+		/// В данном случае надо показать и компоненты
+		/// </summary>
 		public void Show()
 		{
 			CanDraw = true;
@@ -247,28 +253,26 @@ namespace Engine.Visualization
 			CursorHandlerLocal(cursorX, cursorY);
 		}
 
-		protected void CursorHandlerLocal(int cursorX, int cursorY)
+		protected void CursorHandlerLocal(int screenCursorX, int screenCursorY)
 		{
 			if (overedOne) return;// если уже есть объект (с вложенными) у которого выставлено over - у остальных не устанавливаем
 			if (!CanDraw) return;
-			if (!InRange(cursorX, cursorY)) {
+			if (!InRange(screenCursorX, screenCursorY)) {
 				CursorOverOff(); // сбрасываем выделение, в том числе и у вложенных контролов
 				return;
 			}
 			CursorOver = true;
-			Cursor(cursorX, cursorY);
+			Cursor(screenCursorX, screenCursorY);
 			if (Components.Count > 0) {
 				CursorOverOffed = false;
 				foreach (var component in Components) {
 					component.CursorOverOff();
-					var curX = cursorX - _xScreen + X;
-					var curY = cursorY - _yScreen + Y;
-					if (!component.InRange(curX, curY)) {
+					if (!component.InRange(screenCursorX, screenCursorY)) {
 						component.CursorOverOff();
 						continue; // компонент не в точке нажатия
 					}
 					// смещаем курсор и передаём контролу смещенные координаты
-					component.CursorHandlerLocal(curX, curY);
+					component.CursorHandlerLocal(screenCursorX, screenCursorY);
 					if (component.CursorOver) overedOne = true;
 				}
 			}

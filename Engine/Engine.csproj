@@ -115,6 +115,7 @@
     <Compile Include="Enums\ErrorType.cs" />
     <Compile Include="Enums\Role.cs" />
     <Compile Include="Enums\TCPOperations.cs" />
+    <Compile Include="EventSystem\Checkers.cs" />
     <Compile Include="EventSystem\Event\EventBase.cs" />
     <Compile Include="EventSystem\Event\MessageString.cs" />
     <Compile Include="Exceptions\NoConnectionException.cs" />

@@ -12,12 +12,11 @@ namespace Engine.Visualization
 		{
 			visualizationProvider.SetColor(System.Drawing.Color.Green);
 			visualizationProvider.Rectangle(X, Y, Width, Height);// если текстуры будут то они замаскируют этот прямоугольник
-
 		}
 
 		protected override void DrawComponents(VisualizationProvider visualizationProvider)
 		{
-			visualizationProvider.SetStencilArea(X, Y, X + Width, Y + Height);
+			visualizationProvider.SetStencilArea(_xScreen, _yScreen, _xScreen + Width, _yScreen + Height);
 			base.DrawComponents(visualizationProvider);
 			visualizationProvider.StensilAreaOff();
 		}

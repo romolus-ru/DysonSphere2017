@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Engine.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,7 +15,7 @@ namespace DysonSphereClient.Game
 		/// <summary>
 		/// Требуемое количесто ресурсов
 		/// </summary>
-		public Resources Value;
+		public Resources AmountResources;
 		/// <summary>
 		/// Награда за перевозку всех ресурсов
 		/// </summary>
@@ -23,6 +24,10 @@ namespace DysonSphereClient.Game
 		/// Награда за 1 рейс
 		/// </summary>
 		public int RewardRace;
+		/// <summary>
+		/// Уровень заказа, для различных стадий игры
+		/// </summary>
+		public int Level;
 
 		public Order() { }
 		/// <summary>
@@ -33,7 +38,19 @@ namespace DysonSphereClient.Game
 		{
 			Reward = copyOrder.Reward;
 			RewardRace = copyOrder.RewardRace;
-			Value = copyOrder.Value.GetCopy();
+			AmountResources = copyOrder.AmountResources.GetCopy();
+		}
+
+		/// <summary>
+		/// Создать копию заказа
+		/// </summary>
+		/// <param name="copyOrder">Исходный заказ</param>
+		/// <param name="hardness">Добавляемая сложность</param>
+		public Order(Order copyOrder, int hardness):this(copyOrder)
+		{
+			if (hardness <= 1) return;
+			var multiplier = RandomHelper.Random(hardness) / hardness;
+			AmountResources.Increase(multiplier);
 		}
 
 		public List<string> GetInfo()
@@ -41,7 +58,7 @@ namespace DysonSphereClient.Game
 			var ret = new List<string>();
 			ret.Add("+" + Reward + " (+" + RewardRace + " за рейс)");
 			ret.Add("Требуется перевезти");
-			ret.Add(Value.GetInfo());
+			ret.Add(AmountResources.GetInfo());
 			return ret;
 		}
 	}

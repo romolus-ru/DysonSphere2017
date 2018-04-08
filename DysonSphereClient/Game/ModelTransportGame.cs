@@ -16,8 +16,8 @@ namespace DysonSphereClient.Game
 		private List<Planet> RoadPoints = new List<Planet>();
 		private List<ScreenEdge> RoadEdges = new List<ScreenEdge>();
 		private List<ScreenEdge> RoadMST = new List<ScreenEdge>();
-		private List<Ship> _Ships = new List<Ship>();
-		private List<Order> _Orders = new List<Order>();
+		private List<Ship> _ships = new List<Ship>();
+		private Orders _Orders = new Orders();
 		public SetPointsDelegate OnSetPoints;
 		public Action<int> OnMoneyChanged;
 
@@ -52,8 +52,10 @@ namespace DysonSphereClient.Game
 				if (!ContainsScreenEdge(RoadEdges, bc)) RoadEdges.Add(bc);
 			}
 
+			_ships.Clear();
+			_ships.Add(CreateDefaultShip());
 			RoadMST = AlgorithmByPrim(RoadEdges, RoadPoints);
-			OnSetPoints?.Invoke(RoadPoints, RoadEdges, RoadMST, _Ships);
+			OnSetPoints?.Invoke(RoadPoints, RoadEdges, RoadMST, _ships);
 		}
 
 		/// <summary>
@@ -66,18 +68,7 @@ namespace DysonSphereClient.Game
 			//и при выполнении каждого заказа обновлять информацию по выбранному заказу
 			foreach (var point in roadPoints) point.Building = new Building() { BuilingType = BuildingEnum.Nope };
 			roadPoints[0].Building = new Building() { BuilingType = BuildingEnum.ShipDepot };
-			
-			// TODO генерируем все возможные виды строек (пока одна будет)
-			// и вывод информации сделать двух видов - краткий и полный
-			var order = new Order();
-			order.Value = new Resources();
-			order.Value.Add(ResourcesEnum.Materials, 2000);
-			order.RewardRace = 3;
-			order.Reward = 100;
-			_Orders.Add(order);
 
-			// добавляем начальные ордера
-			//for (int i = 1; i < roadPoints.Count-3; i++) {roadPoints[i].Order = _Orders[0];}
 			CreateRandomOrder();
 
 			// добавляем ресурсные базы
@@ -198,6 +189,15 @@ namespace DysonSphereClient.Game
 			return ret;
 		}
 
+		private Ship CreateDefaultShip()
+		{
+			var res = GetDefaultCargoCapacity();
+			var ship = new Ship(RoadPoints[0], res);
+			ship.OnGetRoad += GetShipRoad;
+			ship.OnShipEndOrder += ShipEndOrder;
+			return ship;
+		}
+
 		/// <summary>
 		/// Запускаем корабль 
 		/// </summary>
@@ -206,22 +206,15 @@ namespace DysonSphereClient.Game
 		internal void SendShip(Planet start, Planet end)
 		{
 			Ship ship = null;
-			if (_Ships.Count == 0) {
-				var res = GetDefaultCargoCapacity();
-				ship = new Ship(RoadPoints[0], res);
-				ship.OnGetRoad += GetShipRoad;
-				ship.OnShipEndOrder += ShipEndOrder;
-				_Ships.Add(ship);
-			}
 			if (ship != null) {
-				foreach (var fship in _Ships) {
+				foreach (var fship in _ships) {
 					if (fship.ShipCommand == ShipCommandEnum.NoCommand) {
 						ship = fship;
 						break;
 					}
 				}
 			}
-			if (ship == null) ship = _Ships[0];
+			if (ship == null) ship = _ships[0];
 			if (ship == null) return;
 			ship.MoveToOrder(start, end);
 		}
@@ -235,14 +228,15 @@ namespace DysonSphereClient.Game
 			var planet = ((Planet)shipEndOrder.OrderPlanetDestination);
 			var order = planet.Order;
 			if (order == null) return;
-			if (order.Value.IsEmpty()) {
+			if (order.AmountResources.IsEmpty()) {
 				Money += order.Reward;
 				planet.Order = null;
 				planet.Building.BuilingType = BuildingEnum.Nope;
 				CreateRandomOrder();
-				foreach (var ship in _Ships) {
+				foreach (var ship in _ships) {
 					//корабли и сами вернутся, если нету заказа. но если заказ будет на той же планете то не вернутся
-					ship.ShipCommand = ShipCommandEnum.ToBase;
+					//ship.ShipCommand = ShipCommandEnum.ToBase;
+					ship.MoveToBase();
 				}
 			} else {
 				Money += order.RewardRace;
@@ -255,7 +249,7 @@ namespace DysonSphereClient.Game
 		private void CreateRandomOrder()
 		{
 			var num = RandomHelper.Random(RoadPoints.Count - 4) + 3;
-			RoadPoints[num].Order = new Order(_Orders[0]);
+			RoadPoints[num].Order = _Orders.GetRandomOrder(100,0);
 			RoadPoints[num].Building = new Building() { BuilingType = BuildingEnum.QuestBuilding };
 		}
 
@@ -406,8 +400,8 @@ namespace DysonSphereClient.Game
 		}
 		public override void Tick()
 		{
-			if (_Ships.Count == 0) return;
-			_Ships[0].MoveNext();
+			if (_ships.Count == 0) return;
+			_ships[0].MoveNext();
 		}
 	}
 }

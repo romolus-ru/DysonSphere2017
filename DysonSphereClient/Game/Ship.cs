@@ -48,10 +48,16 @@ namespace DysonSphereClient.Game
 		{
 			if (ShipCommand == ShipCommandEnum.NoCommand) {
 				//CurrentTarget = start;// начинаем движение от начальной точки
+				CurrentRoad?.Clear();
 			}
 			ShipCommand = ShipCommandEnum.MoveToOrder;
 			OrderPlanetSource = start;
 			OrderPlanetDestination = end;
+		}
+
+		public void MoveToBase()
+		{
+			ProcessMoveToBase();
 		}
 
 		/// <summary>
@@ -84,7 +90,7 @@ namespace DysonSphereClient.Game
 		private bool OrderEmpty()
 		{
 			var dest = (Planet)OrderPlanetDestination;
-			if (dest.Order == null || dest.Order.Value.IsEmpty()) return true;
+			if (dest.Order == null || dest.Order.AmountResources.IsEmpty()) return true;
 			return false;
 		}
 
@@ -117,12 +123,12 @@ namespace DysonSphereClient.Game
 			var planetCargo = (OrderPlanetSource as Planet);
 			var cargo = planetCargo.Building.BuilingType.GetResourceEnum();
 			var cargoCount = _cargoMax.Value(cargo);
-			var orderCount = planet.Order.Value.Value(cargo);
+			var orderCount = planet.Order.AmountResources.Value(cargo);
 			if (orderCount <= cargoCount) {
-				planet.Order.Value.Add(cargo, -orderCount);
+				planet.Order.AmountResources.Add(cargo, -orderCount);
 				OnShipEndOrder?.Invoke(this);
 			} else {
-				planet.Order.Value.Add(cargo, -cargoCount);
+				planet.Order.AmountResources.Add(cargo, -cargoCount);
 				OnShipEndOrder?.Invoke(this);
 				ShipCommand = ShipCommandEnum.MoveToOrder;
 				ProcessMoveToOrder();
