@@ -15,21 +15,34 @@ namespace DysonSphereClient.Game
 	public class ViewShipsPanel:ViewPanel
 	{
 		private ViewShipPanel _shipPanel1 = null;
-		private List<Ship> _ships = null;
+		private Ships _ships = null;
+		private ViewButton btnBuyShip;
+		public Action OnBuyShip;
+
 		protected override void InitObject(VisualizationProvider visualizationProvider, Input input)
 		{
 			base.InitObject(visualizationProvider, input);
 			SetParams(500, 20, 900, 220, "ShipsPanel");
 
+			btnBuyShip = new ViewButton();
+			AddComponent(btnBuyShip);
+			btnBuyShip.InitButton(BuyShip, "btnBuyShip", "Купить корабль");
+			btnBuyShip.SetParams(160, 80, 140, 70, "btnBuyShip");
+			btnBuyShip.InitTexture("textRB", "textRB");
+			
 			_shipPanel1 = new ViewShipPanel();
 			AddComponent(_shipPanel1);
 		}
 
-		public void SetShips(List<Ship> ships)
+		private void BuyShip()
+		{
+			OnBuyShip?.Invoke();
+		}
+
+		public void SetShips(Ships ships)
 		{
 			_ships = ships;
-			if (_ships.Count > 0)
-				_shipPanel1.SetShip(_ships[0]);
+			_shipPanel1.SetShip(_ships.GetFreeShip());
 		}
 	}
 }

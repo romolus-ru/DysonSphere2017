@@ -11,21 +11,15 @@ namespace DysonSphereClient.Game
 {
 	public class ViewTransportGame : ViewComponent
 	{
-		public delegate void SendShipDelegate(Planet start, Planet end);
+		public delegate bool SendShipDelegate(Planet start, Planet end);
 		public Action OnRecreatePoints;
 		public Action OnExitPressed;
 		public Func<int, int, ScreenPoint> OnFindNearest;
-		public Func<ScreenPoint, ScreenPoint, List<ScreenEdge>> OnGetRoadShort;
-		public Func<List<ScreenEdge>, ScreenPoint, List<ScreenPoint>> OnGetPath;
-		public SendShipDelegate OnSendShip;
 
 		private ViewManager _viewManager;
 		private List<Planet> _RoadPoints = new List<Planet>();
-		private List<ScreenEdge> _RoadEdges = new List<ScreenEdge>();
 		private List<ScreenEdge> _RoadEdgesMST = new List<ScreenEdge>();
-		private List<ScreenEdge> _RoadShort = null;
-		private List<ScreenPoint> _RoadPath = null;
-		private List<Ship> _ships = null;
+		private Ships _ships = null;
 		private int _mapX = 100;
 		private int _mapY = 250;
 		private int _curX;
@@ -44,14 +38,12 @@ namespace DysonSphereClient.Game
 			_viewManager = viewManager;
 		}
 
-		public void SetPoints(List<Planet> points, List<ScreenEdge> edges, List<ScreenEdge> MST, List<Ship> ships)
+		public void SetPoints(List<Planet> points, List<ScreenEdge> MST, Ships ships)
 		{
 			_RoadPoints = points;
-			_RoadEdges = edges;
 			_RoadEdgesMST = MST;
 			_ships = ships;
-			if (_ships?.Count>0)
-				_shipsPanel.SetShips(_ships);
+			_shipsPanel.SetShips(_ships);
 		}
 
 		protected override void InitObject(VisualizationProvider visualizationProvider, Input input)
@@ -72,9 +64,6 @@ namespace DysonSphereClient.Game
 			_shipsPanel = new ViewShipsPanel();
 			AddComponent(_shipsPanel);
 
-			_shipPanel = new ViewShipPanel();
-			AddComponent(_shipPanel);
-
 			var btnClose = new ViewButton();
 			AddComponent(btnClose);
 			btnClose.InitButton(Close, "exit", "hint", Keys.LMenu, Keys.X);
@@ -91,7 +80,6 @@ namespace DysonSphereClient.Game
 		{
 			_selected = null;
 			_nearest = null;
-			_RoadShort = null;
 			OnRecreatePoints?.Invoke();
 		}
 		private void SelectPoint()
@@ -115,10 +103,11 @@ namespace DysonSphereClient.Game
 				if (!fromPlanet.Building.BuilingType.IsSource()) return;
 				if (toPlanet.Building.BuilingType != BuildingEnum.QuestBuilding) return;
 
-				// формируем путь
-				_RoadShort = OnGetRoadShort?.Invoke(fromPlanet, toPlanet);
-				_RoadPath = OnGetPath?.Invoke(_RoadShort, fromPlanet);
-				OnSendShip?.Invoke((Planet)fromPlanet, (Planet)toPlanet);
+				var res=_ships.SendShip((Planet)fromPlanet, (Planet)toPlanet);
+				if (!res) {
+					//TODO добавить крупное сообщение на экран что не получилось отправить корабль
+
+				}
 				_nearest = null;
 				_selected = null;
 			}
@@ -161,22 +150,10 @@ namespace DysonSphereClient.Game
 				DrawPlanetInfo(visualizationProvider, p);
 			}
 
-			visualizationProvider.SetColor(Color.DarkSeaGreen, 10);
-			foreach (var e in _RoadEdges) {
-				visualizationProvider.Line(e.A.X, e.A.Y, e.B.X, e.B.Y);
-			}
 			visualizationProvider.SetColor(Color.White);
 			foreach (var e in _RoadEdgesMST) {
 				visualizationProvider.Line(e.A.X, e.A.Y, e.B.X, e.B.Y);
 			}
-			/*for (int i = 0; i < _RoadEdges.Count / 3; i++) {
-				var a = _RoadEdges[i * 3];
-				var b = _RoadEdges[i * 3 + 1];
-				var c = _RoadEdges[i * 3 + 2];
-				visualizationProvider.Line(a.X, a.Y, b.X, b.Y);
-				visualizationProvider.Line(a.X, a.Y, c.X, c.Y);
-				visualizationProvider.Line(b.X, b.Y, c.X, c.Y);
-			}*/
 
 			if (_nearest != null) {
 				visualizationProvider.SetColor(Color.OrangeRed);
@@ -187,81 +164,39 @@ namespace DysonSphereClient.Game
 				visualizationProvider.Circle(_selected.X, _selected.Y, 15);
 			}
 
-			if (_RoadShort != null) {
-				foreach (var e in _RoadShort) {
-					visualizationProvider.SetColor(Color.GreenYellow, 10);
-					visualizationProvider.Print((e.A.X + e.B.X) / 2, (e.A.Y + e.B.Y) / 2, e.Weight.ToString());
-					double dy = (e.B.X - e.A.X);
-					double dx = -(e.B.Y - e.A.Y);
-					var sq = Math.Sqrt(dx * dx + dy * dy);
-					dx = 5 * dx / sq;
-					dy = 5 * dy / sq;
-					//visualizationProvider.Line(e.A.X, e.A.Y, e.B.X, e.B.Y);
-					visualizationProvider.SetColor(Color.GreenYellow, 30);
-					visualizationProvider.Line(
-						(int)(e.A.X + dx),
-						(int)(e.A.Y + dy),
-						(int)(e.B.X + dx),
-						(int)(e.B.Y + dy));
-					visualizationProvider.Line(
-						(int)(e.A.X - dx),
-						(int)(e.A.Y - dy),
-						(int)(e.B.X - dx),
-						(int)(e.B.Y - dy));
-				}
-			}
-
-			if (_RoadPath != null && _RoadShort != null) {
-				visualizationProvider.SetColor(Color.GreenYellow, 20);
-				var len = (int)(_RoadShort/*.Count * 20);//*/ .Sum(e => e.Weight) / 5 / _RoadShort.Count);
-				visualizationProvider.Print(_RoadPath[0].X, _RoadPath[0].Y, "rpcount=" + _RoadPath.Count.ToString() + " rcount=" + _RoadShort.Count.ToString() + " len=" + len);
-				visualizationProvider.SetColor(Color.LightGoldenrodYellow, 10);
-				ScreenPoint p1 = null;
-				foreach (var p2 in _RoadPath) {
-					if (p1 == null) { p1 = p2; continue; }
-					visualizationProvider.Rectangle(p1.X, p1.Y, 1, 1);//, p2.X, p2.Y);
-					p1 = p2;
-				}
-			}
-
 			if (_ships != null) {
 				visualizationProvider.SetColor(Color.LightCoral);
 				foreach (var ship in _ships) {
-					if (ship.CurrentRoadPointNum <= 0) continue;
-					var p = ship.CurrentRoad[ship.CurrentRoadPointNum];
-					visualizationProvider.Rectangle(p.X, p.Y, 3, 3);
-					if (ship.CurrentRoad != null) {
-						visualizationProvider.SetColor(Color.DeepSkyBlue, 90);
-						foreach (var p1 in ship.CurrentRoad) {
-							visualizationProvider.Rectangle(p1.X, p1.Y, 1, 1);
-						}
-					}
-					ScreenPoint sp;
-
-					sp = ship.CurrentTarget;
-					visualizationProvider.SetColor(Color.Red);
-					visualizationProvider.Circle(sp.X, sp.Y, 20);
-					visualizationProvider.Print(sp.X, sp.Y, "        current");
-
-					sp = ship.OrderPlanetSource;
-					visualizationProvider.SetColor(Color.Green);
-					visualizationProvider.Circle(sp.X, sp.Y, 15);
-					visualizationProvider.Print(sp.X, sp.Y, "  s");
-
-					sp = ship.OrderPlanetDestination;
-					visualizationProvider.SetColor(Color.Blue);
-					visualizationProvider.Circle(sp.X, sp.Y, 15);
-					visualizationProvider.Print(sp.X, sp.Y, "  d");
-					
-					sp = ship.Base;
-					visualizationProvider.SetColor(Color.Yellow);
-					visualizationProvider.Circle(sp.X, sp.Y, 15);
-					visualizationProvider.Print(sp.X, sp.Y, "  b");
-
+					DrawShipMapInfo(visualizationProvider, ship);
 				}
 			}
 
 			visualizationProvider.OffsetRemove();
+		}
+
+		private void DrawShipMapInfo(VisualizationProvider visualizationProvider, Ship ship)
+		{
+			var waitState = ship.TimeToWaitState;
+			if (waitState != ShipCommandEnum.NoCommand) {
+				// рисуем прогресс бар
+				var planet = ship.CurrentRoad[0];
+				const int progressBarLenght = 50;
+				int cur = progressBarLenght * ship.TimeToWaitCurrent / ship.TimeToWaitMax;
+				visualizationProvider.SetColor(Color.Green);
+				visualizationProvider.Box(planet.X + 10, planet.Y - 10, cur, 10);
+				visualizationProvider.SetColor(Color.Red);
+				visualizationProvider.Box(planet.X + 10 + cur, planet.Y - 10, progressBarLenght - cur, 10);
+				return;
+			}
+			if (ship.CurrentRoadPointNum <= 0) return;
+			var p = ship.CurrentRoad[ship.CurrentRoadPointNum];
+			visualizationProvider.Rectangle(p.X, p.Y, 3, 3);
+			if (ship.CurrentRoad != null) {
+				visualizationProvider.SetColor(Color.DeepSkyBlue, 90);
+				foreach (var p1 in ship.CurrentRoad) {
+					visualizationProvider.Rectangle(p1.X, p1.Y, 1, 1);
+				}
+			}
 		}
 
 		private void DrawPlanetInfo(VisualizationProvider visualizationProvider, Planet p)

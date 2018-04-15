@@ -12,26 +12,33 @@ namespace DysonSphereClient.Game
 {
 	internal class ModelTransportGame : Model
 	{
-		public delegate void SetPointsDelegate(List<Planet> points, List<ScreenEdge> edges, List<ScreenEdge> mst, List<Ship> ships);
+		public delegate void SetPointsDelegate(List<Planet> points, List<ScreenEdge> mst, Ships ships);
 		private List<Planet> RoadPoints = new List<Planet>();
-		private List<ScreenEdge> RoadEdges = new List<ScreenEdge>();
 		private List<ScreenEdge> RoadMST = new List<ScreenEdge>();
-		private List<Ship> _ships = new List<Ship>();
-		private Orders _Orders = new Orders();
+		private Ships _ships;
+		private Orders _orders = new Orders();
+		private Paths _paths = new Paths();
 		public SetPointsDelegate OnSetPoints;
 		public Action<int> OnMoneyChanged;
+
+		public ModelTransportGame(Ships ships)
+		{
+			_ships = ships;
+			_ships.OnFinishOrder = CreateRandomOrder;
+			_ships.OnMoneyChanged = MoneyChanged;
+		}
 
 		/// <summary>
 		/// Минимальное расстояние на котором точка будет реагировать на курсор
 		/// </summary>
 		private const int MouseMinimalDistance = 50;
 		private int Money = 0;
-
+		
 		public void RecreatePoints()
 		{
+			var RoadEdges = new List<ScreenEdge>();
 			RoadPoints.Clear();
-			RoadEdges.Clear();
-			RoadPoints = CreateGalaxy(70, 1200, 700);
+			RoadPoints.AddRange(_paths.CreateGalaxy(70, 1200, 700, 100));
 			InitFillResources(RoadPoints);
 			var tmpPoints = new List<Vertex>();
 			foreach (var point in RoadPoints) {
@@ -53,9 +60,10 @@ namespace DysonSphereClient.Game
 			}
 
 			_ships.Clear();
-			_ships.Add(CreateDefaultShip());
-			RoadMST = AlgorithmByPrim(RoadEdges, RoadPoints);
-			OnSetPoints?.Invoke(RoadPoints, RoadEdges, RoadMST, _ships);
+			_ships.Init(RoadPoints[0]);
+			_ships.CreateShip(GetShipRoad);
+			RoadMST = _paths.AlgorithmByPrim(RoadEdges, RoadPoints);
+			OnSetPoints?.Invoke(RoadPoints, RoadMST, _ships);
 		}
 
 		/// <summary>
@@ -69,6 +77,8 @@ namespace DysonSphereClient.Game
 			foreach (var point in roadPoints) point.Building = new Building() { BuilingType = BuildingEnum.Nope };
 			roadPoints[0].Building = new Building() { BuilingType = BuildingEnum.ShipDepot };
 
+			CreateRandomOrder();
+			CreateRandomOrder();
 			CreateRandomOrder();
 
 			// добавляем ресурсные базы
@@ -89,97 +99,16 @@ namespace DysonSphereClient.Game
 			return false;
 		}
 
-		public List<ScreenEdge> AlgorithmByPrim(List<ScreenEdge> E, IEnumerable<ScreenPoint> points)
-		{
-			List<ScreenEdge> MST = new List<ScreenEdge>();
-			//неиспользованные ребра
-			List<ScreenEdge> notUsedE = new List<ScreenEdge>(E);
-			//использованные вершины
-			List<ScreenPoint> usedV = new List<ScreenPoint>();
-			//неиспользованные вершины
-			List<ScreenPoint> notUsedV = new List<ScreenPoint>(points);
-			//выбираем случайную начальную вершину
-			var num = RandomHelper.Random(notUsedV.Count);
-			usedV.Add(notUsedV[num]);
-			notUsedV.RemoveAt(num);
-			while (notUsedV.Count > 0) {
-				int minE = -1; //номер наименьшего ребра
-							   //поиск наименьшего ребра
-				for (int i = 0; i < notUsedE.Count; i++) {
-					if ((usedV.IndexOf(notUsedE[i].A) != -1) && (notUsedV.IndexOf(notUsedE[i].B) != -1) ||
-						(usedV.IndexOf(notUsedE[i].B) != -1) && (notUsedV.IndexOf(notUsedE[i].A) != -1)) {
-						if (minE != -1) {
-							if (notUsedE[i].Weight < notUsedE[minE].Weight)
-								minE = i;
-						} else
-							minE = i;
-					}
-				}
-				//заносим новую вершину в список использованных и удаляем ее из списка неиспользованных
-				if (usedV.IndexOf(notUsedE[minE].A) != -1) {
-					usedV.Add(notUsedE[minE].B);
-					notUsedV.Remove(notUsedE[minE].B);
-				} else {
-					usedV.Add(notUsedE[minE].A);
-					notUsedV.Remove(notUsedE[minE].A);
-				}
-				//заносим новое ребро в дерево и удаляем его из списка неиспользованных
-				MST.Add(notUsedE[minE]);
-				notUsedE.RemoveAt(minE);
-			}
-			return MST;
-		}
-
-		private List<Planet> CreateGalaxy(int count, int width, int height)
-		{
-			List<Planet> resultPoints = new List<Planet>();
-			var minDist = width / 30;
-			var counter = 0;
-
-			var first = new Planet()
-			{
-				X = RandomHelper.Random(width),
-				Y = RandomHelper.Random(height),
-			};
-			resultPoints.Add(first);
-
-			while (resultPoints.Count != count) {
-				counter++;
-				if (counter > 50) {
-					counter = 0;
-					minDist = minDist / 2;
-					if (minDist == 0) break;
-				}
-
-				var p = new Planet()
-				{
-					X = RandomHelper.Random(width),
-					Y = RandomHelper.Random(height)
-				};
-				var foundedMin = false;
-				foreach (var pt in resultPoints) {
-					var dist = p.distanceTo(pt);
-					if (dist < minDist) {
-						foundedMin = true;
-						break;
-					}
-				}
-				if (foundedMin) continue;// начинаем цикл по новой - нашлась точка которая близко расположена к новой										 
-				resultPoints.Add(p);
-				counter = 0;
-			}
-			return resultPoints;
-		}
-
 		public ScreenPoint FindNearest(int x, int y)
 		{
 			var p = new ScreenPoint(x, y);
 			ScreenPoint ret = null;
-			var minDist = p.distanceTo(RoadPoints[0]);
-			if (minDist < MouseMinimalDistance) {
-				ret = RoadPoints[0];
-			}
+			var minDist = p.distanceTo(RoadPoints[0]);// первоначальное значение, чтоб не с потолка брать
 			foreach (var point in RoadPoints) {
+				if (point.Building == null
+					|| point.Building.BuilingType == BuildingEnum.Nope
+					|| point.Building.BuilingType == BuildingEnum.ShipDepot
+					) continue;
 				var curDist = p.distanceTo(point);
 				if (curDist > MouseMinimalDistance) continue;
 				if (curDist > minDist) continue;
@@ -189,67 +118,26 @@ namespace DysonSphereClient.Game
 			return ret;
 		}
 
-		private Ship CreateDefaultShip()
-		{
-			var res = GetDefaultCargoCapacity();
-			var ship = new Ship(RoadPoints[0], res);
-			ship.OnGetRoad += GetShipRoad;
-			ship.OnShipEndOrder += ShipEndOrder;
-			return ship;
-		}
-
 		/// <summary>
-		/// Запускаем корабль 
+		/// Изменение денег, обычно вследствие завершения рейса
 		/// </summary>
-		/// <param name="start"></param>
-		/// <param name="end"></param>
-		internal void SendShip(Planet start, Planet end)
+		/// <param name="deltaMoney"></param>
+		private void MoneyChanged(int deltaMoney)
 		{
-			Ship ship = null;
-			if (ship != null) {
-				foreach (var fship in _ships) {
-					if (fship.ShipCommand == ShipCommandEnum.NoCommand) {
-						ship = fship;
-						break;
-					}
-				}
-			}
-			if (ship == null) ship = _ships[0];
-			if (ship == null) return;
-			ship.MoveToOrder(start, end);
-		}
-
-		/// <summary>
-		/// Корабль прилетел к планете назначению и выгрузил груз
-		/// </summary>
-		/// <param name="shipEndOrder"></param>
-		private void ShipEndOrder(Ship shipEndOrder)
-		{
-			var planet = ((Planet)shipEndOrder.OrderPlanetDestination);
-			var order = planet.Order;
-			if (order == null) return;
-			if (order.AmountResources.IsEmpty()) {
-				Money += order.Reward;
-				planet.Order = null;
-				planet.Building.BuilingType = BuildingEnum.Nope;
-				CreateRandomOrder();
-				foreach (var ship in _ships) {
-					//корабли и сами вернутся, если нету заказа. но если заказ будет на той же планете то не вернутся
-					//ship.ShipCommand = ShipCommandEnum.ToBase;
-					ship.MoveToBase();
-				}
-			} else {
-				Money += order.RewardRace;
-				order.Reward -= order.RewardRace;
-				if (order.Reward <= 0) order.Reward = 0;
-			}
-			OnMoneyChanged?.Invoke(Money);
+			if (deltaMoney == 0) return;
+			Money += deltaMoney;
+			OnMoneyChanged.Invoke(Money);
 		}
 
 		private void CreateRandomOrder()
 		{
-			var num = RandomHelper.Random(RoadPoints.Count - 4) + 3;
-			RoadPoints[num].Order = _Orders.GetRandomOrder(100,0);
+			var num = RandomHelper.Random(RoadPoints.Count - 4) + 1;
+			var order= _orders.GetRandomOrder(100, 0);
+			if (RoadPoints[num].Order == null)
+				RoadPoints[num].Order = order;
+			else {// добавляем значение заказа к текущему
+				RoadPoints[num].Order.AddOrder(order);
+			}
 			RoadPoints[num].Building = new Building() { BuilingType = BuildingEnum.QuestBuilding };
 		}
 
@@ -259,149 +147,14 @@ namespace DysonSphereClient.Game
 		/// <returns></returns>
 		private List<ScreenPoint> GetShipRoad(ScreenPoint A, ScreenPoint B)
 		{
-			var shortRoad = GetShortRoad(A, B);
-			return GetPath(shortRoad, A);
+			return _paths.GetShipRoad(RoadMST, A, B);
 		}
 
-		/// <summary>
-		/// Почти по дейкстре. 
-		/// распространяем сигнал по всем направлениям. как только достигли целевой точки - 
-		/// двигаемся назад по граням с меньшим весом
-		/// </summary>
-		/// <param name="A"></param>
-		/// <param name="B"></param>
-		/// <returns></returns>
-		public List<ScreenEdge> GetShortRoad(ScreenPoint A, ScreenPoint B)
-		{
-			var edges = new List<ScreenEdge>();
-			var pointsSearched = new List<ScreenPoint>();
-
-			foreach (var edgeRoad in RoadMST) {
-				var ne = new ScreenEdge(edgeRoad.A, edgeRoad.B);
-				edges.Add(ne);
-			}
-
-			var path = new List<ScreenEdge>();
-			var beginEdges = edges.Where(e => (e.A == A || e.B == A)).DefaultIfEmpty().ToList();
-			if (beginEdges == null || beginEdges.Count == 0) return null;
-			pointsSearched.Add(A);
-			path.AddRange(beginEdges);
-			beginEdges.ForEach(e =>
-				{
-					edges.Remove(e);// удаляем 
-					if (e == null) throw new Exception("e = null");
-					e.Weight = e.A.distanceTo(e.B);// расчитываем начальный вес
-				}
-			);
-			
-			var founded = false;
-			while (!founded) {
-				ScreenPoint search = null;
-				ScreenEdge searchEdge = null;
-				// ищем точку для которой будем искать следующие ребра
-				foreach (var pathEdge in path) {
-					if (!pointsSearched.Contains(pathEdge.A)) {
-						search = pathEdge.A;
-						searchEdge = pathEdge;
-						break;
-					}
-					if (!pointsSearched.Contains(pathEdge.B)) {
-						search = pathEdge.B;
-						searchEdge = pathEdge;
-						break;
-					}
-				}
-				if (search == null) { founded = true; continue; }
-
-				// ищем ребра которые связаны с новой вершиной, за исключением самого найденного ребра
-				var edgesSearch = edges.Where(
-					e => (/*e != searchEdge &&*/ (e.A == search || e.B == search))
-				).ToList();
-				foreach (var e in edgesSearch) {
-					e.Weight = searchEdge.Weight + e.A.distanceTo(e.B);
-					if (e.A == B || e.B == B) { founded = true; }
-				}
-
-				pointsSearched.Add(search);// запоминаем
-				path.AddRange(edgesSearch);// добавляем
-				edgesSearch.ForEach(e => edges.Remove(e));// удаляем
-			}
-
-			// выбираем только нужные вершины
-			var ret = new List<ScreenEdge>();
-			ScreenPoint searchPoint = B;
-			var edge = path.Where(e => e.A == searchPoint || e.B == searchPoint).OrderBy(e => e.Weight).First();
-			ret.Add(edge);
-			searchPoint = edge.A == searchPoint ? edge.B : edge.A;
-			while (searchPoint != A) {// ищем вершины по точке и берём из них только с меньшим весом. из нее берём следующую точку
-				edge = path.Where(e => e.A == searchPoint || e.B == searchPoint)
-					.OrderBy(e => e.Weight).First();
-				ret.Add(edge);
-				searchPoint = edge.A == searchPoint ? edge.B : edge.A;// выбираем другую точку
-			}
-			ret.Reverse();
-
-			return ret;
-		}
-
-		/// <summary>
-		/// По присланным граням 
-		/// </summary>
-		/// <param name="basePath"></param>
-		/// <param name="firstPoint"></param>
-		/// <returns></returns>
-		public List<ScreenPoint> GetPath(List<ScreenEdge> basePath, ScreenPoint firstPoint)
-		{
-			var bc = new BezierCurve();
-			var pathlength = (int)(basePath/*.Count * 20);//*/ .Sum(e => e.Weight) / 5 / basePath.Count);
-			var basePoints = GetPathFromEdges(basePath, firstPoint);
-			var ret = new List<ScreenPoint>();
-			bc.Bezier2D(basePoints, pathlength, ret);
-			return ret;
-		}
-
-		private List<ScreenPoint> GetPathFromEdges(List<ScreenEdge> basePath, ScreenPoint firstPoint)
-		{
-			var ret = new List<ScreenPoint>();
-			var p = firstPoint;
-			ret.Add(p);// сохраняем первую точку
-			foreach (var edge in basePath) {
-				p = edge.A == p ? edge.B : edge.A;
-				ret.Add(p);// сохраняем другую точку 
-			}
-			return ret;
-		}
-
-		private Resources GetDefaultResources()
-		{
-			var ret = new Resources();
-			ret.Add(ResourcesEnum.Materials, 50000000);
-			ret.Add(ResourcesEnum.Tools, 50000000);
-			ret.Add(ResourcesEnum.Personal, 50000000);
-			return ret;
-		}
-
-		private Resources GetDefaultReward()
-		{
-			var ret = new Resources();
-			ret.Add(ResourcesEnum.Materials, 5);
-			ret.Add(ResourcesEnum.Tools, 7);
-			ret.Add(ResourcesEnum.Personal, 10);
-			return ret;
-		}
-
-		private Resources GetDefaultCargoCapacity()
-		{
-			var ret = new Resources();
-			ret.Add(ResourcesEnum.Materials, 500);
-			ret.Add(ResourcesEnum.Tools, 300);
-			ret.Add(ResourcesEnum.Personal, 20);
-			return ret;
-		}
 		public override void Tick()
 		{
-			if (_ships.Count == 0) return;
-			_ships[0].MoveNext();
+			foreach (var ship in _ships) {
+				ship.MoveNext();
+			}
 		}
 	}
 }

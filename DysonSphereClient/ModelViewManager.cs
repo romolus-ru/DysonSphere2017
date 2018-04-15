@@ -161,7 +161,8 @@ namespace DysonSphereClient
 			_viewManager.RemoveView(_vm);
 			_vm = null;
 
-			_mtg = new ModelTransportGame();
+			var ships = new Ships();
+			_mtg = new ModelTransportGame(ships);
 			_modelMainClient.AddModel(_mtg);
 
 			_vtg = new ViewTransportGame();
@@ -171,9 +172,7 @@ namespace DysonSphereClient
 			_mtg.OnSetPoints += _vtg.SetPoints;
 			_vtg.OnExitPressed += Close;
 			_vtg.OnFindNearest += _mtg.FindNearest;
-			_vtg.OnGetRoadShort += _mtg.GetShortRoad;
-			_vtg.OnGetPath += _mtg.GetPath;
-			_vtg.OnSendShip += _mtg.SendShip;
+			//_vtg.OnGetPath += _mtg.GetPath;
 			_mtg.OnMoneyChanged += _vtg.MoneyChanged;
 		}
 

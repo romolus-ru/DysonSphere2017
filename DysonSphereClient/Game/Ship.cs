@@ -13,7 +13,7 @@ namespace DysonSphereClient.Game
 		private Resources _cargoMax = null;
 		public ShipCommandEnum ShipCommand;
 		public Func<ScreenPoint, ScreenPoint, List<ScreenPoint>> OnGetRoad;
-		public Action<Ship> OnShipEndOrder;
+		public Action<Ship> OnRaceEnded;
 
 		/// <summary>
 		/// Текущий путь между двух планет
@@ -31,9 +31,17 @@ namespace DysonSphereClient.Game
 		public ScreenPoint CurrentTarget;
 		public ScreenPoint OrderPlanetSource;
 		public ScreenPoint OrderPlanetDestination;
+		/// <summary>
+		/// Время загрузки/разгрузки
+		/// </summary>
+		public int TimeToWaitMax;
+		public int TimeToWaitCurrent;
+		public ShipCommandEnum TimeToWaitState = ShipCommandEnum.NoCommand;
 
 		public Ship(ScreenPoint shipBase, Resources cargoMax)
 		{
+			TimeToWaitMax = 10;
+			TimeToWaitCurrent = 0;
 			Base = shipBase;
 			CurrentTarget = Base;
 			_cargoMax = cargoMax;
@@ -44,19 +52,27 @@ namespace DysonSphereClient.Game
 		/// </summary>
 		/// <param name="start"></param>
 		/// <param name="end"></param>
-		public void MoveToOrder(Planet start, Planet end)
+		/// <returns>Успешно ли запустили</returns>
+		public bool MoveToOrder(Planet start, Planet end)
 		{
 			if (ShipCommand == ShipCommandEnum.NoCommand) {
 				//CurrentTarget = start;// начинаем движение от начальной точки
 				CurrentRoad?.Clear();
 			}
+			if (end != null) {
+				var cargo = start.Building.BuilingType.GetResourceEnum();
+				var needCount = end.Order.AmountResources.Value(cargo);
+				if (needCount <= 0) return false;
+			}
 			ShipCommand = ShipCommandEnum.MoveToOrder;
 			OrderPlanetSource = start;
 			OrderPlanetDestination = end;
+			return true;
 		}
 
 		public void MoveToBase()
 		{
+			ShipCommand = ShipCommandEnum.ToBase;
 			ProcessMoveToBase();
 		}
 
@@ -66,6 +82,19 @@ namespace DysonSphereClient.Game
 		public void MoveNext()
 		{
 			if (ShipCommand == ShipCommandEnum.NoCommand) return;
+
+			if (TimeToWaitState == ShipCommandEnum.CargoLoad) {
+				TimeToWaitCurrent++;
+				if (TimeToWaitCurrent >= TimeToWaitMax)
+					TimeToWaitState = ShipCommandEnum.NoCommand;
+				return;
+			}
+			if (TimeToWaitState == ShipCommandEnum.CargoUnload) {
+				TimeToWaitCurrent--;
+				if (TimeToWaitCurrent <= 0)
+					TimeToWaitState = ShipCommandEnum.NoCommand;
+				return;
+			}
 
 			CurrentRoadPointNum++;
 			if (CurrentRoadPointNum < (CurrentRoad?.Count ?? 0)) return;
@@ -89,6 +118,7 @@ namespace DysonSphereClient.Game
 
 		private bool OrderEmpty()
 		{
+			if (OrderPlanetDestination == null) return false;
 			var dest = (Planet)OrderPlanetDestination;
 			if (dest.Order == null || dest.Order.AmountResources.IsEmpty()) return true;
 			return false;
@@ -100,8 +130,11 @@ namespace DysonSphereClient.Game
 		private void ProcessMoveToBase()
 		{
 			if (CurrentTarget!= Base) {
+				TimeToWaitState = ShipCommandEnum.CargoUnload;
 				CurrentRoad = OnGetRoad?.Invoke(CurrentTarget, Base);
 				CurrentTarget = Base;
+				OrderPlanetSource = null;
+				OrderPlanetDestination = null;
 				return;
 			}
 			ShipCommand = ShipCommandEnum.NoCommand;
@@ -113,6 +146,7 @@ namespace DysonSphereClient.Game
 		private void ProcessMoveOrder()
 		{
 			if (CurrentTarget != OrderPlanetDestination) {
+				TimeToWaitState = ShipCommandEnum.CargoLoad;
 				CurrentRoad = OnGetRoad(CurrentTarget, OrderPlanetDestination);
 				CurrentTarget = OrderPlanetDestination;
 				return;
@@ -126,21 +160,23 @@ namespace DysonSphereClient.Game
 			var orderCount = planet.Order.AmountResources.Value(cargo);
 			if (orderCount <= cargoCount) {
 				planet.Order.AmountResources.Add(cargo, -orderCount);
-				OnShipEndOrder?.Invoke(this);
+				// раз ресурсов нету то там надо отправить все задействованные корабли назад
+				OnRaceEnded?.Invoke(this);
 			} else {
 				planet.Order.AmountResources.Add(cargo, -cargoCount);
-				OnShipEndOrder?.Invoke(this);
+				OnRaceEnded?.Invoke(this);
 				ShipCommand = ShipCommandEnum.MoveToOrder;
 				ProcessMoveToOrder();
 			}
 		}
 
 		/// <summary>
-		/// Двигаемся к заказу и переходим на режим перевозки заказа
+		/// Двигаемся к заказу и переходим в режим перевозки заказа
 		/// </summary>
 		private void ProcessMoveToOrder()
 		{
 			if (CurrentTarget != OrderPlanetSource) {
+				TimeToWaitState = ShipCommandEnum.CargoUnload;
 				CurrentRoad = OnGetRoad?.Invoke(CurrentTarget, OrderPlanetSource);
 				CurrentTarget = OrderPlanetSource;
 				return;

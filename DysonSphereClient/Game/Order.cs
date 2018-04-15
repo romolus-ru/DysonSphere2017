@@ -61,5 +61,17 @@ namespace DysonSphereClient.Game
 			ret.Add(AmountResources.GetInfo());
 			return ret;
 		}
+
+		/// <summary>
+		/// Увеличить заказ
+		/// </summary>
+		/// <param name="order"></param>
+		internal void AddOrder(Order order)
+		{
+			Reward += order.Reward;
+			RewardRace = Math.Min(RewardRace, order.Reward);
+			Level = Math.Max(Level, order.Level);
+			AmountResources.Add(order.AmountResources);
+		}
 	}
 }

@@ -17,7 +17,6 @@ namespace DysonSphereClient.Game
 	public class ViewShipPanel:ViewPanel
 	{
 		private ViewButton btnMoveToBase;
-		private ViewButton btnBuyShip;
 
 		private Ship _ship = null;
 
@@ -29,14 +28,8 @@ namespace DysonSphereClient.Game
 			btnMoveToBase = new ViewButton();
 			AddComponent(btnMoveToBase);
 			btnMoveToBase.InitButton(MoveToBase, "btnMoveToBase", "Вернуть на базу");
-			btnMoveToBase.SetParams(5, 10, 140, 30, "btnMoveToBase");
+			btnMoveToBase.SetParams(5, 150, 140, 30, "btnMoveToBase");
 			btnMoveToBase.InitTexture("textRB", "textRB");
-
-			btnBuyShip = new ViewButton();
-			AddComponent(btnBuyShip);
-			btnBuyShip.InitButton(MoveToBase, "btnBuyShip", "Купить корабль");
-			btnBuyShip.SetParams(5, 80, 140, 70, "btnBuyShip");
-			btnBuyShip.InitTexture("textRB", "textRB");
 
 			Checkers.AddToCheckOnce(CheckState);
 		}
@@ -49,8 +42,7 @@ namespace DysonSphereClient.Game
 
 		private void CheckState()
 		{
-			btnMoveToBase.SetVisible(true);// _ship != null);
-			btnBuyShip.SetVisible(true);// _ship == null);
+			btnMoveToBase.SetVisible(_ship != null);
 		}
 
 		private void MoveToBase()
@@ -59,14 +51,6 @@ namespace DysonSphereClient.Game
 			if (_ship.ShipCommand == ShipCommandEnum.ToBase) return;
 			if (_ship.ShipCommand == ShipCommandEnum.NoCommand) return;
 			_ship.MoveToBase();
-		}
-
-		public override void DrawObject(VisualizationProvider visualizationProvider)
-		{
-			base.DrawObject(visualizationProvider);
-			visualizationProvider.SetColor(Color.White);
-			visualizationProvider.Print(10, 10, "TXT");
-
 		}
 	}
 }

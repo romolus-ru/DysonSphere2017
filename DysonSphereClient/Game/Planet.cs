@@ -29,5 +29,12 @@ namespace DysonSphereClient.Game
 		{
 			
 		}
+
+		public override string ToString()
+		{
+			return base.ToString() + 
+				" o=" + (Order != null) + 
+				" b=" + (Building == null ? "null" : Building.BuilingType.ToString());
+		}
 	}
 }
