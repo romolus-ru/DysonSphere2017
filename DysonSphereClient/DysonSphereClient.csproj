@@ -58,8 +58,10 @@
     <Compile Include="Game\Orders.cs" />
     <Compile Include="Game\Paths.cs" />
     <Compile Include="Game\QuestEnum.cs" />
+    <Compile Include="Game\ResourcesHelper.cs" />
     <Compile Include="Game\ShipCommandEnum.cs" />
     <Compile Include="Game\Ships.cs" />
+    <Compile Include="Game\ViewLabelIcon.cs" />
     <Compile Include="Game\ViewShipPanel.cs" />
     <Compile Include="Game\ViewShipsPanel.cs" />
     <Compile Include="ModelViewManager.cs" />

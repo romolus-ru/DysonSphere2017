@@ -13,25 +13,26 @@ namespace DysonSphereClient.Game
 	public class Orders
 	{
 		private List<Order> _orders = new List<Order>();
+		public int MaxOrders = 3;
 		public Orders()
 		{
 			var order = new Order();
 			order.AmountResources = new Resources();
-			order.AmountResources.Add(ResourcesEnum.Materials, 2000);
+			order.AmountResources.Add(ResourcesEnum.RawMaterials, 2000);
 			order.RewardRace = 3;
 			order.Reward = 100;
 			_orders.Add(order);
 
 			order = new Order();
 			order.AmountResources = new Resources();
-			order.AmountResources.Add(ResourcesEnum.Tools, 500);
+			order.AmountResources.Add(ResourcesEnum.Consumables, 500);
 			order.RewardRace = 3;
 			order.Reward = 100;
 			_orders.Add(order);
 
 			order = new Order();
 			order.AmountResources = new Resources();
-			order.AmountResources.Add(ResourcesEnum.Personal, 100);
+			order.AmountResources.Add(ResourcesEnum.Tools, 100);
 			order.RewardRace = 3;
 			order.Reward = 100;
 			_orders.Add(order);

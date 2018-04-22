@@ -66,9 +66,9 @@ namespace DysonSphereClient.Game
 		private Resources GetDefaultCargoCapacity()
 		{
 			var ret = new Resources();
-			ret.Add(ResourcesEnum.Materials, 500);
-			ret.Add(ResourcesEnum.Tools, 300);
-			ret.Add(ResourcesEnum.Personal, 20);
+			ret.Add(ResourcesEnum.RawMaterials, 500);
+			ret.Add(ResourcesEnum.Consumables, 300);
+			ret.Add(ResourcesEnum.Tools, 20);
 			return ret;
 		}
 
@@ -78,7 +78,7 @@ namespace DysonSphereClient.Game
 		}
 
 		/// <summary>
-		/// Запускаем корабль 
+		/// Запускаем корабль
 		/// </summary>
 		/// <param name="start"></param>
 		/// <param name="end"></param>

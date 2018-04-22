@@ -10,6 +10,7 @@ using Tao.Platform.Windows;
 using OpenGL4NET;
 using Engine.Visualization;
 using Engine.Utils;
+using System.Windows.Media;
 
 namespace VisualizationOpenGL
 {
@@ -53,8 +54,8 @@ namespace VisualizationOpenGL
 			gl.DepthFunc(GL.LESS);      // The Type Of Depth Test To Do
 			gl.Enable(GL.ALPHA_TEST);
 			ResizeGlScene(_formOpenGl.Width, _formOpenGl.Height);
-			LoadFont("default", "Consolas", 12);
 			LoadFont("bigFont", "Segoe UI", 24);
+			LoadFont("default", "Consolas", 12);
 			SetFont("default");
 			//LoadFont("default", "Book Antiqua", 14);
 			//LoadFont("default2", "Book Antiqua", 10);
@@ -545,7 +546,7 @@ namespace VisualizationOpenGL
 			gl.BlendFunc(GL.ONE, GL.ONE);
 		}
 
-		protected override void _DrawTexturePart(int x, int y, string textureName, int placeWidth, int placeHeight)
+		protected override void _DrawTexturePart(int x, int y, string textureName, int placeWidth, int placeHeight, bool useColorModification)
 		{
 			var texInfo = _atlasManager.GetTextureInfo(textureName);
 			if (texInfo == null) return;
@@ -568,6 +569,10 @@ namespace VisualizationOpenGL
 			gl.Enable(GL.TEXTURE_2D);
 			gl.PushAttrib(GL.BLEND);
 			gl.Enable(GL.BLEND);
+
+			if (useColorModification)
+				gl.TexEnvi(GL.TEXTURE_ENV, GL.TEXTURE_ENV_MODE, GL.MODULATE);// что бы текстура была прозрачной, сама текстура
+			//gl.BlendFunc(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA);
 			gl.BlendFunc(texInfo.BlendParam, GL.ONE);
 			gl.BindTexture(GL.TEXTURE_2D, texInfo.TextureCode);
 			gl.TexParameteri(GL.TEXTURE_2D, GL.TEXTURE_WRAP_S, GL.REPEAT);
@@ -607,6 +612,8 @@ namespace VisualizationOpenGL
 			gl.PopAttrib();//Gl.GL_BLEND
 			gl.PopAttrib();//Gl.GL_TEXTURE_2D
 			gl.BlendFunc(GL.ONE, GL.ONE);
+			if (useColorModification)
+				gl.TexEnvi(GL.TEXTURE_ENV, GL.TEXTURE_ENV_MODE, GL.REPLACE);
 		}
 
 		protected override void _DrawTextureMasked(int x, int y, string textureName, string textureMaskName)
@@ -686,18 +693,30 @@ namespace VisualizationOpenGL
 		private int TextLength(byte[] text)
 		{
 			//int len = text.Sum(с => ((int)(_glyphMetrics[с].gmfCellIncX * FontHeight * 1.22f + 0.5f)));
-			double len = text.Sum(c => Math.Ceiling(_glyphMetrics[c].gmfCellIncX * FontHeight + FontHeight / 8));
-			return (int)len;
+			//double len = text.Sum(c => Math.Ceiling(_glyphMetrics[c].gmfCellIncX * FontHeight + FontHeight / 4));
+			double len = text.Sum(c =>
+			{
+				var glf = _glyphMetrics[c];
+				return Math.Ceiling((glf.gmfCellIncX + glf.gmfBlackBoxX / 2 - glf.gmfptGlyphOrigin.X * 2) * FontHeight);
+			}
+			);
+			return (int)Math.Ceiling(len);
 		}
 
 		public override int TextLength(string text)
 		{
+			if (text == "W") {
+				var a = 1;
+			}
+			if (text == "+") {
+				var a = 1;
+			}
 			var w1251Bytes = ConvertEncoding(text);
 			return TextLength(w1251Bytes);
 		}
 
 		/// <summary>
-		/// Вспомогательная функция для конвертирования уникода в другую кодировку и преобразование в массив байтов
+		/// Вспомогательная функция для конвертирования юникода в другую кодировку и преобразование в массив байтов
 		/// </summary>
 		/// <param name="text"></param>
 		/// <returns></returns>
@@ -726,7 +745,7 @@ namespace VisualizationOpenGL
 			gl.Enable(GL.ALPHA_TEST);
 			gl.Enable(GL.BLEND);
 
-			gl.WindowPos2iARB(x, _formOpenGl.Height - y - 16);
+			gl.WindowPos2iARB(x, _formOpenGl.Height - y - FontHeight);
 			gl.PushAttrib(GL.LIST_BIT);     // Save's the current base list
 			gl.BlendFunc(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA);
 			gl.ListBase((uint)_fontOpenGLList);            // Set the base list to our character list
@@ -737,9 +756,6 @@ namespace VisualizationOpenGL
 			gl.PopAttrib(); // Restore GL_ALPHA_TEST
 			gl.PopAttrib(); // Restore GL_TEXTURE_2D
 			gl.PopAttrib(); // Restore GL_DEPTH_TEST
-			_textCursorX = x + TextLength(w1251Bytes);
-			_textCursorY = y;
-
 		}
 
 		public override void BeginDraw()
@@ -785,14 +801,6 @@ namespace VisualizationOpenGL
 		}
 		private Dictionary<string, FontInfo> _fontInfos = new Dictionary<string, FontInfo>();
 
-		/// <summary>
-		/// Имя текстуры-шрифта
-		/// </summary>
-		public const string TextureFont = "Font";
-
-		private int _textCursorX = 0;
-		private int _textCursorY = 0;
-
 		// Хранит информацию о шрифте. нужна для вычисления длины текста
 		private Gdi.GLYPHMETRICSFLOAT[] _glyphMetrics = new Gdi.GLYPHMETRICSFLOAT[256];
 
@@ -806,7 +814,7 @@ namespace VisualizationOpenGL
 								  0,
 								  0,
 								  0,
-								  Gdi.FW_BOLD,//Gdi.FF_DONTCARE
+								  Gdi.FF_DONTCARE,//Gdi.FW_BOLD
 								  false,
 								  false,
 								  false,
@@ -816,7 +824,7 @@ namespace VisualizationOpenGL
 								  Gdi.ANTIALIASED_QUALITY,
 								  0,
 								  fontName);
-
+			
 			IntPtr dc = Wgl.wglGetCurrentDC();
 			oldfont = Gdi.SelectObject(dc, font);
 			Wgl.wglUseFontOutlinesA(dc, 0, 256, _fontOpenGLList, 0, 0f, Wgl.WGL_FONT_POLYGONS, _glyphMetrics);
@@ -1040,6 +1048,34 @@ void main(void)
 		}
 		public override void StopShader() {
 			gl.UseProgram(0);
+		}
+
+		protected override int _printTexture(string textureName, string fontName)
+		{
+			if (string.IsNullOrEmpty(textureName)) return 0;
+
+			var texInfo = _atlasManager.GetTextureInfo(textureName);
+			if (texInfo == null) return 0;
+			float coeff = 0;
+			if (texInfo.Width < texInfo.Height)
+				coeff = texInfo.Width / texInfo.Height;
+			else
+				coeff = texInfo.Height / texInfo.Width;
+
+			var fontHeight = FontHeight;// текущий размер шрифта
+			if (!string.IsNullOrEmpty(fontName) && _fontInfos.ContainsKey(fontName))
+				fontHeight = _fontInfos[fontName].FontHeight;// размер шрифта для которого выводится текстура
+			int cFH = (int)(fontHeight * coeff + 0.5);
+			int dx = 0;
+			int dy = (int)((cFH * 1 / 7));
+			DrawTexturePart(CurTxtX + dx, CurTxtY + dy, textureName, fontHeight, cFH);
+			//Line(CurTxtX - 5, CurTxtY - 5, CurTxtX + 5, CurTxtY + 5);
+			//Line(CurTxtX + 5, CurTxtY - 5, CurTxtX - 5, CurTxtY + 5);
+
+			//Line(CurTxtX - 5 + dx, CurTxtY - 5 + dy, CurTxtX + 5 + dx, CurTxtY + 5 + dy);
+			//Line(CurTxtX + 5 + dx, CurTxtY - 5 + dy, CurTxtX - 5 + dx, CurTxtY + 5 + dy);
+
+			return cFH;
 		}
 	}
 }

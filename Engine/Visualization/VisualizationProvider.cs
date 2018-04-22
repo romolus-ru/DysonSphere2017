@@ -2,9 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Engine.Visualization
 {
@@ -286,10 +283,10 @@ namespace Engine.Visualization
 		/// <param name="textureName">Имя текстуры</param>
 		/// <param name="placeWidth">Ширина выводимой части текстуры</param>
 		/// <param name="placeHeight">Высота выводимой части текстуры</param>
-		public void DrawTexturePart(int x, int y, string textureName, int placeWidth, int placeHeight)
-		{ _DrawTexturePart(x + curOffsetX, y + curOffsetY, textureName, placeWidth, placeHeight); }
+		public void DrawTexturePart(int x, int y, string textureName, int placeWidth, int placeHeight, bool useColorModification=false)
+		{ _DrawTexturePart(x + curOffsetX, y + curOffsetY, textureName, placeWidth, placeHeight, useColorModification); }
 
-		protected virtual void _DrawTexturePart(int x, int y, string textureName, int placeWidth, int placeHeight) { }
+		protected virtual void _DrawTexturePart(int x, int y, string textureName, int placeWidth, int placeHeight, bool useColorModification) { }
 
 		/// <summary>
 		/// Вывести на экран текстуру с маской
@@ -403,7 +400,7 @@ namespace Engine.Visualization
 		}
 
 		/// <summary>
-		/// Именно эта функция и  выводит текст
+		/// Именно эта функция и выводит текст
 		/// </summary>
 		/// <param name="x"></param>
 		/// <param name="y"></param>
@@ -413,6 +410,14 @@ namespace Engine.Visualization
 		/// выводит текст в указанных координатах
 		/// цвет уже установлен в других функциях, тут это не должно требоваться</remarks>
 		protected virtual void PrintOnly(int x, int y, string text) { }
+
+		public void PrintTexture(string textureName, string fontName = null)
+		{
+			var offset = _printTexture(textureName, fontName);
+			CurTxtX += offset;
+		}
+
+		protected virtual int _printTexture(string textureName, string fontName) { return 0; }
 
 		#endregion
 

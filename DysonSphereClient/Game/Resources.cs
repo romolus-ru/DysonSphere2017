@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,6 +19,11 @@ namespace DysonSphereClient.Game
 			_resources.Clear();
 			foreach (ResourcesEnum item in Enum.GetValues(typeof(ResourcesEnum)))
 				_resources.Add(item, 0);
+		}
+
+		public Dictionary<ResourcesEnum, int>.Enumerator GetEnumerator()
+		{
+			return _resources.GetEnumerator();
 		}
 
 		public bool IsEmpty() => _resources.Sum(v => v.Value) == 0;

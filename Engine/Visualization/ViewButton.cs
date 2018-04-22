@@ -89,9 +89,11 @@ namespace Engine.Visualization
 			}
 			var f = visualizationProvider.FontHeight / 2;
 
+			var texture = CursorOver ? _btnTexture : _btnTextureOver;
+			GUIHelper.ViewGUIRectangle(visualizationProvider, this, texture);
+
 			visualizationProvider.SetColor(color);
 			visualizationProvider.Print(X + 4, Y + Height / 2 - f - 3, txt);
-			var texture = _btnTexture;
 			if (!string.IsNullOrEmpty(Hint) && CursorOver) {
 				visualizationProvider.SetColor(GUIHelper.ButtonHintColor);
 				visualizationProvider.Print(X + 10, Y + Height + 5 - f, Hint);
@@ -102,9 +104,7 @@ namespace Engine.Visualization
 					//s += " = > " + visualizationProvider.CurTxtX + "  " + HintKeys + " " + visualizationProvider.TextLength(HintKeys) + " ";
 				}
 				//visualizationProvider.SetColor(Color.White);visualizationProvider.Print(X + 10, Y + Height + 5 + 15, s);
-				texture = _btnTextureOver;
 			}
-			GUIHelper.ViewGUIRectangle(visualizationProvider, this, texture);
 		}
 
 		public void InitTexture(string textureName, string textureNameOver)

@@ -57,7 +57,7 @@
                     </DataGrid>
                 </ScrollViewer>
 
-                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" Height="573">
                     <DataGrid x:Name="AtlasTexturesGrid"
                   AutoGenerateColumns="False"
                   ItemsSource="{Binding ViewAtlasTextures, Mode=TwoWay}"

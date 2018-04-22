@@ -182,13 +182,13 @@ namespace AtlasViewer.ViewModel
 			if (w == 0 || h == 0) return;
 			var stepW = _selectedAtlasFile.AtlasFileData.Width / w;
 			var stepH = _selectedAtlasFile.AtlasFileData.Height / h;
-			for (int i = 0; i < w; i++) {
-				for (int j = 0; j < h; j++) {
-					var x1 = j * stepW;
-					var y1 = i * stepH;
+			for (int j = 0; j < h; j++) {
+				for (int i = 0; i < w; i++) {
+					var x1 = i * stepW;
+					var y1 = j * stepH;
 					var newAtlasTexture = new AtlasTextures();
 					newAtlasTexture.AtlasFileId = SelectedAtlasFile.AtlasFileData.IdAtlasFile;
-					newAtlasTexture.Name = "t" + (w * i + j + 1);
+					newAtlasTexture.Name = "t" + (w * j + i + 1);
 					newAtlasTexture.Description = newAtlasTexture.Name + " auto";
 					newAtlasTexture.P1X = x1;
 					newAtlasTexture.P1Y = y1;

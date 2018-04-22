@@ -24,7 +24,7 @@ namespace DysonSphereClient.Game
 		public ModelTransportGame(Ships ships)
 		{
 			_ships = ships;
-			_ships.OnFinishOrder = CreateRandomOrder;
+			_ships.OnFinishOrder = CreateRandomOrders;
 			_ships.OnMoneyChanged = MoneyChanged;
 		}
 
@@ -77,10 +77,7 @@ namespace DysonSphereClient.Game
 			foreach (var point in roadPoints) point.Building = new Building() { BuilingType = BuildingEnum.Nope };
 			roadPoints[0].Building = new Building() { BuilingType = BuildingEnum.ShipDepot };
 
-			CreateRandomOrder();
-			CreateRandomOrder();
-			CreateRandomOrder();
-
+			CreateRandomOrders();
 			// добавляем ресурсные базы
 			for (int i = 0; i < 3; i++) {
 				var rp = roadPoints[roadPoints.Count - 3 + i];
@@ -129,16 +126,22 @@ namespace DysonSphereClient.Game
 			OnMoneyChanged.Invoke(Money);
 		}
 
-		private void CreateRandomOrder()
+		private void CreateRandomOrders()
 		{
-			var num = RandomHelper.Random(RoadPoints.Count - 4) + 1;
-			var order= _orders.GetRandomOrder(100, 0);
-			if (RoadPoints[num].Order == null)
-				RoadPoints[num].Order = order;
-			else {// добавляем значение заказа к текущему
-				RoadPoints[num].Order.AddOrder(order);
+			var countOrders = RoadPoints.Where(p => p.Order != null).Count();
+			var needOrders = _orders.MaxOrders - countOrders;
+			if (needOrders > 0) {
+				for (int i = 0; i < needOrders; i++) {// создаём нужное количество заказов
+					var num = RandomHelper.Random(RoadPoints.Count - 4) + 1;
+					var order = _orders.GetRandomOrder(100, 0);
+					if (RoadPoints[num].Order == null)
+						RoadPoints[num].Order = order;
+					else {// добавляем значение заказа к текущему
+						RoadPoints[num].Order.AddOrder(order);
+					}
+					RoadPoints[num].Building = new Building() { BuilingType = BuildingEnum.QuestBuilding };
+				}
 			}
-			RoadPoints[num].Building = new Building() { BuilingType = BuildingEnum.QuestBuilding };
 		}
 
 		/// <summary>

@@ -92,5 +92,34 @@ namespace Engine.Visualization
 			//		Quad(mx1, my1, mx2, my2, nx2, ny2, nx1, ny1);mx1 = mx2;my1 = my2;nx1 = nx2;ny1 = ny2;}}
 		}
 
+		public void DrawTextLineArtifacts()
+		{
+			Line(
+				CurTxtX, CurTxtY,
+				CurTxtX, CurTxtY + 30
+				);
+
+			/*
+			нужно для проверки что текст идёт друг за другом. на данный момент что то не так - возможно что то с GLYPHMETRICSFLOAT
+			visualizationProvider.SetFont("bigFont");
+
+			visualizationProvider.Print(100, 500, " +");
+			visualizationProvider.DrawTextLineArtifacts();
+			visualizationProvider.Print("+");
+			visualizationProvider.DrawTextLineArtifacts();
+			visualizationProvider.Print(" ");
+			visualizationProvider.DrawTextLineArtifacts();
+			visualizationProvider.Print("1");
+			visualizationProvider.DrawTextLineArtifacts();
+			visualizationProvider.Print("W");
+			visualizationProvider.DrawTextLineArtifacts();
+			visualizationProvider.Print("|");
+			visualizationProvider.DrawTextLineArtifacts();
+			visualizationProvider.Print("_");
+			visualizationProvider.DrawTextLineArtifacts();
+
+			visualizationProvider.SetFont("default");
+			*/
+		}
 	}
 }

@@ -14,7 +14,7 @@ namespace DysonSphereClient.Game
 	/// <summary>
 	/// Отображение информации о корабле и управление им
 	/// </summary>
-	public class ViewShipPanel:ViewPanel
+	public class ViewShipPanel : ViewPanel
 	{
 		private ViewButton btnMoveToBase;
 
@@ -51,6 +51,35 @@ namespace DysonSphereClient.Game
 			if (_ship.ShipCommand == ShipCommandEnum.ToBase) return;
 			if (_ship.ShipCommand == ShipCommandEnum.NoCommand) return;
 			_ship.MoveToBase();
+		}
+
+		public override void DrawObject(VisualizationProvider visualizationProvider)
+		{
+			base.DrawObject(visualizationProvider);
+			if (_ship == null) return;
+			string texture = null;
+			string operation = "Ожидание";
+			if (_ship.OrderPlanetDestination != null) {
+				operation = "Перевозка";
+				texture = ResourcesHelper.GetTexture(
+					(_ship.OrderPlanetSource as Planet)
+					.Building.BuilingType.GetResourceEnum());
+			}
+			if (_ship.ShipCommand == ShipCommandEnum.ToBase)
+				operation = "На базу";
+			if (_ship.TimeToWaitState == ShipCommandEnum.CargoLoad)
+				operation = "Загрузка";
+			if (_ship.TimeToWaitState == ShipCommandEnum.CargoUnload)
+				operation = "Разгрузка";
+			if (_ship.ShipCommand == ShipCommandEnum.NoCommand)
+				texture = "Resources.Infinity";
+			if (!string.IsNullOrEmpty(texture)) {
+				const int size = 40;
+				visualizationProvider.DrawTexturePart((Width) / 2 - size / 4, 15, texture, size, size);
+			}
+			var l = visualizationProvider.TextLength(operation);
+			visualizationProvider.Print(Width / 2 - l / 4, 55, operation);
+
 		}
 	}
 }

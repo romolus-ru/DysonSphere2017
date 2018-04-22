@@ -20,13 +20,13 @@ namespace DysonSphereClient.Game
 		/// </summary>
 		MineMaterial,
 		/// <summary>
-		/// Создание инструментов
+		/// Фабрика расходных материалов
 		/// </summary>
-		CraftTools,
+		ConsumablesFactory,
 		/// <summary>
-		/// Пополнение рабочих ресурсов
+		/// Инструментальный завод
 		/// </summary>
-		PopulationCamp,
+		ToolsFactory,
 		/// <summary>
 		/// Док для кораблей, после заданий они возвращаются туда
 		/// </summary>

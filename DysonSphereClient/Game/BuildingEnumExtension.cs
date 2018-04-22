@@ -26,30 +26,30 @@ namespace DysonSphereClient.Game
 		public static bool IsSource(this BuildingEnum value)
 		{
 			return value == BuildingEnum.MineMaterial
-				|| value == BuildingEnum.CraftTools
-				|| value == BuildingEnum.PopulationCamp;
+				|| value == BuildingEnum.ConsumablesFactory
+				|| value == BuildingEnum.ToolsFactory;
 		}
 
 		public static ResourcesEnum GetResourceEnum(this BuildingEnum value)
 		{
 			switch (value) {
 				case BuildingEnum.MineMaterial:
-					return ResourcesEnum.Materials;
-				case BuildingEnum.CraftTools:
-					return ResourcesEnum.Tools;
+					return ResourcesEnum.RawMaterials;
+				case BuildingEnum.ConsumablesFactory:
+					return ResourcesEnum.Consumables;
 			}
-			return ResourcesEnum.Personal;
+			return ResourcesEnum.Tools;
 		}
 
 		public static BuildingEnum GetBuildingEnum(this ResourcesEnum value)
 		{
 			switch (value) {
-				case ResourcesEnum.Materials:
+				case ResourcesEnum.RawMaterials:
 					return BuildingEnum.MineMaterial;
-				case ResourcesEnum.Tools:
-					return BuildingEnum.CraftTools;
+				case ResourcesEnum.Consumables:
+					return BuildingEnum.ConsumablesFactory;
 			}
-			return BuildingEnum.PopulationCamp;
+			return BuildingEnum.ToolsFactory;
 		}
 
 
