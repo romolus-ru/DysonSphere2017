@@ -34,7 +34,7 @@ namespace DysonSphereClient
 		private ModelTransportGame _mtg;
 
 		public Action OnExit;
-		
+
 
 		public void Start(ModelMainClient modelMainClient, ViewManager viewManager, UserRegistration userRegistration)
 		{
@@ -172,9 +172,11 @@ namespace DysonSphereClient
 			_mtg.OnSetPoints += _vtg.SetPoints;
 			_vtg.OnExitPressed += Close;
 			_vtg.OnFindNearest += _mtg.FindNearest;
+			_vtg.OnBuyShip += _mtg.BuyShip;
+
 			//_vtg.OnGetPath += _mtg.GetPath;
 			_mtg.OnMoneyChanged += _vtg.MoneyChanged;
+			_mtg.OnOrdersChanged += _vtg.OrdersChanged;
 		}
-
 	}
 }

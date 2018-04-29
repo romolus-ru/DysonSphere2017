@@ -168,6 +168,8 @@
     <Compile Include="Visualization\Maths\Triangle.cs" />
     <Compile Include="Visualization\Maths\Triangulator.cs" />
     <Compile Include="Visualization\Maths\Vertex.cs" />
+    <Compile Include="Visualization\Scroll\IScrollItem.cs" />
+    <Compile Include="Visualization\Scroll\ScrollItem.cs" />
     <Compile Include="Visualization\View.cs" />
     <Compile Include="Visualization\ViewButton.cs" />
     <Compile Include="Visualization\ViewComponent.cs" />
@@ -182,6 +184,7 @@
     <Compile Include="Visualization\ViewObject.cs" />
     <Compile Include="Visualization\ViewPanel.cs" />
     <Compile Include="Visualization\ViewProgressBar.cs" />
+    <Compile Include="Visualization\Scroll\ViewScroll.cs" />
     <Compile Include="Visualization\ViewSystem.cs" />
     <Compile Include="Visualization\ViewWindow.cs" />
     <Compile Include="Visualization\ViewWindowCaption.cs" />

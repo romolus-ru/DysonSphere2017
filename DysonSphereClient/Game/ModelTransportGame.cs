@@ -20,12 +20,13 @@ namespace DysonSphereClient.Game
 		private Paths _paths = new Paths();
 		public SetPointsDelegate OnSetPoints;
 		public Action<int> OnMoneyChanged;
+		public Action OnOrdersChanged;
 
 		public ModelTransportGame(Ships ships)
 		{
 			_ships = ships;
 			_ships.OnFinishOrder = CreateRandomOrders;
-			_ships.OnMoneyChanged = MoneyChanged;
+			_ships.OnRaceEnded = MoneyChanged;
 		}
 
 		/// <summary>
@@ -33,7 +34,7 @@ namespace DysonSphereClient.Game
 		/// </summary>
 		private const int MouseMinimalDistance = 50;
 		private int Money = 0;
-		
+
 		public void RecreatePoints()
 		{
 			var RoadEdges = new List<ScreenEdge>();
@@ -60,8 +61,7 @@ namespace DysonSphereClient.Game
 			}
 
 			_ships.Clear();
-			_ships.Init(RoadPoints[0]);
-			_ships.CreateShip(GetShipRoad);
+			_ships.Init(RoadPoints[0], GetShipRoad);
 			RoadMST = _paths.AlgorithmByPrim(RoadEdges, RoadPoints);
 			OnSetPoints?.Invoke(RoadPoints, RoadMST, _ships);
 		}
@@ -124,6 +124,7 @@ namespace DysonSphereClient.Game
 			if (deltaMoney == 0) return;
 			Money += deltaMoney;
 			OnMoneyChanged.Invoke(Money);
+			_ships.ProcessMoney(Money);
 		}
 
 		private void CreateRandomOrders()
@@ -141,6 +142,7 @@ namespace DysonSphereClient.Game
 					}
 					RoadPoints[num].Building = new Building() { BuilingType = BuildingEnum.QuestBuilding };
 				}
+				OnOrdersChanged?.Invoke();
 			}
 		}
 
@@ -151,6 +153,11 @@ namespace DysonSphereClient.Game
 		private List<ScreenPoint> GetShipRoad(ScreenPoint A, ScreenPoint B)
 		{
 			return _paths.GetShipRoad(RoadMST, A, B);
+		}
+
+		public void BuyShip()
+		{
+			_ships.BuyShip();
 		}
 
 		public override void Tick()

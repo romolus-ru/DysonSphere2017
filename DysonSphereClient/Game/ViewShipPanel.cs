@@ -31,7 +31,7 @@ namespace DysonSphereClient.Game
 			btnMoveToBase.SetParams(5, 150, 140, 30, "btnMoveToBase");
 			btnMoveToBase.InitTexture("textRB", "textRB");
 
-			Checkers.AddToCheckOnce(CheckState);
+			//Checkers.AddToCheckOnce(CheckState);
 		}
 
 		public void SetShip(Ship ship)
@@ -58,14 +58,14 @@ namespace DysonSphereClient.Game
 			base.DrawObject(visualizationProvider);
 			if (_ship == null) return;
 			string texture = null;
-			string operation = "Ожидание";
+			string operation = "---";
 			if (_ship.OrderPlanetDestination != null) {
 				operation = "Перевозка";
 				texture = ResourcesHelper.GetTexture(
 					(_ship.OrderPlanetSource as Planet)
 					.Building.BuilingType.GetResourceEnum());
 			}
-			if (_ship.ShipCommand == ShipCommandEnum.ToBase)
+			if ((_ship.ShipCommand == ShipCommandEnum.ToBase) || (_ship.ShipCommand == ShipCommandEnum.ToBasePrepare))
 				operation = "На базу";
 			if (_ship.TimeToWaitState == ShipCommandEnum.CargoLoad)
 				operation = "Загрузка";
@@ -75,11 +75,12 @@ namespace DysonSphereClient.Game
 				texture = "Resources.Infinity";
 			if (!string.IsNullOrEmpty(texture)) {
 				const int size = 40;
-				visualizationProvider.DrawTexturePart((Width) / 2 - size / 4, 15, texture, size, size);
+				visualizationProvider.DrawTexturePart(X + (Width - size) / 2, Y + 15, texture, size, size);
 			}
 			var l = visualizationProvider.TextLength(operation);
-			visualizationProvider.Print(Width / 2 - l / 4, 55, operation);
+			visualizationProvider.Print(X + (Width - l) / 2, Y + 55, operation);
 
+			visualizationProvider.Print(X + 10, Y + 70, "ИД=" + _ship.ShipNum.ToString());
 		}
 	}
 }

@@ -28,6 +28,10 @@ namespace DysonSphereClient.Game
 		/// </summary>
 		ToBase,
 		/// <summary>
+		/// Завершить текущую операцию и вернуться на базу
+		/// </summary>
+		ToBasePrepare,
+		/// <summary>
 		/// Дополнение - загрузка
 		/// </summary>
 		CargoLoad,

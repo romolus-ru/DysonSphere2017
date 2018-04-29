@@ -73,5 +73,17 @@ namespace DysonSphereClient.Game
 			Level = Math.Max(Level, order.Level);
 			AmountResources.Add(order.AmountResources);
 		}
+
+		internal int GetRewarForRace()
+		{
+			if (Reward <= 0) return 0;
+			var ret = RewardRace;
+			Reward -= ret;
+			if (Reward < 0) {
+				ret += Reward;
+				Reward = 0;
+			}
+			return ret;
+		}
 	}
 }

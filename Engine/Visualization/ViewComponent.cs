@@ -271,7 +271,6 @@ namespace Engine.Visualization
 						component.CursorOverOff();
 						continue; // компонент не в точке нажатия
 					}
-					// смещаем курсор и передаём контролу смещенные координаты
 					component.CursorHandlerLocal(screenCursorX, screenCursorY);
 					if (component.CursorOver) overedOne = true;
 				}

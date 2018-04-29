@@ -15,6 +15,7 @@ namespace DysonSphereClient.Game
 		public Action OnRecreatePoints;
 		public Action OnExitPressed;
 		public Func<int, int, ScreenPoint> OnFindNearest;
+		public Action OnBuyShip;
 
 		private ViewManager _viewManager;
 		private List<Planet> _RoadPoints = new List<Planet>();
@@ -28,10 +29,12 @@ namespace DysonSphereClient.Game
 		private int _oldCurY;
 		private ScreenPoint _nearest = null;
 		private ScreenPoint _selected = null;
-		private int Money = 0;
 		private ViewLabelIcon _showMoney = null;
 		private ViewShipsPanel _shipsPanel = null;
-		private ViewShipPanel _shipPanel = null;
+		/// <summary>
+		/// Позиция для вывода информации о загрузке
+		/// </summary>
+		private int _shipLoadRow = 0;
 
 		public void InitTransportGame(ViewManager viewManager)
 		{
@@ -66,6 +69,7 @@ namespace DysonSphereClient.Game
 
 			_shipsPanel = new ViewShipsPanel();
 			AddComponent(_shipsPanel);
+			_shipsPanel.OnBuyShip += () => OnBuyShip?.Invoke();// отправляем запрос выше
 
 			var btnClose = new ViewButton();
 			AddComponent(btnClose);
@@ -165,6 +169,7 @@ namespace DysonSphereClient.Game
 
 			if (_ships != null) {
 				visualizationProvider.SetColor(Color.LightCoral);
+				_shipLoadRow = 0;
 				foreach (var ship in _ships) {
 					DrawShipMapInfo(visualizationProvider, ship);
 				}
@@ -194,12 +199,17 @@ namespace DysonSphereClient.Game
 				const int progressBarLenght = 50;
 				int cur = progressBarLenght * ship.TimeToWaitCurrent / ship.TimeToWaitMax;
 				visualizationProvider.SetColor(Color.Green);
-				visualizationProvider.Box(planet.X + 10, planet.Y - 10, cur, 10);
+				visualizationProvider.Box(planet.X + 10, planet.Y - 10 + _shipLoadRow * progressBarLenght, cur, 10);
 				visualizationProvider.SetColor(Color.Red);
-				visualizationProvider.Box(planet.X + 10 + cur, planet.Y - 10, progressBarLenght - cur, 10);
+				visualizationProvider.Box(planet.X + 10 + cur, planet.Y - 10 + _shipLoadRow * progressBarLenght, progressBarLenght - cur, 10);
+				_shipLoadRow++;
 				return;
 			}
 			if (ship.CurrentRoadPointNum <= 0) return;
+			if (ship.CurrentRoadPointNum >= ship.CurrentRoad.Count) {
+				System.Diagnostics.Debug.WriteLine("количество точек в пути меньше чем текущее положение корабля");
+				return;
+			}
 			var p = ship.CurrentRoad[ship.CurrentRoadPointNum];
 			visualizationProvider.Rectangle(p.X, p.Y, 3, 3);
 			if (ship.CurrentRoad != null) {
@@ -257,6 +267,17 @@ namespace DysonSphereClient.Game
 
 
 			}
+		}
+
+		/// <summary>
+		/// При изменении заказов проверить, не выделена ли теперь планета без заказа
+		/// </summary>
+		public void OrdersChanged()
+		{
+			if (_selected != null && (_selected as Planet).Order == null)
+				_selected = null;
+			if (_nearest != null && (_nearest as Planet).Order == null)
+				_nearest = null;
 		}
 	}
 }

@@ -37,6 +37,7 @@ namespace DysonSphereClient.Game
 		public int TimeToWaitMax;
 		public int TimeToWaitCurrent;
 		public ShipCommandEnum TimeToWaitState = ShipCommandEnum.NoCommand;
+		public int ShipNum;
 
 		public Ship(ScreenPoint shipBase, Resources cargoMax)
 		{
@@ -72,10 +73,9 @@ namespace DysonSphereClient.Game
 
 		public void MoveToBase()
 		{
-			ShipCommand = ShipCommandEnum.ToBase;
-			ProcessMoveToBase();
+			ShipCommand = ShipCommandEnum.ToBasePrepare;
 		}
-
+		
 		/// <summary>
 		/// Двигаемся дальше по пути
 		/// </summary>
@@ -87,6 +87,8 @@ namespace DysonSphereClient.Game
 				TimeToWaitCurrent++;
 				if (TimeToWaitCurrent >= TimeToWaitMax)
 					TimeToWaitState = ShipCommandEnum.NoCommand;
+				if (ShipCommand == ShipCommandEnum.ToBasePrepare)
+					TimeToWaitState = ShipCommandEnum.CargoUnload;
 				return;
 			}
 			if (TimeToWaitState == ShipCommandEnum.CargoUnload) {
@@ -96,9 +98,15 @@ namespace DysonSphereClient.Game
 				return;
 			}
 
+			if (ShipCommand == ShipCommandEnum.ToBasePrepare)
+				ShipCommand = ShipCommandEnum.ToBase;
+
 			CurrentRoadPointNum++;
 			if (CurrentRoadPointNum < (CurrentRoad?.Count ?? 0)) return;
 			if (OrderEmpty()) { ShipCommand = ShipCommandEnum.ToBase; }
+			if (ShipCommand== ShipCommandEnum.ToBasePrepare) {
+				ShipCommand = ShipCommandEnum.ToBase;
+			}
 
 			CurrentRoadPointNum = -1;
 			switch (ShipCommand) {
@@ -125,7 +133,7 @@ namespace DysonSphereClient.Game
 		}
 
 		/// <summary>
-		/// Вернуть корабль на базу для апгрейда
+		/// Вернуть корабль на базу
 		/// </summary>
 		private void ProcessMoveToBase()
 		{

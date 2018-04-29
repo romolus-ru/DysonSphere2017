@@ -25,7 +25,14 @@ namespace DysonSphereClient.Game
 		/// <summary>
 		/// Перечисление заработанных денег
 		/// </summary>
-		public Action<int> OnMoneyChanged;
+		public Action<int> OnRaceEnded;
+		/// <summary>
+		/// Разрешаем кнопку покупки
+		/// </summary>
+		public Action OnBuyButtonEnable;
+		private bool BuyButtonActive = false;
+		private Func<ScreenPoint, ScreenPoint, List<ScreenPoint>> _onGetShipRoad;
+		public Action OnShipBuyed;
 
 		/// <summary>
 		/// Цена корабля, с учётом уже купленных и многих других факторов
@@ -33,13 +40,7 @@ namespace DysonSphereClient.Game
 		/// <returns></returns>
 		public int GetShipCost()
 		{
-			return 0;
-		}
-
-		public void AddShip(Ship ship) 
-		{
-			if (ship != null)
-				_ships.Add(ship);
+			return 3;
 		}
 
 		public void Clear() => _ships.Clear();
@@ -54,13 +55,19 @@ namespace DysonSphereClient.Game
 			return _ships.GetEnumerator();
 		}
 
-		internal void CreateShip(Func<ScreenPoint, ScreenPoint, List<ScreenPoint>> getShipRoad)
+		public Ship this[int i] {
+			get { return _ships[i]; }
+		}
+
+		internal void CreateShip()
 		{
 			var res = GetDefaultCargoCapacity();
 			var ship = new Ship(_shipBase, res);
-			ship.OnGetRoad += getShipRoad;
-			ship.OnRaceEnded += RaceEnd;
+			ship.OnGetRoad = _onGetShipRoad;
+			ship.OnRaceEnded = RaceEnd;
+			ship.ShipNum = _ships.Count + 1;
 			_ships.Add(ship);
+			OnShipBuyed?.Invoke();
 		}
 
 		private Resources GetDefaultCargoCapacity()
@@ -72,9 +79,12 @@ namespace DysonSphereClient.Game
 			return ret;
 		}
 
-		internal void Init(Planet shipBase)
+		internal void Init(Planet shipBase, Func<ScreenPoint, ScreenPoint, List<ScreenPoint>> getShipRoad)
 		{
 			_shipBase = shipBase;
+			_onGetShipRoad = getShipRoad;
+			// создаём первый корабль
+			CreateShip();
 		}
 
 		/// <summary>
@@ -111,14 +121,11 @@ namespace DysonSphereClient.Game
 				}
 				OnFinishOrder.Invoke();//CreateRandomOrder();
 			} else {
-				money = order.RewardRace;
-				order.Reward -= order.RewardRace;// если корабли получили все деньги за заказ то дальше работают бесплатно
-				if (order.Reward <= 0) order.Reward = 0;
-
+				money = order.GetRewarForRace();
 				var planetCargo = (Planet)shipEndOrder.OrderPlanetSource;
 				var cargo = planetCargo.Building.BuilingType.GetResourceEnum();
 				if (order.AmountResources.Value(cargo) <= 0) {
-					// один из ресурсов заказа выполнен - отзываем все корабли сваязанные с этим ресурсом
+					// один из ресурсов заказа выполнен - отзываем все корабли связанные с этим ресурсом
 					foreach (var ship in _ships) {
 						if (ship.OrderPlanetDestination != planet) continue;
 						if (ship.OrderPlanetSource != planetCargo) continue;
@@ -127,7 +134,23 @@ namespace DysonSphereClient.Game
 				}
 			}
 			// сигналим сколько денег заработал корабль
-			if (money != 0) OnMoneyChanged?.Invoke(money);
+			if (money > 0) OnRaceEnded?.Invoke(money);
+		}
+
+		/// <summary>
+		/// Получаем текущее количество денег
+		/// </summary>
+		public void ProcessMoney(int moneyCount)
+		{
+			if (BuyButtonActive) return;
+			if (moneyCount < GetShipCost()) return;
+			OnBuyButtonEnable?.Invoke();
+			BuyButtonActive = true;
+		}
+
+		public void BuyShip()
+		{
+			CreateShip();
 		}
 	}
 }

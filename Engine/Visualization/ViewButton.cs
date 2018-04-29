@@ -27,12 +27,13 @@ namespace Engine.Visualization
 		{
 			if (!CursorOver) return;
 			if (InRange(Input.CursorX, Input.CursorY))
-				Press();
+				KeyPressed();
 		}
 
 		public void KeyPressed()
 		{
-			Press();
+			if (Enabled)
+				Press();
 		}
 		/// <summary>
 		/// Заголовок кнопки
@@ -48,6 +49,11 @@ namespace Engine.Visualization
 		/// Подказка комбинации кнопок
 		/// </summary>
 		protected string HintKeys;
+
+		/// <summary>
+		/// Визуальное состояние
+		/// </summary>
+		public bool Enabled { get; set; } = true;
 
 		public ViewButton() { }
 
@@ -83,17 +89,21 @@ namespace Engine.Visualization
 			string txt;
 			Color color;
 			if (CursorOver) {
-				txt = "[" + Caption + "]"; color = Color.Red;
+				txt = "[" + Caption + "]"; color = Color.Yellow;
 			} else {
 				txt = " " + Caption + " "; color = Color.White;
 			}
 			var f = visualizationProvider.FontHeight / 2;
 
-			var texture = CursorOver ? _btnTexture : _btnTextureOver;
+			var texture = CursorOver||!Enabled ? _btnTexture : _btnTextureOver;
 			GUIHelper.ViewGUIRectangle(visualizationProvider, this, texture);
 
 			visualizationProvider.SetColor(color);
 			visualizationProvider.Print(X + 4, Y + Height / 2 - f - 3, txt);
+			if (!Enabled) {
+				visualizationProvider.SetColor(Color.Black);
+				visualizationProvider.Print(X + 4 - 1, Y + Height / 2 - f - 3 - 1, txt);
+			}
 			if (!string.IsNullOrEmpty(Hint) && CursorOver) {
 				visualizationProvider.SetColor(GUIHelper.ButtonHintColor);
 				visualizationProvider.Print(X + 10, Y + Height + 5 - f, Hint);
