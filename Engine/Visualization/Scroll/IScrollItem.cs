@@ -12,5 +12,6 @@ namespace Engine.Visualization.Scroll
 	interface IScrollItem
 	{
 		void DrawItem(VisualizationProvider visualizationProvider, int x, int y);
+		void ScrollBy(int deltaX, int deltaY);
 	}
 }

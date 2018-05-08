@@ -299,12 +299,6 @@ namespace Engine.Visualization
 		}
 
 		/// <summary>
-		/// Прорисовка объекта переопределяемая
-		/// </summary>
-		/// <param name="visualizationProvider"></param>
-		public override void DrawObject(VisualizationProvider visualizationProvider) { }
-
-		/// <summary>
 		/// Перерисовать подчиненные компоненты
 		/// </summary>
 		/// <param name="visualizationProvider"></param>

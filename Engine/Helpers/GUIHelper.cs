@@ -19,11 +19,10 @@ namespace Engine.Helpers
 		public static Color CursorDarkColor = Color.Beige;
 		public static Color ButtonHintColor = Color.ForestGreen;
 		public static Color ButtonHintKeysColor = Color.LawnGreen;
+		public static Color HintBackgroundColor = Color.FromArgb(210, Color.Black);
 
 		public static void ViewGUIRectangle(VisualizationProvider visualizationProvider, ViewComponent component, string textureName)
 		{
-			var f = visualizationProvider.FontHeight / 2;
-
 			if (textureName != null) {
 				var size = visualizationProvider.GetTextureSize(textureName + ".t1");
 				if (size.Width * 2 > component.Width) size.Width = component.Width / 2 - 1;
@@ -52,6 +51,26 @@ namespace Engine.Helpers
 			} else {
 				visualizationProvider.SetColor(DefaultMissingTextureColor);
 				visualizationProvider.Rectangle(component.X, component.Y, component.Width, component.Height);
+			}
+		}
+
+		public static void ShowHint(VisualizationProvider visualizationProvider, ViewComponent component, string hintText, string hintKeys)
+		{
+			if (!string.IsNullOrEmpty(hintText) && component.CursorOver) {
+				var f = visualizationProvider.FontHeight / 2;
+				var l = visualizationProvider.TextLength(hintText + " " + hintKeys);
+
+				//visualizationProvider.SetColor(Color.White);
+				//visualizationProvider.Rectangle(component.X+5 , component.Y + component.Height + 5 - f, l + 15, (int)(f * 2.6f));
+				visualizationProvider.SetColor(HintBackgroundColor);
+				visualizationProvider.Box(component.X+5, component.Y + component.Height + 5 - f, l + 15, (int)(f * 2.6f));
+
+				visualizationProvider.SetColor(GUIHelper.ButtonHintColor);
+				visualizationProvider.Print(component.X + 10, component.Y + component.Height + 5 - f, hintText);
+				if (!string.IsNullOrEmpty(hintKeys)) {
+					visualizationProvider.SetColor(GUIHelper.ButtonHintKeysColor);
+					visualizationProvider.Print(" " + hintKeys);
+				}
 			}
 		}
 	}

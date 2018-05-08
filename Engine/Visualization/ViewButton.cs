@@ -104,7 +104,8 @@ namespace Engine.Visualization
 				visualizationProvider.SetColor(Color.Black);
 				visualizationProvider.Print(X + 4 - 1, Y + Height / 2 - f - 3 - 1, txt);
 			}
-			if (!string.IsNullOrEmpty(Hint) && CursorOver) {
+			GUIHelper.ShowHint(visualizationProvider, this, Hint, HintKeys);
+			/*if (!string.IsNullOrEmpty(Hint) && CursorOver) {
 				visualizationProvider.SetColor(GUIHelper.ButtonHintColor);
 				visualizationProvider.Print(X + 10, Y + Height + 5 - f, Hint);
 				//var s = visualizationProvider.CurTxtX + " " + Hint + " " + visualizationProvider.TextLength(Hint) + " ";
@@ -114,7 +115,7 @@ namespace Engine.Visualization
 					//s += " = > " + visualizationProvider.CurTxtX + "  " + HintKeys + " " + visualizationProvider.TextLength(HintKeys) + " ";
 				}
 				//visualizationProvider.SetColor(Color.White);visualizationProvider.Print(X + 10, Y + Height + 5 + 15, s);
-			}
+			}*/
 		}
 
 		public void InitTexture(string textureName, string textureNameOver)

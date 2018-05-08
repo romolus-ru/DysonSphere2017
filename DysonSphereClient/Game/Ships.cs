@@ -117,7 +117,7 @@ namespace DysonSphereClient.Game
 				planet.Building.BuilingType = BuildingEnum.Nope;
 				foreach (var ship in _ships) {
 					if (ship.OrderPlanetDestination != planet) continue;
-					ship.MoveToBase();
+					ship.MoveToBasePrepare();
 				}
 				OnFinishOrder.Invoke();//CreateRandomOrder();
 			} else {
@@ -129,7 +129,7 @@ namespace DysonSphereClient.Game
 					foreach (var ship in _ships) {
 						if (ship.OrderPlanetDestination != planet) continue;
 						if (ship.OrderPlanetSource != planetCargo) continue;
-						ship.MoveToBase();
+						ship.MoveToBasePrepare();
 					}
 				}
 			}

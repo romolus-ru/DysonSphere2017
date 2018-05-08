@@ -12,5 +12,10 @@ namespace Engine.Visualization.Scroll
 		{
 			
 		}
+
+		public virtual void ScrollBy(int deltaX, int deltaY)
+		{
+			SetCoordinatesRelative(deltaX, deltaY, 0);
+		}
 	}
 }

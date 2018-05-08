@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Engine.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -99,18 +100,7 @@ namespace Engine.Visualization
 		{
 			var texture = _btnTexture;
 			if (!string.IsNullOrEmpty(texture)) {
-				// углы
-				visualizationProvider.DrawTexturePart(X, Y, texture + ".t1", _btnTextureBorder, _btnTextureBorder);
-				visualizationProvider.DrawTexturePart(X + Width - 10, Y, texture + ".t3", _btnTextureBorder, _btnTextureBorder);
-				visualizationProvider.DrawTexturePart(X, Y + Height - 10, texture + ".t7", _btnTextureBorder, _btnTextureBorder);
-				visualizationProvider.DrawTexturePart(X + Width - 10, Y + Height - 10, texture + ".t9", _btnTextureBorder, _btnTextureBorder);
-				// стороны
-				visualizationProvider.DrawTexturePart(X + 10, Y, texture + ".t2", Width - _btnTextureBorder * 2, _btnTextureBorder);
-				visualizationProvider.DrawTexturePart(X, Y + 10, texture + ".t4", _btnTextureBorder, Height - _btnTextureBorder * 2);
-				visualizationProvider.DrawTexturePart(X + Width - 10, Y + 10, texture + ".t6", _btnTextureBorder, Height - _btnTextureBorder * 2);
-				visualizationProvider.DrawTexturePart(X + 10, Y + Height - 10, texture + ".t8", Width - _btnTextureBorder * 2, _btnTextureBorder);
-				// центр
-				visualizationProvider.DrawTexturePart(X + 10, Y + 10, texture + ".t5", Width - _btnTextureBorder * 2, Height - _btnTextureBorder * 2);
+				GUIHelper.ViewGUIRectangle(visualizationProvider, this, texture);
 			} else {
 				var color = CursorOver ? Color.DarkOliveGreen : Color.Green;
 				visualizationProvider.SetColor(color, 75);

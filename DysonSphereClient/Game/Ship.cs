@@ -1,9 +1,6 @@
 ﻿using Engine.Visualization;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DysonSphereClient.Game
 {
@@ -11,7 +8,7 @@ namespace DysonSphereClient.Game
 	{
 		private Resources _cargo = new Resources();
 		private Resources _cargoMax = null;
-		public ShipCommandEnum ShipCommand;
+		public ShipCommandEnum ShipCommand { get; private set; }
 		public Func<ScreenPoint, ScreenPoint, List<ScreenPoint>> OnGetRoad;
 		public Action<Ship> OnRaceEnded;
 
@@ -71,11 +68,13 @@ namespace DysonSphereClient.Game
 			return true;
 		}
 
-		public void MoveToBase()
+		public void MoveToBasePrepare()
 		{
-			ShipCommand = ShipCommandEnum.ToBasePrepare;
+			ShipCommand = ShipCommandEnum.ToBase;
+			if (CurrentRoadPointNum == -1)
+				ProcessMoveToBase();
 		}
-		
+
 		/// <summary>
 		/// Двигаемся дальше по пути
 		/// </summary>
@@ -98,15 +97,11 @@ namespace DysonSphereClient.Game
 				return;
 			}
 
-			if (ShipCommand == ShipCommandEnum.ToBasePrepare)
-				ShipCommand = ShipCommandEnum.ToBase;
-
 			CurrentRoadPointNum++;
 			if (CurrentRoadPointNum < (CurrentRoad?.Count ?? 0)) return;
 			if (OrderEmpty()) { ShipCommand = ShipCommandEnum.ToBase; }
-			if (ShipCommand== ShipCommandEnum.ToBasePrepare) {
+			if (ShipCommand == ShipCommandEnum.ToBasePrepare)
 				ShipCommand = ShipCommandEnum.ToBase;
-			}
 
 			CurrentRoadPointNum = -1;
 			switch (ShipCommand) {
@@ -137,7 +132,7 @@ namespace DysonSphereClient.Game
 		/// </summary>
 		private void ProcessMoveToBase()
 		{
-			if (CurrentTarget!= Base) {
+			if (CurrentTarget != Base) {
 				TimeToWaitState = ShipCommandEnum.CargoUnload;
 				CurrentRoad = OnGetRoad?.Invoke(CurrentTarget, Base);
 				CurrentTarget = Base;

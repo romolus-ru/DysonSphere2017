@@ -61,9 +61,13 @@
     <Compile Include="Game\ResourcesHelper.cs" />
     <Compile Include="Game\ShipCommandEnum.cs" />
     <Compile Include="Game\Ships.cs" />
+    <Compile Include="Game\Upgrades\ShipUpgradeWindow.cs" />
+    <Compile Include="Game\Upgrades\UpgradeScrollItem.cs" />
+    <Compile Include="Game\Upgrades\ShopWindow.cs" />
     <Compile Include="Game\ViewLabelIcon.cs" />
     <Compile Include="Game\ViewShipPanel.cs" />
     <Compile Include="Game\ViewShipsPanel.cs" />
+    <Compile Include="Game\ViewUpgradesWindow.cs" />
     <Compile Include="ModelViewManager.cs" />
     <Compile Include="ModelIntro.cs" />
     <Compile Include="ModelLoadResources.cs" />

@@ -6,6 +6,7 @@ using Engine.Visualization.Debug;
 using System.Windows.Forms;
 using System.Drawing;
 using System.Linq;
+using DysonSphereClient.Game.Upgrades;
 
 namespace DysonSphereClient.Game
 {
@@ -67,6 +68,18 @@ namespace DysonSphereClient.Game
 			btnRecreatePoints.SetParams(20, 120, 140, 30, "RecreatePoints");
 			btnRecreatePoints.InitTexture("textRB", "textRB");
 
+			var btnBuyShip = new ViewButton();
+			AddComponent(btnBuyShip);
+			btnBuyShip.InitButton(null, "Купить корабль", "hint", Keys.S);
+			btnBuyShip.SetParams(250, 70, 140, 30, "btnBuyShip");
+			btnBuyShip.InitTexture("textRB", "textRB");
+
+			var btnShop = new ViewButton();
+			AddComponent(btnShop);
+			btnShop.InitButton(ShowShop, "ShowShop", "hint", Keys.S);
+			btnShop.SetParams(250, 105, 140, 30, "btnShop");
+			btnShop.InitTexture("textRB", "textRB");
+
 			_shipsPanel = new ViewShipsPanel();
 			AddComponent(_shipsPanel);
 			_shipsPanel.OnBuyShip += () => OnBuyShip?.Invoke();// отправляем запрос выше
@@ -81,6 +94,11 @@ namespace DysonSphereClient.Game
 
 			Input.AddKeyActionSticked(SelectPoint, Keys.LButton);
 			visualizationProvider.InitShader();
+		}
+
+		private void ShowShop()
+		{
+			new ShopWindow().InitWindow(_viewManager);
 		}
 
 		private void RecreatePoints()
@@ -214,9 +232,11 @@ namespace DysonSphereClient.Game
 			visualizationProvider.Rectangle(p.X, p.Y, 3, 3);
 			if (ship.CurrentRoad != null) {
 				visualizationProvider.SetColor(Color.DeepSkyBlue, 90);
-				foreach (var p1 in ship.CurrentRoad) {
+				for (int i = ship.CurrentRoadPointNum; i < ship.CurrentRoad.Count; i++) {
+					var p1 = ship.CurrentRoad[i];
 					visualizationProvider.Rectangle(p1.X, p1.Y, 1, 1);
 				}
+				//foreach (var p1 in ship.CurrentRoad) { visualizationProvider.Rectangle(p1.X, p1.Y, 1, 1); }
 			}
 		}
 
@@ -236,10 +256,12 @@ namespace DysonSphereClient.Game
 					if (isBright)
 						visualizationProvider.DrawTexturePart(p.X + 10, p.Y + 30, texture, 40, 40);
 					visualizationProvider.DrawTexturePart(p.X - offsetResources, p.Y - offsetResources, texture, offsetResources * 2, offsetResources * 2);
+					visualizationProvider.SetColor(Color.BlanchedAlmond);
+					visualizationProvider.Circle(p.X, p.Y, 20);
 				}
-			} else
-				visualizationProvider.DrawTexturePart(p.X - offsetPlanet, p.Y - offsetPlanet, "Planets.P2", offsetPlanet * 2, offsetPlanet * 2);
-
+			} //else visualizationProvider.DrawTexturePart(p.X - offsetPlanet, p.Y - offsetPlanet, "Planets.P2", offsetPlanet * 2, offsetPlanet * 2);
+			if (p.Building.BuilingType==BuildingEnum.ShipDepot)
+				visualizationProvider.DrawTexturePart(p.X - offsetResources, p.Y - offsetResources, "Resources.ShipDepot", offsetResources * 2, offsetResources * 2);
 			var infoStr = "";
 			if (p.Building != null && p.Building.BuilingType != BuildingEnum.Nope) {
 				infoStr = p.Building.BuilingType.ToString();

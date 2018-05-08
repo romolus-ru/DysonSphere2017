@@ -17,6 +17,11 @@ namespace Engine
 		public const int CursorFrequency = 20;
 
 		/// <summary>
+		/// Дистанция для начала перемещения. может меняться в зависимости от разрешения экрана
+		/// </summary>
+		public const int DragDistance = 5;
+
+		/// <summary>
 		/// Там хранятся архивы с JSON файлами в которых данные из БД хранятся
 		/// </summary>
 		public const string PlayerDBPath = "/data/";

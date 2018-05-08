@@ -166,6 +166,7 @@ namespace DysonSphereClient
 			_modelMainClient.AddModel(_mtg);
 
 			_vtg = new ViewTransportGame();
+			_vtg.InitTransportGame(_viewManager);
 			_viewManager.AddView(_vtg);
 
 			_vtg.OnRecreatePoints += _mtg.RecreatePoints;

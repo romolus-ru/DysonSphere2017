@@ -50,7 +50,7 @@ namespace DysonSphereClient.Game
 			if (_ship == null) return;
 			if (_ship.ShipCommand == ShipCommandEnum.ToBase) return;
 			if (_ship.ShipCommand == ShipCommandEnum.NoCommand) return;
-			_ship.MoveToBase();
+			_ship.MoveToBasePrepare();
 		}
 
 		public override void DrawObject(VisualizationProvider visualizationProvider)
@@ -67,6 +67,8 @@ namespace DysonSphereClient.Game
 			}
 			if ((_ship.ShipCommand == ShipCommandEnum.ToBase) || (_ship.ShipCommand == ShipCommandEnum.ToBasePrepare))
 				operation = "На базу";
+			if (_ship.ShipCommand == ShipCommandEnum.ToBasePrepare)
+				operation = "Готовимся";
 			if (_ship.TimeToWaitState == ShipCommandEnum.CargoLoad)
 				operation = "Загрузка";
 			if (_ship.TimeToWaitState == ShipCommandEnum.CargoUnload)
