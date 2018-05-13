@@ -12,32 +12,32 @@ namespace DysonSphereClient.Game
 	/// </summary>
 	public class Orders
 	{
+		/// <summary>
+		/// Текущие заказы
+		/// </summary>
 		private List<Order> _orders = new List<Order>();
+		/// <summary>
+		/// Заготовки заказов. считываются из файла
+		/// </summary>
+		private List<Order> _ordersBlanks = new List<Order>();
+
+		public Dictionary<Planet, OrderViewInfo> OrdersViewInfo = new Dictionary<Planet, OrderViewInfo>();
+
 		public int MaxOrders = 3;
 		public Orders()
 		{
-			var order = new Order();
-			order.AmountResources = new Resources();
-			order.AmountResources.Add(ResourcesEnum.RawMaterials, 2000);
-			order.RewardRace = 3;
-			order.Reward = 100;
-			_orders.Add(order);
-
-			order = new Order();
-			order.AmountResources = new Resources();
-			order.AmountResources.Add(ResourcesEnum.Consumables, 500);
-			order.RewardRace = 3;
-			order.Reward = 100;
-			_orders.Add(order);
-
-			order = new Order();
-			order.AmountResources = new Resources();
-			order.AmountResources.Add(ResourcesEnum.Tools, 100);
-			order.RewardRace = 3;
-			order.Reward = 100;
-			_orders.Add(order);
+			InitBlankOrders();
 		}
 
+		public IEnumerator<Order> GetEnumerator()
+		{
+			return _orders.GetEnumerator();
+		}
+
+		public Order this[int i] {
+			get { return _orders[i]; }
+		}
+		
 		/// <summary>
 		/// Получить заказ
 		/// </summary>
@@ -46,9 +46,37 @@ namespace DysonSphereClient.Game
 		/// <returns></returns>
 		public Order GetRandomOrder(int orderLevel, int hardness)
 		{
-			var ordersLevel = _orders.Where(o => o.Level <= orderLevel);
+			var ordersLevel = _ordersBlanks.Where(o => o.Level <= orderLevel);
 			var orderNum = RandomHelper.Random(_orders.Count);
-			return new Order(_orders[orderNum], hardness);
+			var order = Order.Create(_orders[orderNum], hardness);
+
+			return order;
+		}
+
+		private void InitBlankOrders()
+		{
+			Order order;
+
+			order = new Order();
+			order.AmountResources = new Resources();
+			order.AmountResources.Add(ResourcesEnum.RawMaterials, 2000);
+			order.RewardRace = 3;
+			order.Reward = 100;
+			_ordersBlanks.Add(order);
+
+			order = new Order();
+			order.AmountResources = new Resources();
+			order.AmountResources.Add(ResourcesEnum.Consumables, 500);
+			order.RewardRace = 3;
+			order.Reward = 100;
+			_ordersBlanks.Add(order);
+
+			order = new Order();
+			order.AmountResources = new Resources();
+			order.AmountResources.Add(ResourcesEnum.Tools, 100);
+			order.RewardRace = 3;
+			order.Reward = 100;
+			_ordersBlanks.Add(order);
 		}
 	}
 }

@@ -24,6 +24,9 @@ namespace Engine.Visualization
 		private int _oldY;
 		private int _startX;
 		private int _startY;
+		private DateTime _startTime;
+		private int _autoX = 0;
+		private int _autoY = 0;
 		private int _scrollOffsetX = 0;// для ограничения движения и смещения обратно по горизонтали
 		private int _scrollWidth = 0;
 		private int _scrollOffsetY = 0;// для ограничения движения и смещения обратно по вертикали
@@ -85,6 +88,7 @@ namespace Engine.Visualization
 			if (!IsPressedMode) {
 				_startX = cx;
 				_startY = cy;
+				_startTime = DateTime.Now;
 				IsPressedMode = true;
 			}
 
@@ -112,6 +116,7 @@ namespace Engine.Visualization
 			Input.ModalStateStop();
 			IsDragMode = false;
 			IsPressedMode = false;
+			CalcAutoMove();
 		}
 
 		private void CursorMove(int newX, int newY)
@@ -141,6 +146,11 @@ namespace Engine.Visualization
 			base.DrawObject(visualizationProvider);
 			visualizationProvider.SetColor(Color.Azure);
 			visualizationProvider.Print(X + 10, Y + 10, "dm=" + IsDragMode + " pm=" + IsPressedMode);
+			visualizationProvider.Print(X + 10, Y + 25, "ox=" + _scrollOffsetX + " b=" + Constants.ScrollMoveBorder);
+			visualizationProvider.Print(X + 10, Y + 40, "dxr=" + (X + Width - _scrollOffsetX - _scrollWidth - 2 * Constants.ScrollMoveBorder)
+				//- _scrollOffsetX - Width + Constants.ScrollMoveBorder)
+				+ " W=" + Width + " sw=" + _scrollWidth);
+			visualizationProvider.Print(X + 10, Y + 55, "ax=" + _autoX + " ay=" + _autoY);
 		}
 
 		/// <summary>
@@ -148,10 +158,41 @@ namespace Engine.Visualization
 		/// </summary>
 		private void MoveScrollItems()
 		{
-			if (_scrollOffsetX + _scrollWidth < Width) {
+			if (_scrollWidth + 2 * Constants.ScrollMoveBorder < Width) return;
+
+			var dxLeft = _scrollOffsetX - Constants.ScrollMoveBorder;
+			if (dxLeft > 0) ScrollItems(-dxLeft, 0);
+
+			var dxRight = X + Width - _scrollOffsetX - _scrollWidth - 3 * Constants.ScrollMoveBorder;
+				//X+_scrollWidth - _scrollOffsetX - Width;// + Constants.ScrollMoveBorder;
+			if (dxRight > 0) ScrollItems(dxRight, 0);
+
+			if (IsDragMode)
+			return;
+			var dxLeftBack = _scrollOffsetX;
+			if (dxLeftBack > 0) ScrollItems(-dxLeftBack / 10, 0);
+			var dxRightBack = X + Width - _scrollOffsetX - _scrollWidth - 2 * Constants.ScrollMoveBorder;
+			//X - _scrollOffsetX - Width + Constants.ScrollMoveBorder;
+			if (dxRightBack > 0) ScrollItems(dxRightBack / 10, 0);
+			var dx = _autoX / 4;
+			_autoX -= dx;
+			var dy = _autoY / 4;
+			_autoY -= dy;
+			ScrollItems(dx, dy);
+		}
+
+		private void CalcAutoMove()
+		{
+			int dtime = (DateTime.Now - _startTime).Milliseconds / 100;
+			if (dtime == 0) {
+				_autoX = 0;
+				_autoY = 0;
 				return;
 			}
-			// TODO ограничить движение скролируемых объектов
+			var dx = Input.CursorX - _startX;
+			var dy = Input.CursorY - _startY;
+			_autoX = dx / dtime;
+			_autoY = dy / dtime;
 		}
 	}
 }

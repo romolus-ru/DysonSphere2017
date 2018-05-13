@@ -225,6 +225,7 @@ namespace DysonSphereClient.Game
 				resultPoints.Add(p);
 				counter = 0;
 			}
+
 			return resultPoints;
 		}
 	}

@@ -28,31 +28,40 @@ namespace DysonSphereClient.Game
 		/// Уровень заказа, для различных стадий игры
 		/// </summary>
 		public int Level;
+		/// <summary>
+		/// Уровень сложности заказа. обычный/высокий/важный/военный
+		/// </summary>
+		/// <remarks>Влияет на награду. в начале игры все заказы обычные, более высокий уровень или сюжетный или связан с каким-либо событием)
+		/// с покупкой товаров/ получением ачивок и т.п. - сложность растёт вместе с наградой</remarks>
+		public int Hardness;
+		public string OrderShortName;
+		public string OrderDescription;
+		/// <summary>
+		/// Планета которая сделала заказ
+		/// </summary>
+		public Planet Destination;
 
 		public Order() { }
+
 		/// <summary>
 		/// Создаём копию заказа что бы оригинальный заказ не трогать
 		/// </summary>
 		/// <param name="copyOrder"></param>
-		public Order(Order copyOrder)
+		public static Order Create(Order copyOrder, int hardness)
 		{
-			Reward = copyOrder.Reward;
-			RewardRace = copyOrder.RewardRace;
-			AmountResources = copyOrder.AmountResources.GetCopy();
+			var order = new Order();
+			order.Reward = copyOrder.Reward;
+			order.RewardRace = copyOrder.RewardRace;
+			order.AmountResources = copyOrder.AmountResources.GetCopy();
+			order.OrderShortName = copyOrder.OrderShortName;
+			order.OrderDescription = copyOrder.OrderDescription;
+			if (hardness > 1) {
+				var multiplier = RandomHelper.Random(hardness) / hardness;
+				order.AmountResources.Increase(multiplier);
+			}
+			return order;
 		}
-
-		/// <summary>
-		/// Создать копию заказа
-		/// </summary>
-		/// <param name="copyOrder">Исходный заказ</param>
-		/// <param name="hardness">Добавляемая сложность</param>
-		public Order(Order copyOrder, int hardness):this(copyOrder)
-		{
-			if (hardness <= 1) return;
-			var multiplier = RandomHelper.Random(hardness) / hardness;
-			AmountResources.Increase(multiplier);
-		}
-
+		
 		public List<string> GetInfo()
 		{
 			var ret = new List<string>();
@@ -74,7 +83,7 @@ namespace DysonSphereClient.Game
 			AmountResources.Add(order.AmountResources);
 		}
 
-		internal int GetRewarForRace()
+		internal int GetRewardForRace()
 		{
 			if (Reward <= 0) return 0;
 			var ret = RewardRace;

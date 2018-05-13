@@ -56,9 +56,11 @@
     <Compile Include="Game\ModelTransportGame.cs" />
     <Compile Include="Game\Order.cs" />
     <Compile Include="Game\Orders.cs" />
+    <Compile Include="Game\OrderViewInfo.cs" />
     <Compile Include="Game\Paths.cs" />
     <Compile Include="Game\QuestEnum.cs" />
     <Compile Include="Game\ResourcesHelper.cs" />
+    <Compile Include="Game\ResourceViewInfo.cs" />
     <Compile Include="Game\ShipCommandEnum.cs" />
     <Compile Include="Game\Ships.cs" />
     <Compile Include="Game\Upgrades\ShipUpgradeWindow.cs" />

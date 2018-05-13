@@ -8,7 +8,7 @@ namespace Engine.Visualization
 {
 	public class ViewObject
 	{
-		public virtual void DrawObject(VisualizationProvider vp)
+		public virtual void DrawObject(VisualizationProvider visualizationProvider)
 		{
 
 		}

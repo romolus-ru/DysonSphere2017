@@ -121,7 +121,7 @@ namespace DysonSphereClient.Game
 				}
 				OnFinishOrder.Invoke();//CreateRandomOrder();
 			} else {
-				money = order.GetRewarForRace();
+				money = order.GetRewardForRace();
 				var planetCargo = (Planet)shipEndOrder.OrderPlanetSource;
 				var cargo = planetCargo.Building.BuilingType.GetResourceEnum();
 				if (order.AmountResources.Value(cargo) <= 0) {

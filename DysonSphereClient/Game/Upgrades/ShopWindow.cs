@@ -30,10 +30,10 @@ namespace DysonSphereClient.Game.Upgrades
 			AddComponent(_scroll);
 			_scroll.SetParams(10, 10, 500, 400, "Апгрейды");
 
-			foreach (var item in Enumerable.Range(1, 20)) {
+			foreach (var item in Enumerable.Range(1, 30)) {
 				var scrollItem = new UpgradeScrollItem();
 				_scroll.AddComponent(scrollItem);
-				scrollItem.SetParams(item * 90, 10, 80, 150, "item" + item);
+				scrollItem.SetParams((item - 1) * 90 + 10, 10, 80, 150, "item" + item);
 			}
 
 			_viewManager = viewManager;

@@ -170,6 +170,7 @@
     <Compile Include="Visualization\Maths\Vertex.cs" />
     <Compile Include="Visualization\Scroll\IScrollItem.cs" />
     <Compile Include="Visualization\Scroll\ScrollItem.cs" />
+    <Compile Include="Visualization\Scroll\ViewScrollLooped.cs" />
     <Compile Include="Visualization\View.cs" />
     <Compile Include="Visualization\ViewButton.cs" />
     <Compile Include="Visualization\ViewComponent.cs" />

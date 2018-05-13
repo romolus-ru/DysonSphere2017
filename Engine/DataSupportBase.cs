@@ -47,7 +47,7 @@ namespace Engine
 		/// <summary>
 		/// Получить информацию о текстурах в атласе
 		/// </summary>
-		/// <param name="atlasName"></param>
+		/// <param name="atlasId"></param>
 		/// <returns></returns>
 		public virtual List<AtlasTextures> GetAtlasTextures(long atlasId)
 		{

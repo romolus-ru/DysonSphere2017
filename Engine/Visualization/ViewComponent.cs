@@ -466,8 +466,6 @@ namespace Engine.Visualization
 		/// <summary>
 		/// Изменились размеры компонента
 		/// </summary>
-		/// <param name="width"></param>
-		/// <param name="height"></param>
 		protected virtual void Resized() { }
 
 	}
