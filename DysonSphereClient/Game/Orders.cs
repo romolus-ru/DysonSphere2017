@@ -46,9 +46,9 @@ namespace DysonSphereClient.Game
 		/// <returns></returns>
 		public Order GetRandomOrder(int orderLevel, int hardness)
 		{
-			var ordersLevel = _ordersBlanks.Where(o => o.Level <= orderLevel);
-			var orderNum = RandomHelper.Random(_orders.Count);
-			var order = Order.Create(_orders[orderNum], hardness);
+			var ordersLevel = _ordersBlanks.Where(o => o.Level <= orderLevel).ToList();
+			var orderNum = RandomHelper.Random(ordersLevel.Count);
+			var order = Order.Create(ordersLevel[orderNum], hardness);
 
 			return order;
 		}

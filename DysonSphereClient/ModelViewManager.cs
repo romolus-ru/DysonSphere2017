@@ -32,6 +32,7 @@ namespace DysonSphereClient
 		private ModelMenu _mm;
 		private ViewTransportGame _vtg;
 		private ModelTransportGame _mtg;
+		private GameAchievements _achievements;
 
 		public Action OnExit;
 
@@ -39,6 +40,7 @@ namespace DysonSphereClient
 		public void Start(ModelMainClient modelMainClient, ViewManager viewManager, UserRegistration userRegistration)
 		{
 			_stopwatch = Stopwatch.StartNew();
+			_achievements = new GameAchievements();
 			_modelMainClient = modelMainClient;
 			_viewManager = viewManager;
 			_rplayer = userRegistration;
@@ -168,6 +170,8 @@ namespace DysonSphereClient
 			_vtg = new ViewTransportGame();
 			_vtg.InitTransportGame(_viewManager);
 			_viewManager.AddView(_vtg);
+
+			_achievements.SetupAvievementsActions(_vtg);
 
 			_vtg.OnRecreatePoints += _mtg.RecreatePoints;
 			_mtg.OnSetPoints += _vtg.SetPoints;

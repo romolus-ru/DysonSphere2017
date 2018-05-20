@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Engine.Data
 {
-    public partial class MiniGameDescription:EventBase
+    public partial class MiniGameDescription_old:EventBase
     {
         public long IdMiniGameDescription { get; set; }
         public long Version { get; set; }

@@ -54,6 +54,7 @@
     <Compile Include="DataPlus\ResultOperation.cs" />
     <Compile Include="DataSupportBase.cs" />
     <Compile Include="DataSupportFiles.cs" />
+    <Compile Include="Data\AchieveValues.cs" />
     <Compile Include="Data\AtlasFiles.cs" />
     <Compile Include="Data\AtlasTextures.cs" />
     <Compile Include="Data\CollectClass.cs" />
@@ -74,11 +75,15 @@
     <Compile Include="Data\MegaShipAdmiral.cs" />
     <Compile Include="Data\MegaShipCalculated.cs" />
     <Compile Include="Data\MegaShipDescription.cs" />
-    <Compile Include="Data\MinigameData.cs" />
-    <Compile Include="Data\MiniGameDescription.cs" />
-    <Compile Include="Data\MiniGameLogs.cs" />
-    <Compile Include="Data\MiniGamePermission.cs" />
-    <Compile Include="Data\MiniGameSettings.cs" />
+    <Compile Include="Data\MiniGames.cs" />
+    <Compile Include="Data\MinigameData_old.cs" />
+    <Compile Include="Data\MiniGameDescription_old.cs" />
+    <Compile Include="Data\MiniGameLogs_old.cs" />
+    <Compile Include="Data\MiniGamePermission_old.cs" />
+    <Compile Include="Data\MiniGameSettings_old.cs" />
+    <Compile Include="Data\MiniGamesGenres.cs" />
+    <Compile Include="Data\MiniGamesMiniGamesGenres.cs" />
+    <Compile Include="Data\MiniGamesInfos.cs" />
     <Compile Include="Data\MModuleBase.cs" />
     <Compile Include="Data\MModuleCalculated.cs" />
     <Compile Include="Data\MModulePlayer.cs" />
@@ -110,6 +115,7 @@
     <Compile Include="Data\TimerDate.cs" />
     <Compile Include="Data\UserRegistration.cs" />
     <Compile Include="Data\_Settings.cs" />
+    <Compile Include="Enums\AchievementClassTypeEnum.cs" />
     <Compile Include="Enums\Client\LoginState.cs" />
     <Compile Include="Enums\Client\RegistrationState.cs" />
     <Compile Include="Enums\ErrorType.cs" />

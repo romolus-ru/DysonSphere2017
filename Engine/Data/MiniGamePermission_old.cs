@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Engine.Data
 {
-    public partial class MiniGamePermission:EventBase
+    public partial class MiniGamePermission_old:EventBase
     {
         public long PlayerId { get; set; }
         public long MiniGameId { get; set; }

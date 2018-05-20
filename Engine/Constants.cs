@@ -26,6 +26,11 @@ namespace Engine
 		public const int ScrollMoveBorder = 50;
 
 		/// <summary>
+		/// Основной разделитель строк в строке ("value1;value2")
+		/// </summary>
+		public const char BaseStringSeparator = ';';
+
+		/// <summary>
 		/// Там хранятся архивы с JSON файлами в которых данные из БД хранятся
 		/// </summary>
 		public const string PlayerDBPath = "/data/";

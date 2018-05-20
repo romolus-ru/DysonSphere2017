@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using System.Drawing;
 using System.Linq;
 using DysonSphereClient.Game.Upgrades;
+using DysonSphereClient.Game.Achievements;
 
 namespace DysonSphereClient.Game
 {
@@ -17,6 +18,8 @@ namespace DysonSphereClient.Game
 		public Action OnExitPressed;
 		public Func<int, int, ScreenPoint> OnFindNearest;
 		public Action OnBuyShip;
+		[AchievementInfo(Name = GameAchievementsConstants.SelectPlanet)]
+		public Action OnSelectPlanet;// = () => { };
 
 		private ViewManager _viewManager;
 		private List<Planet> _RoadPoints = new List<Planet>();
@@ -110,7 +113,9 @@ namespace DysonSphereClient.Game
 		private void SelectPoint()
 		{
 			if (_selected == null) {
+				if (_nearest == null) return;
 				_selected = _nearest;
+				OnSelectPlanet?.Invoke();
 				return;
 			}
 			if (_nearest == null) return;
@@ -260,7 +265,7 @@ namespace DysonSphereClient.Game
 					visualizationProvider.Circle(p.X, p.Y, 20);
 				}
 			} //else visualizationProvider.DrawTexturePart(p.X - offsetPlanet, p.Y - offsetPlanet, "Planets.P2", offsetPlanet * 2, offsetPlanet * 2);
-			if (p.Building.BuilingType==BuildingEnum.ShipDepot)
+			if (p.Building.BuilingType == BuildingEnum.ShipDepot)
 				visualizationProvider.DrawTexturePart(p.X - offsetResources, p.Y - offsetResources, "Resources.ShipDepot", offsetResources * 2, offsetResources * 2);
 			var infoStr = "";
 			if (p.Building != null && p.Building.BuilingType != BuildingEnum.Nope) {

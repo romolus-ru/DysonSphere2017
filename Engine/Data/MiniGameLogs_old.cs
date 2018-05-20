@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Engine.Data
 {
-    public partial class MiniGameLogs:EventBase
+    public partial class MiniGameLogs_old:EventBase
     {
         public long MiniGameId { get; set; }
         public Nullable<System.DateTime> data { get; set; }

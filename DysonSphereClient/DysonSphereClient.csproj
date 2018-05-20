@@ -50,9 +50,13 @@
   <ItemGroup>
     <Compile Include="Client.cs" />
     <Compile Include="ClientView.cs" />
+    <Compile Include="Game\Achievements\AchievementInfoAttribute.cs" />
+    <Compile Include="Game\Achievements\GameAchievementsConstants.cs" />
     <Compile Include="Game\Building.cs" />
     <Compile Include="Game\BuildingEnum.cs" />
     <Compile Include="Game\BuildingEnumExtension.cs" />
+    <Compile Include="Game\Achievements\GameAchievements.cs" />
+    <Compile Include="Game\Achievements\GameAchievementValue.cs" />
     <Compile Include="Game\ModelTransportGame.cs" />
     <Compile Include="Game\Order.cs" />
     <Compile Include="Game\Orders.cs" />
