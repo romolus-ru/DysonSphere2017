@@ -1,4 +1,5 @@
-﻿using Engine.Visualization;
+﻿using DysonSphereClient.Game.Resource;
+using Engine.Visualization;
 using System;
 using System.Collections.Generic;
 
@@ -6,8 +7,7 @@ namespace DysonSphereClient.Game
 {
 	public class Ship
 	{
-		private Resources _cargo = new Resources();
-		private Resources _cargoMax = null;
+		private ResourcesHolder _cargoMax = null;
 		public ShipCommandEnum ShipCommand { get; private set; }
 		public Func<ScreenPoint, ScreenPoint, List<ScreenPoint>> OnGetRoad;
 		public Action<Ship> OnRaceEnded;
@@ -36,7 +36,7 @@ namespace DysonSphereClient.Game
 		public ShipCommandEnum TimeToWaitState = ShipCommandEnum.NoCommand;
 		public int ShipNum;
 
-		public Ship(ScreenPoint shipBase, Resources cargoMax)
+		public Ship(ScreenPoint shipBase, ResourcesHolder cargoMax)
 		{
 			TimeToWaitMax = 10;
 			TimeToWaitCurrent = 0;

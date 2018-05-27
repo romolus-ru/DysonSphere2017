@@ -1,4 +1,5 @@
-﻿using Engine.Visualization;
+﻿using DysonSphereClient.Game.Resource;
+using Engine.Visualization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,14 +13,14 @@ namespace DysonSphereClient.Game
 	/// </summary>
 	public static class ResourcesHelper
 	{
-		public static void PrintResources(VisualizationProvider visualizationProvider, int x, int y, Resources res, string fontName=null)
+		public static void PrintResources(VisualizationProvider visualizationProvider, int x, int y, ResourcesHolder res, string fontName=null)
 		{
 			visualizationProvider.Print(x, y, null);
 			var enumerator = res.GetEnumerator();
 			while (enumerator.MoveNext()) {
 				var cur = enumerator.Current;
 				if (cur.Value <= 0) continue;
-				visualizationProvider.PrintTexture(GetTexture(cur.Key),fontName);
+				visualizationProvider.PrintTexture(GetTexture(cur.Res),fontName);
 				visualizationProvider.Print(cur.Value + " ");
 			}
 		}

@@ -31,17 +31,25 @@ namespace DysonSphereClient.Game
 		//тут. получаем Ships и надо подключиться к событию отправки корабля
 		//точнее последовательности событий которые надо сделать для ачивки
 		//нечто наподобие туториала - будет выведена ачивка (неубираемая) и там будет написано что надо сделать что бы её получить
-		public void SetupAvievementsActions(ViewTransportGame vtg)
+		public void SetupAvievementsActions(ViewTransportGame vtg, Ships ships)
 		{
 			LoadAchievementsDescriptions();
 			CreateAndFillAchievementValues();
-			Dictionary<string, MemberInfo> _achivementEvents = new Dictionary<string, MemberInfo>();
-			GetAchievementMethods(_achivementEvents, vtg);
+			Dictionary<string, KeyValuePair<object, MemberInfo>> _achivementEvents = new Dictionary<string, KeyValuePair<object, MemberInfo>>();
+			Dictionary<string, KeyValuePair<object, MemberInfo>> _achivementMethods = new Dictionary<string, KeyValuePair<object, MemberInfo>>();
+			GetAchievementMethods(_achivementEvents, _achivementMethods, vtg);
+			GetAchievementMethods(_achivementEvents, _achivementMethods, ships);
 			foreach (var ach in _Achievements) {
-				if (!_achivementEvents.ContainsKey(ach.Achieve.Title)) continue;
 				ach.OnAchieved -= OnAchieved;
 				ach.OnAchieved += OnAchieved;
-				ach.StoreParams(vtg, _achivementEvents[ach.Achieve.Title]);
+				if (_achivementEvents.ContainsKey(ach.Achieve.Code)) {
+					var p = _achivementEvents[ach.Achieve.Code];
+					ach.StoreWaitParams(p.Key, p.Value);
+				}
+				if (_achivementMethods.ContainsKey(ach.Achieve.Code)) {
+					var p = _achivementMethods[ach.Achieve.Code];
+					ach.StoreOutParams(p.Key, p.Value);
+				}
 			}
 			foreach (var ach in _Achievements) {
 				if (ach.IsAchieved) continue;
@@ -63,27 +71,36 @@ namespace DysonSphereClient.Game
 		/// <summary>
 		/// Получить из класса методы и заполнить словарь ссылками на них
 		/// </summary>
-		/// <param name="_achivementEvents"></param>
+		/// <param name="achivementEvents"></param>
 		/// <param name="obj"></param>
-		private void GetAchievementMethods(Dictionary<string, MemberInfo> _achivementEvents, Object obj)
+		private void GetAchievementMethods(
+			Dictionary<string, KeyValuePair<object, MemberInfo>> achivementEvents,
+			Dictionary<string, KeyValuePair<object, MemberInfo>> achivementMethods,
+			Object obj)
 		{
 			var t = obj.GetType();
-			var methodsAll = t.GetMembers();
-			var methodsAch = new List<MemberInfo>();
+			var membersAll = t.GetMembers();
+			var membersAch = new List<MemberInfo>();
 			var searchType = typeof(AchievementInfoAttribute).FullName;
-			foreach (var method in methodsAll) {
-				//if (method.ReflectedType.Name!= "Action") continue;
-				var attributes = method.GetCustomAttributesData();
+			foreach (var member in membersAll) {
+				var attributes = member.GetCustomAttributesData()
+					.Where(a => a.AttributeType.FullName == searchType);
 				foreach (var attr in attributes) {
-					var isAchieveAttribute = attr.AttributeType.FullName == searchType;
-					if (isAchieveAttribute) {
-						var names = attr.NamedArguments;
-						foreach (var item in names) {
-							var name = item.MemberName;
-							if (name == "Name") {
-								if (_achivementEvents.ContainsKey(name))
-									throw new InvalidOperationException("Уже объявлено и заполнено " + name + " для ачивки");
-								_achivementEvents.Add(item.TypedValue.Value as string, method);
+					foreach (var namedArg in attr.NamedArguments) {
+						var name = namedArg.MemberName;
+						if (name == "Name") {
+							if (member.MemberType == MemberTypes.Field
+								|| member.MemberType == MemberTypes.Property) {
+								if (achivementEvents.ContainsKey(namedArg.TypedValue.Value as string))
+									throw new InvalidOperationException("Уже объявлено и заполнено " + name
+										+ " для ачивки " + (namedArg.TypedValue.Value as string));
+								achivementEvents.Add(namedArg.TypedValue.Value as string, new KeyValuePair<object, MemberInfo>(obj, member));
+							}
+							if (member.MemberType == MemberTypes.Method) {
+								if (achivementMethods.ContainsKey(namedArg.TypedValue.Value as string))
+									throw new InvalidOperationException("Уже объявлено и заполнено " + name
+										+ " для ачивки " + (namedArg.TypedValue.Value as string));
+								achivementMethods.Add(namedArg.TypedValue.Value as string, new KeyValuePair<object, MemberInfo>(obj, member));
 							}
 						}
 					}
@@ -99,7 +116,7 @@ namespace DysonSphereClient.Game
 		public GameAchievementValue GetAchievement(string achCode)
 		{
 			foreach (var ach in _Achievements) {
-				if (ach.Code == achCode) return ach;
+				if (ach.Achieve.Code == achCode) return ach;
 			}
 			return null;
 		}
@@ -149,10 +166,12 @@ namespace DysonSphereClient.Game
 				Group = "Tutorial",
 				Count = 0,
 			};
+			_AchievementsDescription.Add(ach);
+
 			ach = new AchieveDescription()
 			{
 				Code = GameAchievementsConstants.StartRace,
-				PreviousAchievements=GameAchievementsConstants.SelectPlanet,
+				PreviousAchievements = GameAchievementsConstants.SelectPlanet,
 				Title = "Запустите выполнение заказа",
 				Description = "Выберите планету с необходимыми ресурсами для запуска рейса",
 				DescriptionReward = "Награда - дополнительный бесплатный корабль",

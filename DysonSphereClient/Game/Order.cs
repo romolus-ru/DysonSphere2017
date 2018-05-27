@@ -1,4 +1,5 @@
-﻿using Engine.Helpers;
+﻿using DysonSphereClient.Game.Resource;
+using Engine.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +16,7 @@ namespace DysonSphereClient.Game
 		/// <summary>
 		/// Требуемое количесто ресурсов
 		/// </summary>
-		public Resources AmountResources;
+		public ResourcesHolder AmountResources;
 		/// <summary>
 		/// Награда за перевозку всех ресурсов
 		/// </summary>

@@ -6,19 +6,14 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
 using Engine;
+using System.Diagnostics;
 
 namespace DysonSphereClient.Game
 {
+	[DebuggerDisplay("{Achieve.Code}")]
 	public class GameAchievementValue
 	{
 		public AchieveDescription Achieve;
-		public long Id;
-		public bool IsTutorialAchievement;// тип ачивки - обычная или туториальная
-		public int RequiredSequenceLevel;// енум для условия вывода ачивки
-		public int SequenceId;// вспомогательный код для енума
-		public int Step;// вспомогательный код для енума
-		//или лучше сделать общий класс и уже каждый тип енума условия и т.п. сделать дополнительно - они будут определять видна ли ачивка или нет
-		public string Code;
 		/// <summary>
 		/// Есть условия для активации ачивки и подключения установлены
 		/// </summary>
@@ -27,7 +22,6 @@ namespace DysonSphereClient.Game
 		/// Ачивка достигнута
 		/// </summary>
 		public bool IsAchieved;
-		public float ValueMax;
 		public float Value;
 		/// <summary>
 		/// Временные значения, например для определения нескольких разных событий - типа выполнили 5 разных квестов
@@ -39,24 +33,43 @@ namespace DysonSphereClient.Game
 		/// </summary>
 		public Action<GameAchievementValue> OnAchieved;
 		/// <summary>
-		/// Объект для которого делается эта ачивка
+		/// Объект от которого получается событие для ачивки
 		/// </summary>
-		public object LiveObject;
+		public object WaitObject;
 		/// <summary>
-		/// Член класса связанный с ачивкой
+		/// Член класса (Action) который присылает нужное событие
 		/// </summary>
-		public MemberInfo LiveMember;
+		public MemberInfo WaitMember;
+		/// <summary>
+		/// Объект которому передаётся значение установлена ачивка или нет
+		/// </summary>
+		public object OutObject;
+		/// <summary>
+		/// Член класса (метод) который получит информацию об ачивке
+		/// </summary>
+		public MemberInfo OutMember;
 
 		/// <summary>
 		/// Сохраняем объекты для будущего подключения/отключения
 		/// </summary>
-		public void StoreParams(object liveObject, MemberInfo liveMember)
+		public void StoreWaitParams(object waitObject, MemberInfo waitMember)
 		{
 			if (IsAchieved) return;
-			LiveObject = liveObject;
-			LiveMember = liveMember;
+			WaitObject = waitObject;
+			WaitMember = waitMember;
 		}
-		
+
+		/// <summary>
+		/// Сохраняем объекты для будущего подключения/отключения
+		/// </summary>
+		public void StoreOutParams(object outObject, MemberInfo outMember)
+		{
+			if (IsAchieved) return;
+			OutObject = outObject;
+			OutMember = outMember;
+		}
+
+
 		/// <summary>
 		/// Установить нужные праметры, подключиться к событиям и т.п.
 		/// </summary>
@@ -84,6 +97,8 @@ namespace DysonSphereClient.Game
 			var prevAchieved = true;// все предыдущие ачивки получены
 			foreach (var achCode in prevs) {
 				var ach = achievements.GetAchievement(achCode);
+				if (ach == null)
+					throw new Exception("В ачивках нету ачивки с кодом " + achCode);
 				if (!ach.IsAchieved) {
 					prevAchieved = false;
 					break;
@@ -98,8 +113,10 @@ namespace DysonSphereClient.Game
 		public void Clear()
 		{
 			UnlinkFromObject();
-			LiveMember = null;
-			LiveObject = null;
+			WaitMember = null;
+			WaitObject = null;
+			OutMember = null;
+			OutObject = null;
 		}
 
 		/// <summary>
@@ -107,20 +124,20 @@ namespace DysonSphereClient.Game
 		/// </summary>
 		private void LinkToObject()
 		{
-			if (LiveMember.MemberType != MemberTypes.Field) return;
-			var f = LiveMember as FieldInfo;
-			Action action = f.GetValue(LiveObject) as Action;
+			if (WaitMember == null || WaitMember.MemberType != MemberTypes.Field) return;
+			var f = WaitMember as FieldInfo;
+			Action action = f.GetValue(WaitObject) as Action;
 			action += OnAchieveActionStarted;
-			f.SetValue(LiveObject, action);
+			f.SetValue(WaitObject, action);
 		}
 
 		private void UnlinkFromObject()
 		{
-			if (LiveMember.MemberType != MemberTypes.Field) return;
-			var f = LiveMember as FieldInfo;
-			Action action = f.GetValue(LiveObject) as Action;
+			if (WaitMember.MemberType != MemberTypes.Field) return;
+			var f = WaitMember as FieldInfo;
+			Action action = f.GetValue(WaitObject) as Action;
 			action -= OnAchieveActionStarted;
-			f.SetValue(LiveObject, action);
+			f.SetValue(WaitObject, action);
 		}
 
 		private void OnAchieveActionStarted()
@@ -132,6 +149,10 @@ namespace DysonSphereClient.Game
 		{
 			IsAchieved = true;
 			OnAchieved?.Invoke(this);
+			if (OutMember != null && OutMember.MemberType == MemberTypes.Method) {
+				var method = OutMember as MethodInfo;
+				method.Invoke(OutObject, new object[] { IsAchieved });
+			}
 		}
 	}
 }

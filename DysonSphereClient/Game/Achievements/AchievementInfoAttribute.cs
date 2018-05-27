@@ -9,7 +9,7 @@ namespace DysonSphereClient.Game.Achievements
 	/// <summary>
 	/// Атрибут добавления ачивки 
 	/// </summary>
-	[AttributeUsage(AttributeTargets.Event | AttributeTargets.Field | AttributeTargets.Property)]
+	[AttributeUsage(AttributeTargets.Event | AttributeTargets.Field | AttributeTargets.Property|AttributeTargets.Method)]
 	public class AchievementInfoAttribute : Attribute
 	{
 		/// <summary>

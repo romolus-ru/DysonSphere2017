@@ -52,6 +52,7 @@
     <Compile Include="ClientView.cs" />
     <Compile Include="Game\Achievements\AchievementInfoAttribute.cs" />
     <Compile Include="Game\Achievements\GameAchievementsConstants.cs" />
+    <Compile Include="Game\Achievements\ViewTutorialStep.cs" />
     <Compile Include="Game\Building.cs" />
     <Compile Include="Game\BuildingEnum.cs" />
     <Compile Include="Game\BuildingEnumExtension.cs" />
@@ -63,8 +64,9 @@
     <Compile Include="Game\OrderViewInfo.cs" />
     <Compile Include="Game\Paths.cs" />
     <Compile Include="Game\QuestEnum.cs" />
-    <Compile Include="Game\ResourcesHelper.cs" />
-    <Compile Include="Game\ResourceViewInfo.cs" />
+    <Compile Include="Game\Resources\ResourcesHelper.cs" />
+    <Compile Include="Game\Resources\ResourceValue.cs" />
+    <Compile Include="Game\Resources\ResourceViewInfo.cs" />
     <Compile Include="Game\ShipCommandEnum.cs" />
     <Compile Include="Game\Ships.cs" />
     <Compile Include="Game\Upgrades\ShipUpgradeWindow.cs" />
@@ -81,8 +83,8 @@
     <Compile Include="Game\Planet.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Game\Resources.cs" />
-    <Compile Include="Game\ResourcesEnum.cs" />
+    <Compile Include="Game\Resources\ResourcesHolder.cs" />
+    <Compile Include="Game\Resources\ResourcesEnum.cs" />
     <Compile Include="Game\Ship.cs" />
     <Compile Include="ViewMenu.cs" />
     <Compile Include="Game\ViewTransportGame.cs" />

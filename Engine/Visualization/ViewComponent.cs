@@ -46,10 +46,7 @@ namespace Engine.Visualization
 		/// <summary>
 		/// Флаг, находится ли курсор над компонентом
 		/// </summary>
-		public bool CursorOver {
-			get;
-			set;
-		}
+		public bool CursorOver;
 
 		/// <summary>
 		/// Вложенные компоненты
@@ -60,6 +57,8 @@ namespace Engine.Visualization
 		/// Покинул ли курсор пределы объекта (что бы лишний раз не сбрасывать состояние)
 		/// </summary>
 		protected bool CursorOverOffed;
+
+		protected bool _cleared = false;
 
 		#endregion
 
@@ -127,6 +126,7 @@ namespace Engine.Visualization
 		/// <remarks>Отдельно потому что инициализация происходит при добавлении объекта к вышестоящему компоненту</remarks>
 		public void Init(VisualizationProvider visualizationProvider, Input input)
 		{
+			_cleared = false;
 			VisualizationProvider = visualizationProvider;// сохраняем для будущего использования
 			Input = input;
 			InitObject(VisualizationProvider, input);
@@ -143,6 +143,8 @@ namespace Engine.Visualization
 		/// </summary>
 		public void Clear()
 		{
+			if (_cleared) return;
+			_cleared = true;
 			foreach (var component in Components) {
 				component.Clear();
 			}

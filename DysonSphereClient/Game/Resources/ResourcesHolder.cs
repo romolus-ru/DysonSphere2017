@@ -5,51 +5,66 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DysonSphereClient.Game
+namespace DysonSphereClient.Game.Resource
 {
 	/// <summary>
 	/// Описание ресурсов
 	/// </summary>
-	public class Resources
+	public class ResourcesHolder
 	{
-		protected Dictionary<ResourcesEnum, int> _resources = new Dictionary<ResourcesEnum, int>();
-		public Resources() { Clear(); }
+		protected List<ResourceValue> _resources = new List<ResourceValue>();
+		public ResourcesHolder() { Clear(); }
 		public void Clear()
 		{
 			_resources.Clear();
-			foreach (ResourcesEnum item in Enum.GetValues(typeof(ResourcesEnum)))
-				_resources.Add(item, 0);
 		}
 
-		public Dictionary<ResourcesEnum, int>.Enumerator GetEnumerator()
+		public List<ResourceValue>.Enumerator GetEnumerator()
 		{
 			return _resources.GetEnumerator();
 		}
 
 		public bool IsEmpty() => _resources.Sum(v => v.Value) == 0;
-		public void Add(ResourcesEnum resource, int value) => _resources[resource] += value;
+		private ResourceValue GetResource(ResourcesEnum resource)
+			=> _resources.Where(v => v.Res == resource).FirstOrDefault();
+		private int GetResourceValue(ResourcesEnum resource)
+		{
+			var r = GetResource(resource);
+			return r != null ? r.Value : 0;
+		}
+		public void Add(ResourcesEnum resource, int value)
+		{
+			var r = GetResource(resource);
+			if (r == null) {
+				r = new ResourceValue() { Res = resource, Value = 0 };
+				_resources.Add(r);
+			}
+			r.Value += value;
+		}
 
-		public void Add(Resources resources)
+		public void Add(ResourcesHolder resources)
 		{
 			foreach (var value in resources._resources) {
-				_resources[value.Key] += value.Value;
+				var r = GetResource(value.Res);
+				r.Value += value.Value;
 			}
 		}
 
-		public int Value(ResourcesEnum resource) {
-			if (!_resources.ContainsKey(resource)) return 0;
-			return _resources[resource];
+		public int Value(ResourcesEnum resource)
+		{
+			var r = GetResource(resource);
+			return r != null ? r.Value : 0;
 		}
 
 		/// <summary>
 		/// Проверяем что ресурсов больше чем передали для проверки
 		/// </summary>
 		/// <returns></returns>
-		public bool GreaterThen(Resources toVerify)
+		public bool GreaterThen(ResourcesHolder toVerify)
 		{
 			var res = true;
 			foreach (var value in _resources) {
-				if (value.Value < toVerify._resources[value.Key]) {
+				if (value.Value < toVerify.GetResourceValue(value.Res)) {
 					res = false;
 					break;
 				}
@@ -62,7 +77,7 @@ namespace DysonSphereClient.Game
 			var s = "";
 			foreach (var res in _resources) {
 				if (res.Value == 0) continue;
-				s += "(" + res.Key.ToString() + "," + res.Value.ToString() + ")";
+				s += "(" + res.Res.ToString() + "," + res.Value.ToString() + ")";
 			}
 			return s;
 		}
@@ -71,11 +86,11 @@ namespace DysonSphereClient.Game
 		/// Получить копию ресурсов
 		/// </summary>
 		/// <returns></returns>
-		public Resources GetCopy()
+		public ResourcesHolder GetCopy()
 		{
-			var res = new Resources();
+			var res = new ResourcesHolder();
 			foreach (var res1 in _resources) {
-				res.Add(res1.Key, res1.Value);
+				res._resources.Add(res1.GetCopy());
 			}
 			return res;
 		}
@@ -88,7 +103,7 @@ namespace DysonSphereClient.Game
 			foreach (var res in _resources) {
 				int increase = (int)(res.Value * multiplier);
 				if (increase == 0) continue;
-				Add(res.Key, increase);
+				res.Value += increase;
 			}
 		}
 	}

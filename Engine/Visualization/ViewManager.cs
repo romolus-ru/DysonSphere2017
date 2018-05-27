@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace Engine.Visualization
 {
@@ -16,10 +17,14 @@ namespace Engine.Visualization
 		/// <summary>
 		/// Подсказки, важная информация и т.п. - всё что должно быть всегда наверху
 		/// </summary>
-		/// <remarks>Если нужно будет расширить эту систему то можно будет ввести словарь и уровнями</remarks>
+		/// <remarks>Если нужно будет расширить эту систему то можно будет ввести словарь с уровнями</remarks>
 		private ViewSystem _viewSystemTop;
 		private ViewSystem _viewSystem;
 		private ViewCursor _viewCursor;
+		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+		private ViewHint _viewHint;
+		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+		private ViewBigMessages _viewBigMessages;
 
 		public ViewManager(VisualizationProvider provider, Input input)
 		{
@@ -34,6 +39,10 @@ namespace Engine.Visualization
 			_input.AddCursorAction(_viewSystem.CursorHandler);
 			_viewCursor = new ViewCursor();
 			_viewCursor.Init(Provider, input);
+			_viewHint = new ViewHint();
+			_viewHint.Init(Provider, input);
+			_viewBigMessages = new ViewBigMessages();
+			_viewBigMessages.Init(Provider, input);
 		}
 
 		/// <summary>
@@ -51,7 +60,7 @@ namespace Engine.Visualization
 		/// </summary>
 		public void AddViewSystem(ViewComponent view, bool toTop = false)
 		{
-
+			_viewSystemTop.AddComponent(view, toTop);
 		}
 		public void RemoveView(ViewComponent view)
 		{
@@ -69,8 +78,8 @@ namespace Engine.Visualization
 		{
 			_input.ModalStateStop();
 			RemoveView(view);
-		}		
-		
+		}
+
 		/// <summary>
 		/// Визуализируем имеющиеся данные
 		/// </summary>

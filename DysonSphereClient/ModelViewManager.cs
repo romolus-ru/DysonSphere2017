@@ -171,7 +171,7 @@ namespace DysonSphereClient
 			_vtg.InitTransportGame(_viewManager);
 			_viewManager.AddView(_vtg);
 
-			_achievements.SetupAvievementsActions(_vtg);
+			_achievements.SetupAvievementsActions(_vtg, ships);
 
 			_vtg.OnRecreatePoints += _mtg.RecreatePoints;
 			_mtg.OnSetPoints += _vtg.SetPoints;

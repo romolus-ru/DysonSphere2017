@@ -1,4 +1,5 @@
-﻿using Engine.Helpers;
+﻿using DysonSphereClient.Game.Resource;
+using Engine.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -58,21 +59,21 @@ namespace DysonSphereClient.Game
 			Order order;
 
 			order = new Order();
-			order.AmountResources = new Resources();
+			order.AmountResources = new ResourcesHolder();
 			order.AmountResources.Add(ResourcesEnum.RawMaterials, 2000);
 			order.RewardRace = 3;
 			order.Reward = 100;
 			_ordersBlanks.Add(order);
 
 			order = new Order();
-			order.AmountResources = new Resources();
+			order.AmountResources = new ResourcesHolder();
 			order.AmountResources.Add(ResourcesEnum.Consumables, 500);
 			order.RewardRace = 3;
 			order.Reward = 100;
 			_ordersBlanks.Add(order);
 
 			order = new Order();
-			order.AmountResources = new Resources();
+			order.AmountResources = new ResourcesHolder();
 			order.AmountResources.Add(ResourcesEnum.Tools, 100);
 			order.RewardRace = 3;
 			order.Reward = 100;

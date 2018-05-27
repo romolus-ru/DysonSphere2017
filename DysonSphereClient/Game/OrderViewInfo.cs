@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DysonSphereClient.Game.Resource;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,7 +19,7 @@ namespace DysonSphereClient.Game
 		/// <summary>
 		/// Количество требуемых ресурсов
 		/// </summary>
-		public Resources Amount;
+		public ResourcesHolder Amount;
 		public List<ResourceViewInfo> Resources = new List<ResourceViewInfo>();
 	}
 }

@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Engine.Visualization;
+using DysonSphereClient.Game.Achievements;
+using DysonSphereClient.Game.Resource;
 
 namespace DysonSphereClient.Game
 {
@@ -32,7 +34,16 @@ namespace DysonSphereClient.Game
 		public Action OnBuyButtonEnable;
 		private bool BuyButtonActive = false;
 		private Func<ScreenPoint, ScreenPoint, List<ScreenPoint>> _onGetShipRoad;
+		private int _currentMaxShips = 0;
+		private const int _defaultMaxShips = 1;
+		private int _tutorialAddShips = 0;
 		public Action OnShipBuyed;
+
+		[AchievementInfo(Name = GameAchievementsConstants.StartRace)]
+		public void ChangeTutorialShips(bool value)
+		{
+			_tutorialAddShips = value ? 1 : 0;
+		}
 
 		/// <summary>
 		/// Цена корабля, с учётом уже купленных и многих других факторов
@@ -70,9 +81,9 @@ namespace DysonSphereClient.Game
 			OnShipBuyed?.Invoke();
 		}
 
-		private Resources GetDefaultCargoCapacity()
+		private ResourcesHolder GetDefaultCargoCapacity()
 		{
-			var ret = new Resources();
+			var ret = new ResourcesHolder();
 			ret.Add(ResourcesEnum.RawMaterials, 500);
 			ret.Add(ResourcesEnum.Consumables, 300);
 			ret.Add(ResourcesEnum.Tools, 20);
@@ -81,6 +92,7 @@ namespace DysonSphereClient.Game
 
 		internal void Init(Planet shipBase, Func<ScreenPoint, ScreenPoint, List<ScreenPoint>> getShipRoad)
 		{
+			_currentMaxShips = 1;
 			_shipBase = shipBase;
 			_onGetShipRoad = getShipRoad;
 			// создаём первый корабль

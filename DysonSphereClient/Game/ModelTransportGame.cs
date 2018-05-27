@@ -1,4 +1,5 @@
-﻿using Engine.Helpers;
+﻿using DysonSphereClient.Game.Resource;
+using Engine.Helpers;
 using Engine.Models;
 using Engine.Visualization;
 using Engine.Visualization.Maths;
@@ -81,7 +82,7 @@ namespace DysonSphereClient.Game
 			// добавляем ресурсные базы
 			for (int i = 0; i < 3; i++) {
 				var rp = roadPoints[roadPoints.Count - 3 + i];
-				rp.Source = new Resources();
+				rp.Source = new ResourcesHolder();
 				rp.Source.Add((ResourcesEnum)(i + 1), 50000000);
 				var be = ((ResourcesEnum)(i + 1)).GetBuildingEnum();
 				rp.Building = new Building() { BuilingType = be };

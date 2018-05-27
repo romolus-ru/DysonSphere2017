@@ -2,9 +2,11 @@ using Engine.Enums;
 using Engine.EventSystem.Event;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Engine.Data
 {
+	[DebuggerDisplay("Code={Code} Group={Group} Description={Description}")]
     public class AchieveDescription:EventBase
     {
         public long IdAchieve { get; set; }

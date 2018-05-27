@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DysonSphereClient.Game.Resource;
 
 namespace DysonSphereClient.Game
 {
@@ -24,7 +25,7 @@ namespace DysonSphereClient.Game
 		/// <summary>
 		/// Ископаемые ресурсы
 		/// </summary>
-		public Resources Source = null;
+		public ResourcesHolder Source = null;
 		public Planet()
 		{
 			
