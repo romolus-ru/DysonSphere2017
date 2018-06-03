@@ -8,6 +8,7 @@ using System.Drawing;
 using System.Linq;
 using DysonSphereClient.Game.Upgrades;
 using DysonSphereClient.Game.Achievements;
+using Engine.Visualization.Text;
 
 namespace DysonSphereClient.Game
 {
@@ -94,6 +95,16 @@ namespace DysonSphereClient.Game
 
 			_showMoney = ViewLabelIcon.Create(300, 20, Color.Red, "0", "bigFont", "Money.MR");
 			AddComponent(_showMoney);
+
+			var viewText = new ViewText();
+			AddComponent(viewText);
+			viewText.SetParams(250, 140, 100, 50, "ViewText");
+			var tr = viewText.CreateTextRow();
+			viewText.AddText(tr, Color.Red, null, "Red");
+			viewText.AddTexture(tr, "Resources.Tools");
+			viewText.AddText(tr, Color.Yellow, null, "Yellow");
+			viewText.AddText(tr, Color.Green, null, "Green");
+			viewText.CalculateTextPositions();
 
 			Input.AddKeyActionSticked(SelectPoint, Keys.LButton);
 			visualizationProvider.InitShader();

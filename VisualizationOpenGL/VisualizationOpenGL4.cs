@@ -696,8 +696,8 @@ namespace VisualizationOpenGL
 			//double len = text.Sum(c => Math.Ceiling(_glyphMetrics[c].gmfCellIncX * FontHeight + FontHeight / 4));
 			double len = text.Sum(c =>
 			{
-				var glf = _glyphMetrics[c];
-				return Math.Ceiling((glf.gmfCellIncX + glf.gmfBlackBoxX / 2 - glf.gmfptGlyphOrigin.X * 2) * FontHeight);
+				var glc = _glyphMetrics[c];
+				return Math.Ceiling((glc.gmfCellIncX + glc.gmfBlackBoxX / 2 - glc.gmfptGlyphOrigin.X * 2) * FontHeight);
 			}
 			);
 			return (int)Math.Ceiling(len);
@@ -705,14 +705,33 @@ namespace VisualizationOpenGL
 
 		public override int TextLength(string text)
 		{
-			if (text == "W") {
-				var a = 1;
-			}
-			if (text == "+") {
-				var a = 1;
-			}
 			var w1251Bytes = ConvertEncoding(text);
 			return TextLength(w1251Bytes);
+		}
+
+		public override int TextLength(string font, string text)
+		{
+			var w1251Bytes = ConvertEncoding(text);
+			var glm = _glyphMetrics;// default
+			if (!string.IsNullOrEmpty(font) && _fontInfos.ContainsKey(font)) {
+				var fi = _fontInfos[font];
+				glm = fi.GlyphMetrics;
+			}
+			double len = w1251Bytes.Sum(c =>
+			{
+				var glc = glm[c];
+				return Math.Ceiling((glc.gmfCellIncX + glc.gmfBlackBoxX / 2 - glc.gmfptGlyphOrigin.X * 2) * FontHeight);
+			}
+			);
+			return (int)Math.Ceiling(len);
+		}
+
+		public override int GetFontSize(string font)
+		{
+			if (string.IsNullOrEmpty(font) || !_fontInfos.ContainsKey(font))
+				return FontHeight;
+			var fi = _fontInfos[font];
+			return fi.FontHeight;
 		}
 
 		/// <summary>
@@ -1056,26 +1075,33 @@ void main(void)
 
 			var texInfo = _atlasManager.GetTextureInfo(textureName);
 			if (texInfo == null) return 0;
-			float coeff = 0;
-			if (texInfo.Width < texInfo.Height)
-				coeff = texInfo.Width / texInfo.Height;
-			else
-				coeff = texInfo.Height / texInfo.Width;
-
-			var fontHeight = FontHeight;// текущий размер шрифта
-			if (!string.IsNullOrEmpty(fontName) && _fontInfos.ContainsKey(fontName))
-				fontHeight = _fontInfos[fontName].FontHeight;// размер шрифта для которого выводится текстура
-			int cFH = (int)(fontHeight * coeff + 0.5);
-			int dx = 0;
-			int dy = (int)((cFH * 1 / 7));
-			DrawTexturePart(CurTxtX + dx, CurTxtY + dy, textureName, fontHeight, cFH);
+			int dx, dy, placeWidth, placeHeight;
+			_getTextureSizeForFont(textureName, fontName, out dx, out dy, out placeWidth, out placeHeight);
+			DrawTexturePart(CurTxtX + dx, CurTxtY + dy, textureName, placeWidth, placeHeight);
 			//Line(CurTxtX - 5, CurTxtY - 5, CurTxtX + 5, CurTxtY + 5);
 			//Line(CurTxtX + 5, CurTxtY - 5, CurTxtX - 5, CurTxtY + 5);
 
 			//Line(CurTxtX - 5 + dx, CurTxtY - 5 + dy, CurTxtX + 5 + dx, CurTxtY + 5 + dy);
 			//Line(CurTxtX + 5 + dx, CurTxtY - 5 + dy, CurTxtX - 5 + dx, CurTxtY + 5 + dy);
 
-			return cFH;
+			return placeWidth/*placeHeight*/;
+		}
+
+		public void _getTextureSizeForFont(string textureName, string fontName, out int dx, out int dy, out int placeWidth, out int placeHeight)
+		{
+			var texInfo = _atlasManager.GetTextureInfo(textureName);
+			float coeff = 0;
+			if (texInfo.Width < texInfo.Height)
+				coeff = texInfo.Width / texInfo.Height;
+			else
+				coeff = texInfo.Height / texInfo.Width;
+
+			placeWidth = FontHeight;// текущий размер шрифта
+			if (!string.IsNullOrEmpty(fontName) && _fontInfos.ContainsKey(fontName))
+				placeWidth = _fontInfos[fontName].FontHeight;// размер шрифта для которого выводится текстура
+			placeHeight = (int)(placeWidth * coeff + 0.5);
+			dx = 0;
+			dy = (int)(placeHeight * 1 / 7);
 		}
 	}
 }

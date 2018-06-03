@@ -358,12 +358,28 @@ namespace Engine.Visualization
 		/// </summary>
 		/// <param name="fontCodeName"></param>
 		public virtual void SetFont(string fontCodeName) { }
+
 		/// <summary>
-		/// Вычисление длины текста
+		/// Вычисление длины текста для текущего шрифта
 		/// </summary>
 		/// <param name="text"></param>
 		/// <returns></returns>
 		public virtual int TextLength(string text) { return 0; }
+
+		/// <summary>
+		/// Вычисление длины текста для указанного шрифта
+		/// </summary>
+		/// <param name="font"></param>
+		/// <param name="text"></param>
+		/// <returns></returns>
+		public virtual int TextLength(string font, string text) { return 0; }
+
+		/// <summary>
+		/// Получить размер шрифта
+		/// </summary>
+		/// <param name="font"></param>
+		/// <returns></returns>
+		public virtual int GetFontSize(string font) { return 0; }
 
 		/// <summary>
 		/// Координата текста Х
