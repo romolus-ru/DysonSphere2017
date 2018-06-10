@@ -17,6 +17,11 @@ namespace DysonSphereClient.Game
 	public class GameAchievements
 	{
 		/// <summary>
+		/// Изменение состояния ачивок
+		/// </summary>
+		public Action OnAchieveChanged;
+		
+		/// <summary>
 		/// Данные об ачивках, состоянии и т.п. - абстрактные данные, унифицированные, хранятся в файле или БД
 		/// </summary>
 		private List<AchieveDescription> _AchievementsDescription = new List<AchieveDescription>();
@@ -28,6 +33,7 @@ namespace DysonSphereClient.Game
 		/// Активные - которые подключены
 		/// </summary>
 		private Dictionary<string, GameAchievementValue> _ActiveAchievements = new Dictionary<string, GameAchievementValue>();
+
 		//тут. получаем Ships и надо подключиться к событию отправки корабля
 		//точнее последовательности событий которые надо сделать для ачивки
 		//нечто наподобие туториала - будет выведена ачивка (неубираемая) и там будет написано что надо сделать что бы её получить
@@ -40,8 +46,8 @@ namespace DysonSphereClient.Game
 			GetAchievementMethods(_achivementEvents, _achivementMethods, vtg);
 			GetAchievementMethods(_achivementEvents, _achivementMethods, ships);
 			foreach (var ach in _Achievements) {
-				ach.OnAchieved -= OnAchieved;
-				ach.OnAchieved += OnAchieved;
+				//ach.OnAchieved -= Achieved;
+				//ach.OnAchieved += Achieved;
 				if (_achivementEvents.ContainsKey(ach.Achieve.Code)) {
 					var p = _achivementEvents[ach.Achieve.Code];
 					ach.StoreWaitParams(p.Key, p.Value);
@@ -63,9 +69,10 @@ namespace DysonSphereClient.Game
 		/// Запускаем проверку ачивок на запуск и установку
 		/// </summary>
 		/// <param name="achievement"></param>
-		public void OnAchieved(GameAchievementValue achievement)
+		public void Achieved(GameAchievementValue achievement)
 		{
 			// для начала проверим по присланной ачивке есть ли у кого previous такая же и активируем её
+			OnAchieveChanged?.Invoke();
 		}
 
 		/// <summary>
@@ -179,6 +186,16 @@ namespace DysonSphereClient.Game
 				Count = 0,
 			};
 			_AchievementsDescription.Add(ach);
+		}
+
+		public GameAchievementValue GetTutorialAchieves()
+		{
+			foreach (var ach in _Achievements) {
+				if (ach.Achieve.Group != "Tutorial") continue;
+				if (ach.IsActive)
+					return ach;
+			}
+			return null;
 		}
 	}
 }

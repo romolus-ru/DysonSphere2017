@@ -21,11 +21,12 @@ namespace Engine.Visualization.Text
 			return tr;
 		}
 
-		public void AddText(TextRow textRow, Color color, string font, string text)
+		public TextPiece AddText(TextRow textRow, Color color, string font, string text)
 		{
 			var ts = new TextSimple();
 			ts.Init(VisualizationProvider, color, font, text);
 			textRow.AddPiece(ts);
+			return ts;
 		}
 
 		public void AddTexture(TextRow textRow, string texture, string font = null)
@@ -37,10 +38,12 @@ namespace Engine.Visualization.Text
 
 		public void CalculateTextPositions()
 		{
+			var h = 0;
 			foreach (var txt in _texts) {
 				txt.CalculateSize(VisualizationProvider);
+				h += txt.Height;
 			}
-			var height = 0;
+			var height = (Height - h) / 2;
 			foreach (var txt in _texts) {
 				var xpos = (Width - txt.Width) / 2;
 				txt.CalculatePlace(xpos, height);
@@ -50,6 +53,8 @@ namespace Engine.Visualization.Text
 
 		public override void DrawObject(VisualizationProvider visualizationProvider)
 		{
+			visualizationProvider.SetColor(Color.FloralWhite);
+			visualizationProvider.Rectangle(X, Y, Width, Height);
 			visualizationProvider.OffsetAdd(X, Y);
 			foreach (var txt in _texts) {
 				txt.Draw(visualizationProvider);

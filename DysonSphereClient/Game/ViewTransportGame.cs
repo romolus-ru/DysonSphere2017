@@ -98,12 +98,14 @@ namespace DysonSphereClient.Game
 
 			var viewText = new ViewText();
 			AddComponent(viewText);
-			viewText.SetParams(250, 140, 100, 50, "ViewText");
+			viewText.SetParams(250, 140, 180, 50, "ViewText");
 			var tr = viewText.CreateTextRow();
 			viewText.AddText(tr, Color.Red, null, "Red");
 			viewText.AddTexture(tr, "Resources.Tools");
 			viewText.AddText(tr, Color.Yellow, null, "Yellow");
 			viewText.AddText(tr, Color.Green, null, "Green");
+			var tr2 = viewText.CreateTextRow();
+			viewText.AddText(tr2, Color.Red, null, "color = Red 2 ");
 			viewText.CalculateTextPositions();
 
 			Input.AddKeyActionSticked(SelectPoint, Keys.LButton);

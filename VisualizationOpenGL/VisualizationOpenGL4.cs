@@ -106,14 +106,22 @@ namespace VisualizationOpenGL
 
 		private void ResizeGlScene(int width, int height)
 		{
-
+			var aspect = width / height;
 			// задаётся размер экрана, влияет на искажение вида, поэтому  надо пересчитать размеры
 			gl.Viewport(0, 0, width, height);
 			gl.MatrixMode(GL.PROJECTION);
 			gl.LoadIdentity();
 
+			if (width >= height) {
+				// aspect >= 1, set the height from -1 to 1, with larger width
+				gl.Ortho(0, width * aspect, height, 0, -1, 1);
+			} else {
+				// aspect < 1, set the width to -1 to 1, with larger height
+				gl.Ortho(0, width, height / aspect, 0, -1, 1);
+			}
+
 			//Glu.gluOrtho2D(0, width, height, 0);
-			gl.Ortho(0, width, height, 0, -1, 1);
+			//gl.Ortho(0, width-1, height-1, 0, -1, 1);
 			gl.MatrixMode(GL.MODELVIEW);
 			CanvasHeight = height;
 			CanvasWidth = width;
@@ -167,33 +175,46 @@ namespace VisualizationOpenGL
 			_backgroundColorA = (float)a / 255;
 		}
 
-		protected override void _Line(int x1, int y1, int x2, int y2)
+		protected override void _Line(int x1, int y1, int x2, int y2, int lineType)
 		{
 			gl.Enable(GL.LINE_SMOOTH);
 			gl.Disable(GL.TEXTURE_2D); // Turn off textures
 			gl.Enable(GL.BLEND);
 			gl.BlendFunc(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA);
 
-			gl.Begin(GL.LINES);
-			gl.Vertex2f(x1, y1);
-			gl.Vertex2f(x2, y2);
-			gl.End();
+			if (lineType == 0) {
+				gl.Begin(GL.LINES);
+				gl.Vertex2f(x1, y1);
+				gl.Vertex2f(x2, y2);
+				gl.End();
+			} else {
+				var dx = y1 - y2;
+				var dy = x2 - x1;
+				if (dx != 0) dx /= Math.Abs(dx);
+				if (dy != 0) dy /= Math.Abs(dy);
+				gl.Begin(GL.QUADS);
+				gl.Vertex2f(x1, y1);
+				gl.Vertex2f(x2, y2);
+				gl.Vertex2f(x2 + dx, y2 + dy);
+				gl.Vertex2f(x1 + dx, y1 + dy);
+				gl.End();
+			}
 		}
 
 		protected override void _Rectangle(int x, int y, int width, int height)
 		{
-			Line(x, y, x + width, y);
-			Line(x + width, y, x + width, y + height);
-			Line(x + width, y + height, x, y + height);
-			Line(x, y + height, x, y);
+			Line(x, y, x + width, y, 1);
+			Line(x + width, y, x + width, y + height, 1);
+			Line(x + width, y + height, x, y + height, 1);
+			Line(x, y + height, x, y, 1);
 		}
 
 		protected override void _Rectangle(int x, int y, int width, int height, int radius)
 		{
-			Line(x + radius, y, x + width - radius, y);
-			Line(x + width, y + radius, x + width, y + height - radius);
-			Line(x + width - radius, y + height, x + radius, y + height);
-			Line(x, y + height - radius, x, y + radius);
+			Line(x + radius, y, x + width - radius, y, 1);
+			Line(x + width, y + radius, x + width, y + height - radius, 1);
+			Line(x + width - radius, y + height, x + radius, y + height, 1);
+			Line(x, y + height - radius, x, y + radius, 1);
 			_drawArc(x + radius, y + radius, radius, 270, 360, 10);
 			_drawArc(x + width - radius, y + radius, radius, 0, 90, 10);
 			_drawArc(x + width - radius, y + height - radius, radius, 90, 180, 10);
@@ -255,10 +276,10 @@ namespace VisualizationOpenGL
 
 		protected override void _Box(int x, int y, int width, int height, int radius)
 		{
-			_Line(x + radius, y, x + width - radius, y);
-			_Line(x + width, y + radius, x + width, y + height - radius);
-			_Line(x + width - radius, y + height, x + radius, y + height);
-			_Line(x, y + height - radius, x, y + radius);
+			_Line(x + radius, y, x + width - radius, y, 1);
+			_Line(x + width, y + radius, x + width, y + height - radius, 1);
+			_Line(x + width - radius, y + height, x + radius, y + height, 1);
+			_Line(x, y + height - radius, x, y + radius, 1);
 			var p1 = _getArcPoints(x + radius, y + radius, radius, 270, 360, 10);
 			var p2 = _getArcPoints(x + width - radius, y + radius, radius, 0, 90, 10);
 			var p3 = _getArcPoints(x + width - radius, y + height - radius, radius, 90, 180, 10);
@@ -572,7 +593,7 @@ namespace VisualizationOpenGL
 
 			if (useColorModification)
 				gl.TexEnvi(GL.TEXTURE_ENV, GL.TEXTURE_ENV_MODE, GL.MODULATE);// что бы текстура была прозрачной, сама текстура
-			//gl.BlendFunc(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA);
+																			 //gl.BlendFunc(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA);
 			gl.BlendFunc(texInfo.BlendParam, GL.ONE);
 			gl.BindTexture(GL.TEXTURE_2D, texInfo.TextureCode);
 			gl.TexParameteri(GL.TEXTURE_2D, GL.TEXTURE_WRAP_S, GL.REPEAT);
@@ -843,7 +864,7 @@ namespace VisualizationOpenGL
 								  Gdi.ANTIALIASED_QUALITY,
 								  0,
 								  fontName);
-			
+
 			IntPtr dc = Wgl.wglGetCurrentDC();
 			oldfont = Gdi.SelectObject(dc, font);
 			Wgl.wglUseFontOutlinesA(dc, 0, 256, _fontOpenGLList, 0, 0f, Wgl.WGL_FONT_POLYGONS, _glyphMetrics);
@@ -1021,7 +1042,8 @@ void main(void)
 }";
 		private uint _program;
 
-		public override void InitShader() {
+		public override void InitShader()
+		{
 
 			var vertexShader = gl.CreateShader(GL.VERTEX_SHADER);
 			gl.ShaderSource(vertexShader,
@@ -1049,8 +1071,8 @@ void main(void)
 			_program = program;
 		}
 
-		public override void UseShader() {
-
+		public override void UseShader()
+		{
 			gl.UseProgram(_program);
 			// получаем имя переменной
 			//int uniformLoopDuration = glGetUniformLocation(theProgram, "loopDuration");
@@ -1065,7 +1087,8 @@ void main(void)
 			//gl.GetUniformLocation
 			//gl.GetVaryingLocation
 		}
-		public override void StopShader() {
+		public override void StopShader()
+		{
 			gl.UseProgram(0);
 		}
 

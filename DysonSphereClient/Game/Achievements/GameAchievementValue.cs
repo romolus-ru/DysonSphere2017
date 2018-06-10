@@ -79,7 +79,7 @@ namespace DysonSphereClient.Game
 			if (IsAchieved) return;
 			IsActive = CanActivateAchievement(achievements);
 			if (!IsActive) return;
-			OnAchieved += achievements.OnAchieved;
+			OnAchieved += achievements.Achieved;
 			LinkToObject();
 		}
 

@@ -33,6 +33,7 @@ namespace DysonSphereClient
 		private ViewTransportGame _vtg;
 		private ModelTransportGame _mtg;
 		private GameAchievements _achievements;
+		private ViewTutorialStep _vts;
 
 		public Action OnExit;
 
@@ -172,6 +173,9 @@ namespace DysonSphereClient
 			_viewManager.AddView(_vtg);
 
 			_achievements.SetupAvievementsActions(_vtg, ships);
+			_vts = new ViewTutorialStep();
+			_achievements.OnAchieveChanged += _vts.AchievementsChanged;
+			_viewManager.AddViewSystem(_vts, true);
 
 			_vtg.OnRecreatePoints += _mtg.RecreatePoints;
 			_mtg.OnSetPoints += _vtg.SetPoints;

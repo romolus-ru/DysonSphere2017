@@ -122,12 +122,13 @@ namespace Engine.Visualization
 		/// <param name="y1"></param>
 		/// <param name="x2"></param>
 		/// <param name="y2"></param>
-		public void Line(int x1, int y1, int x2, int y2)
+		/// <param name="lineType">Тип линии. 0 обычная, 1 для опенгл на квадах</param>
+		public void Line(int x1, int y1, int x2, int y2, int lineType = 0)
 		{
-			_Line(x1 + curOffsetX, y1 + curOffsetY, x2 + curOffsetX, y2 + curOffsetY);
+			_Line(x1 + curOffsetX, y1 + curOffsetY, x2 + curOffsetX, y2 + curOffsetY, lineType);
 		}
 
-		protected virtual void _Line(int x1, int y1, int x2, int y2) { }
+		protected virtual void _Line(int x1, int y1, int x2, int y2, int lineType) { }
 
 		/// <summary>
 		/// Нарисовать прямоугольник

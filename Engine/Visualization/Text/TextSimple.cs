@@ -15,6 +15,14 @@ namespace Engine.Visualization.Text
 		private Color _color;
 		private string _font;
 		private string _text;
+		public string Text {
+			get { return _text; }
+			set{
+				_text = value;
+				_textSizeCalculated = false;
+				CalculateSize(_visualizationProvider);
+			}
+		}
 		private VisualizationProvider _visualizationProvider;
 		private bool _textSizeCalculated = false;
 
@@ -28,20 +36,13 @@ namespace Engine.Visualization.Text
 			_visualizationProvider = visualizationProvider;
 			_font = font;
 			SetColor(color);
-			SetText(text);
+			Text = text;
 		}
-		public void SetText(string text)
-		{
-			_text = text;
-			_textSizeCalculated = false;
-			CalculateSize(_visualizationProvider);
-		}
-
 		public override void CalculateSize(VisualizationProvider visualizationProvider)
 		{
 			if (_textSizeCalculated) return;
 			_textSizeCalculated = true;
-			Width = visualizationProvider.TextLength(_font, _text);
+			Width = visualizationProvider.TextLength(_font, Text);
 			Height = visualizationProvider.GetFontSize(_font);
 		}
 
@@ -61,7 +62,7 @@ namespace Engine.Visualization.Text
 				visualizationProvider.SetFont(_font);
 			visualizationProvider.SetColor(_color);
 			visualizationProvider.Rectangle(X, Y, Width, Height);
-			visualizationProvider.Print(X, Y, _text);
+			visualizationProvider.Print(X, Y, Text);
 			visualizationProvider.Line(X + 5, Y + Height + 5, X + Width - 5, Y + Height + 5);
 		}
 	}
