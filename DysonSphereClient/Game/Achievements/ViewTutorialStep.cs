@@ -17,7 +17,7 @@ namespace DysonSphereClient.Game
 		public Func<GameAchievementValue> OnGetActiveTutorValue;
 
 		private GameAchievementValue _currentTutorialStep;
-		private TextSimple _header;
+		private ViewText _headerMain;
 
 		protected override void InitObject(VisualizationProvider visualizationProvider, Input input)
 		{
@@ -27,10 +27,11 @@ namespace DysonSphereClient.Game
 			Width = 300;
 			Height = 160;
 
-			var header = new ViewText();
-			AddComponent(header);
-			var row = header.CreateTextRow();
-			_header = header.AddText(row, System.Drawing.Color.White, null, "HEADER") as TextSimple;
+			_headerMain = new ViewText();
+			AddComponent(_headerMain);
+			_headerMain.SetParams(0, 0, Width, 30, "Header");
+			_headerMain.CreateSplitedTextAuto(System.Drawing.Color.White, null, "HEADER");
+			_headerMain.CalculateTextPositions();
 			AchievementsChanged();
 		}
 
@@ -39,9 +40,12 @@ namespace DysonSphereClient.Game
 			_currentTutorialStep = OnGetActiveTutorValue?.Invoke();
 			if (_currentTutorialStep == null) {
 				// TODO remove ViewTutorStep
+				this.Hide();
 				return;
 			}
-			_header.Text = _currentTutorialStep.Achieve.Description;
+			_headerMain.ClearTexts();
+			_headerMain.CreateSplitedTextAuto(System.Drawing.Color.White, null, _currentTutorialStep.Achieve.Description);
+			_headerMain.CalculateTextPositions();
 		}
 
 		public override void DrawObject(VisualizationProvider visualizationProvider)

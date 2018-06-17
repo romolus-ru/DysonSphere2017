@@ -172,8 +172,9 @@ namespace DysonSphereClient
 			_vtg.InitTransportGame(_viewManager);
 			_viewManager.AddView(_vtg);
 
-			_achievements.SetupAvievementsActions(_vtg, ships);
+			_achievements.SetupAchievementsActions(_vtg, ships);
 			_vts = new ViewTutorialStep();
+			_vts.OnGetActiveTutorValue += _achievements.GetTutorialAchieves;
 			_achievements.OnAchieveChanged += _vts.AchievementsChanged;
 			_viewManager.AddViewSystem(_vts, true);
 

@@ -131,6 +131,7 @@
     <Compile Include="Helpers\DataSupportFileHelper.cs" />
     <Compile Include="Helpers\InputHelper.cs" />
     <Compile Include="Helpers\RandomHelper.cs" />
+    <Compile Include="Helpers\ViewHelper.cs" />
     <Compile Include="Input.cs" />
     <Compile Include="InputKeyStatePause.cs" />
     <Compile Include="Models\Model.cs" />
@@ -185,6 +186,7 @@
     <Compile Include="Visualization\Text\TextTexture.cs" />
     <Compile Include="Visualization\Text\ViewText.cs" />
     <Compile Include="Visualization\View.cs" />
+    <Compile Include="Visualization\ViewBigMessage.cs" />
     <Compile Include="Visualization\ViewBigMessages.cs" />
     <Compile Include="Visualization\ViewButton.cs" />
     <Compile Include="Visualization\ViewComponent.cs" />

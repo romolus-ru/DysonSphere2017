@@ -14,6 +14,51 @@ namespace Engine.Visualization.Text
 	{
 		private List<TextPiece> _texts = new List<TextPiece>();
 
+		/// <summary>
+		/// Добавить строку текста с автоматической разбивкой на строки по ширине
+		/// </summary>
+		/// <param name="text"></param>
+		/// <returns></returns>
+		public void CreateSplitedTextAuto(Color color, string font, string text)
+		{
+			while (!string.IsNullOrEmpty(text)) {
+				var len = GetWidthLength(font, text);
+				if (len == -1) break;
+				var str = text.Substring(0, len);
+				text = len < text.Length ? text.Substring(len + 1) : null;
+				var tr = new TextRow();
+				_texts.Add(tr);
+				AddText(tr, color, font, str);
+			}
+		}
+
+		/// <summary>
+		/// Получить длину строки которая влезает в ширину компонента
+		/// </summary>
+		/// <param name="text"></param>
+		/// <returns></returns>
+		private int GetWidthLength(string font,string text)
+		{
+			if (string.IsNullOrEmpty(text))
+				return -1;
+			int ret = 0;
+			int counter = 0;
+			int prevCounter = -1;
+			do {
+				counter = text.IndexOf(' ', counter + 1);
+				if (counter == -1) return text.Length;
+				var len = VisualizationProvider.TextLength(font, text.Substring(0, counter));
+				if (len > Width) {
+					return prevCounter;
+				}
+				prevCounter = counter;
+			}
+			while (counter != -1);
+			return -1;
+		}
+
+		public void ClearTexts() => _texts.Clear();
+
 		public TextRow CreateTextRow()
 		{
 			var tr = new TextRow();

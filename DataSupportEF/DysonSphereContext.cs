@@ -30,6 +30,7 @@ namespace DataSupportEF
 		public DbSet<CollectClass> CollectClasses { get; set; }
 		public DbSet<_Settings> Settings { get; set; }
 		public DbSet<UserRegistration> UserRegistration { get; set; }
+		public DbSet<MiniGames> Minigames { get; set; }
 
 		protected override void OnModelCreating(DbModelBuilder modelBuilder)
 		{

@@ -37,12 +37,18 @@ namespace Engine.Visualization
 			_viewSystem.SetParams(0, 0, provider.CanvasWidth, provider.CanvasHeight, "ViewSystem");
 			_viewSystem.Init(Provider, input);
 			_input.AddCursorAction(_viewSystem.CursorHandler);
+
 			_viewCursor = new ViewCursor();
 			_viewCursor.Init(Provider, input);
+
 			_viewHint = new ViewHint();
 			_viewHint.Init(Provider, input);
+			_viewSystemTop.AddComponent(_viewHint);
+
 			_viewBigMessages = new ViewBigMessages();
 			_viewBigMessages.Init(Provider, input);
+			_viewBigMessages.SetParams(0, 0, provider.CanvasWidth, provider.CanvasHeight, "BigMessages");
+			_viewSystemTop.AddComponent(_viewBigMessages);
 		}
 
 		/// <summary>
@@ -98,6 +104,16 @@ namespace Engine.Visualization
 		{
 			_viewSystemTop.SetScreenPos(windowPosX, windowPosY);
 			_viewSystem.SetScreenPos(windowPosX, windowPosY);
+		}
+
+		public void ShowHint(string hintText, string hintKeys = null)
+		{
+			_viewHint.ShowHint(TimeSpan.FromSeconds(7), hintText, hintKeys);
+		}
+
+		public void ShowBigMessage(string message)
+		{
+			_viewBigMessages.ShowMessage(TimeSpan.FromSeconds(7), "BigFont", message);
 		}
 	}
 }

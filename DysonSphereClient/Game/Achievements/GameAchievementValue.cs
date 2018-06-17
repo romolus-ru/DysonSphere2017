@@ -133,6 +133,7 @@ namespace DysonSphereClient.Game
 
 		private void UnlinkFromObject()
 		{
+			if (WaitMember == null) return;
 			if (WaitMember.MemberType != MemberTypes.Field) return;
 			var f = WaitMember as FieldInfo;
 			Action action = f.GetValue(WaitObject) as Action;
@@ -148,11 +149,13 @@ namespace DysonSphereClient.Game
 		private void AchievementGranted()
 		{
 			IsAchieved = true;
+			IsActive = false;
 			OnAchieved?.Invoke(this);
 			if (OutMember != null && OutMember.MemberType == MemberTypes.Method) {
 				var method = OutMember as MethodInfo;
 				method.Invoke(OutObject, new object[] { IsAchieved });
 			}
+			Clear();
 		}
 	}
 }

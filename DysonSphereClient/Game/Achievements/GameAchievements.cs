@@ -1,5 +1,6 @@
 ﻿//создать, визуализировать, должна быть достигнута ачивка, сохранить состояние локально, передавать на сервер
 using DysonSphereClient.Game.Achievements;
+using Engine;
 using Engine.Data;
 using Engine.Enums;
 using System;
@@ -37,7 +38,7 @@ namespace DysonSphereClient.Game
 		//тут. получаем Ships и надо подключиться к событию отправки корабля
 		//точнее последовательности событий которые надо сделать для ачивки
 		//нечто наподобие туториала - будет выведена ачивка (неубираемая) и там будет написано что надо сделать что бы её получить
-		public void SetupAvievementsActions(ViewTransportGame vtg, Ships ships)
+		public void SetupAchievementsActions(ViewTransportGame vtg, Ships ships)
 		{
 			LoadAchievementsDescriptions();
 			CreateAndFillAchievementValues();
@@ -72,6 +73,15 @@ namespace DysonSphereClient.Game
 		public void Achieved(GameAchievementValue achievement)
 		{
 			// для начала проверим по присланной ачивке есть ли у кого previous такая же и активируем её
+			var find = achievement.Achieve.Code;
+			foreach (var ach in _Achievements) {
+				if (string.IsNullOrEmpty(ach.Achieve.PreviousAchievements)) continue;
+				var prev = ach.Achieve.PreviousAchievements;
+				if (!prev.Contains(find)) continue;
+				var prevs = prev.Split(Constants.BaseStringSeparator);
+				if (prevs.Contains(find))
+					ach.Setup(this);
+			}
 			OnAchieveChanged?.Invoke();
 		}
 
@@ -180,7 +190,7 @@ namespace DysonSphereClient.Game
 				Code = GameAchievementsConstants.StartRace,
 				PreviousAchievements = GameAchievementsConstants.SelectPlanet,
 				Title = "Запустите выполнение заказа",
-				Description = "Выберите планету с необходимыми ресурсами для запуска рейса",
+				Description = "Запустите рейс между двумя планетами",
 				DescriptionReward = "Награда - дополнительный бесплатный корабль",
 				Group = "Tutorial",
 				Count = 0,

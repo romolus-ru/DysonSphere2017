@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -14,6 +15,7 @@ namespace Engine.Visualization.Text
 	{
 		private Color _color;
 		private string _font;
+		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		private string _text;
 		public string Text {
 			get { return _text; }

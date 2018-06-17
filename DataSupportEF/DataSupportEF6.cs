@@ -154,5 +154,27 @@ namespace DataSupportEF
 			return user;
 		}
 
+		public override List<MiniGames> GetMinigames(string filter = null)
+		{
+			IQueryable<MiniGames> all = ds.Minigames;
+			if (!string.IsNullOrEmpty(filter)) {
+				all = all.Where(mg => mg.CodeName.Contains(filter));
+			}
+			return all.ToList();
+		}
+
+		public override void AddMinigame(MiniGames miniGame)
+		{
+			ds.Entry(miniGame).State = miniGame.Id == 0 ?
+					   EntityState.Added :
+					   EntityState.Modified;
+			ds.SaveChanges();
+		}
+
+		public override void DeleteMinigame(MiniGames miniGame)
+		{
+			ds.Entry(miniGame).State = EntityState.Deleted;
+			ds.SaveChanges();
+		}
 	}
 }

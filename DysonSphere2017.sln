@@ -22,6 +22,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AtlasViewer", "AtlasViewer\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DysonSphereClient", "DysonSphereClient\DysonSphereClient.csproj", "{9D6C1B3A-0687-4B79-B917-8ECD1A8E9AEF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EngineTools", "EngineTools\EngineTools.csproj", "{3BEC5A20-56DB-4EDB-9AC2-B53D96FC7462}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -60,6 +62,10 @@ Global
 		{9D6C1B3A-0687-4B79-B917-8ECD1A8E9AEF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9D6C1B3A-0687-4B79-B917-8ECD1A8E9AEF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9D6C1B3A-0687-4B79-B917-8ECD1A8E9AEF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3BEC5A20-56DB-4EDB-9AC2-B53D96FC7462}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3BEC5A20-56DB-4EDB-9AC2-B53D96FC7462}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3BEC5A20-56DB-4EDB-9AC2-B53D96FC7462}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3BEC5A20-56DB-4EDB-9AC2-B53D96FC7462}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

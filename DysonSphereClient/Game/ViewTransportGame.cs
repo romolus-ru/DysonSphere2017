@@ -9,6 +9,7 @@ using System.Linq;
 using DysonSphereClient.Game.Upgrades;
 using DysonSphereClient.Game.Achievements;
 using Engine.Visualization.Text;
+using Engine.Helpers;
 
 namespace DysonSphereClient.Game
 {
@@ -84,6 +85,12 @@ namespace DysonSphereClient.Game
 			btnShop.SetParams(250, 105, 140, 30, "btnShop");
 			btnShop.InitTexture("textRB", "textRB");
 
+			var btnBigMessage = new ViewButton();
+			AddComponent(btnBigMessage);
+			btnBigMessage.InitButton(AddBigMessage, "AddBigMessage", "hint", Keys.U);
+			btnBigMessage.SetParams(250, 225, 140, 30, "btnBigMessage");
+			btnBigMessage.InitTexture("textRB", "textRB");
+
 			_shipsPanel = new ViewShipsPanel();
 			AddComponent(_shipsPanel);
 			_shipsPanel.OnBuyShip += () => OnBuyShip?.Invoke();// отправляем запрос выше
@@ -110,6 +117,13 @@ namespace DysonSphereClient.Game
 
 			Input.AddKeyActionSticked(SelectPoint, Keys.LButton);
 			visualizationProvider.InitShader();
+		}
+
+		int counter = 0;
+		private void AddBigMessage()
+		{
+			counter++;
+			ViewHelper.ShowBigMessage("Message " + counter);
 		}
 
 		private void ShowShop()

@@ -734,17 +734,20 @@ namespace VisualizationOpenGL
 		{
 			var w1251Bytes = ConvertEncoding(text);
 			var glm = _glyphMetrics;// default
+			var fontHeight = FontHeight;
 			if (!string.IsNullOrEmpty(font) && _fontInfos.ContainsKey(font)) {
 				var fi = _fontInfos[font];
 				glm = fi.GlyphMetrics;
 			}
+
+			// https://doxygen.reactos.org/d1/dbc/3dtext_8c.html // nope
 			double len = w1251Bytes.Sum(c =>
 			{
 				var glc = glm[c];
-				return Math.Ceiling((glc.gmfCellIncX + glc.gmfBlackBoxX / 2 - glc.gmfptGlyphOrigin.X * 2) * FontHeight);
+				return ((glc.gmfCellIncX + glc.gmfBlackBoxX / 2 - glc.gmfptGlyphOrigin.X));
 			}
-			);
-			return (int)Math.Ceiling(len);
+			) * fontHeight;
+			return (int)len;// Math.Ceiling(len);
 		}
 
 		public override int GetFontSize(string font)

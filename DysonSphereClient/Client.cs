@@ -83,6 +83,7 @@ namespace DysonSphereClient
 			_model.OnLoginResult += LoginResult;
 
 			_viewManager = new ViewManager(_visualization, _input);
+			ViewHelper.SetViewManager(_viewManager);
 			// соединяем модели, формируем основные пути передачи информации
 			// вынести в отдельный метод. делать что то наподобие serverInitializer нету смысла - надо будет передавать много параметров, а они уникальные
 

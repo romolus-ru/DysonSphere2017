@@ -117,8 +117,14 @@ namespace Engine
 		public virtual UserRegistration UserStatus { get; set; }
 
 
-		public virtual ErrorType RegisterUser(UserRegistration userRegistration){ return ErrorType.NoError; }
+		public virtual ErrorType RegisterUser(UserRegistration userRegistration) { return ErrorType.NoError; }
 
 		public virtual UserRegistration LoginUser(LoginData loginData) { return null; }
+
+		public virtual List<MiniGames> GetMinigames(string filter = null) { return null; }
+
+		public virtual void AddMinigame(MiniGames miniGame) { }
+
+		public virtual void DeleteMinigame(MiniGames miniGame) { }
 	}
 }
