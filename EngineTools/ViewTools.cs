@@ -28,18 +28,18 @@ namespace EngineTools
 			var debugView = new DebugView();
 			AddComponent(debugView, true);
 			debugView.SetParams(1100, 0, debugView.Width, debugView.Height, "DebugView");
+			
+			var btnSaveTablesToFiles = new ViewButton();
+			AddComponent(btnSaveTablesToFiles);
+			btnSaveTablesToFiles.InitButton(null, "SaveTablesToFiles", "SaveTablesToFiles hint", Keys.S);
+			btnSaveTablesToFiles.SetParams(150, 100, 140, 30, "btnSaveTablesToFiles");
+			btnSaveTablesToFiles.InitTexture("textRB", "textRB");
 
 			var btnSelectGame = new ViewButton();
 			AddComponent(btnSelectGame);
 			btnSelectGame.InitButton(SelectGame, "SelectGame", "SelectGame hint", Keys.Y);
-			btnSelectGame.SetParams(20, 120, 140, 30, "btnSelectGame");
+			btnSelectGame.SetParams(150, 140, 140, 30, "btnSelectGame");
 			btnSelectGame.InitTexture("textRB", "textRB");
-
-			var btnSaveTablesToFiles = new ViewButton();
-			AddComponent(btnSaveTablesToFiles);
-			btnSaveTablesToFiles.InitButton(null, "SaveTablesToFiles", "SaveTablesToFiles hint", Keys.S);
-			btnSaveTablesToFiles.SetParams(250, 70, 140, 30, "btnSaveTablesToFiles");
-			btnSaveTablesToFiles.InitTexture("textRB", "textRB");
 
 			var btnClose = new ViewButton();
 			AddComponent(btnClose);
@@ -49,7 +49,7 @@ namespace EngineTools
 
 		private void SelectGame()
 		{
-			//new ShopWindow().InitWindow(_viewManager);
+			new MiniGameSelectWindow().InitWindow(_viewManager, null, null);
 		}
 
 		private void Close()

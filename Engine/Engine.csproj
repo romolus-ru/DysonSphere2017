@@ -176,6 +176,8 @@
     <Compile Include="Visualization\Maths\Triangle.cs" />
     <Compile Include="Visualization\Maths\Triangulator.cs" />
     <Compile Include="Visualization\Maths\Vertex.cs" />
+    <Compile Include="Visualization\Scroll2\ScrollItem.cs" />
+    <Compile Include="Visualization\Scroll2\ViewScroll.cs" />
     <Compile Include="Visualization\Scroll\IScrollItem.cs" />
     <Compile Include="Visualization\Scroll\ScrollItem.cs" />
     <Compile Include="Visualization\Scroll\ViewScrollLooped.cs" />

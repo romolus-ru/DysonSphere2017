@@ -7,6 +7,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+// TODO переделать. нужно что бы скрол принимал айтемы-генерики и мог выдать тот айтем который счас выбран
+// так же айтем-генерик должен легко переопределяться для вывода нужной информации
+// например что бы он мог получить строку и другую информацию для вывода на экран
 namespace Engine.Visualization
 {
 	/// <summary>
@@ -134,7 +137,7 @@ namespace Engine.Visualization
 		{
 			_scrollOffsetX += deltaX;
 			_scrollOffsetY += deltaY;
-			deltaY = 0;
+			//deltaY = 0;
 			foreach (var item in _items) {
 				item.ScrollBy(deltaX, deltaY);
 			}
@@ -167,13 +170,28 @@ namespace Engine.Visualization
 				//X+_scrollWidth - _scrollOffsetX - Width;// + Constants.ScrollMoveBorder;
 			if (dxRight > 0) ScrollItems(dxRight, 0);
 
+			var dxTop = _scrollOffsetY - Constants.ScrollMoveBorder;
+			if (dxTop > 0) ScrollItems(0, -dxTop);
+
+			var dxBottom = Y + Height - _scrollOffsetY - _scrollHeight - 3 * Constants.ScrollMoveBorder;
+			//X+_scrollWidth - _scrollOffsetX - Width;// + Constants.ScrollMoveBorder;
+			if (dxBottom > 0) ScrollItems(0, dxBottom);
+
 			if (IsDragMode)
-			return;
+				return;
+
 			var dxLeftBack = _scrollOffsetX;
 			if (dxLeftBack > 0) ScrollItems(-dxLeftBack / 10, 0);
 			var dxRightBack = X + Width - _scrollOffsetX - _scrollWidth - 2 * Constants.ScrollMoveBorder;
 			//X - _scrollOffsetX - Width + Constants.ScrollMoveBorder;
 			if (dxRightBack > 0) ScrollItems(dxRightBack / 10, 0);
+
+			var dxTopBack = _scrollOffsetY;
+			if (dxTopBack > 0) ScrollItems(0, -dxTopBack / 10);
+			var dxBottomBack = Y + Height - _scrollOffsetY - _scrollHeight - 2 * Constants.ScrollMoveBorder;
+			//X - _scrollOffsetX - Width + Constants.ScrollMoveBorder;
+			if (dxBottomBack > 0) ScrollItems(0, dxBottomBack / 10);
+
 			var dx = _autoX / 4;
 			_autoX -= dx;
 			var dy = _autoY / 4;

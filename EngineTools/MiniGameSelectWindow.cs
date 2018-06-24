@@ -15,6 +15,7 @@ namespace EngineTools
 		private Action _cancel;
 		private ViewManager _viewManager;
 		private ViewInput _filter;
+		private ViewScroll _viewScroll;
 
 		protected override void InitObject(VisualizationProvider visualizationProvider, Input input)
 		{
@@ -29,29 +30,39 @@ namespace EngineTools
 		public void InitWindow(ViewManager viewManager, Action<long> selectedGame, Action cancel)
 		{
 			viewManager.AddViewModal(this);
-			SetParams(150, 150, 500, 200, "Выбор миниигры");
+			SetParams(150, 150, 1200, 700, "Выбор миниигры");
 			InitTexture("textRB", 10);
 
 			var btn1 = new ViewButton();
 			AddComponent(btn1);
-			btn1.InitButton(Entered, "ok", "Логин", Keys.Enter);
-			btn1.SetParams(50, 140, 80, 25, "btnSelect");
+			btn1.InitButton(Entered, "ok", "выбрать", Keys.Enter);
+			btn1.SetParams(50, 670, 80, 25, "btnSelect");
 			btn1.InitTexture("textRB", "textRB");
 
 			var btn2 = new ViewButton();
 			AddComponent(btn2);
 			btn2.InitButton(Cancel, "Cancel", "Отмена", Keys.Escape);
-			btn2.SetParams(150, 140, 80, 25, "btnCancel");
+			btn2.SetParams(150, 670, 80, 25, "btnCancel");
 			btn2.InitTexture("textRB", "textRB");
 
 			_filter = new ViewInput();
 			AddComponent(_filter);
-			_filter.SetParams(140, 30, 200, 40, "filter for games");
+			_filter.SetParams(140, 30, 500, 40, "filter for games");
 			_filter.InputAction("");
 
 			_selectedGame = selectedGame;
 			_cancel = cancel;
 			_viewManager = viewManager;
+
+			_viewScroll = new ViewScroll();
+			AddComponent(_viewScroll);
+			_viewScroll.SetParams(10, 80, 1000, 560, "Список игр");
+
+			foreach (var item in Enumerable.Range(1, 30)) {
+				var scrollItem = new GameNameScrollView();
+				_viewScroll.AddComponent(scrollItem);
+				scrollItem.SetParams(10, (item - 1) * 90 + 10, 950, 20, "item" + item);
+			}
 		}
 
 		private void Entered()
