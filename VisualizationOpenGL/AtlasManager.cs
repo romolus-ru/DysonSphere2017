@@ -1,5 +1,6 @@
 ﻿using Engine;
 using Engine.Data;
+using Engine.Enums;
 using Engine.Utils;
 using System;
 using System.Collections.Generic;
@@ -29,17 +30,21 @@ namespace VisualizationOpenGL
 
 		public AtlasFiles GetAtlasFile(string atlasName)
 		{
-			var atlasInfo = _data.GetAtlasFile(atlasName);
-			if (atlasInfo == null) {
-				_log.AddLog(LogTag, "Атлас не найден " + atlasName);
-				return null;
-			}
 			if (_atlasLoaded.Contains(atlasName)) {
 				_log.AddLog(LogTag, "Атлас уже загружен " + atlasName);
 				return null;
 			}
+
+			AtlasFiles atlasInfo = _data.GetAtlasFile(atlasName);
+
+			if (atlasInfo == null) {
+				_log.AddLog(LogTag, "Атлас не найден " + atlasName);
+				return null;
+			}
+
 			return atlasInfo;
 		}
+
 		/// <summary>
 		/// Загружаем атлас из базы и возвращаем имя файла, который надо загрузить
 		/// </summary>

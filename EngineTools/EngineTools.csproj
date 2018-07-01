@@ -42,7 +42,9 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataEditor.cs" />
     <Compile Include="GameNameScrollView.cs" />
+    <Compile Include="MemberScrollView.cs" />
     <Compile Include="ModelTools.cs" />
     <Compile Include="ModelViewManager.cs" />
     <Compile Include="Program.cs" />

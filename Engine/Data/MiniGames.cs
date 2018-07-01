@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Engine.EventSystem.Event;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Engine.Data
 {
-	public class MiniGames
+	public class MiniGames : EventBase
 	{
 		public long Id { get; set; }
 		/// <summary>

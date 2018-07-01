@@ -1,4 +1,6 @@
 ﻿using Engine;
+using Engine.Data;
+using Engine.EventSystem.Event;
 using Engine.Visualization;
 using System;
 using System.Collections.Generic;
@@ -33,17 +35,23 @@ namespace EngineTools
 			SetParams(150, 150, 1200, 700, "Выбор миниигры");
 			InitTexture("textRB", 10);
 
-			var btn1 = new ViewButton();
-			AddComponent(btn1);
-			btn1.InitButton(Entered, "ok", "выбрать", Keys.Enter);
-			btn1.SetParams(50, 670, 80, 25, "btnSelect");
-			btn1.InitTexture("textRB", "textRB");
+			var btnSelect = new ViewButton();
+			AddComponent(btnSelect);
+			btnSelect.InitButton(Entered, "ok", "выбрать", Keys.Enter);
+			btnSelect.SetParams(50, 670, 80, 25, "btnSelect");
+			btnSelect.InitTexture("textRB", "textRB");
 
-			var btn2 = new ViewButton();
-			AddComponent(btn2);
-			btn2.InitButton(Cancel, "Cancel", "Отмена", Keys.Escape);
-			btn2.SetParams(150, 670, 80, 25, "btnCancel");
-			btn2.InitTexture("textRB", "textRB");
+			var btnCancel = new ViewButton();
+			AddComponent(btnCancel);
+			btnCancel.InitButton(Cancel, "Cancel", "Отмена", Keys.Escape);
+			btnCancel.SetParams(150, 670, 80, 25, "btnCancel");
+			btnCancel.InitTexture("textRB", "textRB");
+
+			var btnNew = new ViewButton();
+			AddComponent(btnNew);
+			btnNew.InitButton(AddNewGame, "New", "New", Keys.N);
+			btnNew.SetParams(20, 20, 80, 25, "btnNewGame");
+			btnNew.InitTexture("textRB", "textRB");
 
 			_filter = new ViewInput();
 			AddComponent(_filter);
@@ -63,6 +71,17 @@ namespace EngineTools
 				_viewScroll.AddComponent(scrollItem);
 				scrollItem.SetParams(10, (item - 1) * 90 + 10, 950, 20, "item" + item);
 			}
+		}
+
+		private void AddNewGame()
+		{
+			var a = new MiniGames();
+			a.Id = 1;
+			a.Name = "Name";
+			a.VersionCode = 1;
+			a.CodeName = "CodeName";
+			a.Description = "Description";
+			new DataEditor<MiniGames>().InitWindow(_viewManager, a, null);
 		}
 
 		private void Entered()
