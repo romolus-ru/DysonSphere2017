@@ -127,6 +127,8 @@ namespace Engine.Visualization
 			if (!IsDragMode) return;
 			var deltaX = newX - _oldX;
 			var deltaY = newY - _oldY;
+			//if (_scrollHeight < Height) deltaY = 0;
+			//if (_scrollWidth < Width) deltaX = 0;
 			if (deltaX == 0 && deltaY == 0) return;
 			_oldX = newX;
 			_oldY = newY;
@@ -135,6 +137,8 @@ namespace Engine.Visualization
 
 		public void ScrollItems(int deltaX, int deltaY)
 		{
+			if (_scrollHeight < Height) deltaY = 0;
+			if (_scrollWidth < Width) deltaX = 0;
 			_scrollOffsetX += deltaX;
 			_scrollOffsetY += deltaY;
 			//deltaY = 0;

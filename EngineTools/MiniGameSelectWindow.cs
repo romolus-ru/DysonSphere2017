@@ -66,10 +66,10 @@ namespace EngineTools
 			AddComponent(_viewScroll);
 			_viewScroll.SetParams(10, 80, 1000, 560, "Список игр");
 
-			foreach (var item in Enumerable.Range(1, 30)) {
+			foreach (var item in Enumerable.Range(1, 25)) {
 				var scrollItem = new GameNameScrollView();
 				_viewScroll.AddComponent(scrollItem);
-				scrollItem.SetParams(10, (item - 1) * 90 + 10, 950, 20, "item" + item);
+				scrollItem.SetParams(10, (item - 1) * 90 + 10, 950, 50, "item" + item);
 			}
 		}
 

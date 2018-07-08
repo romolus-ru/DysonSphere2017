@@ -41,10 +41,21 @@ namespace EngineTools
 			btnSelectGame.SetParams(150, 140, 140, 30, "btnSelectGame");
 			btnSelectGame.InitTexture("textRB", "textRB");
 
+			var btnLoginFormView = new ViewButton();
+			AddComponent(btnLoginFormView);
+			btnLoginFormView.InitButton(ShowLoginWindow, "LoginWindow", "LoginWindow hint", Keys.L);
+			btnLoginFormView.SetParams(150, 060, 140, 30, "btnLoginFormView");
+			btnLoginFormView.InitTexture("textRB", "textRB");
+
 			var btnClose = new ViewButton();
 			AddComponent(btnClose);
 			btnClose.InitButton(Close, "exit", "hint", Keys.LMenu, Keys.X);
 			btnClose.SetParams(1659, 0, 20, 20, "btnE");
+		}
+
+		private void ShowLoginWindow()
+		{
+			new LoginWindow().InitWindow(_viewManager, null, null);
 		}
 
 		private void SelectGame()

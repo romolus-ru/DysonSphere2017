@@ -15,6 +15,10 @@ namespace Engine.Visualization
 	public class ViewInput : ViewComponent
 	{
 		public string Text { get; protected set; } = "";
+		/// <summary>
+		/// Фильтруем символы
+		/// </summary>
+		public Func<string, string> Filter = null;
 		private int _offsetTxtY = 0;
 		private int _offsetCursorY = 0;
 		private int _offsetCursorH = 0;
@@ -25,9 +29,31 @@ namespace Engine.Visualization
 			get { return _isFocused; }
 			set {
 				if (value == _isFocused) return;
-				_isFocused = value;
+				_isFocused = Enabled ? value : false;
 				ChangeFocus(_isFocused);
 			}
+		}
+
+		protected override void InitObject(VisualizationProvider visualizationProvider, Input input)
+		{
+			base.InitObject(visualizationProvider, input);
+			Input.AddKeyActionSticked(ViewInputActivate, Keys.LButton);
+		}
+
+		protected override void ClearObject()
+		{
+			IsFocused = false;
+			Input.RemoveKeyActionSticked(ViewInputActivate, Keys.LButton);
+			base.ClearObject();
+		}
+
+		private void ViewInputActivate()
+		{
+			IsFocused = false;
+			if (!CursorOver) return;
+			if (!Enabled) return;
+			if (InRange(Input.CursorX, Input.CursorY))
+				IsFocused = true;
 		}
 
 		private void ChangeFocus(bool isFocused)
@@ -93,6 +119,8 @@ namespace Engine.Visualization
 
 		public void InputAction(string str)
 		{
+			if (Filter != null)
+				str = Filter(str);
 			Text = Text.Insert(_cursorPos, str);
 			_cursorPos += str.Length;
 			RecalcCursorPosX();
@@ -116,10 +144,15 @@ namespace Engine.Visualization
 
 		public override void DrawObject(VisualizationProvider visualizationProvider)
 		{
-			var color = CursorOver ? Color.DarkOliveGreen : Color.Green;
+			var color = 
+				Enabled 
+					? CursorOver 
+						? Color.DarkOliveGreen 
+						: Color.Green 
+					: Color.DarkSlateGray;
 			visualizationProvider.SetColor(color, 75);
 			visualizationProvider.Box(X, Y, Width, Height);
-			color = IsFocused ? Color.Red : Color.LightYellow;
+			color = IsFocused ? Color.YellowGreen : Color.LightYellow;
 			visualizationProvider.SetColor(color);
 			visualizationProvider.Rectangle(X, Y, Width, Height);
 			color = Color.White;

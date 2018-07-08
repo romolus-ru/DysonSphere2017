@@ -44,6 +44,11 @@ namespace Engine.Visualization
 		public bool CanDraw { get; private set; }
 
 		/// <summary>
+		/// Активен ли компонент
+		/// </summary>
+		public bool Enabled { get; set; } = true;
+
+		/// <summary>
 		/// Флаг, находится ли курсор над компонентом
 		/// </summary>
 		public bool CursorOver;
@@ -274,7 +279,10 @@ namespace Engine.Visualization
 						continue; // компонент не в точке нажатия
 					}
 					component.CursorHandlerLocal(screenCursorX, screenCursorY);
-					if (component.CursorOver) overedOne = true;
+					if (component.CursorOver) {
+						overedOne = true;
+						break;
+					}
 				}
 			}
 		}

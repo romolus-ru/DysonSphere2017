@@ -16,7 +16,7 @@ namespace Engine.Visualization
 		protected override void InitObject(VisualizationProvider visualizationProvider, Input input)
 		{
 			base.InitObject(visualizationProvider, input);
-			Input.AddCursorAction(CursorHandler, true);
+			Input.AddCursorAction(CursorHandler);
 			_fadeScreen = new ViewFadeScreen();
 			_fadeScreen.Init(visualizationProvider, input);
 		}

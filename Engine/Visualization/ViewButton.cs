@@ -23,14 +23,14 @@ namespace Engine.Visualization
 		/// <summary>
 		/// Получили сообщение что нажали - определяем местоположение
 		/// </summary>
-		public void ClickedOnScreen()
+		private void ClickedOnScreen()
 		{
 			if (!CursorOver) return;
 			if (InRange(Input.CursorX, Input.CursorY))
 				KeyPressed();
 		}
 
-		public void KeyPressed()
+		private void KeyPressed()
 		{
 			if (Enabled)
 				Press();

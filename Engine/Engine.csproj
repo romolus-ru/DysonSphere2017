@@ -127,6 +127,7 @@
     <Compile Include="EventSystem\Event\MessageString.cs" />
     <Compile Include="Exceptions\NoConnectionException.cs" />
     <Compile Include="GameInitializer.cs" />
+    <Compile Include="Helpers\AttributesHelper.cs" />
     <Compile Include="Helpers\CryptoHelper.cs" />
     <Compile Include="Helpers\DataSupportFileHelper.cs" />
     <Compile Include="Helpers\InputHelper.cs" />

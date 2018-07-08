@@ -3,6 +3,7 @@ using Engine.Visualization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -44,12 +45,14 @@ namespace EngineTools
 
 			var row = 0;
 			var t = objectToEdit.GetType();
-			var mi = t.GetMembers().Where(m => m.MemberType == System.Reflection.MemberTypes.Property);
-			foreach (var item in mi) {
+			var mi = t.GetMembers().Where(m => m.MemberType == MemberTypes.Property);
+			foreach (PropertyInfo item in mi) {
 				var scrollItem = new MemberScrollView<T>();
 				_viewScroll.AddComponent(scrollItem);
 				scrollItem.InitValueEditor(objectToEdit, item);
-				scrollItem.SetParams(10, (row) * 60 + 10, 950, 20, "item" + item);
+				scrollItem.SetParams(10, (row) * 60 + 10, 950, 50, "item" + item);
+				if (item.PropertyType.Name == "String")
+					scrollItem.SetupMemberEditor();
 				row++;
 			}
 
