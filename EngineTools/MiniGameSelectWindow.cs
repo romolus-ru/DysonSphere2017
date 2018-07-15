@@ -18,6 +18,7 @@ namespace EngineTools
 		private ViewManager _viewManager;
 		private ViewInput _filter;
 		private ViewScroll _viewScroll;
+		private DataSupportBase _datasupport;
 
 		protected override void InitObject(VisualizationProvider visualizationProvider, Input input)
 		{
@@ -29,7 +30,7 @@ namespace EngineTools
 			base.ClearObject();
 		}
 
-		public void InitWindow(ViewManager viewManager, Action<long> selectedGame, Action cancel)
+		public void InitWindow(ViewManager viewManager, DataSupportBase datasupport, Action<long> selectedGame, Action cancel)
 		{
 			viewManager.AddViewModal(this);
 			SetParams(150, 150, 1200, 700, "Выбор миниигры");
@@ -61,27 +62,34 @@ namespace EngineTools
 			_selectedGame = selectedGame;
 			_cancel = cancel;
 			_viewManager = viewManager;
+			_datasupport = datasupport;
 
 			_viewScroll = new ViewScroll();
 			AddComponent(_viewScroll);
 			_viewScroll.SetParams(10, 80, 1000, 560, "Список игр");
 
-			foreach (var item in Enumerable.Range(1, 25)) {
+			foreach (var item in Enumerable.Range(1, 7)) {
 				var scrollItem = new GameNameScrollView();
 				_viewScroll.AddComponent(scrollItem);
 				scrollItem.SetParams(10, (item - 1) * 90 + 10, 950, 50, "item" + item);
 			}
+			_viewScroll.CalcScrollSize();
 		}
 
 		private void AddNewGame()
 		{
 			var a = new MiniGames();
-			a.Id = 1;
-			a.Name = "Name";
+			a.Id = 0;
+			a.Name = "";
 			a.VersionCode = 1;
-			a.CodeName = "CodeName";
-			a.Description = "Description";
-			new DataEditor<MiniGames>().InitWindow(_viewManager, a, null);
+			a.CodeName = "";
+			a.Description = "";
+			new DataEditor<MiniGames>().InitWindow(_viewManager, a, UpdateGame);
+		}
+
+		private void UpdateGame(MiniGames miniGame)
+		{
+			var a = 1;
 		}
 
 		private void Entered()

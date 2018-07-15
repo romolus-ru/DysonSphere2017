@@ -15,10 +15,12 @@ namespace EngineTools
 	{
 		public Action OnExitPressed;
 		private ViewManager _viewManager;
+		private DataSupportBase _dataSupport;
 
-		public void InitTools(ViewManager viewManager)
+		public void InitTools(ViewManager viewManager, DataSupportBase dataSupport)
 		{
 			_viewManager = viewManager;
+			_dataSupport = dataSupport;
 		}
 
 		protected override void InitObject(VisualizationProvider visualizationProvider, Input input)
@@ -60,7 +62,7 @@ namespace EngineTools
 
 		private void SelectGame()
 		{
-			new MiniGameSelectWindow().InitWindow(_viewManager, null, null);
+			new MiniGameSelectWindow().InitWindow(_viewManager, _dataSupport, null, null);
 		}
 
 		private void Close()

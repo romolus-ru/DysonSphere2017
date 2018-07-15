@@ -17,11 +17,17 @@ namespace EngineTools
 	/// <summary>
 	/// Основа для редакторов свойств класса
 	/// </summary>
+	/// <remarks>
+	/// Выводит обязательно InputView
+	/// по умолчанию InputView заблокирован
+	/// Требует внешнее управление для установки фильтра и для получения значения переменной из строки
+	/// </remarks>
 	public class MemberScrollView<T> : ScrollItem where T : EventBase
 	{
 		private ViewInput inputView;
 		private MemberInfo _memberInfo;
 		private bool _selected = false;
+		private Func<string, object> _getValue;
 
 		protected override void InitObject(VisualizationProvider visualizationProvider, Input input)
 		{
@@ -36,15 +42,16 @@ namespace EngineTools
 		/// <summary>
 		/// Настроить Filter для работы с конкретным типом данных
 		/// </summary>
-		public virtual void SetupMemberEditor(Func<string, string> filter=null)
+		public virtual void SetupMemberEditor(Func<string, object> getValue, Func<string, string> filter=null)
 		{
+			_getValue = getValue;
 			inputView.Enabled = true;
 			if (filter != null) {
 				inputView.Filter = filter;
 			}
 		}
 
-	public void SetInputFocus()
+		public void SetInputFocus()
 		{
 			//_filter.IsFocused = true;
 			_selected = false;
@@ -68,7 +75,14 @@ namespace EngineTools
 		/// Установить значение поля объекта
 		/// </summary>
 		/// <param name="obj"></param>
-		public virtual void SetValue(T obj) { }
+		public virtual void SetValue(T obj)
+		{
+			if (_getValue == null) return;
+			var str = inputView.Text;
+			var value = _getValue(str);
+			var pi = _memberInfo as PropertyInfo;
+			pi.SetValue(obj, value);
+		}
 
 		public override void DrawObject(VisualizationProvider vp)
 		{

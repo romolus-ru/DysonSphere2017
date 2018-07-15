@@ -63,12 +63,16 @@ namespace Engine.Visualization
 				Input.AddKeyActionPaused(CursorRight, Keys.Right);
 				Input.AddKeyActionPaused(CursorBackDeleteChar, Keys.Back);
 				Input.AddKeyActionPaused(CursorDeleteChar, Keys.Delete);
+				Input.AddKeyActionPaused(CursorHome, Keys.Home);
+				Input.AddKeyActionPaused(CursorEnd, Keys.End);
 				Input.AddInputStringAction(InputAction);
 			} else {
 				Input.RemoveKeyActionPaused(CursorLeft, Keys.Left);
 				Input.RemoveKeyActionPaused(CursorRight, Keys.Right);
 				Input.RemoveKeyActionPaused(CursorBackDeleteChar, Keys.Back);
 				Input.RemoveKeyActionPaused(CursorDeleteChar, Keys.Delete);
+				Input.RemoveKeyActionPaused(CursorHome, Keys.Home);
+				Input.RemoveKeyActionPaused(CursorEnd, Keys.End);
 				Input.RemoveInputStringAction(InputAction);
 			}
 			RecalcOfffsets();
@@ -98,6 +102,19 @@ namespace Engine.Visualization
 			if (_cursorPos >= Text.Length) return;
 			Text = Text.Remove(_cursorPos, 1);
 		}
+
+		private void CursorHome()
+		{
+			_cursorPos = 0;
+			RecalcCursorPosX();
+		}
+
+		private void CursorEnd()
+		{
+			_cursorPos = Text.Length;
+			RecalcCursorPosX();
+		}
+
 
 		private void RecalcCursorPosX()
 		{

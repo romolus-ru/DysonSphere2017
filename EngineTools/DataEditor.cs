@@ -16,6 +16,7 @@ namespace EngineTools
 		private Action _cancel;
 		private ViewManager _viewManager;
 		private ViewScroll _viewScroll;
+		private T _objectToEdit;
 
 		public void InitWindow(ViewManager viewManager, T objectToEdit, Action<T> update, Action cancel = null)
 		{
@@ -38,6 +39,7 @@ namespace EngineTools
 			_update = update;
 			_cancel = cancel;
 			_viewManager = viewManager;
+			_objectToEdit = objectToEdit;
 
 			_viewScroll = new ViewScroll();
 			AddComponent(_viewScroll);
@@ -52,7 +54,7 @@ namespace EngineTools
 				scrollItem.InitValueEditor(objectToEdit, item);
 				scrollItem.SetParams(10, (row) * 60 + 10, 950, 50, "item" + item);
 				if (item.PropertyType.Name == "String")
-					scrollItem.SetupMemberEditor();
+					scrollItem.SetupMemberEditor(getValue: str => str);
 				row++;
 			}
 
@@ -60,8 +62,17 @@ namespace EngineTools
 
 		private void Entered()
 		{
-			_update?.Invoke(null);
+			GetValues();
+			_update?.Invoke(_objectToEdit);
 			CloseWindow();
+		}
+
+		/// <summary>
+		/// Получить значения переменных
+		/// </summary>
+		private void GetValues()
+		{
+			 пройтись по всем элементам и вызвать у них SetValue(_objectToEdit)
 		}
 
 		private void CloseWindow()

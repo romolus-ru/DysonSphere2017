@@ -70,7 +70,7 @@ namespace EngineTools
 			// соединяем модели, формируем основные пути передачи информации"DebugView");*/
 
 			_modelClientManager = new ModelViewManager();
-			_modelClientManager.Start(_model, _viewManager);
+			_modelClientManager.Start(_model, _viewManager, _datasupport);
 
 			// 2 создаётся объект для работы с играми (мат модель запуска серверов игр)
 			// 4 создаётся обработчик соединений

@@ -39,12 +39,12 @@ namespace Engine.Visualization
 		{
 			if (component is IScrollItem) {
 				_items.Add(component as IScrollItem);
-				CalcScrollLength();
+				CalcScrollSize();
 			}
 			base.AddComponent(component, toTop);
 		}
 
-		private void CalcScrollLength()
+		public void CalcScrollSize()
 		{
 			var item0 = (_items[0] as ViewComponent);
 			if (item0 == null) return;
@@ -156,7 +156,8 @@ namespace Engine.Visualization
 			visualizationProvider.Print(X + 10, Y + 25, "ox=" + _scrollOffsetX + " b=" + Constants.ScrollMoveBorder);
 			visualizationProvider.Print(X + 10, Y + 40, "dxr=" + (X + Width - _scrollOffsetX - _scrollWidth - 2 * Constants.ScrollMoveBorder)
 				//- _scrollOffsetX - Width + Constants.ScrollMoveBorder)
-				+ " W=" + Width + " sw=" + _scrollWidth);
+				+ " W=" + Width + " sw=" + _scrollWidth
+				+ " H=" + Height + " sh=" + _scrollHeight);
 			visualizationProvider.Print(X + 10, Y + 55, "ax=" + _autoX + " ay=" + _autoY);
 		}
 

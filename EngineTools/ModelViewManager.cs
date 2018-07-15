@@ -21,7 +21,7 @@ namespace EngineTools
 
 		public Action OnExit;
 
-		public void Start(ModelMain modelMain, ViewManager viewManager)
+		public void Start(ModelMain modelMain, ViewManager viewManager, DataSupportBase dataSupport)
 		{
 			_modelMain = modelMain;
 			_viewManager = viewManager;
@@ -30,7 +30,7 @@ namespace EngineTools
 			_modelMain.AddModel(_mt);
 
 			_vt = new ViewTools();
-			_vt.InitTools(_viewManager);
+			_vt.InitTools(_viewManager, dataSupport);
 			_viewManager.AddView(_vt);
 			_vt.OnExitPressed += Close;
 		}
