@@ -77,10 +77,14 @@ namespace EngineTools
 		/// <param name="obj"></param>
 		public virtual void SetValue(T obj)
 		{
-			if (_getValue == null) return;
-			var str = inputView.Text;
-			var value = _getValue(str);
-			var pi = _memberInfo as PropertyInfo;
+			if (!inputView.Enabled) return;
+
+			string str = inputView.Text;
+			PropertyInfo pi = _memberInfo as PropertyInfo;
+			object value = _getValue == null
+				? Convert.ChangeType(str, pi.PropertyType)
+				: _getValue(str);
+
 			pi.SetValue(obj, value);
 		}
 
@@ -91,6 +95,8 @@ namespace EngineTools
 				? Color.YellowGreen
 				: Color.Red);
 			vp.Rectangle(X, Y, Width, Height);
+			if (Selected)
+				vp.Rectangle(X + 1, Y + 1, Width - 2, Height - 2);
 
 			vp.SetColor(Color.White);
 			vp.Print(X + 10, Y + 10, Name);

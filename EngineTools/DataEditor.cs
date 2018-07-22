@@ -72,7 +72,13 @@ namespace EngineTools
 		/// </summary>
 		private void GetValues()
 		{
-			 пройтись по всем элементам и вызвать у них SetValue(_objectToEdit)
+			var a = _viewScroll.GetItems();
+			foreach (var item in a) {
+				var m = item as MemberScrollView<T>;
+				if (m == null) continue;
+
+				m.SetValue(_objectToEdit);
+			}
 		}
 
 		private void CloseWindow()

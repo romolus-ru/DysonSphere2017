@@ -19,6 +19,7 @@ namespace Engine.Visualization
 	{
 		private List<IScrollItem> _items = new List<IScrollItem>();
 		protected bool IsDragMode = false;
+		private bool ModalStateActive = false;
 		/// <summary>
 		/// Ожидаем клик, в режим перемещения ещё не переключились
 		/// </summary>
@@ -43,6 +44,12 @@ namespace Engine.Visualization
 			}
 			base.AddComponent(component, toTop);
 		}
+
+		/// <summary>
+		/// Получить ссылки на элементы скрола
+		/// </summary>
+		/// <returns></returns>
+		public List<IScrollItem> GetItems() => new List<IScrollItem>(_items);
 
 		public void CalcScrollSize()
 		{
@@ -79,9 +86,11 @@ namespace Engine.Visualization
 
 		protected override void ClearObject()
 		{
-			base.ClearObject();
+			if (ModalStateActive)
+				Input.ModalStateStop();
 			Input.RemoveKeyAction(MousePressed, Keys.LButton);
 			Input.RemoveKeyActionSticked(MouseUnPressed, Keys.LButton);
+			base.ClearObject();
 		}
 
 		private void MousePressed()
@@ -102,6 +111,7 @@ namespace Engine.Visualization
 			if (!InRange(cx, cy)) return;
 			IsDragMode = true;
 			Input.ModalStateStart();
+			ModalStateActive = true;
 			Input.AddKeyActionSticked(MouseUnPressed, Keys.LButton);
 			Input.AddCursorAction(CursorMove);
 			_oldX = _startX;
@@ -115,11 +125,20 @@ namespace Engine.Visualization
 
 		private void MouseUnPressed()
 		{
-			if (!IsDragMode) return;
-			Input.ModalStateStop();
-			IsDragMode = false;
-			IsPressedMode = false;
-			CalcAutoMove();
+			if (IsDestroyed) return;// это проще. можно сделать интерфейс IDestroyed - и с его помощью образатывать события в классе Input GetSticked
+			if (IsDragMode) {
+				Input.ModalStateStop();
+				ModalStateActive = false;
+				IsDragMode = false;
+				IsPressedMode = false;
+				CalcAutoMove();
+			} else {
+				// определяем какой айтем под курсором и выделяем его
+				var x = Input.CursorX;
+				var y = Input.CursorY;
+				if (!InRange(x, y)) return;
+				_items.ForEach(item => item.SetSelected(x, y));
+			}
 		}
 
 		private void CursorMove(int newX, int newY)
@@ -172,7 +191,7 @@ namespace Engine.Visualization
 			if (dxLeft > 0) ScrollItems(-dxLeft, 0);
 
 			var dxRight = X + Width - _scrollOffsetX - _scrollWidth - 3 * Constants.ScrollMoveBorder;
-				//X+_scrollWidth - _scrollOffsetX - Width;// + Constants.ScrollMoveBorder;
+			//X+_scrollWidth - _scrollOffsetX - Width;// + Constants.ScrollMoveBorder;
 			if (dxRight > 0) ScrollItems(dxRight, 0);
 
 			var dxTop = _scrollOffsetY - Constants.ScrollMoveBorder;
@@ -182,8 +201,7 @@ namespace Engine.Visualization
 			//X+_scrollWidth - _scrollOffsetX - Width;// + Constants.ScrollMoveBorder;
 			if (dxBottom > 0) ScrollItems(0, dxBottom);
 
-			if (IsDragMode)
-				return;
+			if (IsDragMode) return;
 
 			var dxLeftBack = _scrollOffsetX;
 			if (dxLeftBack > 0) ScrollItems(-dxLeftBack / 10, 0);

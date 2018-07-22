@@ -1,17 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Engine.Visualization.Scroll
+﻿namespace Engine.Visualization.Scroll
 {
 	/// <summary>
 	/// Интерфейс элемента скрола
 	/// </summary>
-	interface IScrollItem
+	public interface IScrollItem
 	{
+		bool Selected { get; }
 		void DrawItem(VisualizationProvider visualizationProvider, int x, int y);
 		void ScrollBy(int deltaX, int deltaY);
+		void SetSelected(int cursorX, int cursorY);
 	}
 }

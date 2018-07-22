@@ -89,7 +89,8 @@ namespace EngineTools
 
 		private void UpdateGame(MiniGames miniGame)
 		{
-			var a = 1;
+			_datasupport.AddMinigame(miniGame);
+			вывод игр, редактирование. добавление разделов
 		}
 
 		private void Entered()

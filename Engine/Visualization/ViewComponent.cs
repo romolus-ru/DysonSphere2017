@@ -17,6 +17,10 @@ namespace Engine.Visualization
 
 		protected VisualizationProvider VisualizationProvider;
 		protected Input Input;
+		/// <summary>
+		/// Иногда запускаются события, например в Input.Sticked, а объект уже удалён - чтоб не запускалось ставим флаг
+		/// </summary>
+		public bool IsDestroyed { get; private set; } = false;
 		public string Name { get; protected set; }
 
 		private int _x;
@@ -156,6 +160,7 @@ namespace Engine.Visualization
 			ClearObject();
 			VisualizationProvider = null;
 			Input = null;
+			IsDestroyed = true;
 		}
 
 		/// <summary>
