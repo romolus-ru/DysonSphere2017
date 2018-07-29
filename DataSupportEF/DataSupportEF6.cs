@@ -176,5 +176,29 @@ namespace DataSupportEF
 			ds.Entry(miniGame).State = EntityState.Deleted;
 			ds.SaveChanges();
 		}
+
+		public override List<MiniGamesInfos> GetMinigameInfos(MiniGames miniGame, string filter = null)
+		{
+			IQueryable<MiniGamesInfos> all = ds.MinigamesInfos;
+			if (!string.IsNullOrEmpty(filter)) {
+				all = all.Where(mg => mg.Section.Contains(filter));
+			}
+			// TODO грузится целая запись. а по факту нужна запись без данных - они потом отдельно загружаются и редактируются
+			return all.ToList();
+		}
+
+		public override void AddMinigameInfo(MiniGamesInfos miniGameInfo)
+		{
+			ds.Entry(miniGameInfo).State = miniGameInfo.IdMiniGamesInfos == 0 ?
+					   EntityState.Added :
+					   EntityState.Modified;
+			ds.SaveChanges();
+		}
+
+		public override void DeleteMinigameInfo(MiniGamesInfos miniGameInfo)
+		{
+			ds.Entry(miniGameInfo).State = EntityState.Deleted;
+			ds.SaveChanges();
+		}
 	}
 }

@@ -126,5 +126,11 @@ namespace Engine
 		public virtual void AddMinigame(MiniGames miniGame) { }
 
 		public virtual void DeleteMinigame(MiniGames miniGame) { }
+
+		public virtual List<MiniGamesInfos> GetMinigameInfos(MiniGames miniGame, string filter = null) { return null; }
+
+		public virtual void AddMinigameInfo(MiniGamesInfos miniGameInfo) { }
+
+		public virtual void DeleteMinigameInfo(MiniGamesInfos miniGameInfo) { }
 	}
 }

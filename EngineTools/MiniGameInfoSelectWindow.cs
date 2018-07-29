@@ -1,6 +1,5 @@
 ﻿using Engine;
 using Engine.Data;
-using Engine.EventSystem.Event;
 using Engine.Visualization;
 using System;
 using System.Collections.Generic;
@@ -11,14 +10,15 @@ using System.Windows.Forms;
 
 namespace EngineTools
 {
-	public class MiniGameSelectWindow : ViewModalWindow
+	public class MiniGameInfoSelectWindow : ViewModalWindow
 	{
 		private Action<long> _selectedGame;
 		private Action _cancel;
 		private ViewManager _viewManager;
 		private ViewInput _filter;
 		private ViewScroll _viewScroll;
-		private DataSupportBase _dataSupport;
+		private DataSupportBase _datasupport;
+		private MiniGames _miniGame;
 
 		protected override void InitObject(VisualizationProvider visualizationProvider, Input input)
 		{
@@ -30,28 +30,22 @@ namespace EngineTools
 			base.ClearObject();
 		}
 
-		public void InitWindow(ViewManager viewManager, DataSupportBase dataSupport, Action<long> selectedGame, Action cancel)
+		public void InitWindow(ViewManager viewManager, DataSupportBase datasupport, MiniGames miniGame, Action<long> selectedGame, Action cancel)
 		{
 			viewManager.AddViewModal(this);
-			SetParams(150, 150, 1200, 700, "Выбор миниигры");
+			SetParams(150, 150, 1200, 700, "Выбор секции миниигры");
 			InitTexture("textRB", 10);
 
 			var btnSelect = new ViewButton();
 			AddComponent(btnSelect);
-			btnSelect.InitButton(Entered, "ok", "выбрать", Keys.Enter);
-			btnSelect.SetParams(50, 670, 80, 25, "btnSelect");
+			btnSelect.InitButton(Cancel, "Cancel", "Отмена", Keys.Escape);
+			btnSelect.SetParams(50, 670, 80, 25, "btnCancel");
 			btnSelect.InitTexture("textRB", "textRB");
-
-			var btnCancel = new ViewButton();
-			AddComponent(btnCancel);
-			btnCancel.InitButton(Cancel, "Cancel", "Отмена", Keys.Escape);
-			btnCancel.SetParams(150, 670, 80, 25, "btnCancel");
-			btnCancel.InitTexture("textRB", "textRB");
 
 			var btnNew = new ViewButton();
 			AddComponent(btnNew);
-			btnNew.InitButton(AddNewGame, "New", "New", Keys.N);
-			btnNew.SetParams(20, 20, 80, 25, "btnNewGame");
+			btnNew.InitButton(AddNewGameSection, "New", "New", Keys.N);
+			btnNew.SetParams(20, 20, 80, 25, "btnNewGameSection");
 			btnNew.InitTexture("textRB", "textRB");
 
 			_filter = new ViewInput();
@@ -59,51 +53,52 @@ namespace EngineTools
 			_filter.SetParams(140, 30, 500, 40, "filter for games");
 			_filter.InputAction("");
 
+			_miniGame = miniGame;
 			_selectedGame = selectedGame;
 			_cancel = cancel;
 			_viewManager = viewManager;
-			_dataSupport = dataSupport;
+			_datasupport = datasupport;
 
 			_viewScroll = new ViewScroll();
 			AddComponent(_viewScroll);
 			_viewScroll.SetParams(10, 80, 1000, 560, "Список игр");
 
 			var i = 2;
-			foreach (var game in _dataSupport.GetMinigames()) {
-				var scrollItem = new GameNameScrollView(game);
+			foreach (var game in _datasupport.GetMinigameInfos(_miniGame)) {
+				var scrollItem = new GameSectionScrollView(game);
 				_viewScroll.AddComponent(scrollItem);
-				scrollItem.SetParams(10, (i - 1) * 50 + 10, 950, 50, game.Id + " " + game.Name);
-				scrollItem.OnEdit += EditMiniGame;
+				scrollItem.SetParams(10, (i - 1) * 50 + 10, 950, 50, game.IdMiniGamesInfos + " " + game.Section);
+				scrollItem.OnEdit += EditMiniGameInfo;
 				scrollItem.OnSelect += SelectSection;
 				i++;
 			}
 			_viewScroll.CalcScrollSize();
 		}
 
-		private void SelectSection(MiniGames miniGame)
+		private void SelectSection(MiniGamesInfos miniGameInfo)
 		{
-			new MiniGameInfoSelectWindow().InitWindow(_viewManager, _dataSupport, miniGame, null, null);
+
 		}
 
-		private void AddNewGame()
+		private void AddNewGameSection()
 		{
-			var newMiniGame = new MiniGames();
-			newMiniGame.Id = 0;
-			newMiniGame.Name = "";
-			newMiniGame.VersionCode = 1;
-			newMiniGame.CodeName = "";
-			newMiniGame.Description = "";
-			EditMiniGame(newMiniGame);
+			var newMiniGame = new MiniGamesInfos();
+			newMiniGame.IdMiniGamesInfos = 0;
+			newMiniGame.DataType = "";
+			newMiniGame.MiniGameId = _miniGame.Id;
+			newMiniGame.Section = "";
+			newMiniGame.Values = "";
+			EditMiniGameInfo(newMiniGame);
 		}
 
-		private void EditMiniGame(MiniGames minigame)
+		private void EditMiniGameInfo(MiniGamesInfos minigameInfo)
 		{
-			new DataEditor<MiniGames>().InitWindow(_viewManager, minigame, UpdateGame);
+			new DataEditor<MiniGamesInfos>().InitWindow(_viewManager, minigameInfo, UpdateGameInfo);
 		}
 
-		private void UpdateGame(MiniGames miniGame)
+		private void UpdateGameInfo(MiniGamesInfos miniGameInfo)
 		{
-			_dataSupport.AddMinigame(miniGame);
+			_datasupport.AddMinigameInfo(miniGameInfo);
 		}
 
 		private void Entered()

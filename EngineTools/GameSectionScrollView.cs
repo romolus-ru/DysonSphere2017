@@ -12,15 +12,15 @@ using System.Windows.Forms;
 
 namespace EngineTools
 {
-	public class GameNameScrollView : ScrollItem
+	public class GameSectionScrollView : ScrollItem
 	{
-		private MiniGames _minigame;
-		public Action<MiniGames> OnEdit;
-		public Action<MiniGames> OnSelect;
+		private MiniGamesInfos _minigameInfo;
+		public Action<MiniGamesInfos> OnEdit;
+		public Action<MiniGamesInfos> OnSelect;
 
-		public GameNameScrollView(MiniGames miniGame)
+		public GameSectionScrollView(MiniGamesInfos miniGameInfos)
 		{
-			_minigame = miniGame;
+			_minigameInfo = miniGameInfos;
 		}
 
 		protected override void InitObject(VisualizationProvider visualizationProvider, Input input)
@@ -29,25 +29,25 @@ namespace EngineTools
 
 			var btnEdit = new ViewButton();
 			AddComponent(btnEdit);
-			btnEdit.InitButton(EditMiniGame, "Edit", "Редактировать", Keys.None);
+			btnEdit.InitButton(EditMiniGameSection, "Edit", "Редактировать", Keys.None);
 			btnEdit.SetParams(20, 10, 60, 30, "EditMiniGame");
 			btnEdit.InitTexture("textRB", "textRB");
 
 			var btnSelect = new ViewButton();
 			AddComponent(btnSelect);
-			btnSelect.InitButton(SelectGameInfo, "Select", "Выбрать", Keys.None);
+			btnSelect.InitButton(SelectGameSection, "Select", "Выбрать", Keys.None);
 			btnSelect.SetParams(90, 10, 120, 30, "Выбрать");
 			btnSelect.InitTexture("textRB", "textRB");
 		}
 
-		private void EditMiniGame()
+		private void EditMiniGameSection()
 		{
-			OnEdit?.Invoke(_minigame);
+			OnEdit?.Invoke(_minigameInfo);
 		}
 
-		private void SelectGameInfo()
+		private void SelectGameSection()
 		{
-			OnSelect?.Invoke(_minigame);
+			OnSelect?.Invoke(_minigameInfo);
 		}
 
 		public override void DrawObject(VisualizationProvider vp)

@@ -53,6 +53,7 @@ namespace Engine.Visualization
 
 		public void CalcScrollSize()
 		{
+			if (_items.Count == 0) return;
 			var item0 = (_items[0] as ViewComponent);
 			if (item0 == null) return;
 			var minX = item0.X;

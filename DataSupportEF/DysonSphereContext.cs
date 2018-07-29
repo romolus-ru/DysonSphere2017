@@ -31,6 +31,7 @@ namespace DataSupportEF
 		public DbSet<_Settings> Settings { get; set; }
 		public DbSet<UserRegistration> UserRegistration { get; set; }
 		public DbSet<MiniGames> Minigames { get; set; }
+		public DbSet<MiniGamesInfos> MinigamesInfos { get; set; }
 
 		protected override void OnModelCreating(DbModelBuilder modelBuilder)
 		{
@@ -42,6 +43,7 @@ namespace DataSupportEF
 				.Property(u => u.Id).HasColumnName("IdFilesClasses");
 			modelBuilder.Entity<_Settings>().HasKey(u => u.IdSettings);
 			modelBuilder.Entity<UserRegistration>().HasKey(u => u.IdUser);
+			modelBuilder.Entity<MiniGamesInfos>().HasKey(u => u.IdMiniGamesInfos);
 		}
 
 	}

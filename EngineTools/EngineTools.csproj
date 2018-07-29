@@ -44,7 +44,9 @@
   <ItemGroup>
     <Compile Include="DataEditor.cs" />
     <Compile Include="GameNameScrollView.cs" />
+    <Compile Include="GameSectionScrollView.cs" />
     <Compile Include="MemberScrollView.cs" />
+    <Compile Include="MiniGameInfoSelectWindow.cs" />
     <Compile Include="ModelTools.cs" />
     <Compile Include="ModelViewManager.cs" />
     <Compile Include="Program.cs" />
