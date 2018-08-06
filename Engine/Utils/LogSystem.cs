@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -35,11 +36,12 @@ namespace Engine.Utils
 			ld.Time = DateTime.Now;
 			ld.Message = message;
 			_logData.Add(ld);
+			Debug.WriteLine(tag + " " + message);
 		}
 
 		public List<string> ScanMsg(string partMsg)
 		{
-			return ScanMsg("", partMsg);
+			return ScanMsg(null, partMsg);
 		}
 
 		public List<string> ScanMsg(string tag, string partMsg)

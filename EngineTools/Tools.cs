@@ -51,6 +51,7 @@ namespace EngineTools
 			var classesList = _datasupport.GetCollectClasses();
 			_collector = new Collector();
 			_collector.LoadClasses(classesList);
+			StateEngine.Collector = _collector;
 
 			// создаётся объект для работы с пользовательским вводом
 			var inputId = _datasupport.ServerSettingsGetValue("input");
