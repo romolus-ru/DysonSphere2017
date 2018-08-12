@@ -26,6 +26,7 @@ namespace Engine
 		private List<Model> _delModel = new List<Model>();
 		private bool IsNeedRefresh = false;
 		private List<Model> _models = new List<Model>();
+		private List<EventModel> _eventModels = new List<EventModel>();
 		public ModelMain()
 		{
 		}
@@ -40,6 +41,16 @@ namespace Engine
 		{
 			_delModel.Add(model);
 			IsNeedRefresh = true;
+		}
+
+		public void AddEventModel(EventModel eventModel)
+		{
+			_eventModels.Add(eventModel);
+		}
+
+		public void DelEventModel(EventModel eventModel)
+		{
+			_eventModels.Add(eventModel);
 		}
 
 		/// <summary>

@@ -98,7 +98,6 @@ namespace EngineTools
 
 		private void UpdateGameInfo(MiniGamesInfos miniGameInfo)
 		{
-			проверяем DataType - он или null или обязательно должен быть в системе. но не запрещать запись а вывести сообщение что нету такого класса
 			_datasupport.AddMinigameInfo(miniGameInfo);
 		}
 

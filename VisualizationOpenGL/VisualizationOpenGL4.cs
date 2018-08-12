@@ -870,7 +870,7 @@ namespace VisualizationOpenGL
 
 			IntPtr dc = Wgl.wglGetCurrentDC();
 			oldfont = Gdi.SelectObject(dc, font);
-			Wgl.wglUseFontOutlinesA(dc, 0, 256, _fontOpenGLList, 0, 0f, Wgl.WGL_FONT_POLYGONS, _glyphMetrics);
+			Wgl.wglUseFontOutlinesA(dc, 0, 256, _fontOpenGLList, 0.1f, 0.2f, Wgl.WGL_FONT_POLYGONS, _glyphMetrics);
 			Wgl.wglUseFontBitmapsA(dc, 0, 256, _fontOpenGLList);
 
 			Gdi.SelectObject(dc, oldfont);
@@ -901,7 +901,7 @@ namespace VisualizationOpenGL
 
 			IntPtr dc = Wgl.wglGetCurrentDC();
 			IntPtr oldfont = Gdi.SelectObject(dc, font);
-			//Wgl.wglUseFontOutlinesA(dc, 0, 256, _fontOpenGLList, 0, 0f, Wgl.WGL_FONT_POLYGONS, _glyphMetrics);
+			//Wgl.wglUseFontOutlinesA(dc, 0, 256, _fontOpenGLList, 0.1f, 0.2f, Wgl.WGL_FONT_POLYGONS, _glyphMetrics);
 			Wgl.wglUseFontBitmapsA(dc, 0, 256, _fontOpenGLList);
 			Gdi.SelectObject(dc, oldfont);
 		}

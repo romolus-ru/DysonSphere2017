@@ -20,16 +20,6 @@ namespace EngineTools
 		private ViewScroll _viewScroll;
 		private DataSupportBase _dataSupport;
 
-		protected override void InitObject(VisualizationProvider visualizationProvider, Input input)
-		{
-			base.InitObject(visualizationProvider, input);
-		}
-
-		protected override void ClearObject()
-		{
-			base.ClearObject();
-		}
-
 		public void InitWindow(ViewManager viewManager, DataSupportBase dataSupport, Action<long> selectedGame, Action cancel)
 		{
 			viewManager.AddViewModal(this);

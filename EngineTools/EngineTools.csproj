@@ -42,6 +42,8 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CollectorClassScrollViewItem.cs" />
+    <Compile Include="CollectorClassSelectWindow.cs" />
     <Compile Include="DataEditor.cs" />
     <Compile Include="EventBaseRowScrollView.cs" />
     <Compile Include="GameNameScrollView.cs" />

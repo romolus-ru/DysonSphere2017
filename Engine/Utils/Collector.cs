@@ -127,5 +127,15 @@ namespace Engine.Utils
 			StateEngine.Log?.AddLog(msg);
 		}
 
+		public List<int> GetRegisteredSubClasses(Type baseType)
+		{
+			var ret = new List<int>();
+			foreach (var typeRow in _collection) {
+				var type = typeRow.Value;
+				if (type.IsSubclassOf(baseType))
+					ret.Add(typeRow.Key);
+			}
+			return ret;
+		}
 	}
 }

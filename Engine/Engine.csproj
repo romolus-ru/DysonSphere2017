@@ -135,6 +135,7 @@
     <Compile Include="Helpers\ViewHelper.cs" />
     <Compile Include="Input.cs" />
     <Compile Include="InputKeyStatePause.cs" />
+    <Compile Include="Models\EventModel.cs" />
     <Compile Include="Models\Model.cs" />
     <Compile Include="Models\ModelMainClient.cs" />
     <Compile Include="Models\ModelMain.cs" />

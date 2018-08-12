@@ -73,6 +73,10 @@ namespace EngineTools
 			}
 			_viewScroll.CalcScrollSize();
 			*/
+			var type1 = typeof(EventBase);
+			var type2 = typeof(EventBaseRowScrollView<>);
+			var type3 = type2.MakeGenericType(new Type[] { type1 });
+			var scrollItem = Activator.CreateInstance(type3);
 		}
 
 		private void AddNewDataRow()

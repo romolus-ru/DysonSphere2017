@@ -1,4 +1,5 @@
 ﻿using Engine;
+using Engine.EventSystem.Event;
 using Engine.Visualization;
 using Engine.Visualization.Debug;
 using System;
@@ -31,6 +32,12 @@ namespace EngineTools
 			AddComponent(debugView, true);
 			debugView.SetParams(1100, 0, debugView.Width, debugView.Height, "DebugView");
 			
+			var btnGetEventBaseClass = new ViewButton();
+			AddComponent(btnGetEventBaseClass);
+			btnGetEventBaseClass.InitButton(ShowGetEventBaseWindow, "GetEventBase", "GetEventBase hint", Keys.E);
+			btnGetEventBaseClass.SetParams(320, 060, 140, 30, "btnGetEventBase");
+			btnGetEventBaseClass.InitTexture("textRB", "textRB");
+
 			var btnSaveTablesToFiles = new ViewButton();
 			AddComponent(btnSaveTablesToFiles);
 			btnSaveTablesToFiles.InitButton(null, "SaveTablesToFiles", "SaveTablesToFiles hint", Keys.S);
@@ -55,14 +62,20 @@ namespace EngineTools
 			btnClose.SetParams(1659, 0, 20, 20, "btnE");
 		}
 
+		private void ShowGetEventBaseWindow()
+		{
+			new CollectorClassSelectWindow<EventBase>()
+				.InitWindow(_viewManager, _dataSupport, null, null);
+		}
+
 		private void ShowLoginWindow()
 		{
 			new LoginWindow().InitWindow(_viewManager, null, null);
 		}
-
 		private void SelectGame()
 		{
-			new MiniGameSelectWindow().InitWindow(_viewManager, _dataSupport, null, null);
+			new MiniGameSelectWindow()
+				.InitWindow(_viewManager, _dataSupport, null, null);
 		}
 
 		private void Close()

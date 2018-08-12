@@ -50,6 +50,13 @@ namespace Engine.Visualization
 		/// </summary>
 		/// <returns></returns>
 		public List<IScrollItem> GetItems() => new List<IScrollItem>(_items);
+		public void ClearItems()
+		{
+			var items = GetItems();
+			foreach (var item in items) {
+				RemoveComponent(item as ViewComponent);
+			}
+		}
 
 		public void CalcScrollSize()
 		{
@@ -89,6 +96,7 @@ namespace Engine.Visualization
 		{
 			if (ModalStateActive)
 				Input.ModalStateStop();
+			_items.Clear();
 			Input.RemoveKeyAction(MousePressed, Keys.LButton);
 			Input.RemoveKeyActionSticked(MouseUnPressed, Keys.LButton);
 			base.ClearObject();
