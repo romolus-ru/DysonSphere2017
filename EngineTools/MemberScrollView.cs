@@ -16,7 +16,7 @@ namespace EngineTools
 	/// по умолчанию InputView заблокирован
 	/// Требует внешнее управление для установки фильтра и для получения значения переменной из строки
 	/// </remarks>
-	public class MemberScrollView<T> : ScrollItem where T : EventBase
+	public class MemberScrollView<T> : MemberBaseScrollView<T> where T : EventBase
 	{
 		private ViewInput inputView;
 		private MemberInfo _memberInfo;
@@ -57,7 +57,7 @@ namespace EngineTools
 		/// </summary>
 		/// <param name="obj"></param>
 		/// <param name="memberInfo"></param>
-		public virtual void InitValueEditor(T obj, MemberInfo memberInfo)
+		public override void InitValueEditor(T obj, MemberInfo memberInfo)
 		{
 			_memberInfo = memberInfo;
 			var _value = (_memberInfo as PropertyInfo).GetValue(obj);
@@ -69,7 +69,7 @@ namespace EngineTools
 		/// Установить значение поля объекта
 		/// </summary>
 		/// <param name="obj"></param>
-		public virtual void SetValue(T obj)
+		public override void SetValue(T obj)
 		{
 			if (!inputView.Enabled) return;
 

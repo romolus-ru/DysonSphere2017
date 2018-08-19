@@ -1,4 +1,7 @@
-﻿using Engine.EventSystem.Event;
+﻿using Engine;
+using Engine.DataPlus;
+using Engine.EventSystem.Event;
+using Engine.Helpers;
 using Engine.Visualization;
 using System;
 using System.Collections.Generic;
@@ -17,8 +20,9 @@ namespace EngineTools
 		private ViewManager _viewManager;
 		private ViewScroll _viewScroll;
 		private T _objectToEdit;
+		private DataSupportBase _dataSupport;
 
-		public void InitWindow(ViewManager viewManager, T objectToEdit, Action<T> update, Action cancel = null)
+		public void InitWindow(ViewManager viewManager, T objectToEdit, Action<T> update, Action cancel = null, DataSupportBase dataSupport=null)
 		{
 			viewManager.AddViewModal(this);
 			SetParams(150, 150, 1200, 700, "Редактировать");
@@ -40,6 +44,7 @@ namespace EngineTools
 			_cancel = cancel;
 			_viewManager = viewManager;
 			_objectToEdit = objectToEdit;
+			_dataSupport = dataSupport;
 
 			_viewScroll = new ViewScroll();
 			AddComponent(_viewScroll);
@@ -49,12 +54,20 @@ namespace EngineTools
 			var t = objectToEdit.GetType();
 			var mi = t.GetMembers().Where(m => m.MemberType == MemberTypes.Property);
 			foreach (PropertyInfo item in mi) {
-				var scrollItem = new MemberScrollView<T>();
-				_viewScroll.AddComponent(scrollItem);
-				scrollItem.InitValueEditor(objectToEdit, item);
-				scrollItem.SetParams(10, (row) * 60 + 10, 950, 50, "item" + item);
-				if (item.PropertyType.Name == "String")
-					scrollItem.SetupMemberEditor(getValue: str => str);
+				if (AttributesHelper.IsHasAttribute<MemberEditorAttribute>(item)) {
+					var type = AttributesHelper.GetMemberEditorType(item);
+					var scrollItem = new MemberCollectorClassScrollViewItem<T>(_viewManager, _dataSupport, type);
+					_viewScroll.AddComponent(scrollItem);
+					scrollItem.InitValueEditor(objectToEdit, item);
+					scrollItem.SetParams(10, (row) * 60 + 10, 950, 50, "item" + item);
+				} else {
+					var scrollItem = new MemberScrollView<T>();
+					_viewScroll.AddComponent(scrollItem);
+					scrollItem.InitValueEditor(objectToEdit, item);
+					scrollItem.SetParams(10, (row) * 60 + 10, 950, 50, "item" + item);
+					if (item.PropertyType.Name == "String")
+						scrollItem.SetupMemberEditor(getValue: str => str);
+				}
 				row++;
 			}
 
@@ -74,7 +87,7 @@ namespace EngineTools
 		{
 			var a = _viewScroll.GetItems();
 			foreach (var item in a) {
-				var m = item as MemberScrollView<T>;
+				var m = item as MemberBaseScrollView<T>;
 				if (m == null) continue;
 
 				m.SetValue(_objectToEdit);

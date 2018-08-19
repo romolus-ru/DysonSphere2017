@@ -30,7 +30,7 @@ namespace Engine.Utils
 
 		public Type GetObjectType(int ID)
 		{
-			Type type = null;// создаём объект активатором или возвращаем нул
+			Type type = null;
 			if (_collection.ContainsKey(ID)) {
 				type = _collection[ID];
 			}
@@ -40,16 +40,18 @@ namespace Engine.Utils
 		public ushort GetClassID(object obj)
 		{
 			var t = obj.GetType();
-			ushort ret = 0;
-			foreach (var type1 in _collection) {
-				if (t == type1.Value) {
-					ret = (ushort)type1.Key;
-					break;
-				}
-			}
-			return ret;
+			return GetClassID(t);
 		}
 
+		public ushort GetClassID(Type type)
+		{
+			foreach (var type1 in _collection) {
+				if (type == type1.Value) {
+					return (ushort)type1.Key;
+				}
+			}
+			return 0;
+		}
 		/// <summary>
 		/// получаем список классов и путей к ним и загружаем сборки и типы классов
 		/// </summary>

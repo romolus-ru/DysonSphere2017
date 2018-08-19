@@ -8,6 +8,7 @@ namespace Engine
 {
 	public static class Constants
 	{
+		public const long UnknownValue = -1;
 		public const int PauseStateNone = 0;
 		public const int PauseStatePauseFirst = 1;
 		public const int PauseStatePause = 2;

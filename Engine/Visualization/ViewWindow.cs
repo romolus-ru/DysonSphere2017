@@ -24,8 +24,6 @@ namespace Engine.Visualization
 		/// </summary>
 		protected string Caption;
 
-		public ViewWindow() { }
-
 		public override void AddComponent(ViewComponent component, bool toTop = false)
 		{
 			base.AddComponent(component, toTop);

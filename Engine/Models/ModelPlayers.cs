@@ -20,7 +20,7 @@ namespace Engine.Models
 		/// </summary>
 		protected DataSupportBase DB { get; private set; }
 
-		public ModelPlayers(DataSupportBase db) : base()
+		public ModelPlayers(DataSupportBase db)
 		{
 			DB = db;
 		}

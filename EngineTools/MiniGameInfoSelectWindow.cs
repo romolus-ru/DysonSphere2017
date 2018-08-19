@@ -84,7 +84,7 @@ namespace EngineTools
 		{
 			var newMiniGame = new MiniGamesInfos();
 			newMiniGame.IdMiniGamesInfos = 0;
-			newMiniGame.DataType = "";
+			newMiniGame.CollectClassId = 0;
 			newMiniGame.MiniGameId = _miniGame.Id;
 			newMiniGame.Section = "";
 			newMiniGame.Values = "";
@@ -93,7 +93,7 @@ namespace EngineTools
 
 		private void EditMiniGameInfo(MiniGamesInfos minigameInfo)
 		{
-			new DataEditor<MiniGamesInfos>().InitWindow(_viewManager, minigameInfo, UpdateGameInfo);
+			new DataEditor<MiniGamesInfos>().InitWindow(_viewManager, minigameInfo, UpdateGameInfo, dataSupport: _datasupport);
 		}
 
 		private void UpdateGameInfo(MiniGamesInfos miniGameInfo)

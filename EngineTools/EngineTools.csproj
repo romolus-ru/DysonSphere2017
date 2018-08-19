@@ -48,6 +48,8 @@
     <Compile Include="EventBaseRowScrollView.cs" />
     <Compile Include="GameNameScrollView.cs" />
     <Compile Include="GameSectionScrollView.cs" />
+    <Compile Include="MemberBaseScrollView.cs" />
+    <Compile Include="MemberCollectorClassScrollViewItem.cs" />
     <Compile Include="MemberScrollView.cs" />
     <Compile Include="MiniGameInfoSelectWindow.cs" />
     <Compile Include="ModelTools.cs" />

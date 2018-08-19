@@ -51,6 +51,7 @@
     <Compile Include="Constants.cs" />
     <Compile Include="DataPlus\LoginData.cs" />
     <Compile Include="DataPlus\LoginResult.cs" />
+    <Compile Include="DataPlus\MemberEditorAttribute.cs" />
     <Compile Include="DataPlus\ResultOperation.cs" />
     <Compile Include="DataSupportBase.cs" />
     <Compile Include="DataSupportFiles.cs" />

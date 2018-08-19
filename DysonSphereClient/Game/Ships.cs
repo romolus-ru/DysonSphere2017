@@ -57,7 +57,7 @@ namespace DysonSphereClient.Game
 		public void Clear() => _ships.Clear();
 
 		public Ship GetFreeShip() =>
-			_ships.Where(ship => ship.ShipCommand == ShipCommandEnum.NoCommand).FirstOrDefault();
+			_ships.FirstOrDefault(ship => ship.ShipCommand == ShipCommandEnum.NoCommand);
 
 		public int GetShipsCount() => _ships.Count;
 

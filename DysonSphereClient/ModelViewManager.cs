@@ -143,7 +143,7 @@ namespace DysonSphereClient
 
 
 
-		private RegistrationWindow rwin;
+		//private RegistrationWindow rwin;
 		private void RegistrationWindow()
 		{
 			if (StateClient.RegistrationState == RegistrationState.Registered) return;

@@ -279,7 +279,7 @@ namespace DysonSphereClient.Game
 			else
 				visualizationProvider.SetColor(Color.White, 75);
 			visualizationProvider.Rectangle(p.X - 1, p.Y - 1, 3, 3);
-			const int offsetPlanet = 7;
+			//const int offsetPlanet = 7;
 			const int offsetResources = 16;
 			if (p.Building.BuilingType.IsSource()) {
 				var texture = ResourcesHelper.GetTexture(

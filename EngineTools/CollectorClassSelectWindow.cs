@@ -14,6 +14,7 @@ namespace EngineTools
 	/// <summary>
 	/// Выбрать из коллекции коллектора нужный тип класса и/или добавить новый
 	/// </summary>
+	/// <typeparam name="T">Класс-основа с которым будет работать Коллектор (например EventBase или VisualizationProvider)</typeparam>
 	public class CollectorClassSelectWindow<T> : ViewModalWindow where T : class
 	{
 		private Action<CollectClass> _selectedCollectorClass;
@@ -84,30 +85,23 @@ namespace EngineTools
 			_viewScroll.CalcScrollSize();
 		}
 
-		private void SelectCollectClass(CollectClass collectClass)
+		private void SelectCollectClass(CollectorClassScrollViewItem item)
 		{
-			if (collectClass.Id <= 0)
-				_dataSupport.SaveCollectClasses(collectClass);
-			_selectedCollectorClass?.Invoke(collectClass);
+			ToolsCollectorManager.SaveNewCollectorClass(_dataSupport, item.CollectClass);
+			_selectedCollectorClass?.Invoke(item.CollectClass);
 			CloseWindow();
 		}
 
-		private void DeleteCollectClass(CollectClass collectClass)
+		private void DeleteCollectClass(CollectorClassScrollViewItem itemToDel)
 		{
-			_dataSupport.DeleteCollectClasses(collectClass);
-			var scrollItems = _viewScroll.GetItems();
-			var h = -1;
-			var y = -1;
-			CollectorClassScrollViewItem itemToDel = null;
-			foreach (CollectorClassScrollViewItem item in scrollItems) {
-				if (item.CollectClass != collectClass) continue;
-				itemToDel = item;
-				h = item.Height;
-				y = item.Y;
-				break;
-			}
+			_dataSupport.DeleteCollectClasses(itemToDel.CollectClass);
+			_viewScroll.RemoveComponent(itemToDel);
+			var scrollItems = _viewScroll.GetItems();// лучше бы чтоб это ViewScroll сам умел делать
+			var h = itemToDel.Height;
+			var y = itemToDel.Y;
 			if (itemToDel == null) return;
 			_viewScroll.RemoveComponent(itemToDel);// удаляем элемент а остальные ставим выше
+			scrollItems = _viewScroll.GetItems();
 			foreach (CollectorClassScrollViewItem item in scrollItems) {
 				if (item.Y < y) continue;
 				item.SetCoordinatesRelative(0, -y, 0);

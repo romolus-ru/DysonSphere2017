@@ -37,10 +37,10 @@ namespace EngineTools
 			var ret = GetCollectClasses<T>(ds);
 			if (ret == null)
 				ret = new List<CollectClass>();
-			
+
 			var files = GetFiles();
 			var baseType = typeof(T);
-			var appPath = AppDomain.CurrentDomain.BaseDirectory;
+			var appPath = StateEngine.AppPath;
 			foreach (var fileName in files) {
 				var types = SearchObjectsInAssembly(fileName, baseType);
 				if (types == null || types.Count == 0) continue;
@@ -69,7 +69,7 @@ namespace EngineTools
 		/// <returns></returns>
 		private static List<string> GetFiles()
 		{
-			var appPath = AppDomain.CurrentDomain.BaseDirectory;
+			var appPath = StateEngine.AppPath;
 			var files = Directory.GetFiles(appPath, "*.dll");
 			var ret = new List<string>();
 			foreach (var fl in files) {
@@ -110,6 +110,16 @@ namespace EngineTools
 				ret.Add(type);
 			}
 			return ret;
+		}
+
+		public static void SaveNewCollectorClass(DataSupportBase ds, CollectClass collectClass)
+		{
+			if (collectClass.Id > 0)
+				return;
+			ds.SaveCollectClasses(collectClass);
+			Collector collector = StateEngine.Collector;
+			if (collector == null) return;
+			collector.LoadClasses(new List<CollectClass> { collectClass });
 		}
 	}
 }

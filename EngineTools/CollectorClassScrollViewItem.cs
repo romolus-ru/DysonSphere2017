@@ -12,9 +12,9 @@ namespace EngineTools
 	public class CollectorClassScrollViewItem : ScrollItem
 	{
 		private CollectClass _collectorClass;
-		public CollectClass CollectClass { get; }
-		public Action<CollectClass> OnDelete;
-		public Action<CollectClass> OnSelect;
+		public CollectClass CollectClass { get { return _collectorClass; } }
+		public Action<CollectorClassScrollViewItem> OnDelete;
+		public Action<CollectorClassScrollViewItem> OnSelect;
 
 		public CollectorClassScrollViewItem(CollectClass collectorClass)
 		{
@@ -54,21 +54,21 @@ namespace EngineTools
 
 		private void DeleteCollectorClass()
 		{
-			OnDelete?.Invoke(_collectorClass);
+			OnDelete?.Invoke(this);
 		}
 
 		private void SelectCollectorClass()
 		{
-			OnSelect?.Invoke(_collectorClass);
+			OnSelect?.Invoke(this);
 		}
 
-		public override void DrawObject(VisualizationProvider vp)
+		public override void DrawObject(VisualizationProvider visualizationProvider)
 		{
-			vp.SetColor(
+			visualizationProvider.SetColor(
 				CursorOver
 				? Color.YellowGreen
 				: Color.Red);
-			vp.Rectangle(X, Y, Width, Height);
+			visualizationProvider.Rectangle(X, Y, Width, Height);
 		}
 	}
 }

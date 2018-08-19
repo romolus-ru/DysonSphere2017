@@ -1,17 +1,15 @@
 ﻿using DysonSphereClient.Game.Resource;
+using Engine.EventSystem.Event;
 using Engine.Helpers;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DysonSphereClient.Game
 {
 	/// <summary>
 	/// Заказ на перевозку ресурсов
 	/// </summary>
-	public class Order
+	public class Order : EventBase
 	{
 		/// <summary>
 		/// Требуемое количесто ресурсов

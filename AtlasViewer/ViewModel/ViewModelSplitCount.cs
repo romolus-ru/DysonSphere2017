@@ -17,10 +17,10 @@ namespace AtlasViewer.ViewModel
 		/// </summary>
 		public event EventHandler RequestClose;
 
-		/// <summary>
-		/// Для обновления вспомогательных окон
-		/// </summary>
-		public event EventHandler RequestRefreshWindow;
+		///// <summary>
+		///// Для обновления вспомогательных окон
+		///// </summary>
+		//public event EventHandler RequestRefreshWindow;
 
 		public string ByWidth { get; set; }
 		public string ByHeight { get; set; }

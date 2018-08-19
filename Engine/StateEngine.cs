@@ -14,5 +14,6 @@ namespace Engine
 	{
 		public static LogSystem Log;
 		public static Collector Collector;
+		public static string AppPath { get { return AppDomain.CurrentDomain.BaseDirectory; } }
 	}
 }
