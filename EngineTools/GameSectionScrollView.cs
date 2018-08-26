@@ -3,11 +3,7 @@ using Engine.Data;
 using Engine.Visualization;
 using Engine.Visualization.Scroll;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace EngineTools
@@ -60,6 +56,12 @@ namespace EngineTools
 
 			vp.SetColor(Color.White);
 			vp.Print(X + 250, Y + 15, Name);
+		}
+
+		public override bool Filtrate(string filter = null)
+		{
+			if (string.IsNullOrEmpty(filter)) return true;
+			return _minigameInfo.Section.IndexOf(filter, StringComparison.InvariantCultureIgnoreCase) >= 0;
 		}
 	}
 }

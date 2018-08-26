@@ -9,6 +9,10 @@ namespace Engine.Visualization.Scroll
 	public class ScrollItem : ViewComponent, IScrollItem
 	{
 		public bool Selected { get; protected set; }
+		public bool Visible {
+			get { return CanDraw; }
+			set { SetVisible(value); }
+		}
 
 		public virtual void DrawItem(VisualizationProvider visualizationProvider, int x, int y)
 		{
@@ -21,5 +25,10 @@ namespace Engine.Visualization.Scroll
 
 		public void SetSelected(int cursorX, int cursorY)
 			=> Selected = InRange(cursorX, cursorY);
+
+		public virtual bool Filtrate(string filter = null)
+		{
+			return false;
+		}
 	}
 }

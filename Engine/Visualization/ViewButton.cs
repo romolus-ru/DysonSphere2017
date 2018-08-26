@@ -25,6 +25,7 @@ namespace Engine.Visualization
 		/// </summary>
 		private void ClickedOnScreen()
 		{
+			if (IsDestroyed) return;
 			if (!CursorOver) return;
 			if (InRange(Input.CursorX, Input.CursorY))
 				KeyPressed();
@@ -38,12 +39,12 @@ namespace Engine.Visualization
 		/// <summary>
 		/// Заголовок кнопки
 		/// </summary>
-		protected string Caption;
+		public string Caption;
 
 		/// <summary>
 		/// Подсказка кнопки
 		/// </summary>
-		protected string Hint;
+		public string Hint;
 
 		/// <summary>
 		/// Подказка комбинации кнопок

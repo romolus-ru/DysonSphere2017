@@ -1,10 +1,6 @@
 ﻿using Engine.Helpers;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Engine.Visualization
@@ -15,6 +11,10 @@ namespace Engine.Visualization
 	public class ViewInput : ViewComponent
 	{
 		public string Text { get; protected set; } = "";
+		/// <summary>
+		/// Событие изменения вводимого текста
+		/// </summary>
+		public Action<string> OnTextChanged = null;
 		/// <summary>
 		/// Фильтруем символы
 		/// </summary>
@@ -101,6 +101,7 @@ namespace Engine.Visualization
 		{
 			if (_cursorPos >= Text.Length) return;
 			Text = Text.Remove(_cursorPos, 1);
+			OnTextChanged?.Invoke(Text);
 		}
 
 		private void CursorHome()
@@ -140,6 +141,7 @@ namespace Engine.Visualization
 				str = Filter(str);
 			Text = Text.Insert(_cursorPos, str);
 			_cursorPos += str.Length;
+			OnTextChanged?.Invoke(Text);
 			RecalcCursorPosX();
 		}
 

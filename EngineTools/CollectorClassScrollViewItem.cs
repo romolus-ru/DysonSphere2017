@@ -70,5 +70,14 @@ namespace EngineTools
 				: Color.Red);
 			visualizationProvider.Rectangle(X, Y, Width, Height);
 		}
+
+		public override bool Filtrate(string filter = null)
+		{
+			if (string.IsNullOrEmpty(filter))
+				return true;
+			if (CollectClass.ClassName.IndexOf(filter, StringComparison.InvariantCultureIgnoreCase) >= 0)
+				return true;
+			return false;
+		}
 	}
 }

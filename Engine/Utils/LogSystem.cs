@@ -13,8 +13,9 @@ namespace Engine.Utils
 	public class LogSystem
 	{
 		private static DateTime _logDateTime;
-		private static int _logCounter=0;
+		private static int _logCounter = 0;
 		private List<LogData> _logData = new List<LogData>();
+		public Action<string> NewLogRecieved = null;
 
 		public LogSystem()
 		{
@@ -26,7 +27,7 @@ namespace Engine.Utils
 			AddLog("", message, level);
 		}
 
-		public void AddLog(string tag,string message, int level=0)
+		public void AddLog(string tag, string message, int level = 0)
 		{
 			_logCounter++;
 			var ld = new LogData();
@@ -37,6 +38,7 @@ namespace Engine.Utils
 			ld.Message = message;
 			_logData.Add(ld);
 			Debug.WriteLine(tag + " " + message);
+			NewLogRecieved?.Invoke(ld.ToString());
 		}
 
 		public List<string> ScanMsg(string partMsg)
@@ -50,12 +52,11 @@ namespace Engine.Utils
 			IEnumerable<LogData> values = null;
 			if (string.IsNullOrEmpty(tag)) {
 				values = _logData;
-			}
-			else {
+			} else {
 				values = _logData.Where(ld => ld.Tag == tag);
 			}
 			foreach (var ld in values) {
-				if (ld.Message.IndexOf(partMsg) >= 0)
+				if (ld.Message.IndexOf(partMsg, StringComparison.InvariantCultureIgnoreCase) >= 0)
 					res.Add(ld.ToString());
 			}
 			return res;

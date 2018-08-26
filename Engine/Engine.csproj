@@ -53,6 +53,7 @@
     <Compile Include="DataPlus\LoginResult.cs" />
     <Compile Include="DataPlus\MemberEditorAttribute.cs" />
     <Compile Include="DataPlus\ResultOperation.cs" />
+    <Compile Include="DataPlus\SkipEditEditorAttribute.cs" />
     <Compile Include="DataSupportBase.cs" />
     <Compile Include="DataSupportFiles.cs" />
     <Compile Include="Data\AchieveValues.cs" />
@@ -127,6 +128,7 @@
     <Compile Include="EventSystem\Event\EventBase.cs" />
     <Compile Include="EventSystem\Event\MessageString.cs" />
     <Compile Include="Exceptions\NoConnectionException.cs" />
+    <Compile Include="Extensions\DictionaryExtensions.cs" />
     <Compile Include="GameInitializer.cs" />
     <Compile Include="Helpers\AttributesHelper.cs" />
     <Compile Include="Helpers\CryptoHelper.cs" />
@@ -182,6 +184,7 @@
     <Compile Include="Visualization\Maths\Vertex.cs" />
     <Compile Include="Visualization\Scroll2\ScrollItem.cs" />
     <Compile Include="Visualization\Scroll2\ViewScroll.cs" />
+    <Compile Include="Visualization\Scroll\FilteredScrollViewWindow.cs" />
     <Compile Include="Visualization\Scroll\IScrollItem.cs" />
     <Compile Include="Visualization\Scroll\ScrollItem.cs" />
     <Compile Include="Visualization\Scroll\ViewScrollLooped.cs" />

@@ -43,6 +43,10 @@ namespace Engine
 		/// Сообщение от сервера в случае какой-либо ошибки
 		/// </summary>
 		public static string LoginMessage = null;
+		/// <summary>
+		/// Для сохранения вспомогательных данных
+		/// </summary>
+		public static Dictionary<string, string> values = new Dictionary<string, string>();
 
 		private StateClient() { }
 		/// <summary>

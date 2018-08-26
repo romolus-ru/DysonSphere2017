@@ -83,6 +83,11 @@ namespace EngineTools
 				if (fl.Contains("Tao.Platform.Windows.dll")) continue;
 				ret.Add(fl);
 			}
+			files = Directory.GetFiles(appPath, "*.exe");
+			foreach (var fl in files) {
+				if (fl.EndsWith(".vshost.exe", StringComparison.InvariantCultureIgnoreCase)) continue;
+				ret.Add(fl);
+			}
 			return ret;
 		}
 

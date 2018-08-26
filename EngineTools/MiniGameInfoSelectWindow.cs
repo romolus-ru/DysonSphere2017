@@ -1,22 +1,16 @@
 ﻿using Engine;
 using Engine.Data;
 using Engine.Visualization;
+using Engine.Visualization.Scroll;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace EngineTools
 {
-	public class MiniGameInfoSelectWindow : ViewModalWindow
+	public class MiniGameInfoSelectWindow : FilteredScrollViewWindow
 	{
 		private Action<long> _selectedGame;
 		private Action _cancel;
 		private ViewManager _viewManager;
-		private ViewInput _filter;
-		private ViewScroll _viewScroll;
 		private DataSupportBase _datasupport;
 		private MiniGames _miniGame;
 
@@ -32,47 +26,26 @@ namespace EngineTools
 
 		public void InitWindow(ViewManager viewManager, DataSupportBase datasupport, MiniGames miniGame, Action<long> selectedGame, Action cancel)
 		{
-			viewManager.AddViewModal(this);
-			SetParams(150, 150, 1200, 700, "Выбор секции миниигры");
-			InitTexture("textRB", 10);
-
-			var btnSelect = new ViewButton();
-			AddComponent(btnSelect);
-			btnSelect.InitButton(Cancel, "Cancel", "Отмена", Keys.Escape);
-			btnSelect.SetParams(50, 670, 80, 25, "btnCancel");
-			btnSelect.InitTexture("textRB", "textRB");
-
-			var btnNew = new ViewButton();
-			AddComponent(btnNew);
-			btnNew.InitButton(AddNewGameSection, "New", "New", Keys.N);
-			btnNew.SetParams(20, 20, 80, 25, "btnNewGameSection");
-			btnNew.InitTexture("textRB", "textRB");
-
-			_filter = new ViewInput();
-			AddComponent(_filter);
-			_filter.SetParams(140, 30, 500, 40, "filter for games");
-			_filter.InputAction("");
-
 			_miniGame = miniGame;
 			_selectedGame = selectedGame;
 			_cancel = cancel;
 			_viewManager = viewManager;
 			_datasupport = datasupport;
 
-			_viewScroll = new ViewScroll();
-			AddComponent(_viewScroll);
-			_viewScroll.SetParams(10, 80, 1000, 560, "Список игр");
+			InitWindow("Выбор секции миниигры", viewManager, false);
+		}
 
+		protected override void InitScrollItems()
+		{
 			var i = 2;
 			foreach (var game in _datasupport.GetMinigameInfos(_miniGame)) {
 				var scrollItem = new GameSectionScrollView(game);
-				_viewScroll.AddComponent(scrollItem);
+				ViewScroll.AddComponent(scrollItem);
 				scrollItem.SetParams(10, (i - 1) * 50 + 10, 950, 50, game.IdMiniGamesInfos + " " + game.Section);
 				scrollItem.OnEdit += EditMiniGameInfo;
 				scrollItem.OnSelect += SelectSection;
 				i++;
 			}
-			_viewScroll.CalcScrollSize();
 		}
 
 		private void SelectSection(MiniGamesInfos miniGameInfo)
@@ -80,7 +53,7 @@ namespace EngineTools
 
 		}
 
-		private void AddNewGameSection()
+		protected override void NewCommand()
 		{
 			var newMiniGame = new MiniGamesInfos();
 			newMiniGame.IdMiniGamesInfos = 0;
@@ -101,25 +74,16 @@ namespace EngineTools
 			_datasupport.AddMinigameInfo(miniGameInfo);
 		}
 
-		private void Entered()
+		protected override void CloseWindow()
 		{
-			var i = 1;
-			_selectedGame?.Invoke(i);
-			CloseWindow();
-		}
-
-		private void CloseWindow()
-		{
-			_viewManager.RemoveViewModal(this);
+			base.CloseWindow();
 			_selectedGame = null;
 			_cancel = null;
-			_viewManager = null;
 		}
 
-		private void Cancel()
+		protected override void CancelCommand()
 		{
 			_cancel?.Invoke();
-			CloseWindow();
 		}
 
 		public override void DrawObject(VisualizationProvider visualizationProvider)

@@ -6,7 +6,7 @@ namespace Engine.DataPlus
 	/// Атрибут определения редактора для члена класса
 	/// </summary>
 	[AttributeUsage(AttributeTargets.Event | AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Method)]
-	public class MemberEditorAttribute:Attribute
+	public class MemberEditorAttribute : Attribute
 	{
 		/// <summary>
 		/// Тип основного класса для редактора

@@ -179,7 +179,7 @@ namespace Engine.Visualization
 		{
 			MoveScrollItems();
 			base.DrawObject(visualizationProvider);
-			visualizationProvider.SetColor(Color.Azure);
+			visualizationProvider.SetColor(Color.DarkSeaGreen, 25);
 			visualizationProvider.Print(X + 10, Y + 10, "dm=" + IsDragMode + " pm=" + IsPressedMode);
 			visualizationProvider.Print(X + 10, Y + 25, "ox=" + _scrollOffsetX + " b=" + Constants.ScrollMoveBorder);
 			visualizationProvider.Print(X + 10, Y + 40, "dxr=" + (X + Width - _scrollOffsetX - _scrollWidth - 2 * Constants.ScrollMoveBorder)

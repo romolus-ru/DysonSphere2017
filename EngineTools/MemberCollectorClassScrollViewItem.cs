@@ -1,10 +1,5 @@
 ﻿using Engine.EventSystem.Event;
-using EngineTools;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Reflection;
 using Engine.Visualization.Text;
 using Engine.Visualization;
@@ -12,6 +7,10 @@ using Engine;
 using System.Drawing;
 using System.Windows.Forms;
 using Engine.Data;
+using System.Linq;
+using System.Collections;
+using System.Collections.Generic;
+using Engine.Helpers;
 
 namespace EngineTools
 {
@@ -64,13 +63,22 @@ namespace EngineTools
 			var type2 = typeof(CollectorClassSelectWindow<>);
 			var windowType = type2.MakeGenericType(new Type[] { type1 });
 			var window = Activator.CreateInstance(windowType);
-			var m = windowType.GetMethod("InitWindow");
+			IEnumerable<MethodInfo> ms = windowType.GetMethods().Where(mv => mv.Name == "InitWindow");
+			MethodInfo m = null;
+			foreach (var method in ms) {
+				var parameters= method.GetParameters();
+				if (parameters.Length < 4) continue;
+				var p2 = parameters[1];
+				if (p2.Name == "dataSupport")
+					m = method;
+			}
 			if (m != null) {
 				//.InitWindow(_viewManager, _dataSupport, null, null);
 				//ViewManager viewManager, DataSupportBase dataSupport, Action<CollectClass> selectedCollectorClass, Action cancel
 				object[] parametersArray = { _viewManager, _dataSupport, (Action<CollectClass>)SelectCollectorClass, null };
 				m.Invoke(window, parametersArray);
-			}
+			} else
+				StateEngine.Log.AddLog("InitWindow in CollectorClassSelectWindow not found");
 		}
 
 		private void SelectCollectorClass(CollectClass collectClass)
@@ -98,7 +106,7 @@ namespace EngineTools
 				var type = StateEngine.Collector.GetObjectType((int)_value);
 				var appPath = StateEngine.AppPath;
 				var shortFileName = type.Assembly.Location.Substring(appPath.Length);
-				SetupViewValue(type.Name, shortFileName);
+				SetupViewValue(type.FullName, shortFileName);
 			} else
 				_value = Constants.UnknownValue;
 		}
