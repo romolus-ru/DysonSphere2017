@@ -1,5 +1,6 @@
 ﻿using Engine;
 using Engine.Data;
+using Engine.Enums;
 using Engine.Visualization;
 using Engine.Visualization.Scroll;
 using Engine.Visualization.Text;
@@ -42,13 +43,13 @@ namespace EngineTools
 			var TextClass = new ViewText();
 			AddComponent(TextClass);
 			TextClass.SetParams(250, 5, 500, 20, "Class");
-			TextClass.CreateSplitedTextAuto(Color.White, null, _collectorClass.ClassName);
+			TextClass.CreateSplitedTextAuto(Color.White, null, _collectorClass.ClassName, TextAlign.Left);
 			TextClass.CalculateTextPositions();
 
 			var TextFile = new ViewText();
 			AddComponent(TextFile);
 			TextFile.SetParams(250, 25, 500, 20, "File");
-			TextFile.CreateSplitedTextAuto(Color.DarkSlateGray, null, _collectorClass.FileName);
+			TextFile.CreateSplitedTextAuto(Color.DarkSlateGray, null, _collectorClass.FileName, TextAlign.Left);
 			TextFile.CalculateTextPositions();
 		}
 

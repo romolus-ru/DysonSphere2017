@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Engine.Enums;
 using System.Diagnostics;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Engine.Visualization.Text
 {
@@ -33,13 +29,15 @@ namespace Engine.Visualization.Text
 				return true;
 			}
 		}
-		public void Init(VisualizationProvider visualizationProvider, Color color, string font = null, string text = null)
+		public void Init(VisualizationProvider visualizationProvider, Color color, string font = null, string text = null, TextAlign textAlign = TextAlign.Left)
 		{
 			_visualizationProvider = visualizationProvider;
 			_font = font;
 			SetColor(color);
 			Text = text;
+			Align = textAlign;
 		}
+
 		public override void CalculateSize(VisualizationProvider visualizationProvider)
 		{
 			if (_textSizeCalculated) return;

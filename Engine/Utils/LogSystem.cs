@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Engine.Utils
 {
@@ -15,7 +13,7 @@ namespace Engine.Utils
 		private static DateTime _logDateTime;
 		private static int _logCounter = 0;
 		private List<LogData> _logData = new List<LogData>();
-		public Action<string> NewLogRecieved = null;
+		public Action<LogData> OnNewLogRecieved = null;
 
 		public LogSystem()
 		{
@@ -38,7 +36,7 @@ namespace Engine.Utils
 			ld.Message = message;
 			_logData.Add(ld);
 			Debug.WriteLine(tag + " " + message);
-			NewLogRecieved?.Invoke(ld.ToString());
+			OnNewLogRecieved?.Invoke(ld);
 		}
 
 		public List<string> ScanMsg(string partMsg)

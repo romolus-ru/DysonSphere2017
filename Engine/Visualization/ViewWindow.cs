@@ -114,8 +114,8 @@ namespace Engine.Visualization
 			_btnTexture = textureName;
 			_btnTextureBorder = textureBorder;
 			VisualizationProvider.LoadAtlas(_btnTexture);
-			_dragHeader.InitTexture(textureName, 6);
-			_resizer.InitTexture(textureName, 6);
+			_dragHeader.InitTexture(GUIHelper.DraggableTexture, 6);
+			_resizer.InitTexture(GUIHelper.DraggableTexture, 6);
 		}
 
 		/// <summary>

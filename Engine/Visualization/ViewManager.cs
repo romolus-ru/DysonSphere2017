@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Diagnostics;
+using Engine.Utils;
 
 namespace Engine.Visualization
 {
@@ -49,6 +46,8 @@ namespace Engine.Visualization
 			_viewBigMessages.Init(Provider, input);
 			_viewBigMessages.SetParams(0, 0, provider.CanvasWidth, provider.CanvasHeight, "BigMessages");
 			_viewSystemTop.AddComponent(_viewBigMessages);
+			if (StateEngine.Log != null)
+				StateEngine.Log.OnNewLogRecieved += NewLogRecieved;
 		}
 
 		/// <summary>
@@ -109,6 +108,11 @@ namespace Engine.Visualization
 		public void ShowHint(string hintText, string hintKeys = null)
 		{
 			_viewHint.ShowHint(TimeSpan.FromSeconds(7), hintText, hintKeys);
+		}
+
+		private void NewLogRecieved(LogData logData)
+		{
+			ShowBigMessage(logData.ToString());
 		}
 
 		public void ShowBigMessage(string message)

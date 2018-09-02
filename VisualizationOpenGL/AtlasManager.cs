@@ -1,12 +1,7 @@
 ﻿using Engine;
 using Engine.Data;
-using Engine.Enums;
 using Engine.Utils;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace VisualizationOpenGL
 {
@@ -31,7 +26,7 @@ namespace VisualizationOpenGL
 		public AtlasFiles GetAtlasFile(string atlasName)
 		{
 			if (_atlasLoaded.Contains(atlasName)) {
-				_log.AddLog(LogTag, "Атлас уже загружен " + atlasName);
+				//_log.AddLog(LogTag, "Атлас уже загружен " + atlasName);
 				return null;
 			}
 

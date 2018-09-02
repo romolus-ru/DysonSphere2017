@@ -5,7 +5,7 @@ namespace Engine.Utils
 	/// <summary>
 	/// Строка данных для логирования
 	/// </summary>
-	internal class LogData
+	public class LogData
 	{
 		public DateTime Time;
 		public int Id;

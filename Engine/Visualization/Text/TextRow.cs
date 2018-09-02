@@ -1,8 +1,6 @@
-﻿using System;
+﻿using Engine.Enums;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Engine.Visualization.Text
 {
@@ -12,6 +10,11 @@ namespace Engine.Visualization.Text
 	public class TextRow : TextPiece
 	{
 		public List<TextPiece> Pieces = new List<TextPiece>();
+
+		public TextRow(TextAlign textAlign = TextAlign.Center)
+		{
+			Align = textAlign;
+		}
 
 		public void AddPiece(TextPiece piece)
 		{

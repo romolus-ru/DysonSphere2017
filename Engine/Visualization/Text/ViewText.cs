@@ -1,9 +1,6 @@
-﻿using System;
+﻿using Engine.Enums;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Engine.Visualization.Text
 {
@@ -19,16 +16,16 @@ namespace Engine.Visualization.Text
 		/// </summary>
 		/// <param name="text"></param>
 		/// <returns></returns>
-		public void CreateSplitedTextAuto(Color color, string font, string text)
+		public void CreateSplitedTextAuto(Color color, string font, string text, TextAlign textAlign = TextAlign.Center)
 		{
 			while (!string.IsNullOrEmpty(text)) {
 				var len = GetWidthLength(font, text);
 				if (len == -1) break;
 				var str = text.Substring(0, len);
 				text = len < text.Length ? text.Substring(len + 1) : null;
-				var tr = new TextRow();
+				var tr = new TextRow(textAlign);
 				_texts.Add(tr);
-				AddText(tr, color, font, str);
+				AddText(tr, color, font, str, textAlign);
 			}
 		}
 
@@ -41,7 +38,6 @@ namespace Engine.Visualization.Text
 		{
 			if (string.IsNullOrEmpty(text))
 				return -1;
-			int ret = 0;
 			int counter = 0;
 			int prevCounter = -1;
 			do {
@@ -66,10 +62,10 @@ namespace Engine.Visualization.Text
 			return tr;
 		}
 
-		public TextPiece AddText(TextRow textRow, Color color, string font, string text)
+		public TextPiece AddText(TextRow textRow, Color color, string font, string text, TextAlign textAlign = TextAlign.Left)
 		{
 			var ts = new TextSimple();
-			ts.Init(VisualizationProvider, color, font, text);
+			ts.Init(VisualizationProvider, color, font, text, textAlign);
 			textRow.AddPiece(ts);
 			return ts;
 		}
@@ -90,7 +86,11 @@ namespace Engine.Visualization.Text
 			}
 			var height = (Height - h) / 2;
 			foreach (var txt in _texts) {
-				var xpos = (Width - txt.Width) / 2;
+				var xpos = (Width - txt.Width);
+				if (txt.Align == TextAlign.Left)
+					xpos = 0;
+				if (txt.Align == TextAlign.Center)
+					xpos = xpos / 2;
 				txt.CalculatePlace(xpos, height);
 				height += txt.Height;
 			}

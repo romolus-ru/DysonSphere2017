@@ -1,10 +1,5 @@
 ﻿using Engine.Visualization;
-using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Engine.Helpers
 {
@@ -20,6 +15,7 @@ namespace Engine.Helpers
 		public static Color ButtonHintColor = Color.ForestGreen;
 		public static Color ButtonHintKeysColor = Color.LawnGreen;
 		public static Color HintBackgroundColor = Color.FromArgb(210, Color.Black);
+		public static string DraggableTexture = "WindowSample";
 
 		public static void ViewGUIRectangle(VisualizationProvider visualizationProvider, ViewComponent component, string textureName)
 		{
