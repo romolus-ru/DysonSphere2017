@@ -51,7 +51,8 @@
     <Compile Include="Constants.cs" />
     <Compile Include="DataPlus\LoginData.cs" />
     <Compile Include="DataPlus\LoginResult.cs" />
-    <Compile Include="DataPlus\MemberEditorAttribute.cs" />
+    <Compile Include="DataPlus\MemberCollectorClassEditorAttribute.cs" />
+    <Compile Include="DataPlus\MemberSpecialEditorAttribute.cs" />
     <Compile Include="DataPlus\ResultOperation.cs" />
     <Compile Include="DataPlus\SkipEditEditorAttribute.cs" />
     <Compile Include="DataSupportBase.cs" />
@@ -187,6 +188,8 @@
     <Compile Include="Visualization\Scroll\FilteredScrollViewWindow.cs" />
     <Compile Include="Visualization\Scroll\IScrollItem.cs" />
     <Compile Include="Visualization\Scroll\ScrollItem.cs" />
+    <Compile Include="Visualization\Scroll\SelectStringScrollItem.cs" />
+    <Compile Include="Visualization\Scroll\SelectStringWindow.cs" />
     <Compile Include="Visualization\Scroll\ViewScrollLooped.cs" />
     <Compile Include="Visualization\Text\TextParagraph.cs" />
     <Compile Include="Visualization\Text\TextPiece.cs" />

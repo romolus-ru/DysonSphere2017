@@ -7,7 +7,6 @@ using Engine.Visualization.Scroll;
 using System;
 using System.Linq;
 using System.Reflection;
-using System.Windows.Forms;
 
 namespace EngineTools
 {
@@ -36,12 +35,20 @@ namespace EngineTools
 			foreach (PropertyInfo item in mi) {
 				if (AttributesHelper.IsHasAttribute<SkipEditEditorAttribute>(item))
 					continue;
-				if (AttributesHelper.IsHasAttribute<MemberEditorAttribute>(item)) {
-					var type = AttributesHelper.GetMemberEditorType(item);
+				if (AttributesHelper.IsHasAttribute<MemberCollectorClassEditorAttribute>(item)) {
+					var type = AttributesHelper.GetMemberCollectorClassEditorType(item);
 					var scrollItem = new MemberCollectorClassScrollViewItem<T>(ViewManager, _dataSupport, type);
 					ViewScroll.AddComponent(scrollItem);
 					scrollItem.InitValueEditor(_objectToEdit, item);
 					scrollItem.SetParams(10, (row) * 60 + 10, 950, 50, "item" + item);
+				} else if (AttributesHelper.IsHasAttribute<MemberSpecialEditorAttribute>(item)) {
+					var type = AttributesHelper.GetAttribute<MemberSpecialEditorAttribute>(item);
+					if (type.EditorType == "SelectClassInFile") {// редактируем поля хранящие имя файла и имя класса 
+						var scrollItem = new MemberClassInFileScrollView<T>(ViewManager);
+						ViewScroll.AddComponent(scrollItem);
+						scrollItem.InitValueEditor(_objectToEdit, item);
+						scrollItem.SetParams(10, (row) * 60 + 10, 950, 50, "item" + item);
+					}
 				} else {
 					var scrollItem = new MemberScrollView<T>();
 					ViewScroll.AddComponent(scrollItem);
@@ -58,7 +65,7 @@ namespace EngineTools
 		{
 			base.InitButtonOk(btnOk);
 			btnOk.Caption = "Ok";
-			btnOk.Caption = "Сохранить";
+			btnOk.Hint = "Сохранить";
 		}
 
 		protected override void OkCommand()

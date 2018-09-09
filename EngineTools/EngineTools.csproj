@@ -49,6 +49,7 @@
     <Compile Include="GameNameScrollView.cs" />
     <Compile Include="GameSectionScrollView.cs" />
     <Compile Include="MemberBaseScrollView.cs" />
+    <Compile Include="MemberClassInFileScrollView.cs" />
     <Compile Include="MemberCollectorClassScrollViewItem.cs" />
     <Compile Include="MemberScrollView.cs" />
     <Compile Include="MiniGameInfoSelectWindow.cs" />
@@ -56,6 +57,7 @@
     <Compile Include="ModelViewManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SelectClassInFileWindow.cs" />
     <Compile Include="Tools.cs" />
     <Compile Include="MiniGameSelectWindow.cs" />
     <Compile Include="ToolsCollectorManager.cs" />

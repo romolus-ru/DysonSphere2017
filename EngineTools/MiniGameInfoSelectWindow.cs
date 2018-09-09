@@ -57,7 +57,8 @@ namespace EngineTools
 		{
 			var newMiniGame = new MiniGamesInfos();
 			newMiniGame.IdMiniGamesInfos = 0;
-			newMiniGame.CollectClassId = 0;
+			newMiniGame.ClassFile = null;
+			newMiniGame.ClassName = null;
 			newMiniGame.MiniGameId = _miniGame.Id;
 			newMiniGame.Section = "";
 			newMiniGame.Values = "";
