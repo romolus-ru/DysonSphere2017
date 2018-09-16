@@ -60,7 +60,7 @@
     <Compile Include="SelectClassInFileWindow.cs" />
     <Compile Include="Tools.cs" />
     <Compile Include="MiniGameSelectWindow.cs" />
-    <Compile Include="ToolsCollectorManager.cs" />
+    <Compile Include="ToolsCollectorHelper.cs" />
     <Compile Include="ViewJsonWindow.cs" />
     <Compile Include="ViewTools.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">

@@ -8,8 +8,6 @@ namespace Engine.Visualization.Scroll
 	{
 		private Action<string> _selectedString;
 		private Action _cancel;
-		private ViewManager _viewManager;
-		private MiniGames _miniGame;
 		private List<string> _values;
 
 		protected override void InitObject(VisualizationProvider visualizationProvider, Input input)
@@ -22,7 +20,6 @@ namespace Engine.Visualization.Scroll
 			_values = values;
 			_selectedString = selectedString;
 			_cancel = cancel;
-			_viewManager = viewManager;
 
 			InitWindow("Выбор строки", viewManager, showOkButton: false, showCancelButton: true, showNewButton: false);
 		}
@@ -41,8 +38,9 @@ namespace Engine.Visualization.Scroll
 
 		private void SelectSection(string value)
 		{
-			_selectedString?.Invoke(value);
-			CloseWindow();
+			var action = _selectedString;
+			CloseWindow();// так правильнее всего на данный момент - выходим из модального режима и потом уже вызываем методы
+			action?.Invoke(value);
 		}
 
 		protected override void CloseWindow()

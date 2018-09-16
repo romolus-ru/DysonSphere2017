@@ -3,6 +3,9 @@ using Engine.Data;
 using Engine.Visualization;
 using Engine.Visualization.Scroll;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 
 namespace EngineTools
 {
@@ -10,26 +13,14 @@ namespace EngineTools
 	{
 		private Action<long> _selectedGame;
 		private Action _cancel;
-		private ViewManager _viewManager;
 		private DataSupportBase _datasupport;
 		private MiniGames _miniGame;
-
-		protected override void InitObject(VisualizationProvider visualizationProvider, Input input)
-		{
-			base.InitObject(visualizationProvider, input);
-		}
-
-		protected override void ClearObject()
-		{
-			base.ClearObject();
-		}
 
 		public void InitWindow(ViewManager viewManager, DataSupportBase datasupport, MiniGames miniGame, Action<long> selectedGame, Action cancel)
 		{
 			_miniGame = miniGame;
 			_selectedGame = selectedGame;
 			_cancel = cancel;
-			_viewManager = viewManager;
 			_datasupport = datasupport;
 
 			InitWindow("Выбор секции миниигры", viewManager, false);
@@ -50,7 +41,37 @@ namespace EngineTools
 
 		private void SelectSection(MiniGamesInfos miniGameInfo)
 		{
+			var type1 = ToolsCollectorHelper.GetTypeFromFile(miniGameInfo.ClassFile, miniGameInfo.ClassName);
+			if (type1 == null) {
+				StateEngine.Log?.AddLog("class not found " + miniGameInfo.ClassName + " in " + miniGameInfo.ClassFile);
+				return;
+			}
 
+			var type2 = typeof(ViewJsonWindow<>);
+			var windowType = type2.MakeGenericType(new Type[] { type1 });
+			var window = Activator.CreateInstance(windowType);
+			IEnumerable<MethodInfo> ms = windowType.GetMethods().Where(mv => mv.Name == "InitWindow");
+			MethodInfo m = null;
+			foreach (var method in ms) {
+				var parameters = method.GetParameters();
+				if (parameters.Length < 5) continue;
+				var p2 = parameters[2];
+				if (p2.Name == "miniGameInfo")
+					m = method;
+			}
+			if (m != null) {
+				//InitWindow(ViewManager viewManager, MiniGames miniGame, MiniGamesInfos miniGameInfo, Action<string> saveData, Action cancel)
+				object[] parametersArray = { ViewManager, _miniGame, miniGameInfo, (Action<string>)SaveSection, null };
+				m.Invoke(window, parametersArray);
+			} else
+				StateEngine.Log.AddLog("InitWindow in ViewJsonWindow not found");
+
+			//new ViewJsonWindow().InitWindow(ViewManager, minigameInfo, UpdateGameInfo, dataSupport: _datasupport);
+		}
+
+		private void SaveSection(string newValue)
+		{
+			// сохранить обновленные данные в секции
 		}
 
 		protected override void NewCommand()
@@ -67,7 +88,7 @@ namespace EngineTools
 
 		private void EditMiniGameInfo(MiniGamesInfos minigameInfo)
 		{
-			new DataEditor<MiniGamesInfos>().InitWindow(_viewManager, minigameInfo, UpdateGameInfo, dataSupport: _datasupport);
+			new DataEditor<MiniGamesInfos>().InitWindow(ViewManager, minigameInfo, UpdateGameInfo, dataSupport: _datasupport);
 		}
 
 		private void UpdateGameInfo(MiniGamesInfos miniGameInfo)

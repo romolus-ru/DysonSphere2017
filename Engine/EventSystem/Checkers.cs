@@ -15,7 +15,7 @@ namespace Engine.EventSystem
 	{
 		private static List<Action> _actionsOnce = new List<Action>();
 		/// <summary>
-		/// Выполнится один раз
+		/// Добавленный метод выполнится один раз в начале цикла обработки
 		/// </summary>
 		/// <param name="action"></param>
 		public static void AddToCheckOnce(Action action)

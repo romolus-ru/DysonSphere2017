@@ -30,7 +30,7 @@ namespace EngineTools
 
 		protected override void InitScrollItems()
 		{
-			var classes = ToolsCollectorManager.GetCollectClasses<T>(_dataSupport);
+			var classes = ToolsCollectorHelper.GetCollectClasses<T>(_dataSupport);
 			UpdateScroll(classes);
 		}
 
@@ -43,7 +43,7 @@ namespace EngineTools
 
 		protected override void NewCommand()
 		{
-			var classes = ToolsCollectorManager.GetAllClasses<T>(_dataSupport);
+			var classes = ToolsCollectorHelper.GetAllClasses<T>(_dataSupport);
 			UpdateScroll(classes);
 		}
 
@@ -64,7 +64,7 @@ namespace EngineTools
 
 		private void SelectCollectClass(CollectorClassScrollViewItem item)
 		{
-			ToolsCollectorManager.SaveNewCollectorClass(_dataSupport, item.CollectClass);
+			ToolsCollectorHelper.SaveNewCollectorClass(_dataSupport, item.CollectClass);
 			_selectedCollectorClass?.Invoke(item.CollectClass);
 			CloseWindow();
 		}

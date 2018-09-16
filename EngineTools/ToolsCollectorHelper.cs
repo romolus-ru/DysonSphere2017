@@ -12,7 +12,7 @@ namespace EngineTools
 	/// <summary>
 	/// Поиск файлов-сборок и типов в них
 	/// </summary>
-	internal class ToolsCollectorManager
+	internal class ToolsCollectorHelper
 	{
 		public static List<CollectClass> GetCollectClasses<T>(DataSupportBase ds) where T : class
 		{
@@ -63,30 +63,51 @@ namespace EngineTools
 			return ret;
 		}
 
+		private static List<string> _dllIgnored = new List<string>() {
+				"EntityFramework.dll",  "EntityFramework.SqlServer.dll",
+				"Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll",
+				"UnitTests.dll", "OpenGL4Net.dll", "Tao.DevIl.dll",
+				"Tao.FreeGlut.dll", "Tao.Platform.Windows.dll",
+		};
+
 		/// <summary>
-		/// Получаем имена файлов которые надо просканировать
+		/// Получаем имена файлов которые можно просканировать
 		/// </summary>
 		/// <returns></returns>
-		private static List<string> GetFiles()
+		public static List<string> GetFiles()
 		{
 			var appPath = StateEngine.AppPath;
 			var files = Directory.GetFiles(appPath, "*.dll");
 			var ret = new List<string>();
 			foreach (var fl in files) {
-				if (fl.Contains("EntityFramework.dll")) continue;
-				if (fl.Contains("EntityFramework.SqlServer.dll")) continue;
-				if (fl.Contains("Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll")) continue;
-				if (fl.Contains("UnitTests.dll")) continue;
-				if (fl.Contains("OpenGL4Net.dll")) continue;
-				if (fl.Contains("Tao.DevIl.dll")) continue;
-				if (fl.Contains("Tao.FreeGlut.dll")) continue;
-				if (fl.Contains("Tao.Platform.Windows.dll")) continue;
+				var str = _dllIgnored.Where(s => fl.Contains(s)).FirstOrDefault();
+				if (string.IsNullOrEmpty(str)) continue;
 				ret.Add(fl);
 			}
 			files = Directory.GetFiles(appPath, "*.exe");
 			foreach (var fl in files) {
 				if (fl.EndsWith(".vshost.exe", StringComparison.InvariantCultureIgnoreCase)) continue;
 				ret.Add(fl);
+			}
+			return ret;
+		}
+
+		public static Type GetTypeFromFile(string classFile, string className)
+		{
+			var types = SearchObjectsInAssembly(classFile, typeof(object));
+			foreach (var tp in types) {
+				if (tp.FullName == className)
+					return tp;
+			}
+			return null;
+		}
+
+		public static List<string> GetClassesInFile(string fileName)
+		{
+			var ret = new List<string>();
+			var cl = SearchObjectsInAssembly(fileName, typeof(object));
+			foreach (var item in cl) {
+				ret.Add(item.FullName);
 			}
 			return ret;
 		}

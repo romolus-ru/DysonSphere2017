@@ -205,14 +205,8 @@ namespace Engine
 			var listPressedCombs = new List<List<Keys>>();
 			foreach (var keyComb in _keyActionPaused.Keys) {
 				if (ModalStateChanged) return;
-				var keyFounded = true;
-				foreach (var k1 in keyComb) {
-					if (IsKeyPressed(k1)) continue;
-					keyFounded = false;
-					break;
-				}
-				// кнопки есть - сохраняем
-				if (keyFounded) listPressedCombs.Add(keyComb);
+				// комбинация кнопок нажата - сохраняем
+				if (IsСombPressed(keyComb)) listPressedCombs.Add(keyComb);
 			}
 
 			// очищаем - никакие кнопки не нажаты
@@ -342,33 +336,13 @@ namespace Engine
 			Action start = null;
 			foreach (var keyComb in _keyActionSticked.Keys) {
 				if (ModalStateChanged) return;
-				var keyFounded = true;
-				var keyFoundShifted = false;
-				foreach (var k1 in keyComb) {
-					if (IsKeyPressed(k1)) continue;
-					keyFounded = false;
-					break;
-				}
-				if (_listKeySticked.Contains(keyComb) && !keyFounded) {
-					// обрабатывается случай когда надо нажать ctrl + C и не обязательно ctrl отпускать. комбинация должна сработать уже при отпускании С
-					var noShiftedKeysPressed = false;
-					var shiftedKeysFound = false;
-					foreach (var k1 in keyComb) {
-						if (shiftKeys.Contains(k1)) { shiftedKeysFound = true; continue; }
-						if (IsKeyPressed(k1)) noShiftedKeysPressed = true;
-					}
-					if (shiftedKeysFound && !noShiftedKeysPressed) {
-						keyFounded = false;
-						keyFoundShifted = true;
-					}
-				}
-				if (keyFounded) {
+				if (IsСombPressed(keyComb)) {
 					if (!_listKeySticked.Contains(keyComb))
 						_listKeySticked.Add(keyComb);// save
 				} else {
 					if (_listKeySticked.Contains(keyComb)) {
-						_listKeySticked.Remove(keyComb);// remove														
-						if (!_isAnyKeyPressed || keyFoundShifted)
+						_listKeySticked.Remove(keyComb);// remove
+						if (!_isAnyKeyPressed || IsMainKeysUnpressed(keyComb))
 							start += _keyActionSticked[keyComb];// запустить событие если ничего больше не нажато
 					}
 				}
@@ -377,8 +351,32 @@ namespace Engine
 			start?.Invoke();
 		}
 
+		/// <summary>
+		/// Проверяем нажата ли комбинация кнопок
+		/// </summary>
+		/// <param name="keyComb"></param>
+		/// <returns></returns>
+		private bool IsСombPressed(List<Keys> keyComb)
+		{
+			foreach (var k1 in keyComb) {
+				if (!IsKeyPressed(k1)) return false;
+			}
+			return true;
+		}
 
-
+		/// <summary>
+		/// Основные кнопки отпущены, а кнопки смещения могут остаться нажатыми
+		/// </summary>
+		private bool IsMainKeysUnpressed(List<Keys> keyComb)
+		{
+			var noShiftedKeysPressed = false;
+			var shiftedKeysFound = false;
+			foreach (var k1 in keyComb) {
+				if (shiftKeys.Contains(k1)) { shiftedKeysFound = true; }
+				else if (IsKeyPressed(k1)) noShiftedKeysPressed = true;
+			}
+			return (shiftedKeysFound && !noShiftedKeysPressed);
+		}
 
 		/// <summary>
 		/// Проверить, нажата ли данная клавиша клавиатуры или мышки
@@ -504,9 +502,10 @@ namespace Engine
 		{
 			if (actions == null) return;
 			foreach (var action in actions.GetInvocationList()) {
-				var name = "(none)";
 				var obj = action.Target as ViewComponent;
-				if (obj != null) name = obj.Name;
+				var name = obj == null 
+					? "(none)" 
+					: obj.Name;
 				result.Add("  " + name + "." + action.Method.Name);
 			}
 		}

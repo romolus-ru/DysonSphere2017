@@ -115,7 +115,7 @@ namespace Engine.Visualization.Scroll
 		}
 
 		/// <summary>
-		/// Инициализация списка
+		/// Инициализация списка и остальных элементов если нужно (например вспомогательных элементов и т.п.)
 		/// </summary>
 		protected virtual void InitScrollItems()
 		{
