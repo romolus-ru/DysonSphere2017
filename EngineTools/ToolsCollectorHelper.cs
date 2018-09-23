@@ -1,6 +1,7 @@
 ﻿using Engine;
 using Engine.Data;
 using Engine.Utils;
+using Engine.Visualization;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -68,6 +69,8 @@ namespace EngineTools
 				"Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll",
 				"UnitTests.dll", "OpenGL4Net.dll", "Tao.DevIl.dll",
 				"Tao.FreeGlut.dll", "Tao.Platform.Windows.dll",
+				"DevIL.dll", "Jint.dll", "Microsoft.Expression.Interactions.dll",
+				"Newtonsoft.Json.dll", "System.Windows.Interactivity.dll",
 		};
 
 		/// <summary>
@@ -81,7 +84,7 @@ namespace EngineTools
 			var ret = new List<string>();
 			foreach (var fl in files) {
 				var str = _dllIgnored.Where(s => fl.Contains(s)).FirstOrDefault();
-				if (string.IsNullOrEmpty(str)) continue;
+				if (!string.IsNullOrEmpty(str)) continue;
 				ret.Add(fl);
 			}
 			files = Directory.GetFiles(appPath, "*.exe");
@@ -102,11 +105,15 @@ namespace EngineTools
 			return null;
 		}
 
-		public static List<string> GetClassesInFile(string fileName)
+		public static List<string> GetClassesInFile(string fileName, bool ignoreViewClasses = false)
 		{
 			var ret = new List<string>();
 			var cl = SearchObjectsInAssembly(fileName, typeof(object));
 			foreach (var item in cl) {
+				if (ignoreViewClasses) {
+					if (item.IsSubclassOf(typeof(ViewObject)))
+						continue;
+				}
 				ret.Add(item.FullName);
 			}
 			return ret;

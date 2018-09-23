@@ -1,7 +1,5 @@
 using Engine.Enums;
 using Engine.EventSystem.Event;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace Engine.Data

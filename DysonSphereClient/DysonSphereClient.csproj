@@ -69,6 +69,9 @@
     <Compile Include="Game\Resources\ResourceViewInfo.cs" />
     <Compile Include="Game\ShipCommandEnum.cs" />
     <Compile Include="Game\Ships.cs" />
+    <Compile Include="Game\States\ShipCommandsEnum.cs" />
+    <Compile Include="Game\States\ShipStates.cs" />
+    <Compile Include="Game\States\ShipStatesEnum.cs" />
     <Compile Include="Game\Upgrades\ShipUpgradeWindow.cs" />
     <Compile Include="Game\Upgrades\UpgradeScrollItem.cs" />
     <Compile Include="Game\Upgrades\ShopWindow.cs" />

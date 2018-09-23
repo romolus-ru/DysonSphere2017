@@ -1,10 +1,6 @@
 ﻿using Engine.Helpers;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Engine.Visualization
@@ -105,7 +101,9 @@ namespace Engine.Visualization
 				visualizationProvider.SetColor(Color.Black);
 				visualizationProvider.Print(X + 4 - 1, Y + Height / 2 - f - 3 - 1, txt);
 			}
-			GUIHelper.ShowHint(visualizationProvider, this, Hint, HintKeys);
+			if (CursorOver)
+				ViewHelper.ShowHint(this, Hint, HintKeys);
+			//GUIHelper.ShowHint(visualizationProvider, this, Hint, HintKeys);
 			/*if (!string.IsNullOrEmpty(Hint) && CursorOver) {
 				visualizationProvider.SetColor(GUIHelper.ButtonHintColor);
 				visualizationProvider.Print(X + 10, Y + Height + 5 - f, Hint);

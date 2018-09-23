@@ -38,6 +38,12 @@ namespace EngineTools
 			btnGetEventBaseClass.SetParams(320, 060, 140, 30, "btnGetEventBase");
 			btnGetEventBaseClass.InitTexture("textRB", "textRB");
 
+			var btnJint = new ViewButton();
+			AddComponent(btnJint);
+			btnJint.InitButton(JintOperation, "Jint", "Jint hint", Keys.J);
+			btnJint.SetParams(320, 100, 140, 30, "btnJint");
+			btnJint.InitTexture("textRB", "textRB");
+
 			var btnSaveTablesToFiles = new ViewButton();
 			AddComponent(btnSaveTablesToFiles);
 			btnSaveTablesToFiles.InitButton(null, "SaveTablesToFiles", "SaveTablesToFiles hint", Keys.S);
@@ -60,6 +66,13 @@ namespace EngineTools
 			AddComponent(btnClose);
 			btnClose.InitButton(Close, "exit", "hint", Keys.LMenu, Keys.X);
 			btnClose.SetParams(1659, 0, 20, 20, "btnE");
+		}
+
+		private void JintOperation()
+		{
+			StateEngine.Jint.LoadFunction("f1.txt");
+			string res = StateEngine.Jint.RunFunction<int>("f1", 1);
+			StateEngine.Log.AddLog("res = " + res);
 		}
 
 		private void ShowGetEventBaseWindow()

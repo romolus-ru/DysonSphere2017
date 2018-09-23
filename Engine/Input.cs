@@ -52,6 +52,18 @@ namespace Engine
 		private int _windowPosY;
 		private bool _initWinPos = true;
 		public Func<Point> OnGetWindowPos;
+		/// <summary>
+		/// Событие изменения модального режима
+		/// </summary>
+		public Action OnModalStateChanged;
+		/// <summary>
+		/// Событие запуска модального режима
+		/// </summary>
+		public Action OnModalStateStarted;
+		/// <summary>
+		/// Событие остановки модального режима
+		/// </summary>
+		public Action OnModalStateStoped;
 
 		/// <summary>
 		/// Кнопки в комбинациях, которые можно держать нажатыми, но комбинация будет считаться сработавшей
@@ -403,6 +415,7 @@ namespace Engine
 		public void ModalStateStart()
 		{
 			ModalStateChanged = true;
+			OnModalStateChanged?.Invoke();
 			_keyActionStack.Push(_keyAction);
 			_keyAction = new Dictionary<List<Keys>, Action>();
 
@@ -418,6 +431,7 @@ namespace Engine
 
 			_cursorMovedStack.Push(_cursorMoved);
 			_cursorMoved = null;
+			OnModalStateStarted?.Invoke();
 		}
 
 		/// <summary>
@@ -426,6 +440,7 @@ namespace Engine
 		public void ModalStateStop()
 		{
 			ModalStateChanged = true;
+			OnModalStateChanged?.Invoke();
 			if (_keyActionStack.Count == 0) throw new Exception("Модальный режим не запускался");
 			_keyAction = _keyActionStack.Pop();
 
@@ -445,6 +460,7 @@ namespace Engine
 			CursorX = -1;
 			CursorY = -1;
 			ProcessInput();
+			OnModalStateStoped?.Invoke();
 		}
 
 		private void AddKeyActionDict(Dictionary<List<Keys>, Action> dict, Action action, params Keys[] keyCombination)

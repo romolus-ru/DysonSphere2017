@@ -17,6 +17,8 @@ namespace Engine
 
 		public const int CursorFrequency = 20;
 
+		public const int HintHidePause = 3;
+
 		/// <summary>
 		/// Дистанция для начала перемещения. может меняться в зависимости от разрешения экрана
 		/// </summary>

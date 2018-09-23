@@ -96,7 +96,6 @@ namespace Engine.Visualization.Scroll
 		/// </summary>
 		protected virtual void NewCommand()
 		{
-
 		}
 
 		/// <summary>

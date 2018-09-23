@@ -5,6 +5,7 @@ using Engine.Visualization.Text;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 
 namespace EngineTools
 {
@@ -29,9 +30,8 @@ namespace EngineTools
 			_textFile = new ViewText();
 			AddComponent(_textFile);
 			_textFile.SetParams(200, 5, 500, 20, "File");
-			_textFile.CreateSplitedTextAuto(Color.Gray, null, "Unknown");
-			_textFile.CalculateTextPositions();
-
+			var fileName = string.IsNullOrEmpty(_classFile) ? "Unknown" : _classFile;
+			UpdateTextFile(fileName);
 			UpdateScroll();
 		}
 
@@ -53,16 +53,19 @@ namespace EngineTools
 			}
 			new SelectStringWindow().InitWindow(ViewManager, files, GetClasses, null);
 		}
-		
+
 		private void GetClasses(string fileName)
 		{
 			_classFile = fileName;
-			if (_textFile != null) {
-				_textFile.ClearTexts();
-				_textFile.CreateSplitedTextAuto(Color.White, null, fileName);
-				_textFile.CalculateTextPositions();
-			}
+			UpdateTextFile(fileName);
 			UpdateScroll();
+		}
+
+		private void UpdateTextFile(string fileName)
+		{
+			_textFile.ClearTexts();
+			_textFile.CreateSplitedTextAuto(Color.White, null, fileName);
+			_textFile.CalculateTextPositions();
 		}
 
 		private void UpdateScroll()
@@ -71,7 +74,7 @@ namespace EngineTools
 			if (string.IsNullOrEmpty(_classFile))
 				return;
 			var i = 2;
-			var classes = ToolsCollectorHelper.GetClassesInFile(StateEngine.AppPath + _classFile);
+			var classes = ToolsCollectorHelper.GetClassesInFile(StateEngine.AppPath + _classFile, ignoreViewClasses: true);
 			foreach (var cls in classes) {
 				var scrollItem = new SelectStringScrollItem(cls);
 				ViewScroll.AddComponent(scrollItem);

@@ -18,9 +18,9 @@ namespace Engine.Helpers
 		private static ViewManager _viewManager;
 		public static void SetViewManager(ViewManager viewManager) { if (viewManager != null) _viewManager = viewManager; }
 
-		public static void ShowHint(string hintText, string hintKeys = null)
+		public static void ShowHint(ViewComponent component, string hintText, string hintKeys = null)
 		{
-			_viewManager?.ShowHint(hintText, hintKeys);
+			_viewManager?.ShowHint(component, hintText, hintKeys);
 		}
 
 		public static void ShowBigMessage(string message)

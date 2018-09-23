@@ -412,7 +412,6 @@ namespace VisualizationOpenGL
 			var atlasFile = _atlasManager.GetAtlasFile(atlasName);
 			if (atlasFile == null) return false;
 
-			bool opacity = true;
 			// идентификатор текстуры
 			int imageId = 0;
 
@@ -446,7 +445,7 @@ namespace VisualizationOpenGL
 						textureCode = MakeGlTexture(GL.RGBA, Il.ilGetData(), width, height);
 						break;
 				}
-				var blendParam = opacity ? GL.SRC_ALPHA : GL.ONE;
+				var blendParam = /*opacity ?*/ GL.SRC_ALPHA;// : GL.ONE;
 				_atlasManager.InitAtlasTextures(atlasFile, textureCode, blendParam);
 
 				// активируем флаг, сигнализирующий успешную загрузку текстуры

@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.IO.Compression;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Engine.Utils
 {
 	public static class FileUtils
 	{
-
 		public static void LoadString(string archiveName, string fileName, out string value)
 		{
 			value = null;
@@ -47,8 +41,15 @@ namespace Engine.Utils
 			}
 		}
 
-
-
+		/// <summary>
+		/// Считываем напрямую содержимое файла как строку
+		/// </summary>
+		/// <param name="fileName"></param>
+		/// <returns></returns>
+		public static string LoadStringFromFile(string fileName)
+		{
+			return File.ReadAllText(fileName);
+		}
 
 	}
 }

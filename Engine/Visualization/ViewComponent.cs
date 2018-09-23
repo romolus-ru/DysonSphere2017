@@ -26,9 +26,9 @@ namespace Engine.Visualization
 		private int _x;
 		private int _y;
 		private int _z;
-		protected int _xScreen;// for mouse operations
-		protected int _yScreen;// for mouse operations
-		protected int _zScreen;// for mouse operations
+		protected internal int _xScreen;// for mouse operations
+		protected internal int _yScreen;// for mouse operations
+		protected internal int _zScreen;// for mouse operations
 
 		/// <summary>
 		/// Координата X объекта

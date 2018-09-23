@@ -14,5 +14,10 @@
 			_xScreen = newScreenPosX;
 			_yScreen = newScreenPosY;
 		}
+
+		public void CursorOverClear()
+		{
+			CursorOverOff();
+		}
 	}
 }

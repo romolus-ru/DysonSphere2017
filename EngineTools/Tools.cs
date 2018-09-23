@@ -53,6 +53,8 @@ namespace EngineTools
 			_collector.LoadClasses(classesList);
 			StateEngine.Collector = _collector;
 
+			StateEngine.Jint = new JintController();
+
 			// создаётся объект для работы с пользовательским вводом
 			var inputId = _datasupport.ServerSettingsGetValue("input");
 			_input = _collector.GetObject(inputId) as Input;

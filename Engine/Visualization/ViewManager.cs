@@ -34,6 +34,7 @@ namespace Engine.Visualization
 			_viewSystem.SetParams(0, 0, provider.CanvasWidth, provider.CanvasHeight, "ViewSystem");
 			_viewSystem.Init(Provider, input);
 			_input.AddCursorAction(_viewSystem.CursorHandler);
+			_input.OnModalStateChanged += CursorOverHide;
 
 			_viewCursor = new ViewCursor();
 			_viewCursor.Init(Provider, input);
@@ -41,6 +42,7 @@ namespace Engine.Visualization
 			_viewHint = new ViewHint();
 			_viewHint.Init(Provider, input);
 			_viewSystemTop.AddComponent(_viewHint);
+			_viewHint.Hide();
 
 			_viewBigMessages = new ViewBigMessages();
 			_viewBigMessages.Init(Provider, input);
@@ -48,6 +50,11 @@ namespace Engine.Visualization
 			_viewSystemTop.AddComponent(_viewBigMessages);
 			if (StateEngine.Log != null)
 				StateEngine.Log.OnNewLogRecieved += NewLogRecieved;
+		}
+
+		private void CursorOverHide()
+		{
+			_viewSystem.CursorOverClear();
 		}
 
 		/// <summary>
@@ -105,9 +112,9 @@ namespace Engine.Visualization
 			_viewSystem.SetScreenPos(windowPosX, windowPosY);
 		}
 
-		public void ShowHint(string hintText, string hintKeys = null)
+		public void ShowHint(ViewComponent component, string hintText, string hintKeys = null)
 		{
-			_viewHint.ShowHint(TimeSpan.FromSeconds(7), hintText, hintKeys);
+			_viewHint.ShowHint(component, TimeSpan.FromSeconds(Constants.HintHidePause), hintText, hintKeys);
 		}
 
 		private void NewLogRecieved(LogData logData)

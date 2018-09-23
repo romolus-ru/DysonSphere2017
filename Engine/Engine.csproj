@@ -30,8 +30,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Jint, Version=0.0.0.0, Culture=neutral, PublicKeyToken=2e92ba9c8d81157f, processorArchitecture=MSIL">
+      <HintPath>..\packages\Jint.2.11.58\lib\net451\Jint.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -105,6 +109,7 @@
     <Compile Include="Data\RewardsPackBasePack.cs" />
     <Compile Include="Data\RewardsPackCondition.cs" />
     <Compile Include="Data\RewardsUnit.cs" />
+    <Compile Include="Data\RandomSequences.cs" />
     <Compile Include="Data\SessionMiniGame.cs" />
     <Compile Include="Data\ShipDescription.cs" />
     <Compile Include="Data\ShipMegaShip.cs" />
@@ -139,6 +144,7 @@
     <Compile Include="Helpers\ViewHelper.cs" />
     <Compile Include="Input.cs" />
     <Compile Include="InputKeyStatePause.cs" />
+    <Compile Include="JintController.cs" />
     <Compile Include="Models\EventModel.cs" />
     <Compile Include="Models\Model.cs" />
     <Compile Include="Models\ModelMainClient.cs" />
@@ -226,7 +232,6 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

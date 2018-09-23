@@ -1,9 +1,5 @@
 ﻿using Engine.Helpers;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Engine.Visualization
 {
@@ -15,10 +11,37 @@ namespace Engine.Visualization
 		private string _hintText;
 		private string _hintKeys;
 		private DateTime _hintHideTime;
-		public void ShowHint(TimeSpan hintHideDelay, string hintText, string hintKeys)
+
+		protected override void InitObject(VisualizationProvider visualizationProvider, Input input)
 		{
+			base.InitObject(visualizationProvider, input);
+			Input.OnModalStateChanged += ModalStateChanging;
+		}
+
+		protected override void ClearObject()
+		{
+			Input.OnModalStateChanged -= ModalStateChanging;
+			base.ClearObject();
+		}
+
+		public void ShowHint(ViewComponent component, TimeSpan hintHideDelay, string hintText, string hintKeys)
+		{
+			if (string.IsNullOrEmpty(hintText))
+				return;
 			_hintText = hintText;
-			_hintKeys = hintKeys;
+			_hintKeys = hintKeys != "None" ? hintKeys : null;
+			X = component._xScreen;
+			Y = component._yScreen;
+			Height = component.Height;
+			Width = component.Width;
+
+			var f = VisualizationProvider.FontHeight / 2;
+			var l = VisualizationProvider.TextLength(_hintText + " " + _hintKeys);
+
+			if (X < 0) X = 0;
+			if (Y < 0) Y = 0;
+			if (X + l > VisualizationProvider.CanvasWidth) X = VisualizationProvider.CanvasWidth - l;
+			if (Y + f > VisualizationProvider.CanvasHeight) Y = VisualizationProvider.CanvasHeight - f;
 			_hintHideTime = DateTime.Now + hintHideDelay;
 			Show();
 		}
@@ -30,9 +53,14 @@ namespace Engine.Visualization
 			Hide();
 		}
 
+		public void ModalStateChanging()
+		{
+			HideHint();
+		}
+
 		public override void DrawObject(VisualizationProvider visualizationProvider)
 		{
-			GUIHelper.ShowHint(visualizationProvider, this, _hintText, _hintKeys);
+			GUIHelper.DrawHint(visualizationProvider, this, _hintText, _hintKeys);
 			if (_hintHideTime <= DateTime.Now) HideHint();
 		}
 	}

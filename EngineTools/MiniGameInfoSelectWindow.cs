@@ -61,17 +61,17 @@ namespace EngineTools
 			}
 			if (m != null) {
 				//InitWindow(ViewManager viewManager, MiniGames miniGame, MiniGamesInfos miniGameInfo, Action<string> saveData, Action cancel)
-				object[] parametersArray = { ViewManager, _miniGame, miniGameInfo, (Action<string>)SaveSection, null };
+				object[] parametersArray = { ViewManager, _miniGame, miniGameInfo, (Action<MiniGamesInfos, string>)SaveSection, null };
 				m.Invoke(window, parametersArray);
 			} else
 				StateEngine.Log.AddLog("InitWindow in ViewJsonWindow not found");
-
-			//new ViewJsonWindow().InitWindow(ViewManager, minigameInfo, UpdateGameInfo, dataSupport: _datasupport);
 		}
 
-		private void SaveSection(string newValue)
+		private void SaveSection(MiniGamesInfos miniGameInfos, string newValue)
 		{
 			// сохранить обновленные данные в секции
+			miniGameInfos.Values = newValue;
+			_datasupport.SaveChanges();
 		}
 
 		protected override void NewCommand()

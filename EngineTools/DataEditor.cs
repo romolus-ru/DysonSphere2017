@@ -1,5 +1,6 @@
 ﻿using Engine;
 using Engine.DataPlus;
+using Engine.EventSystem;
 using Engine.EventSystem.Event;
 using Engine.Helpers;
 using Engine.Visualization;
@@ -71,7 +72,10 @@ namespace EngineTools
 		protected override void OkCommand()
 		{
 			GetValues();
-			_update?.Invoke(_objectToEdit);
+			if (_update == null)
+				return;
+			var updater = _update;
+			Checkers.AddToCheckOnce(() => updater?.Invoke(_objectToEdit));
 		}
 
 		/// <summary>
@@ -97,7 +101,9 @@ namespace EngineTools
 
 		protected override void CancelCommand()
 		{
-			_cancel?.Invoke();
+			if (_cancel == null) return;
+			var canceler = _cancel;
+			Checkers.AddToCheckOnce(() => canceler?.Invoke());
 		}
 
 		public override void DrawObject(VisualizationProvider visualizationProvider)

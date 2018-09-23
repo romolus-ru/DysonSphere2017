@@ -1,12 +1,10 @@
 ﻿using Engine.EventSystem.Event;
-using System;
 using System.Reflection;
 using Engine.Visualization.Text;
 using Engine.Visualization;
 using Engine;
 using System.Drawing;
 using System.Windows.Forms;
-using Engine.Data;
 using System.Linq;
 
 namespace EngineTools
@@ -33,11 +31,11 @@ namespace EngineTools
 		{
 			base.InitObject(visualizationProvider, input);
 
-			var btnSelect = new ViewButton();
-			AddComponent(btnSelect);
-			btnSelect.InitButton(SelectClassInFile, "Select", "Выбрать", Keys.None);
-			btnSelect.SetParams(90, 10, 120, 30, "Выбрать");
-			btnSelect.InitTexture("textRB", "textRB");
+			var btnChange = new ViewButton();
+			AddComponent(btnChange);
+			btnChange.InitButton(SelectClassInFile, "Change", "Поменять", Keys.None);
+			btnChange.SetParams(90, 10, 120, 30, "Поменять");
+			btnChange.InitTexture("textRB", "textRB");
 
 			TextClass = new ViewText();
 			AddComponent(TextClass);
