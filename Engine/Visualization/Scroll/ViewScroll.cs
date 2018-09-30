@@ -2,14 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
-// TODO переделать. нужно что бы скрол принимал айтемы-генерики и мог выдать тот айтем который счас выбран
-// так же айтем-генерик должен легко переопределяться для вывода нужной информации
-// например что бы он мог получить строку и другую информацию для вывода на экран
 namespace Engine.Visualization
 {
 	/// <summary>

@@ -3,11 +3,7 @@ using Engine.Data;
 using Engine.Visualization;
 using Engine.Visualization.Scroll;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace EngineTools
