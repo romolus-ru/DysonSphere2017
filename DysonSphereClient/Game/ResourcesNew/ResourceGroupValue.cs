@@ -7,5 +7,10 @@
 	{
 		public ResourcesGroupEnum Group;
 		public int Value;
+		public ResourceGroupValue(ResourcesGroupEnum group, int value)
+		{
+			Group = group;
+			Value = value;
+		}
 	}
 }

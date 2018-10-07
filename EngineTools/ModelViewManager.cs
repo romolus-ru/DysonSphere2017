@@ -1,10 +1,5 @@
 ﻿using Engine;
 using Engine.Visualization;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EngineTools
 {
@@ -18,9 +13,7 @@ namespace EngineTools
 		
 		private ViewTools _vt;
 		private ModelTools _mt;
-
-		public Action OnExit;
-
+		
 		public void Start(ModelMain modelMain, ViewManager viewManager, DataSupportBase dataSupport)
 		{
 			_modelMain = modelMain;

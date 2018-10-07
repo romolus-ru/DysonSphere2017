@@ -61,6 +61,7 @@
     <Compile Include="Game\ModelTransportGame.cs" />
     <Compile Include="Game\Order.cs" />
     <Compile Include="Game\Orders.cs" />
+    <Compile Include="Game\OrdersNew\Order.cs" />
     <Compile Include="Game\OrdersNew\OrderInfo.cs" />
     <Compile Include="Game\OrdersNew\Orders.cs" />
     <Compile Include="Game\OrderViewInfo.cs" />
@@ -68,7 +69,9 @@
     <Compile Include="Game\QuestEnum.cs" />
     <Compile Include="Game\ResourcesNew\ResourceGroupValue.cs" />
     <Compile Include="Game\ResourcesNew\ResourceInfo.cs" />
+    <Compile Include="Game\ResourcesNew\ResourcesEnum.cs" />
     <Compile Include="Game\ResourcesNew\ResourcesGroupEnum.cs" />
+    <Compile Include="Game\ResourcesNew\ResourcesHolder.cs" />
     <Compile Include="Game\ResourcesNew\ResourceValue.cs" />
     <Compile Include="Game\Resources\ResourcesHelper.cs" />
     <Compile Include="Game\Resources\ResourceValue.cs" />

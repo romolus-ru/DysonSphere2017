@@ -17,7 +17,7 @@
 
 		public void CursorOverClear()
 		{
-			CursorOverOff();
+			CursorOverOff(offAll: true);
 		}
 	}
 }

@@ -5,7 +5,8 @@
 	/// </summary>
 	public class ResourceInfo
 	{
-		public ResourcesGroupEnum Group;
+		public ResourcesGroupEnum ResourceGroup;
+		public ResourcesEnum ResourceType;
 		public string Texture;
 		public string Name;
 		public string Description;

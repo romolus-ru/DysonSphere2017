@@ -10,7 +10,6 @@ using Tao.Platform.Windows;
 using OpenGL4NET;
 using Engine.Visualization;
 using Engine.Utils;
-using System.Windows.Media;
 
 namespace VisualizationOpenGL
 {
@@ -739,14 +738,23 @@ namespace VisualizationOpenGL
 				glm = fi.GlyphMetrics;
 			}
 
-			// https://doxygen.reactos.org/d1/dbc/3dtext_8c.html // nope
+			// https://gamedev.ru/code/forum/?id=32665
 			double len = w1251Bytes.Sum(c =>
 			{
 				var glc = glm[c];
-				return ((glc.gmfCellIncX + glc.gmfBlackBoxX / 2 - glc.gmfptGlyphOrigin.X));
+				return (glc.gmfCellIncX);
 			}
 			) * fontHeight;
-			return (int)len;// Math.Ceiling(len);
+			return (int)len;
+
+			//// https://doxygen.reactos.org/d1/dbc/3dtext_8c.html // nope
+			//double len = w1251Bytes.Sum(c =>
+			//{
+			//	var glc = glm[c];
+			//	return ((glc.gmfCellIncX + glc.gmfBlackBoxX / 2 - glc.gmfptGlyphOrigin.X));
+			//}
+			//) * fontHeight;
+			//return (int)len;// Math.Ceiling(len);
 		}
 
 		public override int GetFontSize(string font)
@@ -833,8 +841,10 @@ namespace VisualizationOpenGL
 		/// код шрифта у openGL
 		/// </summary>
 		private int _fontOpenGLList = -1;
+		private enum FontType { GdiFont, TextureFont }
 		class FontInfo
 		{
+			public FontType FontType;
 			public int FontHeight;
 			public int FontOpenGLList;
 			public Gdi.GLYPHMETRICSFLOAT[] GlyphMetrics;
@@ -881,6 +891,7 @@ namespace VisualizationOpenGL
 				_fontInfos.Add(fontCodeName, new FontInfo());
 			}
 			var fi = _fontInfos[fontCodeName];
+			fi.FontType = FontType.GdiFont;
 			fi.Font = font;
 			fi.FontOpenGLList = _fontOpenGLList;
 			fi.GlyphMetrics = _glyphMetrics;

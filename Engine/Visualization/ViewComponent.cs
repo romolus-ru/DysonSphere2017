@@ -357,12 +357,12 @@ namespace Engine.Visualization
 		/// <remarks>Можно сделать этот метод частью CursorHandler - он будет сбрасывать 
 		/// один раз состояние всех объектов. возможно будет меньше операций чем постоянный вызов
 		/// </remarks>
-		protected void CursorOverOff()
+		protected void CursorOverOff(bool offAll=false)
 		{
 			CursorOver = false;
-			if (CursorOverOffed) return;
+			if (CursorOverOffed && !offAll) return;
 			foreach (var component in Components) {
-				component.CursorOverOff();
+				component.CursorOverOff(offAll);
 			}
 			CursorOverOffed = true;
 		}
