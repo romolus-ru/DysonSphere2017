@@ -40,12 +40,12 @@ namespace Engine.Visualization
 			_viewCursor.Init(Provider, input);
 
 			_viewHint = new ViewHint();
-			_viewHint.Init(Provider, input);
+			//_viewHint.Init(Provider, input);
 			_viewSystemTop.AddComponent(_viewHint);
 			_viewHint.Hide();
 
 			_viewBigMessages = new ViewBigMessages();
-			_viewBigMessages.Init(Provider, input);
+			//_viewBigMessages.Init(Provider, input);
 			_viewBigMessages.SetParams(0, 0, provider.CanvasWidth, provider.CanvasHeight, "BigMessages");
 			_viewSystemTop.AddComponent(_viewBigMessages);
 			if (StateEngine.Log != null)

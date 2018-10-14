@@ -68,6 +68,7 @@ namespace Engine.Visualization
 		protected bool CursorOverOffed;
 
 		protected bool _cleared = false;
+		private bool _inited = false;
 
 		#endregion
 
@@ -138,7 +139,11 @@ namespace Engine.Visualization
 			_cleared = false;
 			VisualizationProvider = visualizationProvider;// сохраняем для будущего использования
 			Input = input;
-			InitObject(VisualizationProvider, input);
+			if (!_inited) {
+				_inited = true;
+				InitObject(VisualizationProvider, input);
+			} else
+				StateEngine.Log?.AddLog("object is inited twice or more " + this.GetType() + " " + Name);
 			Show(); 
 		}
 

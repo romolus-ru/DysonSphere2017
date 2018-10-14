@@ -135,6 +135,7 @@
     <Compile Include="EventSystem\Event\MessageString.cs" />
     <Compile Include="Exceptions\NoConnectionException.cs" />
     <Compile Include="Extensions\DictionaryExtensions.cs" />
+    <Compile Include="Extensions\ListExtensions.cs" />
     <Compile Include="GameInitializer.cs" />
     <Compile Include="Helpers\AttributesHelper.cs" />
     <Compile Include="Helpers\CryptoHelper.cs" />

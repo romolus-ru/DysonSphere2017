@@ -24,6 +24,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DysonSphereClient", "DysonS
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EngineTools", "EngineTools\EngineTools.csproj", "{3BEC5A20-56DB-4EDB-9AC2-B53D96FC7462}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpaceConstruction", "SpaceConstruction\SpaceConstruction.csproj", "{9D9E21FB-54B9-4F82-83C9-390AA2879BFF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -66,6 +68,10 @@ Global
 		{3BEC5A20-56DB-4EDB-9AC2-B53D96FC7462}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3BEC5A20-56DB-4EDB-9AC2-B53D96FC7462}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3BEC5A20-56DB-4EDB-9AC2-B53D96FC7462}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9D9E21FB-54B9-4F82-83C9-390AA2879BFF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9D9E21FB-54B9-4F82-83C9-390AA2879BFF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9D9E21FB-54B9-4F82-83C9-390AA2879BFF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9D9E21FB-54B9-4F82-83C9-390AA2879BFF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

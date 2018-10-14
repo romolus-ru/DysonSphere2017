@@ -36,17 +36,17 @@ namespace DysonSphereClient.Game.OrdersNew
 		/// Создаём копию заказа что бы оригинальный заказ не трогать
 		/// </summary>
 		/// <param name="orderInfo"></param>
-		private Order Create(OrderInfo orderInfo, int hardness)
+		public Order(OrderInfo orderInfo, int hardness = 1)
 		{
-			var order = new Order();
 			//order.AmountResources = copyOrder.AmountResources.GetCopy();
-			order.OrderName = orderInfo.Name;
-			order.OrderDescription = orderInfo.Description;
+			OrderName = orderInfo.Name;
+			OrderDescription = orderInfo.Description;
+			// генерируем сколько  нужно для заказа
+
 			if (hardness > 1) {
 				var multiplier = RandomHelper.Random(hardness) / hardness;
-				order.AmountResources.Increase(multiplier);
+				AmountResources.Increase(multiplier);
 			}
-			return order;
 		}
 
 		public List<string> GetInfo()
