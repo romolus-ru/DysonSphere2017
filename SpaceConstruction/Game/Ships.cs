@@ -1,7 +1,10 @@
 ﻿using Engine.Visualization;
+using SpaceConstruction.Game.Resources;
+using SpaceConstruction.Game.States;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using SpaceConstruction.Game.Orders;
 
 namespace SpaceConstruction.Game
 {
@@ -15,6 +18,7 @@ namespace SpaceConstruction.Game
 		/// Планета базирования кораблей
 		/// </summary>
 		private Planet _shipBase;
+		private ShipStates _shipStates = new ShipStates();
 		/// <summary>
 		/// Корабли перевезли весь нужный груз и заказ закрыт
 		/// </summary>
@@ -33,7 +37,15 @@ namespace SpaceConstruction.Game
 		private const int _defaultMaxShips = 1;
 		private int _tutorialAddShips = 0;
 		public Action OnShipBuyed;
-		
+		private Orders.Orders _orders;
+		private List<ResourceInfo> _resourceInfos;
+
+		public Ships(Orders.Orders orders)
+		{
+			_orders = orders;
+			_resourceInfos = _orders.ResourceInfos;
+		}
+
 		/// <summary>
 		/// Цена корабля, с учётом уже купленных и многих других факторов
 		/// </summary>
@@ -62,7 +74,7 @@ namespace SpaceConstruction.Game
 		internal void CreateShip()
 		{
 			var res = GetDefaultCargoCapacity();
-			var ship = new Ship(_shipBase, res);
+			var ship = new Ship(_shipBase, res, _shipStates);
 			ship.OnGetRoad = _onGetShipRoad;
 			ship.OnRaceEnded = RaceEnd;
 			ship.ShipNum = _ships.Count + 1;
@@ -72,10 +84,8 @@ namespace SpaceConstruction.Game
 
 		private ResourcesHolder GetDefaultCargoCapacity()
 		{
-			var ret = new ResourcesHolder();
-			ret.Add(ResourcesEnum.RawMaterials, 500);
-			ret.Add(ResourcesEnum.Consumables, 300);
-			ret.Add(ResourcesEnum.Tools, 20);
+			var ret = new ResourcesHolder(_resourceInfos);
+			// теперь будет задаваться объем трюма на корабле
 			return ret;
 		}
 
@@ -113,18 +123,18 @@ namespace SpaceConstruction.Game
 			if (order == null) return;
 			if (order.AmountResources.IsEmpty()) {
 				// заказ выполнен - отзываем все корабли связанные с этим заказом
-				money = order.Reward;
+				//money = order.Reward;
 				planet.Order = null;
-				planet.Building.BuilingType = BuildingEnum.Nope;
+				//planet.Building.BuilingType = BuildingEnum.Nope;
 				foreach (var ship in _ships) {
 					if (ship.OrderPlanetDestination != planet) continue;
 					ship.MoveToBasePrepare();
 				}
 				OnFinishOrder.Invoke();//CreateRandomOrder();
 			} else {
-				money = order.GetRewardForRace();
+				//money = order.GetRewardForRace();
 				var planetCargo = (Planet)shipEndOrder.OrderPlanetSource;
-				var cargo = planetCargo.Building.BuilingType.GetResourceEnum();
+				/*var cargo = planetCargo.Building.BuilingType.GetResourceEnum();
 				if (order.AmountResources.Value(cargo) <= 0) {
 					// один из ресурсов заказа выполнен - отзываем все корабли связанные с этим ресурсом
 					foreach (var ship in _ships) {
@@ -132,21 +142,10 @@ namespace SpaceConstruction.Game
 						if (ship.OrderPlanetSource != planetCargo) continue;
 						ship.MoveToBasePrepare();
 					}
-				}
+				}*/
 			}
 			// сигналим сколько денег заработал корабль
 			if (money > 0) OnRaceEnded?.Invoke(money);
-		}
-
-		/// <summary>
-		/// Получаем текущее количество денег
-		/// </summary>
-		public void ProcessMoney(int moneyCount)
-		{
-			if (BuyButtonActive) return;
-			if (moneyCount < GetShipCost()) return;
-			OnBuyButtonEnable?.Invoke();
-			BuyButtonActive = true;
 		}
 
 		public void BuyShip()

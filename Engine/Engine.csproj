@@ -131,6 +131,9 @@
     <Compile Include="Enums\TCPOperations.cs" />
     <Compile Include="Enums\TextAlign.cs" />
     <Compile Include="EventSystem\Checkers.cs" />
+    <Compile Include="EventSystem\EventHolderAction.cs" />
+    <Compile Include="EventSystem\EventHolderBase.cs" />
+    <Compile Include="EventSystem\EventsHolder.cs" />
     <Compile Include="EventSystem\Event\EventBase.cs" />
     <Compile Include="EventSystem\Event\MessageString.cs" />
     <Compile Include="Exceptions\NoConnectionException.cs" />

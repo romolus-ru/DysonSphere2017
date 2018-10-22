@@ -47,9 +47,27 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Client.cs" />
+    <Compile Include="Game\ModelTransportGame.cs" />
+    <Compile Include="Game\Orders\Order.cs" />
+    <Compile Include="Game\Orders\OrderInfo.cs" />
+    <Compile Include="Game\Orders\Orders.cs" />
+    <Compile Include="Game\Paths.cs" />
     <Compile Include="Game\Planet.cs" />
+    <Compile Include="Game\Resources\ResourceGroupValue.cs" />
+    <Compile Include="Game\Resources\ResourceInfo.cs" />
+    <Compile Include="Game\Resources\ResourcesEnum.cs" />
+    <Compile Include="Game\Resources\ResourcesGroupEnum.cs" />
+    <Compile Include="Game\Resources\ResourcesHolder.cs" />
+    <Compile Include="Game\Resources\ResourceValue.cs" />
+    <Compile Include="Game\Ship.cs" />
     <Compile Include="Game\ShipCommandsEnum.cs" />
     <Compile Include="Game\Ships.cs" />
+    <Compile Include="Game\States\ShipStates.cs" />
+    <Compile Include="Game\States\ShipStatesEnum.cs" />
+    <Compile Include="Game\ViewLabelIcon.cs" />
+    <Compile Include="Game\ViewShipPanel.cs" />
+    <Compile Include="Game\ViewShipsPanel.cs" />
+    <Compile Include="Game\ViewTransportGame.cs" />
     <Compile Include="ModelIntro.cs" />
     <Compile Include="ModelLoadResources.cs" />
     <Compile Include="ModelViewManager.cs" />

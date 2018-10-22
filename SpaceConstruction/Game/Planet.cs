@@ -1,22 +1,15 @@
 ﻿using Engine.Visualization;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using SpaceConstruction.Game.Orders;
 
 namespace SpaceConstruction.Game
 {
 	public class Planet : ScreenPoint
 	{
+		public bool IsDepot = false;
 		/// <summary>
 		/// Заказ на перевозку ресурсов
 		/// </summary>
 		public Order Order = null;
-		/// <summary>
-		/// Ископаемые ресурсы
-		/// </summary>
-		public ResourcesHolder Source = null;
 		public Planet()
 		{
 

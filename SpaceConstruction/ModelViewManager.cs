@@ -2,6 +2,8 @@
 using Engine.Data;
 using Engine.Models;
 using Engine.Visualization;
+using SpaceConstruction.Game;
+using SpaceConstruction.Game.Orders;
 using System;
 using System.Diagnostics;
 
@@ -88,7 +90,8 @@ namespace SpaceConstruction
 			_viewManager.RemoveView(_vm);
 			_vm = null;
 
-			var ships = new Ships();
+			var orders = new Orders();
+			var ships = new Ships(orders);
 			_mtg = new ModelTransportGame(ships);
 			_modelMainClient.AddModel(_mtg);
 
