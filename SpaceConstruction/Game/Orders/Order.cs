@@ -40,6 +40,7 @@ namespace SpaceConstruction.Game.Orders
 		public Order(OrderInfo orderInfo, int hardness = 1)
 		{
 			//order.AmountResources = copyOrder.AmountResources.GetCopy();
+			OrderInfo = orderInfo;
 			OrderName = orderInfo.Name;
 			OrderDescription = orderInfo.Description;
 			// генерируем сколько  нужно для заказа
@@ -54,7 +55,7 @@ namespace SpaceConstruction.Game.Orders
 		{
 			var ret = new List<string>();
 			ret.Add("Требуется перевезти");
-			ret.Add(AmountResources.GetInfo());
+			ret.AddRange(AmountResources.GetInfo());
 			return ret;
 		}
 	}

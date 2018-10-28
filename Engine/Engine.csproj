@@ -177,6 +177,7 @@
     <Compile Include="Utils\LogData.cs" />
     <Compile Include="Utils\LogSystem.cs" />
     <Compile Include="Utils\Query\Dynamic.cs" />
+    <Compile Include="Visualization\Console\ViewConsole.cs" />
     <Compile Include="Visualization\Debug\Modules\StateClientView.cs" />
     <Compile Include="Visualization\Debug\Modules\ComponentsView.cs" />
     <Compile Include="Visualization\Debug\DebugView.cs" />

@@ -73,6 +73,7 @@ namespace SpaceConstruction.Game
 		private bool _shipOnPlanet = false;
 		private bool _shipOnBase = true;
 		private bool _shipInSpace = false;
+		public int StoredPercent = 0;
 
 		private void ProcessTime()
 		{
@@ -81,26 +82,25 @@ namespace SpaceConstruction.Game
 			var ts = dt - _timeStore;
 			_timePassed += ts;
 			_timeStore = dt;
-			int percent = percentMax*_timePassed.Milliseconds / _timeCurrentPass.Milliseconds;
+			int percent = (int)(percentMax * _timePassed.TotalMilliseconds / _timeCurrentPass.TotalMilliseconds);
 			if (percent > percentMax) {
 				percent = percentMax;
 				_needStateChange = true;
 			}
+			StoredPercent = percent;
 			OnUpdateOperationProgress?.Invoke(percent);
 		}
 		
 		private void ProcessFly()
 		{
 			// полет между планетами
+			тут
 		}
 
 		private void ProcessState()
 		{
 			if (!_needStateChange) {
-				if (_currentState == ShipStatesEnum.MoveCargo
-					|| _currentState == ShipStatesEnum.MoveToCargo
-					|| _currentState == ShipStatesEnum.MoveToBase
-					)
+				if (IsStarFly())
 					ProcessFly();
 				else
 					ProcessTime();
@@ -118,11 +118,21 @@ namespace SpaceConstruction.Game
 				return;
 
 			// получаем следующую команду из списка команд
+			InitNextCommand();
+
+		}
+
+		private bool IsStarFly() 
+			=> _currentState == ShipStatesEnum.MoveCargo
+			|| _currentState == ShipStatesEnum.MoveToCargo
+			|| _currentState == ShipStatesEnum.MoveToBase;
+
+		private void InitNextCommand()
+		{
 			_currentState = ListStates[0];
 			ListStates.RemoveAt(0);
 
 			PreProcessCommands(ShipCommand, _currentState);
-
 		}
 
 		// возможно часть надо перенести в ShipState - что бы там менялось состояние и при необходимости вызывались команды для корабля и для заказов изменения были
@@ -143,6 +153,9 @@ namespace SpaceConstruction.Game
 			_timePassed = new TimeSpan();
 			_timeStore = DateTime.Now;
 			_timeCurrentPass = _timeLandingUp;// для примера. для каждого состояния желательно ввести своё отдельное время
+			if (IsStarFly()) {// формируем путь полета
+				тут
+			}
 		}
 
 		/// <summary>
@@ -176,6 +189,12 @@ namespace SpaceConstruction.Game
 		/// <returns>Успешно ли запустили</returns>
 		public bool MoveToOrder(Planet start, Planet end)
 		{
+			_shipCommand = ShipCommandsEnum.GetCargo;
+			OrderPlanetSource = start;
+			OrderPlanetDestination = end;
+			_statesProcessor.SwitchCommandTo(_shipCommand, ListStates);
+			InitNextCommand();
+
 			/*if (ShipCommand == ShipCommandEnum.NoCommand) {
 				//CurrentTarget = start;// начинаем движение от начальной точки
 				CurrentRoad?.Clear();
@@ -184,10 +203,7 @@ namespace SpaceConstruction.Game
 				var cargo = start.Building.BuilingType.GetResourceEnum();
 				var needCount = end.Order.AmountResources.Value(cargo);
 				if (needCount <= 0) return false;
-			}
-			ShipCommand = ShipCommandEnum.MoveToOrder;
-			OrderPlanetSource = start;
-			OrderPlanetDestination = end;*/
+			}*/
 			return true;
 		}
 
@@ -204,6 +220,7 @@ namespace SpaceConstruction.Game
 		/// </summary>
 		public void MoveNext()
 		{
+			ProcessMove();
 			/*if (ShipCommand == ShipCommandEnum.NoCommand) return;
 
 			if (TimeToWaitState == ShipCommandEnum.CargoLoad) {

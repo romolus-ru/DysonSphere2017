@@ -74,12 +74,12 @@ namespace SpaceConstruction.Game.Resources
 			return res;
 		}
 
-		public string GetInfo()
+		public List<string> GetInfo()
 		{
-			var s = "";
+			var s = new List<string>();
 			foreach (var res in _resources) {
 				if (res.Value == 0) continue;
-				s += "(" + res.ResType.ToString() + "," + res.Value.ToString() + ")";
+				s.Add("(" + res.ResType.ToString() + "," + res.Value.ToString() + ")");
 			}
 			return s;
 		}

@@ -80,6 +80,9 @@ namespace SpaceConstruction.Game
 			visualizationProvider.Print(X + (Width - l) / 2, Y + 55, operation);
 
 			visualizationProvider.Print(X + 10, Y + 70, "ИД=" + _ship.ShipNum.ToString());
+			visualizationProvider.Print(X + 10, Y + 85, "Команда " + _ship.ShipCommand);
+			visualizationProvider.Print(X + 10, Y + 100, "Состояние " + _ship._currentState);
+			visualizationProvider.Print(X + 10, Y + 115, "% " + _ship.StoredPercent);
 		}
 	}
 }

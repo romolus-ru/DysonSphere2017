@@ -3,6 +3,7 @@ using Engine.Helpers;
 using Engine.Visualization;
 using Engine.Visualization.Debug;
 using Engine.Visualization.Text;
+using SpaceConstruction.Game.Orders;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -17,7 +18,6 @@ namespace SpaceConstruction.Game
 		public Action OnExitPressed;
 		public Func<int, int, ScreenPoint> OnFindNearest;
 		public Action OnBuyShip;
-		public Action OnSelectPlanet;// = () => { };
 
 		private ViewManager _viewManager;
 		private List<Planet> _RoadPoints = new List<Planet>();
@@ -135,13 +135,13 @@ namespace SpaceConstruction.Game
 		}
 		private void SelectPoint()
 		{
-			// при клике на планету выводим диалог более подробный - и там будет кнопка запуска корабля для заказа (с выбором корабля)
-			if (_selected == null) {
-				if (_nearest == null) return;
-				_selected = _nearest;
-				OnSelectPlanet?.Invoke();
-				return;
-			}
+			// при клике на планету запускаем корабль если он один свбодный или в зависимости от настроек или открываем диалог кораблей и запускаем нужные корабли
+			if (_nearest == null) return;
+			var planet = _nearest as Planet;
+			if (planet.Order == null) return;
+			var res = _ships.SendShip(planet.Order.Source, planet.Order.Destination);
+			if (!res)
+				ViewHelper.ShowBigMessage("корабль не запустился");
 		}
 
 		public void MoneyChanged(int amount)
@@ -204,10 +204,6 @@ namespace SpaceConstruction.Game
 				DrawPlanetInfo(visualizationProvider, p);
 			}
 			if (_nearest != null) {
-				visualizationProvider.SetColor(Color.Black, 70);
-				visualizationProvider.Box(_nearest.X - 10, _nearest.Y - 10, 200, 100);
-				visualizationProvider.SetColor(Color.Green, 40);
-				visualizationProvider.Rectangle(_nearest.X - 10, _nearest.Y - 10, 200, 100);
 				DrawPlanetInfo(visualizationProvider, _nearest as Planet, isBright: true);
 			}
 
@@ -252,9 +248,9 @@ namespace SpaceConstruction.Game
 				visualizationProvider.SetColor(Color.White);
 			else
 				visualizationProvider.SetColor(Color.White, 75);
-			visualizationProvider.Rectangle(p.X - 1, p.Y - 1, 3, 3);
 
 			if (p.Order != null) {
+				visualizationProvider.Rectangle(p.X - 1, p.Y - 1, 3, 3);
 				var s = p.Order.GetInfo();
 				//visualizationProvider.Print(p.X, p.Y + 16, " +" + p.Order.Reward);
 				//visualizationProvider.DrawTextLineArtifacts();
@@ -276,11 +272,34 @@ namespace SpaceConstruction.Game
 			const int offsetResources = 16;
 			if (p.IsDepot)
 				visualizationProvider.DrawTexturePart(p.X - offsetResources, p.Y - offsetResources, "Resources.ShipDepot", offsetResources * 2, offsetResources * 2);
-			if (p.Order!=null)
-				visualizationProvider.DrawTexturePart(p.X - offsetResources+20, p.Y - offsetResources, "Resources.ShipDepot", offsetResources * 2, offsetResources * 2);
+			if (p.Order != null)
+				DrawPlanetOrderInfo(visualizationProvider, p, p == _nearest);
 
 		}
 
+		private void DrawPlanetOrderInfo(VisualizationProvider visualizationProvider, Planet p, bool fullView)
+		{
+			var o = p.Order;
+			if (fullView) {
+				visualizationProvider.SetColor(Color.Black, 70);
+				visualizationProvider.Box(_nearest.X - 10, _nearest.Y - 10, 200, 100);
+				visualizationProvider.SetColor(Color.Green, 40);
+				visualizationProvider.Rectangle(_nearest.X - 10, _nearest.Y - 10, 200, 100);
+
+				visualizationProvider.SetColor(Color.DarkSeaGreen);
+				visualizationProvider.Line(o.Destination.X, o.Destination.Y, o.Source.X, o.Source.Y);
+
+				var i = 0;
+				var oi = o.GetInfo();
+				foreach (var item in oi) {
+					i++;
+					visualizationProvider.Print(p.X, p.Y + 20 + i * 15, item);
+				}
+			}
+			visualizationProvider.SetColor(Color.White);
+			visualizationProvider.Print(p.X, p.Y, o.OrderName);
+			visualizationProvider.Print(p.X, p.Y + 20, o.OrderDescription);
+		}
 		/// <summary>
 		/// При изменении заказов проверить, не выделена ли теперь планета без заказа
 		/// </summary>

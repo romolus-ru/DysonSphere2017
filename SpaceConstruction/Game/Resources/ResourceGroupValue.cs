@@ -1,8 +1,11 @@
-﻿namespace SpaceConstruction.Game.Resources
+﻿using System.Diagnostics;
+
+namespace SpaceConstruction.Game.Resources
 {
 	/// <summary>
 	/// Количество требуемых материалов из группы материалов (требуемый объем)
 	/// </summary>
+	[DebuggerDisplay("{Value} {Group} {GetType()}")]
 	public class ResourceGroupValue
 	{
 		public ResourcesGroupEnum Group;

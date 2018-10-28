@@ -36,6 +36,7 @@ namespace SpaceConstruction.Game
 
 		public void RecreatePoints()
 		{
+			_orders.Clear();
 			var RoadEdges = new List<ScreenEdge>();
 			RoadPoints.Clear();
 			RoadPoints.AddRange(_paths.CreateGalaxy(70, 1200, 700, 100));
@@ -104,18 +105,37 @@ namespace SpaceConstruction.Game
 		{
 			var countOrders = _orders.ActualOrdersCount;
 			var needOrders = _orders.MaxOrders - countOrders;
-			if (needOrders > 0) {
-				for (int i = 0; i < needOrders; i++) {// создаём нужное количество заказов
-					var order = _orders.GetNewOrder(1);
-					int num = -1;
-					do {
-						num = RandomHelper.Random(RoadPoints.Count - 1) + 1;
-					} while (RoadPoints[num].Order != null);
-					RoadPoints[num].Order = order;
+			if (needOrders <= 0) return;
+			for (int i = 0; i < needOrders; i++) {// создаём нужное количество заказов
+				// если есть планеты к которым не подключены заказы
+				if (ExistsFreePlanetsForOrder()) {
+					CreateRandomOrder();
 				}
-				OnOrdersChanged?.Invoke();
 			}
+			OnOrdersChanged?.Invoke();
 		}
+
+		private void CreateRandomOrder()
+		{
+			var order = _orders.GetNewOrder(1);
+			int num = -1;
+			do {
+				num = RandomHelper.Random(RoadPoints.Count - 1) + 1;
+			} while (RoadPoints[num].Order != null);
+			RoadPoints[num].Order = order;
+			order.Destination = RoadPoints[num];
+			Planet source = null;
+			do {
+				num = RandomHelper.Random(RoadPoints.Count - 1) + 1;
+				if (RoadPoints[num].Order != null)
+					continue;
+				source = RoadPoints[num];
+			} while (source == null);
+			order.Source = source;
+		}
+
+		private bool ExistsFreePlanetsForOrder() 
+			=> RoadPoints.Where(r => r.Order == null).Count() >= 2;
 
 		/// <summary>
 		/// Получаем путь корабля от одной точки до другой

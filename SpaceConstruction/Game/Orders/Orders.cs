@@ -45,12 +45,20 @@ namespace SpaceConstruction.Game.Orders
 		}
 
 		/// <summary>
+		/// Удалить все имеющиеся заказы
+		/// </summary>
+		public void Clear()
+		{
+			_actualOrders.Clear();
+		}
+
+		/// <summary>
 		/// Формируем сколько ресурсов в заказе будет
 		/// </summary>
 		private void FillOrderResources(int level, Order order, OrderInfo orderInfo, List<ResourceInfo> resourceInfos)
 		{
 			foreach (var resGroup in orderInfo.ResourceGroupValues) {
-				var resGroupInfo = GetResourceGroupInfo(resourceInfos, resGroup);// уровень не учитывается пока
+				var resGroupInfo = GetResourceGroupInfo(resourceInfos, resGroup, level);
 				FillOrderResources(level, order, orderInfo, resourceInfos, resGroupInfo, resGroup.Value);
 			}
 		}
@@ -83,9 +91,12 @@ namespace SpaceConstruction.Game.Orders
 		/// <summary>
 		/// Получаем список ресурсов, входящих в группу ресурсов, вперемешку
 		/// </summary>
-		private List<ResourceInfo> GetResourceGroupInfo(List<ResourceInfo> resourceInfos, ResourceGroupValue resGroupValue)
+		private List<ResourceInfo> GetResourceGroupInfo(List<ResourceInfo> resourceInfos, ResourceGroupValue resGroupValue, int level)
 		{
-			var resGroupInfo = resourceInfos.Where(ri => ri.ResourceGroup == resGroupValue.Group).ToList();
+			var count = 3;// сколько ресурсов будет в заказе для этой группы ресурсов
+			if (level > 1) count = 500;
+			var resGroupInfo = resourceInfos.Where(ri => ri.ResourceGroup == resGroupValue.Group)
+				.Take(count).ToList();
 			resGroupInfo.Shuffle();
 			return resGroupInfo;
 		}
