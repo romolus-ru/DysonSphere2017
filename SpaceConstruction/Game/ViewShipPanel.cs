@@ -83,6 +83,8 @@ namespace SpaceConstruction.Game
 			visualizationProvider.Print(X + 10, Y + 85, "Команда " + _ship.ShipCommand);
 			visualizationProvider.Print(X + 10, Y + 100, "Состояние " + _ship._currentState);
 			visualizationProvider.Print(X + 10, Y + 115, "% " + _ship.StoredPercent);
+			visualizationProvider.Print(X + 10, Y + 125, "cargo " + _ship._cargoLoaded);
+			visualizationProvider.Print(X + 10, Y + 135, "space " + !_ship._shipOnPlanet);
 		}
 	}
 }

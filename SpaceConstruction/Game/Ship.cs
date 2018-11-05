@@ -28,6 +28,7 @@ namespace SpaceConstruction.Game
 		/// </summary>
 		public ScreenPoint Base;
 		public ScreenPoint CurrentTarget;
+		private ScreenPoint _currentPlanet;// текущее место нахождения корабля
 		public ScreenPoint OrderPlanetSource;
 		public ScreenPoint OrderPlanetDestination;
 		/// <summary>
@@ -50,7 +51,7 @@ namespace SpaceConstruction.Game
 		/// <summary>
 		/// Время для состояния взлёта
 		/// </summary>
-		private TimeSpan _timeLandingUp = new TimeSpan(0, 0, 5);
+		private TimeSpan _timeLandingUp = new TimeSpan(0, 0, 0, 0, milliseconds: 200);
 		/// <summary>
 		/// Предыдущее время расчета
 		/// </summary>
@@ -70,9 +71,8 @@ namespace SpaceConstruction.Game
 		public ShipStatesEnum _currentState = ShipStatesEnum.NoCommand;
 
 		private ShipStates _statesProcessor = null;
-		private bool _shipOnPlanet = false;
-		private bool _shipOnBase = true;
-		private bool _shipInSpace = false;
+		public bool _cargoLoaded = false;
+		public bool _shipOnPlanet = true;
 		public int StoredPercent = 0;
 
 		private void ProcessTime()
@@ -94,7 +94,10 @@ namespace SpaceConstruction.Game
 		private void ProcessFly()
 		{
 			// полет между планетами
-			тут
+			CurrentRoadPointNum++;
+			if (CurrentRoadPointNum >= (CurrentRoad?.Count ?? 0)) {
+				_needStateChange = true;
+			}
 		}
 
 		private void ProcessState()
@@ -110,6 +113,7 @@ namespace SpaceConstruction.Game
 			PostProcessCommands(ShipCommand, _currentState);
 
 			_needStateChange = false;
+			CurrentRoadPointNum = 0;
 			if (ListStates.Count == 0) {// получаем следующую команду
 				_statesProcessor.SetChainCommand(out _shipCommand, _shipCommand, ListStates);
 			}
@@ -139,10 +143,26 @@ namespace SpaceConstruction.Game
 		/// <summary>
 		/// Команды выполняемые при завершении состояния
 		/// </summary>
-		private void PostProcessCommands(ShipCommandsEnum shipCommand, ShipStatesEnum currentState)
+		private void PostProcessCommands(ShipCommandsEnum oldShipCommand, ShipStatesEnum currentState)
 		{
-			// для разгрузки срабатывает уже после "разгрзуки" - и из трюма выкладывается заказчику
+			добавить вывод заказа и взаимодействие с заказом
+			// для разгрузки срабатывает уже после "разгрузки" - и из трюма выкладывается заказчику
 			// а для загрузки сразу в preprocess - потащили со склада к кораблю и загружаем
+
+			if (currentState == ShipStatesEnum.Unloading)
+				_cargoLoaded = false;
+			if (currentState == ShipStatesEnum.Takeoff)
+				_shipOnPlanet = false;
+
+			// сохраняем текущее местоположение корабля
+			if (currentState == ShipStatesEnum.Landing) {
+				if (oldShipCommand == ShipCommandsEnum.MoveToBase)
+					_currentPlanet = Base;
+				if (oldShipCommand == ShipCommandsEnum.CargoDelivery)
+					_currentPlanet = OrderPlanetDestination;
+				if (oldShipCommand == ShipCommandsEnum.GetCargo)
+					_currentPlanet = OrderPlanetSource;
+			}
 		}
 
 		/// <summary>
@@ -150,11 +170,28 @@ namespace SpaceConstruction.Game
 		/// </summary>
 		private void PreProcessCommands(ShipCommandsEnum shipCommand, ShipStatesEnum currentState)
 		{
-			_timePassed = new TimeSpan();
+			//_cargoLoaded, _shipOnPlanet
+			if (_currentState == ShipStatesEnum.Loading)
+				_cargoLoaded = true;
+			if (_currentState == ShipStatesEnum.Landing)
+				_shipOnPlanet = true;
+
+		   _timePassed = new TimeSpan();
 			_timeStore = DateTime.Now;
 			_timeCurrentPass = _timeLandingUp;// для примера. для каждого состояния желательно ввести своё отдельное время
 			if (IsStarFly()) {// формируем путь полета
-				тут
+				ScreenPoint from = _currentPlanet;
+				ScreenPoint to = null;
+				if (_currentState == ShipStatesEnum.MoveCargo) {
+					to = OrderPlanetDestination;
+				}
+				if (_currentState == ShipStatesEnum.MoveToCargo) {
+					to = OrderPlanetSource;
+				}
+				if (_currentState == ShipStatesEnum.MoveToBase) {
+					to = Base;
+				}
+				CurrentRoad = OnGetRoad?.Invoke(from, to);
 			}
 		}
 
@@ -174,6 +211,7 @@ namespace SpaceConstruction.Game
 			TimeToWaitMax = 10;
 			TimeToWaitCurrent = 0;
 			Base = shipBase;
+			_currentPlanet = Base;
 			CurrentTarget = Base;
 			_cargoMax = cargoMax;
 			_statesProcessor = statesProcessor;
@@ -192,7 +230,7 @@ namespace SpaceConstruction.Game
 			_shipCommand = ShipCommandsEnum.GetCargo;
 			OrderPlanetSource = start;
 			OrderPlanetDestination = end;
-			_statesProcessor.SwitchCommandTo(_shipCommand, ListStates);
+			_statesProcessor.SwitchCommandTo(_shipCommand, ListStates, _cargoLoaded, _shipOnPlanet);
 			InitNextCommand();
 
 			/*if (ShipCommand == ShipCommandEnum.NoCommand) {

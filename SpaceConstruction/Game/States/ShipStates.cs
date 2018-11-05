@@ -84,13 +84,17 @@ namespace SpaceConstruction.Game.States
 		/// <summary>
 		/// Пришёл сигнал извне или корабль завершил выполнение команды - переключаем на другую команду
 		/// </summary>
-		public void SwitchCommandTo(ShipCommandsEnum newCommand, List<ShipStatesEnum> listStates)
+		public void SwitchCommandTo(ShipCommandsEnum newCommand, List<ShipStatesEnum> listStates, bool cargoLoaded, bool shipOnPlanet)
 		{
 			listStates.Clear();
 			var prepareCommand = _prepareStates.Where(pair => pair.Key == newCommand);// добавляем подготовочные команды
 			if (prepareCommand != null) {
 				var listPrep = _states[prepareCommand.First().Value];
-				if (listPrep != null)
+				if (!cargoLoaded)
+					listPrep.Remove(ShipStatesEnum.Unloading);
+				if (!shipOnPlanet)
+					listPrep.Remove(ShipStatesEnum.Takeoff);
+				if (listPrep != null && listPrep.Count > 0)
 					listStates.AddRange(listPrep);
 			}
 			var listCommand = _states[newCommand];// добавляем команды самой команды
