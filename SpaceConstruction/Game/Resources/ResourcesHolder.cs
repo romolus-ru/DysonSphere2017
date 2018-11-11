@@ -12,6 +12,18 @@ namespace SpaceConstruction.Game.Resources
 		private List<ResourceValue> _resources = new List<ResourceValue>();
 		private List<ResourceInfo> _resourceInfos = null;
 
+		public static ResourcesHolder operator + (ResourcesHolder r1, ResourcesHolder r2)
+		{
+			r1.Add(r2);
+			return r1;
+		}
+
+		public static ResourcesHolder operator -(ResourcesHolder r1, ResourcesHolder r2)
+		{
+			r1.Remove(r2);
+			return r1;
+		}
+
 		public ResourcesHolder(List<ResourceInfo> resourceInfos)
 		{
 			_resourceInfos = resourceInfos;
@@ -20,6 +32,11 @@ namespace SpaceConstruction.Game.Resources
 		public void Clear()
 		{
 			_resources.Clear();
+		}
+
+		public IEnumerator<ResourceValue> GetEnumerator()
+		{
+			return _resources.GetEnumerator();
 		}
 
 		public bool IsEmpty() => _resources.Sum(v => v.Value) == 0;
@@ -31,7 +48,8 @@ namespace SpaceConstruction.Game.Resources
 			var r = GetResource(resource);
 			return r != null ? r.Value : 0;
 		}
-		public void Add(ResourcesEnum resource, int value)
+
+		public ResourceValue GetResourceOrCreate(ResourcesEnum resource)
 		{
 			var r = GetResource(resource);
 			if (r == null) {
@@ -41,14 +59,35 @@ namespace SpaceConstruction.Game.Resources
 				r = new ResourceValue(ri);
 				_resources.Add(r);
 			}
+			return r;
+		}
+
+
+		public void Add(ResourcesEnum resource, int value)
+		{
+			var r = GetResourceOrCreate(resource);
 			r.Value += value;
 		}
 
 		public void Add(ResourcesHolder resources)
 		{
 			foreach (var value in resources._resources) {
-				var r = GetResource(value.ResType);
+				var r = GetResourceOrCreate(value.ResType);
 				r.Value += value.Value;
+			}
+		}
+
+		public void Remove(ResourcesEnum resource, int value)
+		{
+			var r = GetResourceOrCreate(resource);
+			r.Value -= value;
+		}
+
+		public void Remove(ResourcesHolder resources)
+		{
+			foreach (var value in resources._resources) {
+				var r = GetResourceOrCreate(value.ResType);
+				r.Value -= value.Value;
 			}
 		}
 

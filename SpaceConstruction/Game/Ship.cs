@@ -10,6 +10,9 @@ namespace SpaceConstruction.Game
 	{
 		public Action<int> OnUpdateOperationProgress = null;
 		private ResourcesHolder _cargoMax = null;
+		private int _cargoVolumeMax;
+		private int _cargoWeightMax;
+		private ResourcesHolder _cargoCurrent = null;
 
 		public Func<ScreenPoint, ScreenPoint, List<ScreenPoint>> OnGetRoad;
 		public Action<Ship> OnRaceEnded;
@@ -145,12 +148,13 @@ namespace SpaceConstruction.Game
 		/// </summary>
 		private void PostProcessCommands(ShipCommandsEnum oldShipCommand, ShipStatesEnum currentState)
 		{
-			добавить вывод заказа и взаимодействие с заказом
-			// для разгрузки срабатывает уже после "разгрузки" - и из трюма выкладывается заказчику
-			// а для загрузки сразу в preprocess - потащили со склада к кораблю и загружаем
-
-			if (currentState == ShipStatesEnum.Unloading)
+			if (currentState == ShipStatesEnum.Unloading) {
+				(OrderPlanetDestination as Planet).Order.UnloadToPlanetStore(_cargoCurrent);
+				_cargoCurrent.Clear();
 				_cargoLoaded = false;
+				if ((OrderPlanetDestination as Planet).Order.AmountResources.IsEmpty())
+					MoveToBasePrepare();
+			}
 			if (currentState == ShipStatesEnum.Takeoff)
 				_shipOnPlanet = false;
 
@@ -170,15 +174,25 @@ namespace SpaceConstruction.Game
 		/// </summary>
 		private void PreProcessCommands(ShipCommandsEnum shipCommand, ShipStatesEnum currentState)
 		{
-			//_cargoLoaded, _shipOnPlanet
-			if (_currentState == ShipStatesEnum.Loading)
+			if (_currentState == ShipStatesEnum.Loading) {// загружаем груз
+				(OrderPlanetDestination as Planet).Order.LoadToShipStore(_cargoCurrent, _cargoVolumeMax, _cargoWeightMax);
+				if (_cargoCurrent.IsEmpty()) {// если нечего загружать то ведём корабль на базу
+					MoveToBasePrepare();
+					return;
+				}
 				_cargoLoaded = true;
+			}
 			if (_currentState == ShipStatesEnum.Landing)
 				_shipOnPlanet = true;
 
 		   _timePassed = new TimeSpan();
 			_timeStore = DateTime.Now;
 			_timeCurrentPass = _timeLandingUp;// для примера. для каждого состояния желательно ввести своё отдельное время
+			if (shipCommand == ShipCommandsEnum.MoveToBase || shipCommand == ShipCommandsEnum.NoCommand) {
+				OrderPlanetDestination = null;
+				OrderPlanetSource = null;
+			}
+			
 			if (IsStarFly()) {// формируем путь полета
 				ScreenPoint from = _currentPlanet;
 				ScreenPoint to = null;
@@ -205,8 +219,7 @@ namespace SpaceConstruction.Game
 			ProcessState();
 		}
 
-
-		public Ship(ScreenPoint shipBase, ResourcesHolder cargoMax, ShipStates statesProcessor)
+		public Ship(ScreenPoint shipBase, ResourcesHolder shipWarehouse, ResourcesHolder cargoMax, ShipStates statesProcessor)
 		{
 			TimeToWaitMax = 10;
 			TimeToWaitCurrent = 0;
@@ -214,10 +227,11 @@ namespace SpaceConstruction.Game
 			_currentPlanet = Base;
 			CurrentTarget = Base;
 			_cargoMax = cargoMax;
+			_cargoVolumeMax = 100;
+			_cargoWeightMax = 100;
+			_cargoCurrent = shipWarehouse;
 			_statesProcessor = statesProcessor;
-		}
-
-		
+		}		
 
 		/// <summary>
 		/// Двигаться к выполнению заказа
@@ -247,6 +261,9 @@ namespace SpaceConstruction.Game
 
 		public void MoveToBasePrepare()
 		{
+			_shipCommand = ShipCommandsEnum.MoveToBase;
+			_statesProcessor.SwitchCommandTo(_shipCommand, ListStates, _cargoLoaded, _shipOnPlanet);
+			InitNextCommand();
 			/*ShipCommand = ShipCommandEnum.ToBase;
 			if (CurrentRoadPointNum == -1)
 				ProcessMoveToBase();

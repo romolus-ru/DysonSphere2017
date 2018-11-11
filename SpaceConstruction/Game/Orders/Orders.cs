@@ -86,6 +86,8 @@ namespace SpaceConstruction.Game.Orders
 					amount.Add(res.ResourceType, vvalue);
 			}
 			order.AmountResources = amount;
+			order.AmountResourcesDelivered = new ResourcesHolder(resourceInfos);
+			order.AmountResourcesInProgress = new ResourcesHolder(resourceInfos);
 		}
 
 		/// <summary>

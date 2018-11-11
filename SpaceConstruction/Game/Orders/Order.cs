@@ -1,5 +1,6 @@
 ﻿using Engine.Helpers;
 using SpaceConstruction.Game.Resources;
+using System;
 using System.Collections.Generic;
 
 namespace SpaceConstruction.Game.Orders
@@ -57,6 +58,46 @@ namespace SpaceConstruction.Game.Orders
 			ret.Add("Требуется перевезти");
 			ret.AddRange(AmountResources.GetInfo());
 			return ret;
+		}
+
+		/// <summary>
+		/// Получить со склада товар для перевозки
+		/// </summary>
+		/// <returns></returns>
+		public void LoadToShipStore(ResourcesHolder fillCargo, int totalVolume, int totalWeight)
+		{
+			fillCargo.Clear();
+			int freeVolume = totalVolume;
+			int freeWeight = totalWeight;
+			// проходим по ресурсам которые надо перевезти и добавляем их в зависимости от объема трюма
+			foreach (var resValue in AmountResources) {
+				if (resValue.Value <= 0)
+					continue;
+				float rVolume = resValue.ResInfo.VolumeCoefficient;
+				float rWeight = resValue.ResInfo.DencityCoefficient;
+				var cVolume = freeVolume / rVolume;
+				var cWeight = freeWeight / rWeight;
+				if (cVolume < 1 || cWeight < 1) continue;// чтоб хоть 1 товар умещался
+
+				int countResCargo = (int)Math.Min(resValue.Value, Math.Floor(Math.Min(cVolume, cWeight)));
+				
+				fillCargo.Add(resValue.ResType, countResCargo);
+				freeVolume -= (int)Math.Ceiling(countResCargo * rVolume);
+				freeWeight -= (int)Math.Ceiling(countResCargo * rWeight);
+			}
+
+			AmountResources -= fillCargo;
+			AmountResourcesInProgress += fillCargo;
+		}
+
+		/// <summary>
+		/// Сгрузить всё с корабля на склад заказчика
+		/// </summary>
+		/// <param name="_cargoCurrent"></param>
+		public void UnloadToPlanetStore(ResourcesHolder _cargoCurrent)
+		{
+			AmountResourcesInProgress -= _cargoCurrent;
+			AmountResourcesDelivered += _cargoCurrent;
 		}
 	}
 }

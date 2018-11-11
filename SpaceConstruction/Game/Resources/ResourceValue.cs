@@ -1,11 +1,15 @@
-﻿namespace SpaceConstruction.Game.Resources
+﻿using System.Diagnostics;
+
+namespace SpaceConstruction.Game.Resources
 {
+	[DebuggerDisplay("res = {ResType} Value = {Value}")]
 	public class ResourceValue
 	{
 		public ResourcesGroupEnum ResGroup { get; } = ResourcesGroupEnum.Error;
 		public ResourcesEnum ResType { get; } = ResourcesEnum.Error;
 		public float Weight { get; private set; }
 		public float Volume { get; private set; }
+		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		private int _value;
 		public int Value {
 			get {

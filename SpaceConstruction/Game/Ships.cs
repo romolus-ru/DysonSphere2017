@@ -74,7 +74,7 @@ namespace SpaceConstruction.Game
 		internal void CreateShip()
 		{
 			var res = GetDefaultCargoCapacity();
-			var ship = new Ship(_shipBase, res, _shipStates);
+			var ship = new Ship(_shipBase, new ResourcesHolder(_resourceInfos), res, _shipStates);
 			ship.OnGetRoad = _onGetShipRoad;
 			ship.OnRaceEnded = RaceEnd;
 			ship.ShipNum = _ships.Count + 1;
