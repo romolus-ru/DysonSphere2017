@@ -147,5 +147,16 @@ namespace SpaceConstruction.Game.Resources
 				res.Value += increase;
 			}
 		}
+
+		public float Volume()
+		{
+			var volume = 0f;
+			foreach (var res in _resources) {
+				volume += res.Volume;
+			}
+			return volume;
+		}
+
+
 	}
 }

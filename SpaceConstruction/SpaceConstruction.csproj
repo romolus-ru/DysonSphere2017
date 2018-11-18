@@ -62,12 +62,14 @@
     <Compile Include="Game\Ship.cs" />
     <Compile Include="Game\ShipCommandsEnum.cs" />
     <Compile Include="Game\Ships.cs" />
+    <Compile Include="Game\States\PlayerState.cs" />
     <Compile Include="Game\States\ShipStates.cs" />
     <Compile Include="Game\States\ShipStatesEnum.cs" />
     <Compile Include="Game\ViewLabelIcon.cs" />
     <Compile Include="Game\ViewShipPanel.cs" />
     <Compile Include="Game\ViewShipsPanel.cs" />
     <Compile Include="Game\ViewTransportGame.cs" />
+    <Compile Include="Game\Windows\ResourcesInfosViewWindow.cs" />
     <Compile Include="ModelIntro.cs" />
     <Compile Include="ModelLoadResources.cs" />
     <Compile Include="ModelViewManager.cs" />

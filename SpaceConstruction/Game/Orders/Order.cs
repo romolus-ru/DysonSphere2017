@@ -38,6 +38,10 @@ namespace SpaceConstruction.Game.Orders
 		/// </summary>
 		public Planet Source;
 
+		public float ProgressMax;// всего
+		public float ProgressMoved;// перемещено
+		public float ProgressInMove;// перемещается
+
 		public Order(OrderInfo orderInfo, int hardness = 1)
 		{
 			//order.AmountResources = copyOrder.AmountResources.GetCopy();
@@ -50,6 +54,13 @@ namespace SpaceConstruction.Game.Orders
 				var multiplier = RandomHelper.Random(hardness) / hardness;
 				AmountResources.Increase(multiplier);
 			}
+		}
+
+		public void InitProgress()
+		{
+			ProgressMax = AmountResources.Volume();
+			ProgressMoved = 0;
+			ProgressInMove = 0;
 		}
 
 		public List<string> GetInfo()
@@ -88,6 +99,7 @@ namespace SpaceConstruction.Game.Orders
 
 			AmountResources -= fillCargo;
 			AmountResourcesInProgress += fillCargo;
+			ProgressInMove += fillCargo.Volume();
 		}
 
 		/// <summary>
@@ -98,6 +110,8 @@ namespace SpaceConstruction.Game.Orders
 		{
 			AmountResourcesInProgress -= _cargoCurrent;
 			AmountResourcesDelivered += _cargoCurrent;
+			ProgressInMove -= _cargoCurrent.Volume();
+			ProgressMoved += _cargoCurrent.Volume();
 		}
 	}
 }

@@ -88,6 +88,9 @@ namespace SpaceConstruction.Game.Orders
 			order.AmountResources = amount;
 			order.AmountResourcesDelivered = new ResourcesHolder(resourceInfos);
 			order.AmountResourcesInProgress = new ResourcesHolder(resourceInfos);
+			order.InitProgress();
+			вывод списка ресурсов игры
+				создание нового заказа через время после выполнение заказа
 		}
 
 		/// <summary>

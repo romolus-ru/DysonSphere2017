@@ -4,6 +4,8 @@ using Engine.Visualization;
 using Engine.Visualization.Debug;
 using Engine.Visualization.Text;
 using SpaceConstruction.Game.Orders;
+using SpaceConstruction.Game.Resources;
+using SpaceConstruction.Game.Windows;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -18,6 +20,7 @@ namespace SpaceConstruction.Game
 		public Action OnExitPressed;
 		public Func<int, int, ScreenPoint> OnFindNearest;
 		public Action OnBuyShip;
+		public List<ResourceInfo> ResourceInfos;
 
 		private ViewManager _viewManager;
 		private List<Planet> _RoadPoints = new List<Planet>();
@@ -81,6 +84,12 @@ namespace SpaceConstruction.Game
 			btnShop.SetParams(250, 105, 140, 30, "btnShop");
 			btnShop.InitTexture("textRB", "textRB");
 
+			var btnRIView = new ViewButton();
+			AddComponent(btnRIView);
+			btnRIView.InitButton(RIView, "btnRIView", "hint", Keys.S);
+			btnRIView.SetParams(250, 135, 140, 30, "btnRIView");
+			btnRIView.InitTexture("textRB", "textRB");
+
 			var btnBigMessage = new ViewButton();
 			AddComponent(btnBigMessage);
 			btnBigMessage.InitButton(AddBigMessage, "AddBigMessage", "hint", Keys.U);
@@ -125,6 +134,11 @@ namespace SpaceConstruction.Game
 		private void ShowShop()
 		{
 			//new ShopWindow().InitWindow(_viewManager);
+		}
+
+		private void RIView()
+		{
+			new ResourcesInfosViewWindow().InitWindow(_viewManager, ResourceInfos);
 		}
 
 		private void RecreatePoints()
@@ -251,7 +265,7 @@ namespace SpaceConstruction.Game
 
 			if (p.Order != null) {
 				visualizationProvider.Rectangle(p.X - 1, p.Y - 1, 3, 3);
-				var s = p.Order.GetInfo();
+				//var s = p.Order.GetInfo();
 				//visualizationProvider.Print(p.X, p.Y + 16, " +" + p.Order.Reward);
 				//visualizationProvider.DrawTextLineArtifacts();
 				//visualizationProvider.PrintTexture("Money.MR", null);
@@ -299,6 +313,16 @@ namespace SpaceConstruction.Game
 			visualizationProvider.SetColor(Color.White);
 			visualizationProvider.Print(p.X, p.Y, o.OrderName);
 			visualizationProvider.Print(p.X, p.Y + 20, o.OrderDescription);
+			var k = 200 / o.ProgressMax;
+			int ttl = (int)(o.ProgressMax * k);
+			int inp = (int)(o.ProgressInMove * k);
+			int mvd = (int)(o.ProgressMoved * k);
+			visualizationProvider.SetColor(Color.Red);
+			visualizationProvider.Box(p.X + inp + mvd, p.Y - 30, ttl - inp - mvd, 15);
+			visualizationProvider.SetColor(Color.Yellow);
+			visualizationProvider.Box(p.X + mvd, p.Y - 30, inp, 15);
+			visualizationProvider.SetColor(Color.Green);
+			visualizationProvider.Box(p.X, p.Y - 30, mvd, 15);
 		}
 		/// <summary>
 		/// При изменении заказов проверить, не выделена ли теперь планета без заказа
