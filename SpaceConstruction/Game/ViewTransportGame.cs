@@ -21,6 +21,7 @@ namespace SpaceConstruction.Game
 		public Func<int, int, ScreenPoint> OnFindNearest;
 		public Action OnBuyShip;
 		public List<ResourceInfo> ResourceInfos;
+		public List<OrderInfo> OrderInfos;
 
 		private ViewManager _viewManager;
 		private List<Planet> _RoadPoints = new List<Planet>();
@@ -87,8 +88,20 @@ namespace SpaceConstruction.Game
 			var btnRIView = new ViewButton();
 			AddComponent(btnRIView);
 			btnRIView.InitButton(RIView, "btnRIView", "hint", Keys.S);
-			btnRIView.SetParams(250, 135, 140, 30, "btnRIView");
+			btnRIView.SetParams(250, 135, 60, 30, "btnRIView");
 			btnRIView.InitTexture("textRB", "textRB");
+
+			var btnOIView = new ViewButton();
+			AddComponent(btnOIView);
+			btnOIView.InitButton(OIView, "btnOIView", "hint", Keys.S);
+			btnOIView.SetParams(320, 135, 60, 30, "btnOIView");
+			btnOIView.InitTexture("textRB", "textRB");
+
+			var btnSUEView = new ViewButton();
+			AddComponent(btnSUEView);
+			btnSUEView.InitButton(SUEView, "btnSUEView", "hint", Keys.S);
+			btnSUEView.SetParams(250, 175, 140, 20, "btnSUEView");
+			btnSUEView.InitTexture("textRB", "textRB");
 
 			var btnBigMessage = new ViewButton();
 			AddComponent(btnBigMessage);
@@ -108,7 +121,7 @@ namespace SpaceConstruction.Game
 			_showMoney = ViewLabelIcon.Create(300, 20, Color.Red, "0", "bigFont", "Money.MR");
 			AddComponent(_showMoney);
 
-			var viewText = new ViewText();
+			/*var viewText = new ViewText();
 			AddComponent(viewText);
 			viewText.SetParams(250, 140, 180, 50, "ViewText");
 			var tr = viewText.CreateTextRow();
@@ -118,7 +131,7 @@ namespace SpaceConstruction.Game
 			viewText.AddText(tr, Color.Green, null, "Green");
 			var tr2 = viewText.CreateTextRow();
 			viewText.AddText(tr2, Color.Red, null, "color = Red 2 ");
-			viewText.CalculateTextPositions();
+			viewText.CalculateTextPositions();*/
 
 			Input.AddKeyActionSticked(SelectPoint, Keys.LButton);
 			visualizationProvider.InitShader();
@@ -141,6 +154,16 @@ namespace SpaceConstruction.Game
 			new ResourcesInfosViewWindow().InitWindow(_viewManager, ResourceInfos);
 		}
 
+		private void OIView()
+		{
+			new OrdersInfosViewWindow().InitWindow(_viewManager, OrderInfos);
+		}
+
+		private void SUEView()
+		{
+			new ShipUpgradesEditWindow().InitWindow(_viewManager, new Ship(null, null, null, null));
+		}
+		
 		private void RecreatePoints()
 		{
 			_selected = null;

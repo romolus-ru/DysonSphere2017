@@ -47,6 +47,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Client.cs" />
+    <Compile Include="Game\Items\Item.cs" />
+    <Compile Include="Game\Items\ItemManager.cs" />
+    <Compile Include="Game\Items\ItemsManager.cs" />
+    <Compile Include="Game\Items\ItemTypeEnum.cs" />
+    <Compile Include="Game\Items\ItemUpgrade.cs" />
+    <Compile Include="Game\Items\ItemUpgradeQualityEnum.cs" />
+    <Compile Include="Game\Items\ItemUpgradeValue.cs" />
     <Compile Include="Game\ModelTransportGame.cs" />
     <Compile Include="Game\Orders\Order.cs" />
     <Compile Include="Game\Orders\OrderInfo.cs" />
@@ -69,7 +76,11 @@
     <Compile Include="Game\ViewShipPanel.cs" />
     <Compile Include="Game\ViewShipsPanel.cs" />
     <Compile Include="Game\ViewTransportGame.cs" />
+    <Compile Include="Game\Windows\OrdersInfosScrollIem.cs" />
+    <Compile Include="Game\Windows\OrdersInfosViewWindow.cs" />
+    <Compile Include="Game\Windows\ResourcesInfosScrollItem.cs" />
     <Compile Include="Game\Windows\ResourcesInfosViewWindow.cs" />
+    <Compile Include="Game\Windows\ShipUpgradesEditWindow.cs" />
     <Compile Include="ModelIntro.cs" />
     <Compile Include="ModelLoadResources.cs" />
     <Compile Include="ModelViewManager.cs" />

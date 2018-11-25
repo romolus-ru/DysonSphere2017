@@ -188,8 +188,6 @@ namespace Engine.Visualization
 		/// </summary>
 		private void MoveScrollItems()
 		{
-			if (_scrollWidth + 2 * Constants.ScrollMoveBorder < Width) return;
-
 			var dxLeft = _scrollOffsetX - Constants.ScrollMoveBorder;
 			if (dxLeft > 0) ScrollItems(-dxLeft, 0);
 

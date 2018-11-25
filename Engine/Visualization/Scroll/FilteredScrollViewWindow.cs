@@ -103,12 +103,20 @@ namespace Engine.Visualization.Scroll
 		/// </summary>
 		protected virtual void UpdateScrollViewSize()
 		{
-			var pos = 5;
 			var items = ViewScroll.GetItems();
+			var rowHeight = 0;
+			var x = 10;
+			var y = 5;
 			foreach (var item in items) {
 				if (!item.Visible) continue;
-				item.SetCoordinates(10, pos);
-				pos += item.Height;
+				item.SetCoordinates(x, y);
+				rowHeight = Math.Max(rowHeight, item.Height);
+				x += item.Width;
+				if (x > Height) {
+					x = 10;
+					y += rowHeight;
+					rowHeight = 0;
+				}
 			}
 			ViewScroll.CalcScrollSize();
 		}

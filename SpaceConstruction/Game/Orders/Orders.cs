@@ -16,7 +16,7 @@ namespace SpaceConstruction.Game.Orders
 		/// <summary>
 		/// Описания заказов
 		/// </summary>
-		private List<OrderInfo> _orderInfos;
+		public readonly List<OrderInfo> OrderInfos;
 		/// <summary>
 		/// исходная информация о ресурсах
 		/// </summary>
@@ -27,7 +27,7 @@ namespace SpaceConstruction.Game.Orders
 		public Orders()
 		{
 			MaxOrders = INITORDERSCOUNT;
-			_orderInfos = new List<OrderInfo>();
+			OrderInfos = new List<OrderInfo>();
 			_actualOrders = new List<Order>();
 			InitOrderInfos();
 			InitResourceInfos();
@@ -35,7 +35,7 @@ namespace SpaceConstruction.Game.Orders
 
 		public Order GetNewOrder(int level)
 		{
-			var orderInfos = _orderInfos.Where(oi => oi.Level <= level).ToList();
+			var orderInfos = OrderInfos.Where(oi => oi.Level <= level).ToList();
 			var num = RandomHelper.Random(orderInfos.Count);
 			var orderInfo = orderInfos[num];
 			var order = new Order(orderInfo);
@@ -89,8 +89,6 @@ namespace SpaceConstruction.Game.Orders
 			order.AmountResourcesDelivered = new ResourcesHolder(resourceInfos);
 			order.AmountResourcesInProgress = new ResourcesHolder(resourceInfos);
 			order.InitProgress();
-			вывод списка ресурсов игры
-				создание нового заказа через время после выполнение заказа
 		}
 
 		/// <summary>
@@ -150,7 +148,7 @@ namespace SpaceConstruction.Game.Orders
 			if (decMat > 0) order.ResourceGroupValues.Add(new ResourceGroupValue(ResourcesGroupEnum.DecorationMaterial, decMat));
 			if (mchMat > 0) order.ResourceGroupValues.Add(new ResourceGroupValue(ResourcesGroupEnum.Mechs, mchMat));
 
-			_orderInfos.Add(order);
+			OrderInfos.Add(order);
 		}
 
 		private void InitResourceInfos()

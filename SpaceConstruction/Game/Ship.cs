@@ -1,4 +1,5 @@
 ﻿using Engine.Visualization;
+using SpaceConstruction.Game.Items;
 using SpaceConstruction.Game.Resources;
 using SpaceConstruction.Game.States;
 using System;
@@ -77,6 +78,8 @@ namespace SpaceConstruction.Game
 		public bool _cargoLoaded = false;
 		public bool _shipOnPlanet = true;
 		public int StoredPercent = 0;
+
+		internal List<Item> Upgrades = new List<Item>();
 
 		private void ProcessTime()
 		{

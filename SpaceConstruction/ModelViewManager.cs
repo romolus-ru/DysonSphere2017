@@ -105,6 +105,7 @@ namespace SpaceConstruction
 			_vtg.OnFindNearest += _mtg.FindNearest;
 			_vtg.OnBuyShip += _mtg.BuyShip;
 			_vtg.ResourceInfos = orders.ResourceInfos;
+			_vtg.OrderInfos = orders.OrderInfos;
 
 			//_vtg.OnGetPath += _mtg.GetPath;
 			_mtg.OnMoneyChanged += _vtg.MoneyChanged;
