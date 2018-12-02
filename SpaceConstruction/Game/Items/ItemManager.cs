@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 namespace SpaceConstruction.Game.Items
 {
 	/// <summary>
@@ -33,6 +28,12 @@ namespace SpaceConstruction.Game.Items
 			Item = item;
 			PlayerCount = count;
 			RestrictBuyTimerName = restrictBuyTimerName;
+		}
+
+		public bool IsActive {
+			get {
+				return PlayerCount - SetupCount > 0;
+			}
 		}
 	}
 }

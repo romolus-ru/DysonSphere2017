@@ -161,7 +161,7 @@ namespace SpaceConstruction.Game
 
 		private void SUEView()
 		{
-			new ShipUpgradesEditWindow().InitWindow(_viewManager, new Ship(null, null, null, null));
+			new ShipUpgradesEditWindow().InitWindow(_viewManager, new Ship(null, null, null));
 		}
 		
 		private void RecreatePoints()
@@ -172,7 +172,7 @@ namespace SpaceConstruction.Game
 		}
 		private void SelectPoint()
 		{
-			// при клике на планету запускаем корабль если он один свбодный или в зависимости от настроек или открываем диалог кораблей и запускаем нужные корабли
+			// при клике на планету запускаем корабль если он один свободный или в зависимости от настроек или открываем диалог кораблей и запускаем нужные корабли
 			if (_nearest == null) return;
 			var planet = _nearest as Planet;
 			if (planet.Order == null) return;

@@ -198,7 +198,7 @@ namespace Engine.Visualization
 			var dxTop = _scrollOffsetY - Constants.ScrollMoveBorder;
 			if (dxTop > 0) ScrollItems(0, -dxTop);
 
-			var dxBottom = Y + Height - _scrollOffsetY - _scrollHeight - 3 * Constants.ScrollMoveBorder;
+			var dxBottom = Height - _scrollOffsetY - _scrollHeight - Constants.ScrollMoveBorder;
 			//X+_scrollWidth - _scrollOffsetX - Width;// + Constants.ScrollMoveBorder;
 			if (dxBottom > 0) ScrollItems(0, dxBottom);
 
@@ -212,7 +212,7 @@ namespace Engine.Visualization
 
 			var dxTopBack = _scrollOffsetY;
 			if (dxTopBack > 0) ScrollItems(0, -dxTopBack / 10);
-			var dxBottomBack = Y + Height - _scrollOffsetY - _scrollHeight - 2 * Constants.ScrollMoveBorder;
+			var dxBottomBack = Height - _scrollOffsetY - _scrollHeight - Constants.ScrollMoveBorder;
 			//X - _scrollOffsetX - Width + Constants.ScrollMoveBorder;
 			if (dxBottomBack > 0) ScrollItems(0, dxBottomBack / 10);
 

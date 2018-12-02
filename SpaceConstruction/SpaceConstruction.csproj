@@ -81,6 +81,9 @@
     <Compile Include="Game\Windows\ResourcesInfosScrollItem.cs" />
     <Compile Include="Game\Windows\ResourcesInfosViewWindow.cs" />
     <Compile Include="Game\Windows\ShipUpgradesEditWindow.cs" />
+    <Compile Include="Game\Windows\ShipUpgradesLinkedItem.cs" />
+    <Compile Include="Game\Windows\ShipUpgradesScrollItem.cs" />
+    <Compile Include="Game\Windows\ShipUpgradesViewShipInfo.cs" />
     <Compile Include="ModelIntro.cs" />
     <Compile Include="ModelLoadResources.cs" />
     <Compile Include="ModelViewManager.cs" />

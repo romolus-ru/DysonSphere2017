@@ -10,9 +10,16 @@ namespace SpaceConstruction.Game
 	public class Ship
 	{
 		public Action<int> OnUpdateOperationProgress = null;
-		private ResourcesHolder _cargoMax = null;
-		private int _cargoVolumeMax;
-		private int _cargoWeightMax;
+		public int CargoVolumeMax { get; private set; }
+		public int CargoWeightMax { get; private set; }
+		public int XPAdd { get; private set; }
+		private int XPAddDefault = 25;
+		public bool TeleportInstalled { get; private set; }
+		public int TeleportDistance { get; private set; }
+		public double EngineForce { get; private set; }
+		private double EngineForceDefault = 1;
+		public bool AutoPilot { get; private set; }
+
 		private ResourcesHolder _cargoCurrent = null;
 
 		public Func<ScreenPoint, ScreenPoint, List<ScreenPoint>> OnGetRoad;
@@ -40,9 +47,9 @@ namespace SpaceConstruction.Game
 		/// </summary>
 		public int TimeToWaitMax;
 		public int TimeToWaitCurrent;
+
 		public ShipCommandsEnum TimeToWaitState = ShipCommandsEnum.NoCommand;
 		public int ShipNum;
-
 
 		/// <summary>
 		/// Сколько времени прошло с начала состояния
@@ -53,9 +60,21 @@ namespace SpaceConstruction.Game
 		/// </summary>
 		private TimeSpan _timeCurrentPass = new TimeSpan();
 		/// <summary>
-		/// Время для состояния взлёта
+		/// Время для состояния взлёта/посадки
 		/// </summary>
-		private TimeSpan _timeLandingUp = new TimeSpan(0, 0, 0, 0, milliseconds: 200);
+		public TimeSpan TimeLandingUp { get; private set; }
+		/// <summary>
+		/// Время для состояния загрузки/разгрузки по умолчанию
+		/// </summary>
+		private TimeSpan _timeLandingUpDefault = new TimeSpan(0, 0, 0, 0, milliseconds: 200);
+		/// <summary>
+		/// Время для состояния загрузки/разгрузки
+		/// </summary>
+		public TimeSpan TimeLoading { get; private set; }
+		/// <summary>
+		/// Время для состояния загрузки/разгрузки по умолчанию
+		/// </summary>
+		private TimeSpan _timeLoadingDefault = new TimeSpan(0, 0, 0, 0, milliseconds: 200);
 		/// <summary>
 		/// Предыдущее время расчета
 		/// </summary>
@@ -83,7 +102,7 @@ namespace SpaceConstruction.Game
 
 		private void ProcessTime()
 		{
-			const int percentMax= 100;
+			const int percentMax = 100;
 			var dt = DateTime.Now;
 			var ts = dt - _timeStore;
 			_timePassed += ts;
@@ -96,7 +115,7 @@ namespace SpaceConstruction.Game
 			StoredPercent = percent;
 			OnUpdateOperationProgress?.Invoke(percent);
 		}
-		
+
 		private void ProcessFly()
 		{
 			// полет между планетами
@@ -132,7 +151,7 @@ namespace SpaceConstruction.Game
 
 		}
 
-		private bool IsStarFly() 
+		private bool IsStarFly()
 			=> _currentState == ShipStatesEnum.MoveCargo
 			|| _currentState == ShipStatesEnum.MoveToCargo
 			|| _currentState == ShipStatesEnum.MoveToBase;
@@ -178,7 +197,7 @@ namespace SpaceConstruction.Game
 		private void PreProcessCommands(ShipCommandsEnum shipCommand, ShipStatesEnum currentState)
 		{
 			if (_currentState == ShipStatesEnum.Loading) {// загружаем груз
-				(OrderPlanetDestination as Planet).Order.LoadToShipStore(_cargoCurrent, _cargoVolumeMax, _cargoWeightMax);
+				(OrderPlanetDestination as Planet).Order.LoadToShipStore(_cargoCurrent, CargoVolumeMax, CargoWeightMax);
 				if (_cargoCurrent.IsEmpty()) {// если нечего загружать то ведём корабль на базу
 					MoveToBasePrepare();
 					return;
@@ -188,14 +207,19 @@ namespace SpaceConstruction.Game
 			if (_currentState == ShipStatesEnum.Landing)
 				_shipOnPlanet = true;
 
-		   _timePassed = new TimeSpan();
 			_timeStore = DateTime.Now;
-			_timeCurrentPass = _timeLandingUp;// для примера. для каждого состояния желательно ввести своё отдельное время
+			_timePassed = TimeSpan.Zero;
+			_timeCurrentPass = TimeSpan.Zero;// _timeLandingUp;
+			if (currentState == ShipStatesEnum.Landing || currentState == ShipStatesEnum.Takeoff)
+				_timeCurrentPass = TimeLandingUp;
+			if (currentState == ShipStatesEnum.Loading || currentState == ShipStatesEnum.Unloading)
+				_timeCurrentPass = TimeLoading;
+
 			if (shipCommand == ShipCommandsEnum.MoveToBase || shipCommand == ShipCommandsEnum.NoCommand) {
 				OrderPlanetDestination = null;
 				OrderPlanetSource = null;
 			}
-			
+
 			if (IsStarFly()) {// формируем путь полета
 				ScreenPoint from = _currentPlanet;
 				ScreenPoint to = null;
@@ -222,19 +246,15 @@ namespace SpaceConstruction.Game
 			ProcessState();
 		}
 
-		public Ship(ScreenPoint shipBase, ResourcesHolder shipWarehouse, ResourcesHolder cargoMax, ShipStates statesProcessor)
+		public Ship(ScreenPoint shipBase, ResourcesHolder shipWarehouse, ShipStates statesProcessor)
 		{
-			TimeToWaitMax = 10;
-			TimeToWaitCurrent = 0;
 			Base = shipBase;
 			_currentPlanet = Base;
 			CurrentTarget = Base;
-			_cargoMax = cargoMax;
-			_cargoVolumeMax = 100;
-			_cargoWeightMax = 100;
 			_cargoCurrent = shipWarehouse;
 			_statesProcessor = statesProcessor;
-		}		
+			UpdateShipValues();
+		}
 
 		/// <summary>
 		/// Двигаться к выполнению заказа
@@ -387,5 +407,63 @@ namespace SpaceConstruction.Game
 			ShipCommand = ShipCommandEnum.Ordered;
 			ProcessMoveOrder();
 		}*/
+
+
+		public void UpdateShipValues()
+		{
+			TimeToWaitMax = 10;
+			TimeToWaitCurrent = 0;
+			CargoVolumeMax = 100;
+			CargoWeightMax = 100;
+			TeleportInstalled = false;
+			TeleportDistance = 1;
+			AutoPilot = false;
+			
+			TimeLandingUp = _timeLandingUpDefault;
+			TimeLoading = _timeLoadingDefault;
+			EngineForce = EngineForceDefault;
+			XPAdd = XPAddDefault;
+
+			foreach (ItemUpgrade upgrade in Upgrades) {
+				SetupUpgrade(upgrade);
+			}
+		}
+
+		private void SetupUpgrade(ItemUpgrade upgrade)
+		{
+			foreach (ItemUpgradeValue upgradeValue in upgrade.Upgrades) {
+				switch (upgradeValue.UpName) {
+					case "CargoVolumeMax":
+						CargoVolumeMax += upgradeValue.UpValue;
+						break;
+					case "CargoWeightMax":
+						CargoWeightMax += upgradeValue.UpValue;
+						break;
+					case "Exp":
+						XPAdd += upgradeValue.UpValue;
+						break;
+					case "AutoPilot":
+						AutoPilot = true;
+						break;
+					case "Teleport":
+						TeleportInstalled = true;
+						break;
+					case "TeleportDistance":
+						TeleportDistance += upgradeValue.UpValue;
+						break;
+					case "EngineSpeed":
+						EngineForce += upgradeValue.UpValue;
+						break;
+					case "TakeOff":
+						TimeLandingUp += new TimeSpan(0, 0, upgradeValue.UpValue);
+						break;
+					case "Uploading":
+						TimeLoading += new TimeSpan(0, 0, upgradeValue.UpValue);
+						break;
+					default:
+						break;
+				}
+			}
+		}
 	}
 }

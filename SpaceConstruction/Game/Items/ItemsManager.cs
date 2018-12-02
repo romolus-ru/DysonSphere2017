@@ -85,7 +85,7 @@ namespace SpaceConstruction.Game.Items
 			var upgradeExpPlus = CreateUpgradeValue(strUpExpPlus, "Exp", 3);
 
 			var upgradeAutopilot = CreateUpgradeValue(strUpAutoPilot, "AutoPilot", 1);
-			//var upgradeTeleport = CreateUpgradeValue(strUpTeleport, "Teleport", 1);// по умолчанию добавляет 1 к дистанции телепорта
+			//var upgradeTeleport = CreateUpgradeValue(strUpTeleport, "Teleport", 1);// по умолчанию дистанция телепорта 1
 
 			//var upgradeTeleportDistanceExtra = CreateUpgradeValue(strUpTeleportDistanceExtra, "TeleportDistance", 3);
 			//var upgradeTeleportDistance = CreateUpgradeValue(strUpTeleportDistance, "TeleportDistance", 2);
@@ -152,6 +152,13 @@ namespace SpaceConstruction.Game.Items
 			CreateUpgradeItem(strUpLoading, strUpLoading, null, itemCost5, ItemUpgradeQualityEnum.Extra,
 				new List<ItemUpgradeValue>() { upgradeUploadingExtra });
 
+
+			ItemsManaged.Clear();
+			foreach (var item in Items) {
+				var im = new ItemManager(item, 1);
+				ItemsManaged.Add(im);
+			}
+
 		}
 
 		private static ItemUpgradeValue CreateUpgradeValue(string name, string upName, int upValue)
@@ -201,6 +208,7 @@ namespace SpaceConstruction.Game.Items
 				Quality = quality,
 				Upgrades = upgrades,
 			};
+			Items.Add(i);
 		}
 	}
 }

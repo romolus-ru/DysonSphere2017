@@ -21,8 +21,7 @@ namespace Engine.Visualization.Scroll
 			ViewManager = viewManager;
 			ViewManager.AddViewModal(this);
 
-			SetParams(150, 150, 1200, 700, header);
-			InitTexture("textRB", 10);
+			InitWindow(this, header);
 
 			if (showOkButton) {
 				_btnOk = new ViewButton();
@@ -53,9 +52,20 @@ namespace Engine.Visualization.Scroll
 
 			ViewScroll = new ViewScroll();
 			AddComponent(ViewScroll);
-			ViewScroll.SetParams(10, 80, 1000, 560, "ViewScroll for FilteredScrollViewWindow");
+			InitViewScroll(ViewScroll);
 			InitScrollItems();
 			UpdateScrollViewSize();
+		}
+
+		protected virtual void InitWindow(FilteredScrollViewWindow window, string header)
+		{
+			SetParams(150, 150, 1200, 700, header);
+			InitTexture("textRB", 10);
+		}
+
+		protected virtual void InitViewScroll(ViewScroll viewScroll)
+		{
+			viewScroll.SetParams(10, 80, 1000, 560, "ViewScroll for FilteredScrollViewWindow");
 		}
 
 		protected virtual void InitButtonOk(ViewButton btnOk)

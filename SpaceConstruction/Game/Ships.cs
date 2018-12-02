@@ -72,21 +72,13 @@ namespace SpaceConstruction.Game
 		}
 
 		internal void CreateShip()
-		{
-			var res = GetDefaultCargoCapacity();
-			var ship = new Ship(_shipBase, new ResourcesHolder(_resourceInfos), res, _shipStates);
+		{			
+			var ship = new Ship(_shipBase, new ResourcesHolder(_resourceInfos), _shipStates);
 			ship.OnGetRoad = _onGetShipRoad;
 			ship.OnRaceEnded = RaceEnd;
 			ship.ShipNum = _ships.Count + 1;
 			_ships.Add(ship);
 			OnShipBuyed?.Invoke();
-		}
-
-		private ResourcesHolder GetDefaultCargoCapacity()
-		{
-			var ret = new ResourcesHolder(_resourceInfos);
-			// теперь будет задаваться объем трюма на корабле
-			return ret;
 		}
 
 		internal void Init(Planet shipBase, Func<ScreenPoint, ScreenPoint, List<ScreenPoint>> getShipRoad)
