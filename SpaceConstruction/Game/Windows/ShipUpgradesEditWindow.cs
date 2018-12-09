@@ -63,7 +63,8 @@ namespace SpaceConstruction.Game.Windows
 
 		private void MoveUpgradeToInventory(ItemUpgrade itemUpgrade)
 		{
-			тут. перенести улучшение обратно
+			ItemManager item = ItemsManager.GetItemManager(itemUpgrade);
+			item.SetupCount--;
 			_ship.Upgrades.Remove(itemUpgrade);
 			ShipUpgradesViewUpdate();
 		}

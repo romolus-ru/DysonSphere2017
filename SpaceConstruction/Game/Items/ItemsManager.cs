@@ -57,6 +57,18 @@ namespace SpaceConstruction.Game.Items
 		const string strUpLoadingPlus = strUpLoading + small;
 		const string strUpLoadingExtra = strUpLoading + big;
 
+		internal static ItemManager GetItemManager(ItemUpgrade itemUpgrade)
+		{
+			ItemManager ret = null;
+			foreach (var item in ItemsManaged) {
+				if (item.Item != itemUpgrade)
+					continue;
+				ret = item;
+				break;
+			}
+			return ret;
+		}
+
 		const string strUpAutoPilot = "Автоматическая система обработки заказов";
 
 		private static void CreateItems()
