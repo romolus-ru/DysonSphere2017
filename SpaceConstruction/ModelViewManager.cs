@@ -106,6 +106,7 @@ namespace SpaceConstruction
 			_vtg.OnBuyShip += _mtg.BuyShip;
 			_vtg.ResourceInfos = orders.ResourceInfos;
 			_vtg.OrderInfos = orders.OrderInfos;
+			_vtg.OnUpdateMoneyInfo = _mtg.UpdateMoneyInfo;
 
 			//_vtg.OnGetPath += _mtg.GetPath;
 			_mtg.OnMoneyChanged += _vtg.MoneyChanged;

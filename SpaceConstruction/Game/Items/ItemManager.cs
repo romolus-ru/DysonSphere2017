@@ -1,4 +1,6 @@
 ﻿
+using System;
+
 namespace SpaceConstruction.Game.Items
 {
 	/// <summary>
@@ -34,6 +36,31 @@ namespace SpaceConstruction.Game.Items
 			get {
 				return PlayerCount - SetupCount > 0;
 			}
+		}
+
+		/// <summary>
+		/// покупаем предмет
+		/// </summary>
+		/// <param name="moneyItem">Количество денег у игрока</param>
+		public bool BuyItem(ItemManager moneyItem)
+		{
+			if (moneyItem.Item.Code != Item.Cost.Item.Code)
+				return false;// фальшивка
+			var cost = Item.Cost.PlayerCount;
+			var money = moneyItem.PlayerCount;
+			if (money < cost)
+				return false;// мало денег
+
+			moneyItem.PlayerCount -= cost;
+			PlayerCount++;
+			return true;
+		}
+
+		internal void BuySign()
+		{
+			if (Item.Type != ItemTypeEnum.Signs)
+				return;
+			PlayerCount++;
 		}
 	}
 }

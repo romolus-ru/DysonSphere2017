@@ -18,7 +18,7 @@ namespace SpaceConstruction.Game.Items
 		/// <summary>
 		/// Предметы которые доступны пользователю
 		/// </summary>
-		public static List<ItemManager> ItemsManaged = new List<ItemManager>();
+		public readonly static List<ItemManager> ItemsManaged = new List<ItemManager>();
 
 		static ItemsManager()
 		{
@@ -75,9 +75,12 @@ namespace SpaceConstruction.Game.Items
 		{
 			Items.Clear();
 
-			var costSign=
-			CreateItemSigns("Знак выполненного контракта", "Знак выполненного контракта");
-			CreateItemSigns("Особый знак выполненного контракта", "Особый знак выполненного контракта");
+			var costSign =
+			CreateItemSigns("Знак выполненного контракта", "Знак выполненного контракта", 
+			texture: "Resources.Sign1", code: "Sign1");
+			var costSign2 =
+			CreateItemSigns("Особый знак выполненного контракта", "Особый знак выполненного контракта", 
+			texture: "Resources.Sign2", code: "Sign2");
 
 			var itemCost1 = new ItemManager(costSign, 1);
 			var itemCost3 = new ItemManager(costSign, 3);
@@ -164,13 +167,86 @@ namespace SpaceConstruction.Game.Items
 			CreateUpgradeItem(strUpLoading, strUpLoading, null, itemCost5, ItemUpgradeQualityEnum.Extra,
 				new List<ItemUpgradeValue>() { upgradeUploadingExtra });
 
+			CreateResearchItem("улучшить перевозимый объем у кораблей", "улучшить перевозимый объем у кораблей", costSign, 5, null, "ShipVolume");
+			CreateResearchItem("улучшить перевозимый вес у кораблей", "улучшить перевозимый вес у кораблей", costSign, 5, null, "ShipWeight");
+
+			CreateResearchItem("улучшить перевозимый объем у кораблей 2", "улучшить перевозимый объем у кораблей 2", costSign, 5, null, "ShipVolume2");
+			CreateResearchItem("улучшить перевозимый вес у кораблей 2", "улучшить перевозимый вес у кораблей 2", costSign, 5, null, "ShipWeight2");
+
+			CreateResearchItem("дополнительные 4 корабля", "дополнительные 4 корабля", costSign, 20, null, "AddShips1");
+			CreateResearchItem("дополнительные 3 корабля", "дополнительные 3 корабля", costSign, 50, null, "AddShips2");
+			CreateResearchItem("дополнительные 2 корабля", "дополнительные 2 корабля", costSign, 500, null, "AddShips3");
+
+			CreateResearchItem("дополнительные 3 заказа", "дополнительные 3 заказа", costSign, 20, null, "AddOrders1");
+			CreateResearchItem("дополнительные 2 заказа", "дополнительные 2 заказа", costSign, 50, null, "AddOrders2");
+			CreateResearchItem("дополнительный заказ", "дополнительный заказ", costSign, 500, null, "AddOrders3");
+
+			CreateResearchItem("купить доступ к магазину", "купить доступ к магазину", costSign, 50, null, "OpenShop");
+
+			CreateResearchItem("покупка обычных улучшений", "покупка обычных улучшений", costSign, 100, null, "CanBuyNormalUpgrades");
+			CreateResearchItem("покупка особых улучшений", "покупка особых улучшений", costSign, 250, null, "CanBuyExtraUpgrades");
+
+			//CreateResearchItem("открыть доступ к лучшим заказам", "открыть доступ к лучшим заказам", costSign, 500, null, "OpenTopOrders");
+
+			CreateResearchItem("запустить финальный заказ (на время)", "запустить финальный заказ (на время)", costSign, 300, null, "StartFinalOrder");
+
 
 			ItemsManaged.Clear();
 			foreach (var item in Items) {
-				var im = new ItemManager(item, 1);
+				var im = new ItemManager(item, 0);
 				ItemsManaged.Add(im);
 			}
 
+		}
+
+		internal static IEnumerable<ItemManager> GetResearches()
+		{
+			return ItemsManaged.Where(item => item.Item.Type == ItemTypeEnum.Research);
+		}
+
+		internal static ItemManager GetResearchItem(string researchName)
+		{
+			foreach (var mItem in ItemsManaged) {
+				if (mItem.PlayerCount == 0
+					|| mItem.Item.Type != ItemTypeEnum.Research
+					|| mItem.Item.Name != researchName)
+					continue;
+				return mItem;
+			}
+			return null;
+		}
+
+		internal static bool IsResearchItemBuyed(string researchName)
+		{
+			var mItem = GetResearchItem(researchName);
+			return mItem != null && mItem.PlayerCount > 0;
+		}
+
+		/// <summary>
+		/// Купить предмет. возвращаем успешность покупки
+		/// </summary>
+		/// <param name="itemCode"></param>
+		/// <returns></returns>
+		public static bool BuyItem(string itemCode)
+		{
+			var item = GetItemByCode(itemCode);
+			var cost = item.Item.Cost;
+			var moneyItem = GetItemByCode(cost.Item.Code);
+			return item.BuyItem(moneyItem);
+		}
+
+		public static void BuySign(string itemCode)
+		{
+			var item = GetItemByCode(itemCode);
+			item.BuySign();
+		}
+
+		internal static ItemManager GetItemByCode(string code)
+		{
+			var result = ItemsManaged.Where(it => it.Item.Code == code);
+			if (result.Count() > 1)
+				throw new Exception("не уникальный айтем с кодом " + code);
+			return result.FirstOrDefault();
 		}
 
 		private static ItemUpgradeValue CreateUpgradeValue(string name, string upName, int upValue)
@@ -188,11 +264,12 @@ namespace SpaceConstruction.Game.Items
 		/// Создать обычный предмет
 		/// </summary>
 		/// <returns></returns>
-		private static Item CreateItemSigns(string itemName, string itemDescription, string texture = null, ItemManager cost = null)
+		private static Item CreateItemSigns(string itemName, string itemDescription, string texture = null, ItemManager cost = null, string code = null)
 		{
 			var i = new Item()
 			{
 				Type = ItemTypeEnum.Signs,
+				Code = code,
 				Name = itemName,
 				Description = itemDescription,
 				Texture = texture,
@@ -219,6 +296,27 @@ namespace SpaceConstruction.Game.Items
 				Cost = cost,
 				Quality = quality,
 				Upgrades = upgrades,
+			};
+			Items.Add(i);
+		}
+
+		/// <summary>
+		/// Создать предмет-исследование
+		/// </summary>
+		private static void CreateResearchItem(string itemName, string itemDescription, Item costItem, int costCount,
+			string texture = null, string researchCode = null)
+		{
+			if (string.IsNullOrEmpty(researchCode)) return;
+
+			var cost = new ItemManager(costItem, costCount);
+			var i = new ItemResearch()
+			{
+				Type = ItemTypeEnum.Research,
+				Name = itemName,
+				Description = itemDescription,
+				Texture = texture,
+				Cost = cost,
+				Code = researchCode,
 			};
 			Items.Add(i);
 		}

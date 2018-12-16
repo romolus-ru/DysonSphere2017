@@ -10,6 +10,12 @@ namespace SpaceConstruction.Game
 	public class Ship
 	{
 		public Action<int> OnUpdateOperationProgress = null;
+		/// <summary>
+		/// Заказ полностью выполнен
+		/// </summary>
+		public Action OnOrderEmpty = null;
+		public Func<int> OnGetGlobalVolume = null;
+		public Func<int> OnGetGlobalWeight = null;
 		public int CargoVolumeMax { get; private set; }
 		public int CargoWeightMax { get; private set; }
 		public int XPAdd { get; private set; }
@@ -23,6 +29,7 @@ namespace SpaceConstruction.Game
 		private ResourcesHolder _cargoCurrent = null;
 
 		public Func<ScreenPoint, ScreenPoint, List<ScreenPoint>> OnGetRoad;
+		[Obsolete]
 		public Action<Ship> OnRaceEnded;
 
 		/// <summary>
@@ -174,8 +181,10 @@ namespace SpaceConstruction.Game
 				(OrderPlanetDestination as Planet).Order.UnloadToPlanetStore(_cargoCurrent);
 				_cargoCurrent.Clear();
 				_cargoLoaded = false;
-				if ((OrderPlanetDestination as Planet).Order.AmountResources.IsEmpty())
+				if ((OrderPlanetDestination as Planet).Order.AmountResources.IsEmpty()) {
 					MoveToBasePrepare();
+					OnOrderEmpty?.Invoke();
+				}
 			}
 			if (currentState == ShipStatesEnum.Takeoff)
 				_shipOnPlanet = false;
@@ -253,7 +262,6 @@ namespace SpaceConstruction.Game
 			CurrentTarget = Base;
 			_cargoCurrent = shipWarehouse;
 			_statesProcessor = statesProcessor;
-			UpdateShipValues();
 		}
 
 		/// <summary>
@@ -284,9 +292,21 @@ namespace SpaceConstruction.Game
 
 		public void MoveToBasePrepare()
 		{
+			if (!_cargoCurrent.IsEmpty()) {
+				(OrderPlanetDestination as Planet).Order.CancelShipDelivery(_cargoCurrent);
+				_cargoCurrent.Clear();
+				_cargoLoaded = false;
+			}
+
+			if (_shipCommand == ShipCommandsEnum.CargoDelivery)
+				_currentPlanet = OrderPlanetDestination;
+			if (_shipCommand == ShipCommandsEnum.GetCargo)
+				_currentPlanet = OrderPlanetSource;
+
 			_shipCommand = ShipCommandsEnum.MoveToBase;
 			_statesProcessor.SwitchCommandTo(_shipCommand, ListStates, _cargoLoaded, _shipOnPlanet);
-			InitNextCommand();
+			if (!IsStarFly())
+				InitNextCommand();
 			/*ShipCommand = ShipCommandEnum.ToBase;
 			if (CurrentRoadPointNum == -1)
 				ProcessMoveToBase();
@@ -392,9 +412,6 @@ namespace SpaceConstruction.Game
 			}*/
 		}
 
-		/// <summary>
-		/// Двигаемся к заказу и переходим в режим перевозки заказа
-		/// </summary>
 		/*private void ProcessMoveToOrder()
 		{
 			if (CurrentTarget != OrderPlanetSource) {
@@ -409,12 +426,15 @@ namespace SpaceConstruction.Game
 		}*/
 
 
+		/// <summary>
+		/// Обновляем данные о корабле - вместимость, скорость и т.п.
+		/// </summary>
 		public void UpdateShipValues()
 		{
 			TimeToWaitMax = 10;
 			TimeToWaitCurrent = 0;
-			CargoVolumeMax = 100;
-			CargoWeightMax = 100;
+			CargoVolumeMax = 100 + OnGetGlobalVolume();
+			CargoWeightMax = 100 + OnGetGlobalWeight();
 			TeleportInstalled = false;
 			TeleportDistance = 1;
 			AutoPilot = false;

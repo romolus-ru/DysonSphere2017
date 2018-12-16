@@ -2,6 +2,7 @@
 using Engine.Models;
 using Engine.Visualization;
 using Engine.Visualization.Maths;
+using SpaceConstruction.Game.Items;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,20 +21,17 @@ namespace SpaceConstruction.Game
 		public SetPointsDelegate OnSetPoints;
 		public Action<int> OnMoneyChanged;
 		public Action OnOrdersChanged;
+		/// <summary>
+		/// Минимальное расстояние на котором точка будет реагировать на курсор
+		/// </summary>
+		private const int MouseMinimalDistance = 50;
 
 		public ModelTransportGame(Ships ships)
 		{
 			_ships = ships;
 			_ships.OnFinishOrder = CreateRandomOrders;
-			_ships.OnRaceEnded = MoneyChanged;
 		}
-
-		/// <summary>
-		/// Минимальное расстояние на котором точка будет реагировать на курсор
-		/// </summary>
-		private const int MouseMinimalDistance = 50;
-		private int Money = 0;
-
+		
 		public void RecreatePoints()
 		{
 			_orders.Clear();
@@ -90,19 +88,9 @@ namespace SpaceConstruction.Game
 			return ret;
 		}
 
-		/// <summary>
-		/// Изменение денег, обычно вследствие завершения рейса
-		/// </summary>
-		/// <param name="deltaMoney"></param>
-		private void MoneyChanged(int deltaMoney)
-		{
-			if (deltaMoney == 0) return;
-			Money += deltaMoney;
-			OnMoneyChanged.Invoke(Money);
-		}
-
 		private void CreateRandomOrders()
 		{
+			DeleteEmptyOrders();
 			var countOrders = _orders.ActualOrdersCount;
 			var needOrders = _orders.MaxOrders - countOrders;
 			if (needOrders <= 0) return;
@@ -113,6 +101,31 @@ namespace SpaceConstruction.Game
 				}
 			}
 			OnOrdersChanged?.Invoke();
+		}
+
+		private void DeleteEmptyOrders()
+		{
+			var endedOrders = false;
+			foreach (var point in RoadPoints) {
+				var order = point.Order;
+				if (order == null) continue;
+				if (!order.AmountResources.IsEmpty() && order.AmountResourcesInProgress.IsEmpty())
+					continue;
+				// всё перевезено и нету перевозимых ресурсов - удаляем заказ
+
+				point.Order = null;
+				_orders.EndOrder(order);
+				ItemsManager.BuySign("Sign1");
+				endedOrders = true;
+			}
+			if (endedOrders)
+				UpdateMoneyInfo();
+		}
+
+		public void UpdateMoneyInfo()
+		{
+			var item = ItemsManager.GetItemByCode("Sign1");
+			OnMoneyChanged?.Invoke(item.PlayerCount);
 		}
 
 		private void CreateRandomOrder()
@@ -134,8 +147,8 @@ namespace SpaceConstruction.Game
 			order.Source = source;
 		}
 
-		private bool ExistsFreePlanetsForOrder() 
-			=> RoadPoints.Where(r => r.Order == null).Count() >= 2;
+		private bool ExistsFreePlanetsForOrder()
+			=> RoadPoints.Where(r => r.Order == null).Count() >= _orders.MaxOrders - 1;
 
 		/// <summary>
 		/// Получаем путь корабля от одной точки до другой

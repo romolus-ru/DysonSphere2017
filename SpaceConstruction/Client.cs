@@ -15,7 +15,6 @@ namespace SpaceConstruction
 	public class Client
 	{
 		private DataSupportBase _datasupport;
-		private LogSystem _logsystem;
 		private Collector _collector;
 		private Input _input;
 		private VisualizationProvider _visualization;
@@ -34,9 +33,9 @@ namespace SpaceConstruction
 		public Client(DataSupportBase dataSupport, LogSystem logSystem)
 		{
 			Settings.Init();
+			StateEngine.Log = logSystem;
 			StateClient.InitState();
 			_datasupport = dataSupport;
-			_logsystem = logSystem;
 
 			_timer = new Timer();
 			_timer.Interval = TimerInterval;
@@ -55,7 +54,7 @@ namespace SpaceConstruction
 			// создаётся объект для вывода на экран
 			var visualizationId = _datasupport.ServerSettingsGetValue("visualization");
 			_visualization = _collector.GetObject(visualizationId) as VisualizationProvider;
-			_visualization.InitVisualization(_datasupport, _logsystem, 500, 500, true);
+			_visualization.InitVisualization(_datasupport, logSystem, 500, 500, true);
 
 			// создаётся объект для работы с мат моделями
 			_rplayer = _datasupport.UserStatus;// загружаем данные игрока (основные)
@@ -87,7 +86,7 @@ namespace SpaceConstruction
 
 		private void Log(string msg)
 		{
-			_logsystem?.AddLog(LogTag, msg, 1);
+			StateEngine.Log?.AddLog(LogTag, msg, 1);
 		}
 
 		/// <summary>

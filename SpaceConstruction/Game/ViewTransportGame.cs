@@ -3,12 +3,14 @@ using Engine.Helpers;
 using Engine.Visualization;
 using Engine.Visualization.Debug;
 using Engine.Visualization.Text;
+using SpaceConstruction.Game.Items;
 using SpaceConstruction.Game.Orders;
 using SpaceConstruction.Game.Resources;
 using SpaceConstruction.Game.Windows;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace SpaceConstruction.Game
@@ -22,6 +24,7 @@ namespace SpaceConstruction.Game
 		public Action OnBuyShip;
 		public List<ResourceInfo> ResourceInfos;
 		public List<OrderInfo> OrderInfos;
+		public Action OnUpdateMoneyInfo;
 
 		private ViewManager _viewManager;
 		private List<Planet> _RoadPoints = new List<Planet>();
@@ -103,6 +106,12 @@ namespace SpaceConstruction.Game
 			btnSUEView.SetParams(250, 175, 140, 20, "btnSUEView");
 			btnSUEView.InitTexture("textRB", "textRB");
 
+			var btnResearches = new ViewButton();
+			AddComponent(btnResearches);
+			btnResearches.InitButton(ResearchesView, "btnResearches", "hint", Keys.S);
+			btnResearches.SetParams(250, 200, 140, 20, "btnResearches");
+			btnResearches.InitTexture("textRB", "textRB");
+
 			var btnBigMessage = new ViewButton();
 			AddComponent(btnBigMessage);
 			btnBigMessage.InitButton(AddBigMessage, "AddBigMessage", "hint", Keys.U);
@@ -118,7 +127,7 @@ namespace SpaceConstruction.Game
 			btnClose.InitButton(Close, "exit", "hint", Keys.LMenu, Keys.X);
 			btnClose.SetParams(1659, 0, 20, 20, "btnE");
 
-			_showMoney = ViewLabelIcon.Create(300, 20, Color.Red, "0", "bigFont", "Money.MR");
+			_showMoney = ViewLabelIcon.Create(300, 20, Color.Red, "0", "bigFont", "Resources.Sign1");
 			AddComponent(_showMoney);
 
 			/*var viewText = new ViewText();
@@ -163,7 +172,13 @@ namespace SpaceConstruction.Game
 		{
 			new ShipUpgradesEditWindow().InitWindow(_viewManager, new Ship(null, null, null));
 		}
-		
+
+		private void ResearchesView()
+		{
+			var researches = ItemsManager.GetResearches().ToList();
+			new ResearchesBuyWindow().InitWindow(_viewManager, researches, OnUpdateMoneyInfo);
+		}
+
 		private void RecreatePoints()
 		{
 			_selected = null;
@@ -356,6 +371,35 @@ namespace SpaceConstruction.Game
 				_selected = null;
 			if (_nearest != null && (_nearest as Planet).Order == null)
 				_nearest = null;
+		}
+
+		private bool _openShop = false;
+		private bool _canBuyNormalUpgrades = false;
+		private bool _canBuyExtraUpgrades = false;
+		private bool _openTopOrders = false;
+		private bool _finalOrderActive = false;
+		private void UpdateResearchInfo()
+		{
+			if (!_openShop && ItemsManager.IsResearchItemBuyed("OpenShop")) {
+				_openShop = true;
+				//UpdateInterface();
+			}
+			if (!_canBuyNormalUpgrades && ItemsManager.IsResearchItemBuyed("CanBuyNormalUpgrades")) {
+				_canBuyNormalUpgrades = true;
+				//UpdateInterface();
+			}
+			if (!_canBuyExtraUpgrades && ItemsManager.IsResearchItemBuyed("CanBuyExtraUpgrades")) {
+				_canBuyExtraUpgrades = true;
+				//UpdateInterface();
+			}
+			if (!_openTopOrders && ItemsManager.IsResearchItemBuyed("OpenTopOrders")) {
+				_openTopOrders = true;
+				//UpdateInterface();
+			}
+			if (!_finalOrderActive && ItemsManager.IsResearchItemBuyed("StartFinalOrder")) {
+				_finalOrderActive = true;
+				//UpdateInterface();
+			}
 		}
 	}
 }

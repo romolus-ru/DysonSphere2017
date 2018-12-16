@@ -13,6 +13,7 @@ namespace SpaceConstruction.Game.Items
 	{
 		internal string Texture;
 		internal ItemTypeEnum Type;
+		internal string Code;
 		internal string Name;
 		internal string Description;
 		/// <summary>

@@ -7,13 +7,9 @@ using System.Threading.Tasks;
 namespace SpaceConstruction.Game.Items
 {
 	/// <summary>
-	/// Перечичсление основных категорий товара
+	/// Айтем хранит научные исследования (может быть можно будет упразднить этот класс
 	/// </summary>
-	enum ItemTypeEnum
+	internal class ItemResearch : Item
 	{
-		Error,
-		Signs,
-		Research,
-		Upgrade
 	}
 }

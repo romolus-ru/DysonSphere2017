@@ -49,6 +49,7 @@
     <Compile Include="Client.cs" />
     <Compile Include="Game\Items\Item.cs" />
     <Compile Include="Game\Items\ItemManager.cs" />
+    <Compile Include="Game\Items\ItemResearch.cs" />
     <Compile Include="Game\Items\ItemsManager.cs" />
     <Compile Include="Game\Items\ItemTypeEnum.cs" />
     <Compile Include="Game\Items\ItemUpgrade.cs" />
@@ -78,6 +79,8 @@
     <Compile Include="Game\ViewTransportGame.cs" />
     <Compile Include="Game\Windows\OrdersInfosScrollIem.cs" />
     <Compile Include="Game\Windows\OrdersInfosViewWindow.cs" />
+    <Compile Include="Game\Windows\ResearchesBuyScrollItem.cs" />
+    <Compile Include="Game\Windows\ResearchesBuyWindow.cs" />
     <Compile Include="Game\Windows\ResourcesInfosScrollItem.cs" />
     <Compile Include="Game\Windows\ResourcesInfosViewWindow.cs" />
     <Compile Include="Game\Windows\ShipUpgradesEditWindow.cs" />

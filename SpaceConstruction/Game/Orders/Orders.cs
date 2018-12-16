@@ -44,6 +44,11 @@ namespace SpaceConstruction.Game.Orders
 			return order;
 		}
 
+		public void EndOrder(Order order)
+		{
+			_actualOrders.Remove(order);
+		}
+
 		/// <summary>
 		/// Удалить все имеющиеся заказы
 		/// </summary>

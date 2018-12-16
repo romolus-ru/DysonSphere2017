@@ -35,7 +35,7 @@ namespace SpaceConstruction.Game
 			OnBuyShip?.Invoke();
 		}
 
-		public void ShipBuyed()
+		public void UpdateShipsPanel()
 		{
 			var newCount = _ships.GetShipsCount();
 			if (_shipsCount == newCount) return;
@@ -70,7 +70,7 @@ namespace SpaceConstruction.Game
 		public void SetShips(Ships ships)
 		{
 			_ships = ships;
-			_ships.OnShipBuyed += ShipBuyed;
+			_ships.OnUpdateShipsPanel += UpdateShipsPanel;
 			_ships.OnBuyButtonEnable += BuyButtonEnable;
 			CreateShipPanel();
 		}

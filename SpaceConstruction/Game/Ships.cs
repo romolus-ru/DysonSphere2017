@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using SpaceConstruction.Game.Orders;
+using SpaceConstruction.Game.Items;
 
 namespace SpaceConstruction.Game
 {
@@ -26,6 +27,7 @@ namespace SpaceConstruction.Game
 		/// <summary>
 		/// Перечисление заработанных денег
 		/// </summary>
+		[Obsolete]
 		public Action<int> OnRaceEnded;
 		/// <summary>
 		/// Разрешаем кнопку покупки
@@ -36,7 +38,7 @@ namespace SpaceConstruction.Game
 		private int _currentMaxShips = 0;
 		private const int _defaultMaxShips = 1;
 		private int _tutorialAddShips = 0;
-		public Action OnShipBuyed;
+		public Action OnUpdateShipsPanel;
 		private Orders.Orders _orders;
 		private List<ResourceInfo> _resourceInfos;
 
@@ -71,14 +73,24 @@ namespace SpaceConstruction.Game
 			get { return _ships[i]; }
 		}
 
-		internal void CreateShip()
-		{			
+		private void CreateShipOne()
+		{
 			var ship = new Ship(_shipBase, new ResourcesHolder(_resourceInfos), _shipStates);
 			ship.OnGetRoad = _onGetShipRoad;
 			ship.OnRaceEnded = RaceEnd;
+			ship.OnGetGlobalVolume = GlobalShipsVolume;
+			ship.OnGetGlobalWeight = GlobalShipsWeight;
+			ship.OnOrderEmpty = OnFinishOrder;
 			ship.ShipNum = _ships.Count + 1;
+			ship.UpdateShipValues();
 			_ships.Add(ship);
-			OnShipBuyed?.Invoke();
+		}
+
+		internal void CreateShip(int count = 1)
+		{
+			for (int i = 0; i < count; i++)
+				CreateShipOne();
+			OnUpdateShipsPanel?.Invoke();
 		}
 
 		internal void Init(Planet shipBase, Func<ScreenPoint, ScreenPoint, List<ScreenPoint>> getShipRoad)
@@ -107,6 +119,7 @@ namespace SpaceConstruction.Game
 		/// Корабль прилетел к планете назначению и разгрузился
 		/// </summary>
 		/// <param name="shipEndOrder"></param>
+		[Obsolete]
 		private void RaceEnd(Ship shipEndOrder)
 		{
 			var money = 0;
@@ -143,6 +156,77 @@ namespace SpaceConstruction.Game
 		public void BuyShip()
 		{
 			CreateShip();
+		}
+
+		public int AddVolume1 { get; private set; } = 0;
+		public int AddWeight1 { get; private set; } = 0;
+		public int AddVolume2 { get; private set; } = 0;
+		public int AddWeight2 { get; private set; } = 0;
+
+		private int GlobalShipsVolume() => AddVolume1 + AddVolume2;
+		private int GlobalShipsWeight() => AddWeight1 + AddWeight2;
+
+		private bool _shipVolume = false;
+		private bool _shipWeight = false;
+		private bool _shipVolume2 = false;
+		private bool _shipWeight2 = false;
+		private bool _addShips1 = false;
+		private bool _addShips2 = false;
+		private bool _addShips3 = false;
+
+		public void UpdateResearchInfo()
+		{
+			if (!_shipVolume && ItemsManager.IsResearchItemBuyed("ShipVolume")) {
+				_shipVolume = true;
+				AddVolume1 = 100;
+				UpdateShipsValues();
+			}
+			if (!_shipWeight && ItemsManager.IsResearchItemBuyed("ShipWeight")) {
+				_shipWeight = true;
+				AddWeight1 = 100;
+				UpdateShipsValues();
+			}
+			if (!_shipVolume2 && ItemsManager.IsResearchItemBuyed("ShipVolume2")) {
+				_shipVolume2 = true;
+				AddVolume2 = 100;
+				UpdateShipsValues();
+			}
+			if (!_shipWeight2 && ItemsManager.IsResearchItemBuyed("ShipWeight2")) {
+				_shipWeight2 = true;
+				AddWeight2 = 100;
+				UpdateShipsValues();
+			}
+
+
+			if (!_addShips1 && ItemsManager.IsResearchItemBuyed("AddShips1")) {
+				_addShips1 = true;
+				CreateShip(4);
+			}
+			if (!_addShips2 && ItemsManager.IsResearchItemBuyed("AddShips2")) {
+				_addShips2 = true;
+				CreateShip(3);
+			}
+			if (!_addShips3 && ItemsManager.IsResearchItemBuyed("AddShips3")) {
+				_addShips3 = true;
+				CreateShip(2);
+			}
+		}
+
+		private bool UpdateResearchInfoShips(string upgradeName, int count)
+		{
+			var mItem = ItemsManager.GetResearchItem(upgradeName);
+			if (mItem != null && mItem.PlayerCount > 0) {
+				CreateShip(count);
+				return true;
+			}
+			return false;
+		}
+
+		private void UpdateShipsValues()
+		{
+			foreach (var ship in _ships) {
+				ship.UpdateShipValues();
+			}
 		}
 	}
 }

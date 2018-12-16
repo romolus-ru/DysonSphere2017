@@ -113,5 +113,16 @@ namespace SpaceConstruction.Game.Orders
 			ProgressInMove -= _cargoCurrent.Volume();
 			ProgressMoved += _cargoCurrent.Volume();
 		}
+
+		/// <summary>
+		/// Отменить перевозку
+		/// </summary>
+		/// <param name="_cargoCurrent"></param>
+		public void CancelShipDelivery(ResourcesHolder _cargoCurrent)
+		{
+			AmountResourcesInProgress -= _cargoCurrent;
+			AmountResources += _cargoCurrent;
+			ProgressInMove -= _cargoCurrent.Volume();
+		}
 	}
 }
