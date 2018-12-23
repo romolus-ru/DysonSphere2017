@@ -3,6 +3,7 @@ using Engine.Visualization.Scroll;
 using SpaceConstruction.Game.Items;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace SpaceConstruction.Game.Windows
 {
@@ -21,16 +22,26 @@ namespace SpaceConstruction.Game.Windows
 
 		protected override void InitScrollItems()
 		{
+			var items = _researches.Where(x => x.PlayerCount < 1).ToList();
+			items.AddRange(_researches.Where(x => x.PlayerCount > 0));
 			var i = 1;
-			foreach (var ri in _researches) {
-				var scrollItem = new ResearchesBuyScrollItem(ri);
-				scrollItem.OnBuyed = _buyed;
+			foreach (var item in items) {
+				var scrollItem = new ResearchesBuyScrollItem(item);
+				scrollItem.OnBuyed = StartBuy;
 				ViewScroll.AddComponent(scrollItem);
-				scrollItem.SetParams(1, 1, 980, 100, "ri" + i + " " + ri.Item.Name);
+				scrollItem.SetParams(1, 1, 980, 100, "ri" + i + " " + item.Item.Name);
 				i++;
 			}
 		}
 		
+		private void StartBuy()
+		{
+			_buyed?.Invoke();
+			ViewScroll.ClearItems();
+			InitScrollItems();
+			UpdateScrollViewSize();
+		}
+
 		protected override void InitButtonOk(ViewButton btnOk)
 		{
 			base.InitButtonOk(btnOk);

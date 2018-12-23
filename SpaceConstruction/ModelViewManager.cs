@@ -107,6 +107,7 @@ namespace SpaceConstruction
 			_vtg.ResourceInfos = orders.ResourceInfos;
 			_vtg.OrderInfos = orders.OrderInfos;
 			_vtg.OnUpdateMoneyInfo = _mtg.UpdateMoneyInfo;
+			_vtg.OnUpdateMoneyInfo += ships.UpdateResearchInfo;
 
 			//_vtg.OnGetPath += _mtg.GetPath;
 			_mtg.OnMoneyChanged += _vtg.MoneyChanged;

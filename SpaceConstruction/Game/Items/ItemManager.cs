@@ -1,11 +1,13 @@
 ﻿
 using System;
+using System.Diagnostics;
 
 namespace SpaceConstruction.Game.Items
 {
 	/// <summary>
 	/// Менеджер одного айтема, обязательно включает в себя сам предмет и его количество
 	/// </summary>
+	[DebuggerDisplay("itemManager {Item.Name}")]
 	internal class ItemManager
 	{
 		/// <summary>

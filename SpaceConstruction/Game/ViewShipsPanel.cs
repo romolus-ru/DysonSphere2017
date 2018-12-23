@@ -71,13 +71,7 @@ namespace SpaceConstruction.Game
 		{
 			_ships = ships;
 			_ships.OnUpdateShipsPanel += UpdateShipsPanel;
-			_ships.OnBuyButtonEnable += BuyButtonEnable;
 			CreateShipPanel();
-		}
-
-		public void BuyButtonEnable()
-		{
-			btnBuyShip.Enabled = true;
 		}
 	}
 }

@@ -77,6 +77,7 @@ namespace SpaceConstruction.Game.Orders
 		/// <returns></returns>
 		public void LoadToShipStore(ResourcesHolder fillCargo, int totalVolume, int totalWeight)
 		{
+			тут. иногда корабль забирает весь груз
 			fillCargo.Clear();
 			int freeVolume = totalVolume;
 			int freeWeight = totalWeight;

@@ -1,5 +1,6 @@
 ﻿using Engine.Extensions;
 using Engine.Helpers;
+using SpaceConstruction.Game.Items;
 using SpaceConstruction.Game.Resources;
 using System.Collections.Generic;
 using System.Linq;
@@ -198,5 +199,29 @@ namespace SpaceConstruction.Game.Orders
 
 			ResourceInfos.Add(resInfo);
 		}
+
+		private bool _addOrders1 = false;
+		private bool _addOrders2 = false;
+		private bool _addOrders3 = false;
+
+		public void UpdateResearchInfo()
+		{
+			if (!_addOrders1 && ItemsManager.IsResearchItemBuyed("AddOrders1")) {
+				_addOrders1 = true;
+				MaxOrders += 3;
+				//UpdateShipsValues();// обновить заказы на экране
+			}
+			if (!_addOrders2 && ItemsManager.IsResearchItemBuyed("AddOrders2")) {
+				_addOrders2 = true;
+				MaxOrders += 2;
+				//UpdateShipsValues();// обновить заказы на экране
+			}
+			if (!_addOrders3 && ItemsManager.IsResearchItemBuyed("AddOrders3")) {
+				_addOrders3 = true;
+				MaxOrders += 1;
+				//UpdateShipsValues();// обновить заказы на экране
+			}
+		}
+
 	}
 }

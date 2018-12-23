@@ -173,9 +173,9 @@ namespace SpaceConstruction.Game.Items
 			CreateResearchItem("улучшить перевозимый объем у кораблей 2", "улучшить перевозимый объем у кораблей 2", costSign, 5, null, "ShipVolume2");
 			CreateResearchItem("улучшить перевозимый вес у кораблей 2", "улучшить перевозимый вес у кораблей 2", costSign, 5, null, "ShipWeight2");
 
-			CreateResearchItem("дополнительные 4 корабля", "дополнительные 4 корабля", costSign, 20, null, "AddShips1");
-			CreateResearchItem("дополнительные 3 корабля", "дополнительные 3 корабля", costSign, 50, null, "AddShips2");
-			CreateResearchItem("дополнительные 2 корабля", "дополнительные 2 корабля", costSign, 500, null, "AddShips3");
+			CreateResearchItem("дополнительные 4 корабля", "дополнительные 4 корабля", costSign, 1, null, "AddShips1");
+			CreateResearchItem("дополнительные 3 корабля", "дополнительные 3 корабля", costSign, 2, null, "AddShips2");
+			CreateResearchItem("дополнительные 2 корабля", "дополнительные 2 корабля", costSign, 3, null, "AddShips3");
 
 			CreateResearchItem("дополнительные 3 заказа", "дополнительные 3 заказа", costSign, 20, null, "AddOrders1");
 			CreateResearchItem("дополнительные 2 заказа", "дополнительные 2 заказа", costSign, 50, null, "AddOrders2");
@@ -197,6 +197,10 @@ namespace SpaceConstruction.Game.Items
 				ItemsManaged.Add(im);
 			}
 
+			var it1 = GetItemByCode("Sign1");
+			ItemsManaged.Remove(it1);
+			it1 = new ItemManager(costSign, 1000);
+			ItemsManaged.Add(it1);
 		}
 
 		internal static IEnumerable<ItemManager> GetResearches()
@@ -204,21 +208,21 @@ namespace SpaceConstruction.Game.Items
 			return ItemsManaged.Where(item => item.Item.Type == ItemTypeEnum.Research);
 		}
 
-		internal static ItemManager GetResearchItem(string researchName)
+		internal static ItemManager GetResearchItem(string researchCode)
 		{
 			foreach (var mItem in ItemsManaged) {
 				if (mItem.PlayerCount == 0
 					|| mItem.Item.Type != ItemTypeEnum.Research
-					|| mItem.Item.Name != researchName)
+					|| mItem.Item.Code != researchCode)
 					continue;
 				return mItem;
 			}
 			return null;
 		}
 
-		internal static bool IsResearchItemBuyed(string researchName)
+		internal static bool IsResearchItemBuyed(string researchCode)
 		{
-			var mItem = GetResearchItem(researchName);
+			var mItem = GetResearchItem(researchCode);
 			return mItem != null && mItem.PlayerCount > 0;
 		}
 

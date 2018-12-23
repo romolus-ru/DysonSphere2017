@@ -278,15 +278,6 @@ namespace SpaceConstruction.Game
 			_statesProcessor.SwitchCommandTo(_shipCommand, ListStates, _cargoLoaded, _shipOnPlanet);
 			InitNextCommand();
 
-			/*if (ShipCommand == ShipCommandEnum.NoCommand) {
-				//CurrentTarget = start;// начинаем движение от начальной точки
-				CurrentRoad?.Clear();
-			}
-			if (end != null) {
-				var cargo = start.Building.BuilingType.GetResourceEnum();
-				var needCount = end.Order.AmountResources.Value(cargo);
-				if (needCount <= 0) return false;
-			}*/
 			return true;
 		}
 
@@ -307,10 +298,6 @@ namespace SpaceConstruction.Game
 			_statesProcessor.SwitchCommandTo(_shipCommand, ListStates, _cargoLoaded, _shipOnPlanet);
 			if (!IsStarFly())
 				InitNextCommand();
-			/*ShipCommand = ShipCommandEnum.ToBase;
-			if (CurrentRoadPointNum == -1)
-				ProcessMoveToBase();
-			*/
 		}
 
 		/// <summary>
@@ -319,112 +306,7 @@ namespace SpaceConstruction.Game
 		public void MoveNext()
 		{
 			ProcessMove();
-			/*if (ShipCommand == ShipCommandEnum.NoCommand) return;
-
-			if (TimeToWaitState == ShipCommandEnum.CargoLoad) {
-				TimeToWaitCurrent++;
-				if (TimeToWaitCurrent >= TimeToWaitMax)
-					TimeToWaitState = ShipCommandEnum.NoCommand;
-				if (ShipCommand == ShipCommandEnum.ToBasePrepare)
-					TimeToWaitState = ShipCommandEnum.CargoUnload;
-				return;
-			}
-			if (TimeToWaitState == ShipCommandEnum.CargoUnload) {
-				TimeToWaitCurrent--;
-				if (TimeToWaitCurrent <= 0)
-					TimeToWaitState = ShipCommandEnum.NoCommand;
-				return;
-			}
-
-			CurrentRoadPointNum++;
-			if (CurrentRoadPointNum < (CurrentRoad?.Count ?? 0)) return;
-			if (OrderEmpty()) { ShipCommand = ShipCommandEnum.ToBase; }
-			if (ShipCommand == ShipCommandEnum.ToBasePrepare)
-				ShipCommand = ShipCommandEnum.ToBase;
-
-			CurrentRoadPointNum = -1;
-			switch (ShipCommand) {
-				case ShipCommandEnum.MoveToOrder:
-					ProcessMoveToOrder();
-					break;
-				case ShipCommandEnum.Ordered:
-					ProcessMoveOrder();
-					break;
-				case ShipCommandEnum.ToBase:
-					ProcessMoveToBase();
-					break;
-				default:
-					break;
-			}*/
 		}
-
-		/*private bool OrderEmpty()
-		{
-			if (OrderPlanetDestination == null) return false;
-			var dest = (Planet)OrderPlanetDestination;
-			if (dest.Order == null || dest.Order.AmountResources.IsEmpty()) return true;
-			return false;
-		}
-
-		/// <summary>
-		/// Вернуть корабль на базу
-		/// </summary>
-		private void ProcessMoveToBase()
-		{
-			if (CurrentTarget != Base) {
-				TimeToWaitState = ShipCommandEnum.CargoUnload;
-				CurrentRoad = OnGetRoad?.Invoke(CurrentTarget, Base);
-				CurrentTarget = Base;
-				OrderPlanetSource = null;
-				OrderPlanetDestination = null;
-				return;
-			}
-			ShipCommand = ShipCommandEnum.NoCommand;
-		}
-		*/
-		/// <summary>
-		/// Перевозим заказ
-		/// </summary>
-		private void ProcessMoveOrder()
-		{
-			/*if (CurrentTarget != OrderPlanetDestination) {
-				TimeToWaitState = ShipCommandEnum.CargoLoad;
-				CurrentRoad = OnGetRoad(CurrentTarget, OrderPlanetDestination);
-				CurrentTarget = OrderPlanetDestination;
-				return;
-			}
-
-			// выкладываем груз
-			var planet = (OrderPlanetDestination as Planet);
-			var planetCargo = (OrderPlanetSource as Planet);
-			var cargo = planetCargo.Building.BuilingType.GetResourceEnum();
-			var cargoCount = _cargoMax.Value(cargo);
-			var orderCount = planet.Order.AmountResources.Value(cargo);
-			if (orderCount <= cargoCount) {
-				planet.Order.AmountResources.Add(cargo, -orderCount);
-				// раз ресурсов нету то там надо отправить все задействованные корабли назад
-				OnRaceEnded?.Invoke(this);
-			} else {
-				planet.Order.AmountResources.Add(cargo, -cargoCount);
-				OnRaceEnded?.Invoke(this);
-				ShipCommand = ShipCommandEnum.MoveToOrder;
-				ProcessMoveToOrder();
-			}*/
-		}
-
-		/*private void ProcessMoveToOrder()
-		{
-			if (CurrentTarget != OrderPlanetSource) {
-				TimeToWaitState = ShipCommandEnum.CargoUnload;
-				CurrentRoad = OnGetRoad?.Invoke(CurrentTarget, OrderPlanetSource);
-				CurrentTarget = OrderPlanetSource;
-				return;
-			}
-			// корабль на планете откуда перевозят ресурсы - запускаем заказ
-			ShipCommand = ShipCommandEnum.Ordered;
-			ProcessMoveOrder();
-		}*/
-
 
 		/// <summary>
 		/// Обновляем данные о корабле - вместимость, скорость и т.п.

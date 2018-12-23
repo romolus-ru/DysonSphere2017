@@ -157,6 +157,18 @@ namespace SpaceConstruction.Game.Resources
 			return volume;
 		}
 
+		public float Weight()
+		{
+			var weight = 0f;
+			foreach (var res in _resources) {
+				weight += res.Weight;
+			}
+			return weight;
+		}
 
+		public override string ToString()
+		{
+			return "Volume=" + Volume() + " Weight=" + Weight();
+		}
 	}
 }
