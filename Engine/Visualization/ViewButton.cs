@@ -48,13 +48,6 @@ namespace Engine.Visualization
 		protected string HintKeys;
 
 		/// <summary>
-		/// Визуальное состояние
-		/// </summary>
-		public bool Enabled { get; set; } = true;
-
-		public ViewButton() { }
-
-		/// <summary>
 		/// Жмём на кнопку
 		/// </summary>
 		protected virtual void Press()

@@ -92,7 +92,7 @@ namespace SpaceConstruction
 
 			var orders = new Orders();
 			var ships = new Ships(orders);
-			_mtg = new ModelTransportGame(ships);
+			_mtg = new ModelTransportGame(ships, orders);
 			_modelMainClient.AddModel(_mtg);
 
 			_vtg = new ViewTransportGame();
@@ -103,11 +103,12 @@ namespace SpaceConstruction
 			_mtg.OnSetPoints += _vtg.SetPoints;
 			_vtg.OnExitPressed += Close;
 			_vtg.OnFindNearest += _mtg.FindNearest;
-			_vtg.OnBuyShip += _mtg.BuyShip;
 			_vtg.ResourceInfos = orders.ResourceInfos;
 			_vtg.OrderInfos = orders.OrderInfos;
 			_vtg.OnUpdateMoneyInfo = _mtg.UpdateMoneyInfo;
 			_vtg.OnUpdateMoneyInfo += ships.UpdateResearchInfo;
+			_vtg.OnUpdateMoneyInfo += orders.UpdateResearchInfo;
+			_vtg.OnUpdateMoneyInfo += _vtg.UpdateResearchInfo;
 
 			//_vtg.OnGetPath += _mtg.GetPath;
 			_mtg.OnMoneyChanged += _vtg.MoneyChanged;

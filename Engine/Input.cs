@@ -21,7 +21,7 @@ namespace Engine
 	/// </remarks> 
 	public class Input
 	{
-		private Dictionary<List<Keys>, Action> _keyAction = new Dictionary<List<Keys>, Action>();
+		private Dictionary<List<Keys>, Action> _keyActionSimple = new Dictionary<List<Keys>, Action>();
 		private Stack<Dictionary<List<Keys>, Action>> _keyActionStack = new Stack<Dictionary<List<Keys>, Action>>();
 
 		private Dictionary<List<Keys>, Action> _keyActionDouble = new Dictionary<List<Keys>, Action>();
@@ -114,7 +114,7 @@ namespace Engine
 		/// <param name="keyCombination"></param>
 		public void AddKeyAction(Action action, params Keys[] keyCombination)
 		{
-			AddKeyActionDict(_keyAction, action, keyCombination);
+			AddKeyActionDict(_keyActionSimple, action, keyCombination);
 		}
 
 		/// <summary>
@@ -124,7 +124,7 @@ namespace Engine
 		/// <param name="keyCombination"></param>
 		public void RemoveKeyAction(Action action, params Keys[] keyCombination)
 		{
-			RemoveKeyActionDict(_keyAction, action, keyCombination);
+			RemoveKeyActionDict(_keyActionSimple, action, keyCombination);
 		}
 
 		/// <summary>
@@ -176,7 +176,7 @@ namespace Engine
 		/// </summary>
 		private void GetInput()
 		{
-			foreach (var keyComb in _keyAction.Keys) {
+			foreach (var keyComb in _keyActionSimple.Keys) {
 				if (ModalStateChanged) return;
 				var keyFounded = true;
 				foreach (var k1 in keyComb) {
@@ -184,8 +184,11 @@ namespace Engine
 					keyFounded = false;
 					break;
 				}
-				if (keyFounded)
-					RunEachAction(_keyAction[keyComb]);
+				if (keyFounded) {
+					var actions = _keyActionSimple[keyComb];
+					if (actions != null)
+						RunEachAction(actions);
+				}
 			}
 		}
 
@@ -416,8 +419,8 @@ namespace Engine
 		{
 			ModalStateChanged = true;
 			OnModalStateChanged?.Invoke();
-			_keyActionStack.Push(_keyAction);
-			_keyAction = new Dictionary<List<Keys>, Action>();
+			_keyActionStack.Push(_keyActionSimple);
+			_keyActionSimple = new Dictionary<List<Keys>, Action>();
 
 			_keyActionStickedStack.Push(_keyActionSticked);
 			_keyActionSticked = new Dictionary<List<Keys>, Action>();
@@ -442,7 +445,7 @@ namespace Engine
 			ModalStateChanged = true;
 			OnModalStateChanged?.Invoke();
 			if (_keyActionStack.Count == 0) throw new Exception("Модальный режим не запускался");
-			_keyAction = _keyActionStack.Pop();
+			_keyActionSimple = _keyActionStack.Pop();
 
 			if (_keyActionStickedStack.Count == 0) throw new Exception("Модальный режим не запускался");
 			_keyActionSticked = _keyActionStickedStack.Pop();
@@ -529,7 +532,7 @@ namespace Engine
 		public List<string> GetActionsLists()
 		{
 			var ret = new List<string>();
-			foreach (var item in _keyAction) {
+			foreach (var item in _keyActionSimple) {
 				ret.Add(" keys = " + GetKeyList(item.Key));
 				GetActionList(item.Value, ret);
 			}

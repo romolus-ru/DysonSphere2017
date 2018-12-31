@@ -136,12 +136,12 @@ namespace SpaceConstruction.Game.Items
 			CreateUpgradeItem(strUpWeight, strUpWeight, null, itemCost5, ItemUpgradeQualityEnum.Extra,
 				new List<ItemUpgradeValue>() { upgradeWeightExtra });
 
-			CreateUpgradeItem(strUpExp, strUpExp, null, itemCost1, ItemUpgradeQualityEnum.Poor,
+			/*CreateUpgradeItem(strUpExp, strUpExp, null, itemCost1, ItemUpgradeQualityEnum.Poor,
 				new List<ItemUpgradeValue>() { upgradeExpPlus });
 			CreateUpgradeItem(strUpExp, strUpExp, null, itemCost3, ItemUpgradeQualityEnum.Normal,
 				new List<ItemUpgradeValue>() { upgradeExp, upgradeVolumePlus });
 			CreateUpgradeItem(strUpExp, strUpExp, null, itemCost5, ItemUpgradeQualityEnum.Extra,
-				new List<ItemUpgradeValue>() { upgradeExpExtra });
+				new List<ItemUpgradeValue>() { upgradeExpExtra });*/
 
 			CreateUpgradeItem(strUpAutoPilot, strUpAutoPilot, null, itemCost5, ItemUpgradeQualityEnum.Extra,
 				new List<ItemUpgradeValue>() { upgradeAutopilot });
@@ -203,6 +203,27 @@ namespace SpaceConstruction.Game.Items
 			ItemsManaged.Add(it1);
 		}
 
+		internal static List<ItemManager> GetUpgrades(bool buyNormalUpgrades, bool buyExtraUpgrades)
+		{
+			var result = new List<ItemManager>();
+			var upgrades = ItemsManaged.Where(item => item.Item.Type == ItemTypeEnum.Upgrade);
+			if (buyExtraUpgrades)
+				foreach (var upgrade in upgrades) {
+					if ((upgrade.Item as ItemUpgrade).Quality == ItemUpgradeQualityEnum.Extra)
+						result.Add(upgrade);
+				}
+			if (buyNormalUpgrades)
+				foreach (var upgrade in upgrades) {
+					if ((upgrade.Item as ItemUpgrade).Quality == ItemUpgradeQualityEnum.Normal)
+						result.Add(upgrade);
+				}
+			foreach (var upgrade in upgrades) {
+				if ((upgrade.Item as ItemUpgrade).Quality == ItemUpgradeQualityEnum.Poor)
+					result.Add(upgrade);
+			}
+			return result;
+		}
+
 		internal static IEnumerable<ItemManager> GetResearches()
 		{
 			return ItemsManaged.Where(item => item.Item.Type == ItemTypeEnum.Research);
@@ -231,12 +252,23 @@ namespace SpaceConstruction.Game.Items
 		/// </summary>
 		/// <param name="itemCode"></param>
 		/// <returns></returns>
-		public static bool BuyItem(string itemCode)
+		internal static bool BuyItem(string itemCode)
 		{
 			var item = GetItemByCode(itemCode);
 			var cost = item.Item.Cost;
 			var moneyItem = GetItemByCode(cost.Item.Code);
 			return item.BuyItem(moneyItem);
+		}
+
+		/// <summary>
+		/// Купить предмет. возвращаем успешность покупки
+		/// </summary>
+		/// <returns></returns>
+		internal static bool BuyUpgrade(ItemManager upgrade)
+		{
+			var cost = upgrade.Item.Cost;
+			var moneyItem = GetItemByCode(cost.Item.Code);
+			return upgrade.BuyItem(moneyItem);
 		}
 
 		public static void BuySign(string itemCode)

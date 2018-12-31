@@ -1,8 +1,6 @@
 ﻿using Engine;
 using Engine.Helpers;
 using Engine.Visualization;
-using Engine.Visualization.Debug;
-using Engine.Visualization.Text;
 using SpaceConstruction.Game.Items;
 using SpaceConstruction.Game.Orders;
 using SpaceConstruction.Game.Resources;
@@ -21,7 +19,6 @@ namespace SpaceConstruction.Game
 		public Action OnRecreatePoints;
 		public Action OnExitPressed;
 		public Func<int, int, ScreenPoint> OnFindNearest;
-		public Action OnBuyShip;
 		public List<ResourceInfo> ResourceInfos;
 		public List<OrderInfo> OrderInfos;
 		public Action OnUpdateMoneyInfo;
@@ -30,20 +27,18 @@ namespace SpaceConstruction.Game
 		private List<Planet> _RoadPoints = new List<Planet>();
 		private List<ScreenEdge> _RoadEdgesMST = new List<ScreenEdge>();
 		private Ships _ships = null;
-		private int _mapX = 100;
-		private int _mapY = 250;
+		private int _mapX = 50;
+		private int _mapY = 300;
 		private int _curX;
 		private int _curY;
 		private int _oldCurX;
 		private int _oldCurY;
 		private ScreenPoint _nearest = null;
-		private ScreenPoint _selected = null;
 		private ViewLabelIcon _showMoney = null;
 		private ViewShipsPanel _shipsPanel = null;
-		/// <summary>
-		/// Позиция для вывода информации о загрузке
-		/// </summary>
-		private int _shipLoadRow = 0;
+		private ViewButton _btnResearches = null;
+		private ViewButton _btnShop = null;
+		private ViewButton _btnRecreatePoints = null;
 
 		public void InitTransportGame(ViewManager viewManager)
 		{
@@ -65,97 +60,68 @@ namespace SpaceConstruction.Game
 			visualizationProvider.LoadAtlas("Planets");
 			visualizationProvider.LoadAtlas("Money");
 			visualizationProvider.LoadAtlas("Resources");
+			visualizationProvider.LoadAtlas("Result");
 			SetParams(0, 0, visualizationProvider.CanvasWidth, visualizationProvider.CanvasHeight, "ViewTransportGame");
-			var debugView = new DebugView();
+			
+			/*var debugView = new DebugView();
 			AddComponent(debugView, true);
-			debugView.SetParams(1100, 0, debugView.Width, debugView.Height, "DebugView");
+			debugView.SetParams(1100, 0, debugView.Width, debugView.Height, "DebugView");*/
 
-			var btnRecreatePoints = new ViewButton();
-			AddComponent(btnRecreatePoints);
-			btnRecreatePoints.InitButton(RecreatePoints, "RecreatePoints", "hint", Keys.Y);
-			btnRecreatePoints.SetParams(20, 120, 140, 30, "RecreatePoints");
-			btnRecreatePoints.InitTexture("textRB", "textRB");
+			// сделать основной кнопкой - будет запускать игру
+			_btnRecreatePoints = new ViewButton();
+			AddComponent(_btnRecreatePoints);
+			_btnRecreatePoints.InitButton(RecreatePoints, "RecreatePoints", "hint", Keys.Y);
+			_btnRecreatePoints.SetParams(110, 15, 140, 25, "RecreatePoints");
+			_btnRecreatePoints.InitTexture("textRB", "textRB");
 
-			var btnBuyShip = new ViewButton();
-			AddComponent(btnBuyShip);
-			btnBuyShip.InitButton(null, "Купить корабль", "hint", Keys.S);
-			btnBuyShip.SetParams(250, 70, 140, 30, "btnBuyShip");
-			btnBuyShip.InitTexture("textRB", "textRB");
-
-			var btnShop = new ViewButton();
-			AddComponent(btnShop);
-			btnShop.InitButton(ShowShop, "ShowShop", "hint", Keys.S);
-			btnShop.SetParams(250, 105, 140, 30, "btnShop");
-			btnShop.InitTexture("textRB", "textRB");
-
-			var btnRIView = new ViewButton();
+			// нужно что бы сравнивать ресурсы заказов
+			/*var btnRIView = new ViewButton();
 			AddComponent(btnRIView);
 			btnRIView.InitButton(RIView, "btnRIView", "hint", Keys.S);
 			btnRIView.SetParams(250, 135, 60, 30, "btnRIView");
-			btnRIView.InitTexture("textRB", "textRB");
+			btnRIView.InitTexture("textRB", "textRB");*/
 
+			// нужно что бы смотреть имеющиеся заказы
 			var btnOIView = new ViewButton();
 			AddComponent(btnOIView);
-			btnOIView.InitButton(OIView, "btnOIView", "hint", Keys.S);
-			btnOIView.SetParams(320, 135, 60, 30, "btnOIView");
+			btnOIView.InitButton(OIView, "Заказы", "Просмотр информации о заказах", Keys.Q);
+			btnOIView.SetParams(720, 15, 110, 25, "btnOIView");
 			btnOIView.InitTexture("textRB", "textRB");
 
-			var btnSUEView = new ViewButton();
-			AddComponent(btnSUEView);
-			btnSUEView.InitButton(SUEView, "btnSUEView", "hint", Keys.S);
-			btnSUEView.SetParams(250, 175, 140, 20, "btnSUEView");
-			btnSUEView.InitTexture("textRB", "textRB");
+			_btnShop = new ViewButton();
+			AddComponent(_btnShop);
+			_btnShop.InitButton(ShowShop, "Магазин", "hint", Keys.S);
+			_btnShop.SetParams(550, 15, 80, 25, "btnShop");
+			_btnShop.InitTexture("textRB", "textRB");
+			_btnShop.Enabled = false;
 
-			var btnResearches = new ViewButton();
-			AddComponent(btnResearches);
-			btnResearches.InitButton(ResearchesView, "btnResearches", "hint", Keys.S);
-			btnResearches.SetParams(250, 200, 140, 20, "btnResearches");
-			btnResearches.InitTexture("textRB", "textRB");
-
-			var btnBigMessage = new ViewButton();
-			AddComponent(btnBigMessage);
-			btnBigMessage.InitButton(AddBigMessage, "AddBigMessage", "hint", Keys.U);
-			btnBigMessage.SetParams(250, 225, 140, 30, "btnBigMessage");
-			btnBigMessage.InitTexture("textRB", "textRB");
+			_btnResearches = new ViewButton();
+			AddComponent(_btnResearches);
+			_btnResearches.InitButton(ResearchesView, "Исследования", "hint", Keys.S);
+			_btnResearches.SetParams(390, 15, 110, 25, "btnResearches");
+			_btnResearches.InitTexture("textRB", "textRB");
+			_btnResearches.Enabled = false;
 
 			_shipsPanel = new ViewShipsPanel();
 			AddComponent(_shipsPanel);
-			_shipsPanel.OnBuyShip += () => OnBuyShip?.Invoke();// отправляем запрос выше
+			_shipsPanel.SetParams(30, 50, 1620, 220, "ShipsPanel");
+			_shipsPanel.OnUpgradeShip = SUEView;
 
 			var btnClose = new ViewButton();
 			AddComponent(btnClose);
 			btnClose.InitButton(Close, "exit", "hint", Keys.LMenu, Keys.X);
 			btnClose.SetParams(1659, 0, 20, 20, "btnE");
 
-			_showMoney = ViewLabelIcon.Create(300, 20, Color.Red, "0", "bigFont", "Resources.Sign1");
+			_showMoney = ViewLabelIcon.Create(280, 10, Color.Red, "0", "bigFont", "Resources.Sign1");
 			AddComponent(_showMoney);
 
-			/*var viewText = new ViewText();
-			AddComponent(viewText);
-			viewText.SetParams(250, 140, 180, 50, "ViewText");
-			var tr = viewText.CreateTextRow();
-			viewText.AddText(tr, Color.Red, null, "Red");
-			viewText.AddTexture(tr, "Resources.Tools");
-			viewText.AddText(tr, Color.Yellow, null, "Yellow");
-			viewText.AddText(tr, Color.Green, null, "Green");
-			var tr2 = viewText.CreateTextRow();
-			viewText.AddText(tr2, Color.Red, null, "color = Red 2 ");
-			viewText.CalculateTextPositions();*/
-
-			Input.AddKeyActionSticked(SelectPoint, Keys.LButton);
-			visualizationProvider.InitShader();
-		}
-
-		int counter = 0;
-		private void AddBigMessage()
-		{
-			counter++;
-			ViewHelper.ShowBigMessage("Message " + counter);
+			Input.AddKeyActionSticked(StartShip, Keys.LButton);
 		}
 
 		private void ShowShop()
 		{
-			//new ShopWindow().InitWindow(_viewManager);
+			var upgrades = ItemsManager.GetUpgrades(_canBuyNormalUpgrades, _canBuyExtraUpgrades);
+			new ShopUpgradesBuyWindow().InitWindow(_viewManager, upgrades);
 		}
 
 		private void RIView()
@@ -168,26 +134,31 @@ namespace SpaceConstruction.Game
 			new OrdersInfosViewWindow().InitWindow(_viewManager, OrderInfos);
 		}
 
-		private void SUEView()
+		private void SUEView(Ship ship)
 		{
-			new ShipUpgradesEditWindow().InitWindow(_viewManager, new Ship(null, null, null));
+			new ShipUpgradesEditWindow().InitWindow(_viewManager, ship);
 		}
 
 		private void ResearchesView()
 		{
 			var researches = ItemsManager.GetResearches().ToList();
-			new ResearchesBuyWindow().InitWindow(_viewManager, researches, OnUpdateMoneyInfo);
+			new ResearchesBuyWindow().InitWindow(_viewManager, researches, OnUpdateMoneyInfo, ResearchesViewClosed);
+		}
+
+		private void ResearchesViewClosed()
+		{
+			// из-за модального режима нельзя создавать графические объекты - их события будут потом удалены при выключении модального режима
+			_shipsPanel.CreateNewShipPanels();
 		}
 
 		private void RecreatePoints()
 		{
-			_selected = null;
 			_nearest = null;
 			OnRecreatePoints?.Invoke();
+			_btnResearches.Enabled = true;
 		}
-		private void SelectPoint()
+		private void StartShip()
 		{
-			// при клике на планету запускаем корабль если он один свободный или в зависимости от настроек или открываем диалог кораблей и запускаем нужные корабли
 			if (_nearest == null) return;
 			var planet = _nearest as Planet;
 			if (planet.Order == null) return;
@@ -216,17 +187,9 @@ namespace SpaceConstruction.Game
 		{
 			OnExitPressed();
 		}
+
 		public override void DrawObject(VisualizationProvider visualizationProvider)
 		{
-			visualizationProvider.UseShader();
-			visualizationProvider.SetColor(Color.DeepSkyBlue);
-			//visualizationProvider.Box(10, 10, 1400, 800);
-			visualizationProvider.Print(100, 100, "Текст");
-			visualizationProvider.DrawTexturePart(70, 70, "RoundDigits.1", 20, 20);
-
-			visualizationProvider.StopShader();
-			visualizationProvider.DrawTexturePart(100, 70, "RoundDigits.1", 20, 20);
-
 			visualizationProvider.SetColor(Color.White);
 			visualizationProvider.OffsetAdd(_mapX, _mapY);
 
@@ -238,25 +201,16 @@ namespace SpaceConstruction.Game
 				visualizationProvider.SetColor(Color.OrangeRed);
 				visualizationProvider.Circle(_nearest.X, _nearest.Y, 10);
 			}
-			if (_selected != null) {
-				visualizationProvider.SetColor(Color.Red);
-				visualizationProvider.Circle(_selected.X, _selected.Y, 15);
-			}
 
 			if (_ships != null) {
 				visualizationProvider.SetColor(Color.LightCoral);
-				_shipLoadRow = 0;
 				foreach (var ship in _ships) {
 					DrawShipMapInfo(visualizationProvider, ship);
 				}
 			}
 
 			foreach (var p in _RoadPoints) {
-				if (p == _nearest) continue;
 				DrawPlanetInfo(visualizationProvider, p);
-			}
-			if (_nearest != null) {
-				DrawPlanetInfo(visualizationProvider, _nearest as Planet, isBright: true);
 			}
 
 			visualizationProvider.OffsetRemove();
@@ -264,20 +218,8 @@ namespace SpaceConstruction.Game
 
 		private void DrawShipMapInfo(VisualizationProvider visualizationProvider, Ship ship)
 		{
-			var waitState = ship.TimeToWaitState;
-			if (waitState != ShipCommandsEnum.NoCommand) {
-				// рисуем прогресс бар
-				var planet = ship.CurrentRoad[0];
-				const int progressBarLenght = 50;
-				int cur = progressBarLenght * ship.TimeToWaitCurrent / ship.TimeToWaitMax;
-				visualizationProvider.SetColor(Color.Green);
-				visualizationProvider.Box(planet.X + 10, planet.Y - 10 + _shipLoadRow * progressBarLenght, cur, 10);
-				visualizationProvider.SetColor(Color.Red);
-				visualizationProvider.Box(planet.X + 10 + cur, planet.Y - 10 + _shipLoadRow * progressBarLenght, progressBarLenght - cur, 10);
-				_shipLoadRow++;
-				return;
-			}
 			if (ship.CurrentRoadPointNum <= 0) return;
+
 			if (ship.CurrentRoadPointNum >= ship.CurrentRoad.Count) {
 				System.Diagnostics.Debug.WriteLine("количество точек в пути меньше чем текущее положение корабля");
 				return;
@@ -294,38 +236,20 @@ namespace SpaceConstruction.Game
 			}
 		}
 
-		private void DrawPlanetInfo(VisualizationProvider visualizationProvider, Planet p, bool isBright = false)
+		private void DrawPlanetInfo(VisualizationProvider visualizationProvider, Planet p)
 		{
 			if (p == _nearest)
 				visualizationProvider.SetColor(Color.White);
 			else
 				visualizationProvider.SetColor(Color.White, 75);
 
-			if (p.Order != null) {
-				visualizationProvider.Rectangle(p.X - 1, p.Y - 1, 3, 3);
-				//var s = p.Order.GetInfo();
-				//visualizationProvider.Print(p.X, p.Y + 16, " +" + p.Order.Reward);
-				//visualizationProvider.DrawTextLineArtifacts();
-				//visualizationProvider.PrintTexture("Money.MR", null);
-				//visualizationProvider.DrawTextLineArtifacts();
-				//visualizationProvider.PrintTexture("Money.MR", null);
-				//visualizationProvider.DrawTextLineArtifacts();
-				//visualizationProvider.Print(" за рейс)");
-				//visualizationProvider.DrawTextLineArtifacts();
-				//ResourcesHelper.PrintResources(visualizationProvider, p.X, p.Y + 32, p.Order.AmountResources);
-				//var strNum = 0;
-				//foreach (var str in s) {
-				//	strNum++;
-				//	visualizationProvider.Print(p.X, p.Y + strNum * 16, str);
-				//}
-
-
-			}
 			const int offsetResources = 16;
 			if (p.IsDepot)
 				visualizationProvider.DrawTexturePart(p.X - offsetResources, p.Y - offsetResources, "Resources.ShipDepot", offsetResources * 2, offsetResources * 2);
-			if (p.Order != null)
+			if (p.Order != null) {
+				visualizationProvider.Rectangle(p.X - 1, p.Y - 1, 3, 3);
 				DrawPlanetOrderInfo(visualizationProvider, p, p == _nearest);
+			}
 
 		}
 
@@ -334,9 +258,9 @@ namespace SpaceConstruction.Game
 			var o = p.Order;
 			if (fullView) {
 				visualizationProvider.SetColor(Color.Black, 70);
-				visualizationProvider.Box(_nearest.X - 10, _nearest.Y - 10, 200, 100);
+				visualizationProvider.Box(_nearest.X - 10, _nearest.Y - 10, 250, 150);
 				visualizationProvider.SetColor(Color.Green, 40);
-				visualizationProvider.Rectangle(_nearest.X - 10, _nearest.Y - 10, 200, 100);
+				visualizationProvider.Rectangle(_nearest.X - 10, _nearest.Y - 10, 250, 150);
 
 				visualizationProvider.SetColor(Color.DarkSeaGreen);
 				visualizationProvider.Line(o.Destination.X, o.Destination.Y, o.Source.X, o.Source.Y);
@@ -362,13 +286,12 @@ namespace SpaceConstruction.Game
 			visualizationProvider.SetColor(Color.Green);
 			visualizationProvider.Box(p.X, p.Y - 30, mvd, 15);
 		}
+
 		/// <summary>
 		/// При изменении заказов проверить, не выделена ли теперь планета без заказа
 		/// </summary>
 		public void OrdersChanged()
 		{
-			if (_selected != null && (_selected as Planet).Order == null)
-				_selected = null;
 			if (_nearest != null && (_nearest as Planet).Order == null)
 				_nearest = null;
 		}
@@ -378,27 +301,23 @@ namespace SpaceConstruction.Game
 		private bool _canBuyExtraUpgrades = false;
 		private bool _openTopOrders = false;
 		private bool _finalOrderActive = false;
-		private void UpdateResearchInfo()
+		public void UpdateResearchInfo()
 		{
 			if (!_openShop && ItemsManager.IsResearchItemBuyed("OpenShop")) {
 				_openShop = true;
-				//UpdateInterface();
+				_btnShop.Enabled = true;
 			}
 			if (!_canBuyNormalUpgrades && ItemsManager.IsResearchItemBuyed("CanBuyNormalUpgrades")) {
 				_canBuyNormalUpgrades = true;
-				//UpdateInterface();
 			}
 			if (!_canBuyExtraUpgrades && ItemsManager.IsResearchItemBuyed("CanBuyExtraUpgrades")) {
 				_canBuyExtraUpgrades = true;
-				//UpdateInterface();
 			}
 			if (!_openTopOrders && ItemsManager.IsResearchItemBuyed("OpenTopOrders")) {
 				_openTopOrders = true;
-				//UpdateInterface();
 			}
 			if (!_finalOrderActive && ItemsManager.IsResearchItemBuyed("StartFinalOrder")) {
 				_finalOrderActive = true;
-				//UpdateInterface();
 			}
 		}
 	}

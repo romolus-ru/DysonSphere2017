@@ -472,8 +472,18 @@ namespace VisualizationOpenGL
 			//gl.BlendFunc(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA);// непрозрачно
 			gl.BlendFunc(GL.SRC_ALPHA, GL.ONE);// прозрачно, как в DrawTexturePart
 			gl.BindTexture(GL.TEXTURE_2D, texInfo.TextureCode);
-			int h = (int)(scale * texInfo.AtlasHeight);
-			int w = (int)(scale * texInfo.AtlasWidth);
+			int h = (int)(scale * texInfo.Height);
+			int w = (int)(scale * texInfo.Width);
+
+			float x1 = texInfo.X;
+			float x2 = texInfo.X + texInfo.Width;
+			float y1 = texInfo.Y;
+			float y2 = texInfo.Y + texInfo.Height;
+
+			x1 = x1 / texInfo.AtlasWidth;
+			x2 = x2 / texInfo.AtlasWidth;
+			y1 = y1 / texInfo.AtlasHeight;
+			y2 = y2 / texInfo.AtlasHeight;
 
 			// сохраняем состояние матрицы 
 			gl.PushMatrix();
@@ -483,10 +493,10 @@ namespace VisualizationOpenGL
 
 			gl.Begin(GL.QUADS);
 			// указываем поочередно вершины и текстурные координаты
-			gl.TexCoord2f(1, 0); gl.Vertex3d(w / 2, h / 2, z);
-			gl.TexCoord2f(1, 1); gl.Vertex3d(w / 2, -h / 2, z);
-			gl.TexCoord2f(0, 1); gl.Vertex3d(-w / 2, -h / 2, z);
-			gl.TexCoord2f(0, 0); gl.Vertex3d(-w / 2, h / 2, z);
+			gl.TexCoord2f(x2, y1); gl.Vertex3d(w / 2, h / 2, z);
+			gl.TexCoord2f(x2, y2); gl.Vertex3d(w / 2, -h / 2, z);
+			gl.TexCoord2f(x1, y2); gl.Vertex3d(-w / 2, -h / 2, z);
+			gl.TexCoord2f(x1, y1); gl.Vertex3d(-w / 2, h / 2, z);
 
 			gl.End();
 

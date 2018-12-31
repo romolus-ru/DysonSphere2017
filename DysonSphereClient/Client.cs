@@ -36,11 +36,6 @@ namespace DysonSphereClient
 		private UserRegistration _rplayer;
 		private ModelViewManager _modelClientManager;
 
-		/// <summary>
-		/// Значение времени для рассчёта количества кадров в секунду
-		/// </summary>
-		public static int TimerInterval = 1000 / 60;
-
 		public Client(DataSupportBase dataSupport, LogSystem logSystem)
 		{
 			// сохраняем объект для работы с данными
@@ -52,7 +47,7 @@ namespace DysonSphereClient
 			StateClient.InitState();
 
 			_timer = new Timer();
-			_timer.Interval = TimerInterval;
+			_timer.Interval = Constants.TimerInterval;
 			_timer.Tick += MainTimerRun;
 
 			//отсюда всё перенести в ModelClientManage и/или в ModelMenu ViewMenu

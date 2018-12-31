@@ -29,11 +29,6 @@ namespace DysonSphere
 		private ViewManager _viewManager;
 		private Timer _timer;
 
-		/// <summary>
-		/// Значение времени для рассчёта количества кадров в секунду
-		/// </summary>
-		public static int TimerInterval = 1000 / 60;
-
 		public Server(DataSupportBase dataSupport, LogSystem logSystem)
 		{
 			_stopwatch = Stopwatch.StartNew();
@@ -45,7 +40,7 @@ namespace DysonSphere
 			_logsystem = logSystem;
 
 			_timer = new Timer();
-			_timer.Interval = TimerInterval;
+			_timer.Interval = Constants.TimerInterval;
 			_timer.Tick += MainTimerRun;
 
 			// коллектор получает необходимые классы из ДЛЛ через базу

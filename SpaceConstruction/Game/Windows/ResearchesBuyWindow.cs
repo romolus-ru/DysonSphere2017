@@ -10,12 +10,14 @@ namespace SpaceConstruction.Game.Windows
 	internal class ResearchesBuyWindow : FilteredScrollViewWindow
 	{
 		private List<ItemManager> _researches;
-		private Action _buyed;
+		private Action _onBuy;
+		private Action _onClose;
 
-		public void InitWindow(ViewManager viewManager, List<ItemManager> researches, Action buyed)
+		public void InitWindow(ViewManager viewManager, List<ItemManager> researches, Action onBuy, Action onClose)
 		{
 			_researches = researches;
-			_buyed = buyed;
+			_onBuy = onBuy;
+			_onClose = onClose;
 
 			InitWindow("Покупка результатов исследований", viewManager, showOkButton: true, showNewButton: false, showCancelButton: false);
 		}
@@ -36,7 +38,7 @@ namespace SpaceConstruction.Game.Windows
 		
 		private void StartBuy()
 		{
-			_buyed?.Invoke();
+			_onBuy?.Invoke();
 			ViewScroll.ClearItems();
 			InitScrollItems();
 			UpdateScrollViewSize();
@@ -47,6 +49,12 @@ namespace SpaceConstruction.Game.Windows
 			base.InitButtonOk(btnOk);
 			btnOk.Caption = "закрыть";
 			btnOk.Hint = "закрыть окно";
+		}
+
+		protected override void CloseWindow()
+		{
+			base.CloseWindow();
+			_onClose?.Invoke();
 		}
 	}
 }

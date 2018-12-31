@@ -9,7 +9,6 @@ namespace SpaceConstruction.Game
 {
 	public class Ship
 	{
-		public Action<int> OnUpdateOperationProgress = null;
 		/// <summary>
 		/// Заказ полностью выполнен
 		/// </summary>
@@ -49,13 +48,7 @@ namespace SpaceConstruction.Game
 		private ScreenPoint _currentPlanet;// текущее место нахождения корабля
 		public ScreenPoint OrderPlanetSource;
 		public ScreenPoint OrderPlanetDestination;
-		/// <summary>
-		/// Время загрузки/разгрузки
-		/// </summary>
-		public int TimeToWaitMax;
-		public int TimeToWaitCurrent;
 
-		public ShipCommandsEnum TimeToWaitState = ShipCommandsEnum.NoCommand;
 		public int ShipNum;
 
 		/// <summary>
@@ -71,9 +64,9 @@ namespace SpaceConstruction.Game
 		/// </summary>
 		public TimeSpan TimeLandingUp { get; private set; }
 		/// <summary>
-		/// Время для состояния загрузки/разгрузки по умолчанию
+		/// Время для состояния взлёта/посадки по умолчанию
 		/// </summary>
-		private TimeSpan _timeLandingUpDefault = new TimeSpan(0, 0, 0, 0, milliseconds: 200);
+		private TimeSpan _timeLandingUpDefault = new TimeSpan(0, 0, 0, 0, milliseconds: 1500);
 		/// <summary>
 		/// Время для состояния загрузки/разгрузки
 		/// </summary>
@@ -81,7 +74,7 @@ namespace SpaceConstruction.Game
 		/// <summary>
 		/// Время для состояния загрузки/разгрузки по умолчанию
 		/// </summary>
-		private TimeSpan _timeLoadingDefault = new TimeSpan(0, 0, 0, 0, milliseconds: 200);
+		private TimeSpan _timeLoadingDefault = new TimeSpan(0, 0, 0, 0, milliseconds: 1500);
 		/// <summary>
 		/// Предыдущее время расчета
 		/// </summary>
@@ -97,8 +90,8 @@ namespace SpaceConstruction.Game
 		/// <summary>
 		/// Текущий список состояний корабля
 		/// </summary>
-		public List<ShipStatesEnum> ListStates = new List<ShipStatesEnum>();
-		public ShipStatesEnum _currentState = ShipStatesEnum.NoCommand;
+		private List<ShipStatesEnum> ListStates = new List<ShipStatesEnum>();
+		public ShipStatesEnum CurrentState = ShipStatesEnum.NoCommand;
 
 		private ShipStates _statesProcessor = null;
 		public bool _cargoLoaded = false;
@@ -120,7 +113,6 @@ namespace SpaceConstruction.Game
 				_needStateChange = true;
 			}
 			StoredPercent = percent;
-			OnUpdateOperationProgress?.Invoke(percent);
 		}
 
 		private void ProcessFly()
@@ -132,46 +124,23 @@ namespace SpaceConstruction.Game
 			}
 		}
 
-		private void ProcessState()
-		{
-			if (!_needStateChange) {
-				if (IsStarFly())
-					ProcessFly();
-				else
-					ProcessTime();
-				return;
-			}
-
-			PostProcessCommands(ShipCommand, _currentState);
-
-			_needStateChange = false;
-			CurrentRoadPointNum = 0;
-			if (ListStates.Count == 0) {// получаем следующую команду
-				_statesProcessor.SetChainCommand(out _shipCommand, _shipCommand, ListStates);
-			}
-
-			if (_shipCommand == ShipCommandsEnum.NoCommand)
-				return;
-
-			// получаем следующую команду из списка команд
-			InitNextCommand();
-
-		}
-
+		/// <summary>
+		/// Полет в космосе
+		/// </summary>
+		/// <returns></returns>
 		private bool IsStarFly()
-			=> _currentState == ShipStatesEnum.MoveCargo
-			|| _currentState == ShipStatesEnum.MoveToCargo
-			|| _currentState == ShipStatesEnum.MoveToBase;
+			=> CurrentState == ShipStatesEnum.MoveCargo
+			|| CurrentState == ShipStatesEnum.MoveToCargo
+			|| CurrentState == ShipStatesEnum.MoveToBase;
 
 		private void InitNextCommand()
 		{
-			_currentState = ListStates[0];
+			CurrentState = ListStates[0];
 			ListStates.RemoveAt(0);
 
-			PreProcessCommands(ShipCommand, _currentState);
+			PreProcessCommands(ShipCommand, CurrentState);
 		}
 
-		// возможно часть надо перенести в ShipState - что бы там менялось состояние и при необходимости вызывались команды для корабля и для заказов изменения были
 		/// <summary>
 		/// Команды выполняемые при завершении состояния
 		/// </summary>
@@ -205,7 +174,7 @@ namespace SpaceConstruction.Game
 		/// </summary>
 		private void PreProcessCommands(ShipCommandsEnum shipCommand, ShipStatesEnum currentState)
 		{
-			if (_currentState == ShipStatesEnum.Loading) {// загружаем груз
+			if (CurrentState == ShipStatesEnum.Loading) {// загружаем груз
 				(OrderPlanetDestination as Planet).Order.LoadToShipStore(_cargoCurrent, CargoVolumeMax, CargoWeightMax);
 				if (_cargoCurrent.IsEmpty()) {// если нечего загружать то ведём корабль на базу
 					MoveToBasePrepare();
@@ -213,7 +182,7 @@ namespace SpaceConstruction.Game
 				}
 				_cargoLoaded = true;
 			}
-			if (_currentState == ShipStatesEnum.Landing)
+			if (CurrentState == ShipStatesEnum.Landing)
 				_shipOnPlanet = true;
 
 			_timeStore = DateTime.Now;
@@ -232,13 +201,13 @@ namespace SpaceConstruction.Game
 			if (IsStarFly()) {// формируем путь полета
 				ScreenPoint from = _currentPlanet;
 				ScreenPoint to = null;
-				if (_currentState == ShipStatesEnum.MoveCargo) {
+				if (CurrentState == ShipStatesEnum.MoveCargo) {
 					to = OrderPlanetDestination;
 				}
-				if (_currentState == ShipStatesEnum.MoveToCargo) {
+				if (CurrentState == ShipStatesEnum.MoveToCargo) {
 					to = OrderPlanetSource;
 				}
-				if (_currentState == ShipStatesEnum.MoveToBase) {
+				if (CurrentState == ShipStatesEnum.MoveToBase) {
 					to = Base;
 				}
 				CurrentRoad = OnGetRoad?.Invoke(from, to);
@@ -252,7 +221,28 @@ namespace SpaceConstruction.Game
 		{
 			if (ShipCommand == ShipCommandsEnum.NoCommand)
 				return;
-			ProcessState();
+
+			if (!_needStateChange) {
+				if (IsStarFly())
+					ProcessFly();
+				else
+					ProcessTime();
+				return;
+			}
+
+			PostProcessCommands(ShipCommand, CurrentState);
+
+			_needStateChange = false;
+			CurrentRoadPointNum = 0;
+			if (ListStates.Count == 0) {// получаем следующую команду
+				_statesProcessor.SetChainCommand(out _shipCommand, _shipCommand, ListStates);
+			}
+
+			if (_shipCommand == ShipCommandsEnum.NoCommand)
+				return;
+
+			// получаем следующую команду из списка команд
+			InitNextCommand();
 		}
 
 		public Ship(ScreenPoint shipBase, ResourcesHolder shipWarehouse, ShipStates statesProcessor)
@@ -313,10 +303,8 @@ namespace SpaceConstruction.Game
 		/// </summary>
 		public void UpdateShipValues()
 		{
-			TimeToWaitMax = 10;
-			TimeToWaitCurrent = 0;
-			CargoVolumeMax = 100 + OnGetGlobalVolume();
-			CargoWeightMax = 100 + OnGetGlobalWeight();
+			CargoVolumeMax = 100 + OnGetGlobalVolume();// что бы влезала по умолчанию 1 единица самого большого груза
+			CargoWeightMax = 50 + OnGetGlobalWeight();
 			TeleportInstalled = false;
 			TeleportDistance = 1;
 			AutoPilot = false;

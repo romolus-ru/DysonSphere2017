@@ -1,8 +1,6 @@
-﻿using Engine;
-using Engine.Visualization;
+﻿using Engine.Visualization;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace SpaceConstruction.Game
 {
@@ -14,29 +12,12 @@ namespace SpaceConstruction.Game
 		private List<ViewShipPanel> _shipsPanels = new List<ViewShipPanel>();
 		private Ships _ships = null;
 		private int _shipsCount = 0;
-		private ViewButton btnBuyShip;
-		public Action OnBuyShip;
+		public Action<Ship> OnUpgradeShip = null;
 
-		protected override void InitObject(VisualizationProvider visualizationProvider, Input input)
+		public void CreateNewShipPanels()
 		{
-			base.InitObject(visualizationProvider, input);
-			SetParams(500, 20, 900, 220, "ShipsPanel");
-
-			btnBuyShip = new ViewButton();
-			AddComponent(btnBuyShip);
-			btnBuyShip.InitButton(BuyShip, "btnBuyShip", "Купить корабль");
-			btnBuyShip.SetParams(160, 80, 140, 70, "btnBuyShip");
-			btnBuyShip.InitTexture("textRB", "textRB");
-			btnBuyShip.Enabled = false;
-		}
-
-		private void BuyShip()
-		{
-			OnBuyShip?.Invoke();
-		}
-
-		public void UpdateShipsPanel()
-		{
+			if (GameState.IsResearchesOpen)
+				return;
 			var newCount = _ships.GetShipsCount();
 			if (_shipsCount == newCount) return;
 			_shipsCount = newCount;
@@ -52,6 +33,7 @@ namespace SpaceConstruction.Game
 				_shipsPanels.Add(shipPanel);
 				AddComponent(shipPanel);
 				shipPanel.SetShip(_ships[i]);
+				shipPanel.OnUpgradeShip = OnUpgradeShip;
 			}
 			UpdatePanelsPositions();
 		}
@@ -63,14 +45,11 @@ namespace SpaceConstruction.Game
 				panel.SetCoordinates(10 + i * (panel.Width + 5), panel.Y);
 				i++;
 			}
-			var last = _shipsPanels.Last();
-			btnBuyShip.SetCoordinates(last.X + last.Width + 10, btnBuyShip.Y);
 		}
 
 		public void SetShips(Ships ships)
 		{
 			_ships = ships;
-			_ships.OnUpdateShipsPanel += UpdateShipsPanel;
 			CreateShipPanel();
 		}
 	}

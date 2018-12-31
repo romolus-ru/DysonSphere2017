@@ -1,4 +1,5 @@
-﻿using Engine.Helpers;
+﻿using Engine;
+using Engine.Helpers;
 using SpaceConstruction.Game.Resources;
 using System;
 using System.Collections.Generic;
@@ -66,8 +67,12 @@ namespace SpaceConstruction.Game.Orders
 		public List<string> GetInfo()
 		{
 			var ret = new List<string>();
-			ret.Add("Требуется перевезти");
-			ret.AddRange(AmountResources.GetInfo());
+			var rows = AmountResources.GetInfo();
+			if (rows.Count > 0) {
+				ret.Add("Требуется перевезти");
+				ret.AddRange(rows);
+			} else
+				ret.Add("Выполнение заказа завершается");
 			return ret;
 		}
 
@@ -77,7 +82,6 @@ namespace SpaceConstruction.Game.Orders
 		/// <returns></returns>
 		public void LoadToShipStore(ResourcesHolder fillCargo, int totalVolume, int totalWeight)
 		{
-			тут. иногда корабль забирает весь груз
 			fillCargo.Clear();
 			int freeVolume = totalVolume;
 			int freeWeight = totalWeight;
@@ -101,6 +105,8 @@ namespace SpaceConstruction.Game.Orders
 			AmountResources -= fillCargo;
 			AmountResourcesInProgress += fillCargo;
 			ProgressInMove += fillCargo.Volume();
+			//StateEngine.Log.AddLog("++ cargo = " + fillCargo.Volume() + " A=" + AmountResources.Volume() 
+			//	+ " I=" + AmountResourcesInProgress.Volume() + " M=" + ProgressInMove);
 		}
 
 		/// <summary>
@@ -113,6 +119,8 @@ namespace SpaceConstruction.Game.Orders
 			AmountResourcesDelivered += _cargoCurrent;
 			ProgressInMove -= _cargoCurrent.Volume();
 			ProgressMoved += _cargoCurrent.Volume();
+			//StateEngine.Log.AddLog("-- cargo = " + _cargoCurrent.Volume() + " A=" + AmountResources.Volume()
+			//	+ " I=" + AmountResourcesInProgress.Volume() + " M=" + ProgressInMove);
 		}
 
 		/// <summary>

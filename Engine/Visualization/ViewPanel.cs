@@ -18,7 +18,7 @@ namespace Engine.Visualization
 		{
 			visualizationProvider.SetStencilArea(_xScreen, _yScreen, _xScreen + Width, _yScreen + Height);
 			base.DrawComponents(visualizationProvider);
-			visualizationProvider.StensilAreaOff();
+			visualizationProvider.StencilAreaOff();
 		}
 	}
 }

@@ -4,7 +4,7 @@ using System.Drawing;
 
 namespace SpaceConstruction.Game.Windows
 {
-	internal class ShipUpgradesViewShipInfo:ViewComponent
+	internal class ShipUpgradesViewShipInfo : ViewComponent
 	{
 		private Ship _ship;
 		private List<string> _info = new List<string>();
@@ -33,16 +33,16 @@ namespace SpaceConstruction.Game.Windows
 			_info.Add("Опыт за рейс");
 			_info.Add(_ship.XPAdd.ToString());
 
-			_info.Add("Автопилот " + (_ship.AutoPilot ? " установлен" : " отсутствует"));
-			
-			if (_ship.TeleportInstalled) {
-				_info.Add("Телепорт установлен");
-				_info.Add("Дистанция "+_ship.TeleportDistance);
-			}else
-				_info.Add("Телепорт отсутствует");
-
 			_info.Add("Усиление двигателя");
 			_info.Add(_ship.EngineForce.ToString());
+
+			_info.Add("Автопилот " + (_ship.AutoPilot ? " установлен" : " отсутствует"));
+
+			if (_ship.TeleportInstalled) {
+				_info.Add("Телепорт установлен");
+				_info.Add("Дистанция " + _ship.TeleportDistance);
+			} else
+				_info.Add("Телепорт отсутствует");
 
 		}
 

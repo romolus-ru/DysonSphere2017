@@ -1,10 +1,6 @@
 ﻿using Engine;
 using Engine.Visualization;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SpaceConstruction.Game
 {
@@ -14,6 +10,8 @@ namespace SpaceConstruction.Game
 	public class ViewShipPanel : ViewPanel
 	{
 		private ViewButton btnMoveToBase;
+		private ViewButton btnUpgrade;
+		public Action<Ship> OnUpgradeShip = null;
 
 		private Ship _ship = null;
 
@@ -25,21 +23,24 @@ namespace SpaceConstruction.Game
 			btnMoveToBase = new ViewButton();
 			AddComponent(btnMoveToBase);
 			btnMoveToBase.InitButton(MoveToBase, "btnMoveToBase", "Вернуть на базу");
-			btnMoveToBase.SetParams(5, 150, 140, 30, "btnMoveToBase");
+			btnMoveToBase.SetParams(5, 165, 140, 30, "btnMoveToBase");
 			btnMoveToBase.InitTexture("textRB", "textRB");
 
-			//Checkers.AddToCheckOnce(CheckState);
+			btnUpgrade = new ViewButton();
+			AddComponent(btnUpgrade);
+			btnUpgrade.InitButton(UpgradeShip, "U", "Купить улучшения корабля");
+			btnUpgrade.SetParams(120, 10, 25, 25, "btnUpgrade");
+			btnUpgrade.InitTexture("textRB", "textRB");
 		}
 
 		public void SetShip(Ship ship)
 		{
 			_ship = ship;
-			CheckState();
 		}
 
-		private void CheckState()
+		private void UpgradeShip()
 		{
-			btnMoveToBase.SetVisible(_ship != null);
+			OnUpgradeShip?.Invoke(_ship);
 		}
 
 		private void MoveToBase()
@@ -58,9 +59,6 @@ namespace SpaceConstruction.Game
 			string operation = "---";
 			/*if (_ship.OrderPlanetDestination != null) {
 				operation = "Перевозка";
-				texture = ResourcesHelper.GetTexture(
-					(_ship.OrderPlanetSource as Planet)
-					.Building.BuilingType.GetResourceEnum());
 			}
 			if ((_ship.ShipCommand == ShipCommandEnum.ToBase) || (_ship.ShipCommand == ShipCommandEnum.ToBasePrepare))
 				operation = "На базу";
@@ -71,17 +69,18 @@ namespace SpaceConstruction.Game
 			if (_ship.TimeToWaitState == ShipCommandEnum.CargoUnload)
 				operation = "Разгрузка";
 			if (_ship.ShipCommand == ShipCommandEnum.NoCommand)*/
-				texture = "Resources.Infinity";
-			if (!string.IsNullOrEmpty(texture)) {
-				const int size = 40;
-				visualizationProvider.DrawTexturePart(X + (Width - size) / 2, Y + 15, texture, size, size);
-			}
+
+			texture = _ship.ShipCommand == ShipCommandsEnum.NoCommand
+				? "Resources.Infinity"
+				: "Resources.Action";
+			const int size = 40;
+			visualizationProvider.DrawTexturePart(X + (Width - size) / 2, Y + 15, texture, size, size);
+
 			var l = visualizationProvider.TextLength(operation);
 			visualizationProvider.Print(X + (Width - l) / 2, Y + 55, operation);
 
-			visualizationProvider.Print(X + 10, Y + 70, "ИД=" + _ship.ShipNum.ToString());
-			visualizationProvider.Print(X + 10, Y + 85, "Команда " + _ship.ShipCommand);
-			visualizationProvider.Print(X + 10, Y + 100, "Состояние " + _ship._currentState);
+			visualizationProvider.Print(X + 10, Y + 85, _ship.ShipCommand.ToString());
+			visualizationProvider.Print(X + 10, Y + 100, _ship.CurrentState.ToString());
 			visualizationProvider.Print(X + 10, Y + 115, "% " + _ship.StoredPercent);
 			visualizationProvider.Print(X + 10, Y + 125, "cargo " + _ship._cargoLoaded);
 			visualizationProvider.Print(X + 10, Y + 135, "space " + !_ship._shipOnPlanet);

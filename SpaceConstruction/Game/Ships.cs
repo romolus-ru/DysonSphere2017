@@ -1,11 +1,10 @@
 ﻿using Engine.Visualization;
+using SpaceConstruction.Game.Items;
 using SpaceConstruction.Game.Resources;
 using SpaceConstruction.Game.States;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using SpaceConstruction.Game.Orders;
-using SpaceConstruction.Game.Items;
 
 namespace SpaceConstruction.Game
 {
@@ -27,7 +26,6 @@ namespace SpaceConstruction.Game
 		
 		private Func<ScreenPoint, ScreenPoint, List<ScreenPoint>> _onGetShipRoad;
 		private const int _defaultMaxShips = 1;
-		public Action OnUpdateShipsPanel;
 		private Orders.Orders _orders;
 		private List<ResourceInfo> _resourceInfos;
 
@@ -69,7 +67,6 @@ namespace SpaceConstruction.Game
 		{
 			for (int i = 0; i < count; i++)
 				CreateShipOne();
-			OnUpdateShipsPanel?.Invoke();
 		}
 
 		internal void Init(Planet shipBase, Func<ScreenPoint, ScreenPoint, List<ScreenPoint>> getShipRoad)
@@ -93,11 +90,6 @@ namespace SpaceConstruction.Game
 			return ship.MoveToOrder(start, end);
 		}
 
-		public void BuyShip()
-		{
-			CreateShip();
-		}
-
 		public int AddVolume1 { get; private set; } = 0;
 		public int AddWeight1 { get; private set; } = 0;
 		public int AddVolume2 { get; private set; } = 0;
@@ -118,22 +110,22 @@ namespace SpaceConstruction.Game
 		{
 			if (!_shipVolume && ItemsManager.IsResearchItemBuyed("ShipVolume")) {
 				_shipVolume = true;
-				AddVolume1 = 100;
+				AddVolume1 = 50;
 				UpdateShipsValues();
 			}
 			if (!_shipWeight && ItemsManager.IsResearchItemBuyed("ShipWeight")) {
 				_shipWeight = true;
-				AddWeight1 = 100;
+				AddWeight1 = 50;
 				UpdateShipsValues();
 			}
 			if (!_shipVolume2 && ItemsManager.IsResearchItemBuyed("ShipVolume2")) {
 				_shipVolume2 = true;
-				AddVolume2 = 100;
+				AddVolume2 = 30;
 				UpdateShipsValues();
 			}
 			if (!_shipWeight2 && ItemsManager.IsResearchItemBuyed("ShipWeight2")) {
 				_shipWeight2 = true;
-				AddWeight2 = 100;
+				AddWeight2 = 10;
 				UpdateShipsValues();
 			}
 
@@ -149,6 +141,15 @@ namespace SpaceConstruction.Game
 			if (!_addShips3 && ItemsManager.IsResearchItemBuyed("AddShips3")) {
 				_addShips3 = true;
 				CreateShip(2);
+			}
+		}
+
+		public void CancelOrder(Planet destination)
+		{
+			foreach (var ship in _ships) {
+				if (ship.OrderPlanetDestination != destination)
+					continue;
+				ship.MoveToBasePrepare();
 			}
 		}
 

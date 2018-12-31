@@ -25,11 +25,6 @@ namespace SpaceConstruction
 		private UserRegistration _rplayer;
 		private ModelViewManager _modelClientManager;
 
-		/// <summary>
-		/// Значение времени для рассчёта количества кадров в секунду
-		/// </summary>
-		public static int TimerInterval = 1000 / 60;
-
 		public Client(DataSupportBase dataSupport, LogSystem logSystem)
 		{
 			Settings.Init();
@@ -38,7 +33,7 @@ namespace SpaceConstruction
 			_datasupport = dataSupport;
 
 			_timer = new Timer();
-			_timer.Interval = TimerInterval;
+			_timer.Interval = Constants.TimerInterval;
 			_timer.Tick += MainTimerRun;
 
 			// коллектор получает необходимые классы из ДЛЛ через базу

@@ -28,11 +28,6 @@ namespace EngineTools
 		private Timer _timer;
 		private ModelViewManager _modelClientManager;
 
-		/// <summary>
-		/// Значение времени для рассчёта количества кадров в секунду
-		/// </summary>
-		public static int TimerInterval = 1000 / 60;
-
 		public Tools(DataSupportBase dataSupport, LogSystem logSystem)
 		{
 			// сохраняем объект для работы с данными
@@ -44,7 +39,7 @@ namespace EngineTools
 			StateClient.InitState();
 
 			_timer = new Timer();
-			_timer.Interval = TimerInterval;
+			_timer.Interval = Constants.TimerInterval;
 			_timer.Tick += MainTimerRun;
 
 			// коллектор получает необходимые классы из ДЛЛ через базу

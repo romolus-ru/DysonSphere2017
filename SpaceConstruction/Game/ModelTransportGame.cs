@@ -16,7 +16,7 @@ namespace SpaceConstruction.Game
 		private List<Planet> RoadPoints = new List<Planet>();
 		private List<ScreenEdge> RoadMST = new List<ScreenEdge>();
 		private Ships _ships;
-		private Orders.Orders _orders = new Orders.Orders();
+		private Orders.Orders _orders;
 		private Paths _paths = new Paths();
 		public SetPointsDelegate OnSetPoints;
 		public Action<int> OnMoneyChanged;
@@ -26,9 +26,10 @@ namespace SpaceConstruction.Game
 		/// </summary>
 		private const int MouseMinimalDistance = 50;
 
-		public ModelTransportGame(Ships ships)
+		public ModelTransportGame(Ships ships, Orders.Orders orders)
 		{
 			_ships = ships;
+			_orders = orders;
 			_ships.OnFinishOrder = CreateRandomOrders;
 		}
 		
@@ -37,7 +38,7 @@ namespace SpaceConstruction.Game
 			_orders.Clear();
 			var RoadEdges = new List<ScreenEdge>();
 			RoadPoints.Clear();
-			RoadPoints.AddRange(_paths.CreateGalaxy(70, 1200, 700, 100));
+			RoadPoints.AddRange(_paths.CreateGalaxy(70, 1500, 600, 100));
 			RoadPoints[0].IsDepot = true;
 			CreateRandomOrders();
 			var tmpPoints = new List<Vertex>();
@@ -109,10 +110,11 @@ namespace SpaceConstruction.Game
 			foreach (var point in RoadPoints) {
 				var order = point.Order;
 				if (order == null) continue;
-				if (!order.AmountResources.IsEmpty() && order.AmountResourcesInProgress.IsEmpty())
+				if (!order.AmountResources.IsEmpty() || !order.AmountResourcesInProgress.IsEmpty())
 					continue;
-				// всё перевезено и нету перевозимых ресурсов - удаляем заказ
 
+				// всё перевезено и нету перевозимых ресурсов - удаляем заказ
+				_ships.CancelOrder(point);
 				point.Order = null;
 				_orders.EndOrder(order);
 				ItemsManager.BuySign("Sign1");
@@ -157,11 +159,6 @@ namespace SpaceConstruction.Game
 		private List<ScreenPoint> GetShipRoad(ScreenPoint A, ScreenPoint B)
 		{
 			return _paths.GetShipRoad(RoadMST, A, B);
-		}
-
-		public void BuyShip()
-		{
-			_ships.BuyShip();
 		}
 
 		public override void Tick()

@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Client.cs" />
+    <Compile Include="GameState.cs" />
     <Compile Include="Game\Items\Item.cs" />
     <Compile Include="Game\Items\ItemManager.cs" />
     <Compile Include="Game\Items\ItemResearch.cs" />
@@ -87,6 +88,8 @@
     <Compile Include="Game\Windows\ShipUpgradesLinkedItem.cs" />
     <Compile Include="Game\Windows\ShipUpgradesScrollItem.cs" />
     <Compile Include="Game\Windows\ShipUpgradesViewShipInfo.cs" />
+    <Compile Include="Game\Windows\ShopUpgradesBuyScrollItem.cs" />
+    <Compile Include="Game\Windows\ShopUpgradesBuyWindow.cs" />
     <Compile Include="ModelIntro.cs" />
     <Compile Include="ModelLoadResources.cs" />
     <Compile Include="ModelViewManager.cs" />

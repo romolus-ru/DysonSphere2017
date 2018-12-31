@@ -1,4 +1,5 @@
-﻿using Engine.Extensions;
+﻿using Engine;
+using Engine.Extensions;
 using Engine.Helpers;
 using SpaceConstruction.Game.Items;
 using SpaceConstruction.Game.Resources;
@@ -116,13 +117,13 @@ namespace SpaceConstruction.Game.Orders
 				200, 0, 0, 0);
 
 			AddOrderInfo("Фазенда", "Строительство фазенды", 0, "",
-				 400, 0, 0, 0);
+				 300, 0, 0, 0);
 
 			AddOrderInfo("Магазин", "Строительство магазина", 0, "",
-				 500, 150, 100, 0);
+				 200, 150, 100, 0);
 
 			AddOrderInfo("Торговый центр", "Строительство торгового центра", 0, "",
-				 800, 200, 300, 50);
+				 300, 100, 200, 100);
 
 			AddOrderInfo("Товары", "Перевозка товаров для магазина", 0, "",
 				 0, 100, 100, 100);
@@ -131,10 +132,10 @@ namespace SpaceConstruction.Game.Orders
 				 0, 100, 100, 100);
 
 			AddOrderInfo("Инструменты", "Перевозка инструментов для магазина", 0, "",
-				0, 0, 0, 1000);
+				0, 0, 0, 400);
 
 			AddOrderInfo("Парк", "Разбить большой парк", 0, "",
-				400, 200, 200, 100);
+				200, 300, 100, 100);
 
 		}
 
@@ -160,27 +161,27 @@ namespace SpaceConstruction.Game.Orders
 		private void InitResourceInfos()
 		{
 			AddOrderInfo(ResourcesGroupEnum.StructuralMaterial, ResourcesEnum.StrWood, "", "Дерево", "Дерево", 1, 1);
-			AddOrderInfo(ResourcesGroupEnum.StructuralMaterial, ResourcesEnum.StrStone, "", "Камень", "Камень", 1, 1);
-			AddOrderInfo(ResourcesGroupEnum.StructuralMaterial, ResourcesEnum.StrConcrete, "", "Цемент", "Цемент", 1, 1);
-			AddOrderInfo(ResourcesGroupEnum.StructuralMaterial, ResourcesEnum.StrBrick, "", "Кирпич", "Киприч", 1, 1);
-			AddOrderInfo(ResourcesGroupEnum.StructuralMaterial, ResourcesEnum.StrSteel, "", "Железо", "Железо", 1, 1);
-			AddOrderInfo(ResourcesGroupEnum.DecorationMaterial, ResourcesEnum.DecTile, "", "Плитка", "Плитка", 1, 1);
-			AddOrderInfo(ResourcesGroupEnum.DecorationMaterial, ResourcesEnum.DecPaper, "", "Обои", "Обои", 1, 1);
-			AddOrderInfo(ResourcesGroupEnum.DecorationMaterial, ResourcesEnum.DecPlaster, "", "Штукатурка", "Штукатурка", 1, 1);
-			AddOrderInfo(ResourcesGroupEnum.DecorationMaterial, ResourcesEnum.DecPutty, "", "Шпаклевка", "Шпаклевка", 1, 1);
-			AddOrderInfo(ResourcesGroupEnum.DecorationMaterial, ResourcesEnum.DecGlass, "", "Стекло", "Стекло", 1, 1);
-			AddOrderInfo(ResourcesGroupEnum.DecorationMaterial, ResourcesEnum.DecPaint, "", "Краска", "Краска", 1, 1);
-			AddOrderInfo(ResourcesGroupEnum.DecorationMaterial, ResourcesEnum.DecLinoleum, "", "Линолеум", "Линолеум", 1, 1);
-			AddOrderInfo(ResourcesGroupEnum.DecorationMaterial, ResourcesEnum.DecPorcelain, "", "Фарфор", "Фарфор", 1, 1);
-			AddOrderInfo(ResourcesGroupEnum.Furniture, ResourcesEnum.FurFurniture, "", "Мебель", "Мебель", 1, 1);
-			AddOrderInfo(ResourcesGroupEnum.Furniture, ResourcesEnum.FurPlumbing, "", "Сантехника", "Сантехника", 1, 1);
-			AddOrderInfo(ResourcesGroupEnum.Furniture, ResourcesEnum.FurDishes, "", "Посуда", "Посуда", 1, 1);
-			AddOrderInfo(ResourcesGroupEnum.Furniture, ResourcesEnum.FurKitchen, "", "Кухня", "Куня", 1, 1);
+			AddOrderInfo(ResourcesGroupEnum.StructuralMaterial, ResourcesEnum.StrStone, "", "Камень", "Камень", 3, 3);
+			AddOrderInfo(ResourcesGroupEnum.StructuralMaterial, ResourcesEnum.StrConcrete, "", "Цемент", "Цемент", 2, 2);
+			AddOrderInfo(ResourcesGroupEnum.StructuralMaterial, ResourcesEnum.StrBrick, "", "Кирпич", "Кирпич", 2, 2);
+			AddOrderInfo(ResourcesGroupEnum.StructuralMaterial, ResourcesEnum.StrSteel, "", "Железо", "Железо", 5, 1);
+			AddOrderInfo(ResourcesGroupEnum.DecorationMaterial, ResourcesEnum.DecTile, "", "Плитка", "Плитка", 3, 2);
+			AddOrderInfo(ResourcesGroupEnum.DecorationMaterial, ResourcesEnum.DecPaper, "", "Обои", "Обои", 2, 4);
+			AddOrderInfo(ResourcesGroupEnum.DecorationMaterial, ResourcesEnum.DecPlaster, "", "Штукатурка", "Штукатурка", 2, 2);
+			AddOrderInfo(ResourcesGroupEnum.DecorationMaterial, ResourcesEnum.DecPutty, "", "Шпаклевка", "Шпаклевка", 2, 2);
+			AddOrderInfo(ResourcesGroupEnum.DecorationMaterial, ResourcesEnum.DecGlass, "", "Стекло", "Стекло", 2, 5);
+			AddOrderInfo(ResourcesGroupEnum.DecorationMaterial, ResourcesEnum.DecPaint, "", "Краска", "Краска", 2, 3);
+			AddOrderInfo(ResourcesGroupEnum.DecorationMaterial, ResourcesEnum.DecLinoleum, "", "Линолеум", "Линолеум", 3, 5);
+			AddOrderInfo(ResourcesGroupEnum.DecorationMaterial, ResourcesEnum.DecPorcelain, "", "Фарфор", "Фарфор", 2, 4);
+			AddOrderInfo(ResourcesGroupEnum.Furniture, ResourcesEnum.FurFurniture, "", "Мебель", "Мебель", 5, 1);
+			AddOrderInfo(ResourcesGroupEnum.Furniture, ResourcesEnum.FurPlumbing, "", "Сантехника", "Сантехника", 2, 4);
+			AddOrderInfo(ResourcesGroupEnum.Furniture, ResourcesEnum.FurDishes, "", "Посуда", "Посуда", 3, 2);
+			AddOrderInfo(ResourcesGroupEnum.Furniture, ResourcesEnum.FurKitchen, "", "Кухня", "Кухня", 10, 3);
 			AddOrderInfo(ResourcesGroupEnum.Mechs, ResourcesEnum.MechShovels, "", "Лопаты", "Лопаты", 1, 1);
-			AddOrderInfo(ResourcesGroupEnum.Mechs, ResourcesEnum.MechFinishingTools, "", "Инструменты для отделки", "Инструменты для отделки", 1, 1);
-			AddOrderInfo(ResourcesGroupEnum.Mechs, ResourcesEnum.MechExcavator, "", "Эскаватор", "Эскаватор", 1, 1);
-			AddOrderInfo(ResourcesGroupEnum.Mechs, ResourcesEnum.MechCrane, "", "Кран", "Кран", 1, 1);
-			AddOrderInfo(ResourcesGroupEnum.Mechs, ResourcesEnum.MechPileDriving, "", "Сваезабивалка", "Сваезабивалка", 1, 1);
+			AddOrderInfo(ResourcesGroupEnum.Mechs, ResourcesEnum.MechFinishingTools, "", "Инструменты для отделки", "Инструменты для отделки", 2, 2);
+			AddOrderInfo(ResourcesGroupEnum.Mechs, ResourcesEnum.MechExcavator, "", "Эскаватор", "Эскаватор", 50, 3);
+			AddOrderInfo(ResourcesGroupEnum.Mechs, ResourcesEnum.MechCrane, "", "Кран", "Кран", 100, 30);
+			AddOrderInfo(ResourcesGroupEnum.Mechs, ResourcesEnum.MechPileDriving, "", "Сваезабивалка", "Сваезабивалка", 80, 50);
 		}
 
 		private void AddOrderInfo(ResourcesGroupEnum resourceGroup, ResourcesEnum resourceType, string texture,
@@ -209,17 +210,17 @@ namespace SpaceConstruction.Game.Orders
 			if (!_addOrders1 && ItemsManager.IsResearchItemBuyed("AddOrders1")) {
 				_addOrders1 = true;
 				MaxOrders += 3;
-				//UpdateShipsValues();// обновить заказы на экране
+				StateEngine.Log.AddLog("Количество заказов увеличено");
 			}
 			if (!_addOrders2 && ItemsManager.IsResearchItemBuyed("AddOrders2")) {
 				_addOrders2 = true;
 				MaxOrders += 2;
-				//UpdateShipsValues();// обновить заказы на экране
+				StateEngine.Log.AddLog("Количество заказов увеличено");
 			}
 			if (!_addOrders3 && ItemsManager.IsResearchItemBuyed("AddOrders3")) {
 				_addOrders3 = true;
 				MaxOrders += 1;
-				//UpdateShipsValues();// обновить заказы на экране
+				StateEngine.Log.AddLog("Количество заказов увеличено");
 			}
 		}
 

@@ -500,29 +500,29 @@ namespace Engine.Visualization
 		protected virtual void _ClipPlaneOff() { }
 
 
-		private Stack<Tuple<int, int, int, int>> _stensil = new Stack<Tuple<int, int, int, int>>();
+		private Stack<Tuple<int, int, int, int>> _stencil = new Stack<Tuple<int, int, int, int>>();
 		public void SetStencilArea(int x1, int y1, int x2, int y2)
 		{
-			if (_stensil.Count > 0) {
-				var cur = _stensil.Peek();
+			if (_stencil.Count > 0) {
+				var cur = _stencil.Peek();
 				if (x1 < cur.Item1) x1 = cur.Item1;
 				if (y1 < cur.Item2) y1 = cur.Item2;
 				if (x2 > cur.Item3) x2 = cur.Item3;
 				if (y2 > cur.Item4) y2 = cur.Item4;
 			}
-			_stensil.Push(new Tuple<int, int, int, int>(x1, y1, x2, y2));
+			_stencil.Push(new Tuple<int, int, int, int>(x1, y1, x2, y2));
 			_SetStencilArea(x1, y1, x2, y2); }
 
 		protected virtual void _SetStencilArea(int x1, int y1, int x2, int y2) { }
 
-		public void StensilAreaOff()
+		public void StencilAreaOff()
 		{
-			var cur = _stensil.Pop();
-			if (_stensil.Count == 0) {
+			var cur = _stencil.Pop();
+			if (_stencil.Count == 0) {
 				_StencilAreaOff();
 				return;
 			}
-			cur = _stensil.Peek();
+			cur = _stencil.Peek();
 			_SetStencilArea(cur.Item1, cur.Item2, cur.Item3, cur.Item4);
 		}
 		

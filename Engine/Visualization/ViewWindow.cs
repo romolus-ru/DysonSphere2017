@@ -131,7 +131,7 @@ namespace Engine.Visualization
 		/// </summary>
 		protected void BorderCutOffEnd()
 		{
-			VisualizationProvider.StensilAreaOff();
+			VisualizationProvider.StencilAreaOff();
 		}
 	}
 }

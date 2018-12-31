@@ -35,9 +35,9 @@ namespace SpaceConstruction
 			btnClose.InitButton(Close, "exit", "hint", Keys.LMenu, Keys.X);
 			btnClose.SetParams(1659, 0, 20, 20, "btnE");
 
-			var debugView = new DebugView();
+			/*var debugView = new DebugView();
 			AddComponent(debugView);
-			debugView.SetParams(1100, 0, debugView.Width, debugView.Height, "DebugViewMenu");
+			debugView.SetParams(1100, 0, debugView.Width, debugView.Height, "DebugViewMenu");*/
 
 			var pnl = new ViewPanel();
 			AddComponent(pnl);

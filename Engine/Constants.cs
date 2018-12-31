@@ -20,6 +20,11 @@ namespace Engine
 		public const int HintHidePause = 3;
 
 		/// <summary>
+		/// Значение времени для рассчёта количества кадров в секунду (и основных вычислений)
+		/// </summary>
+		public const int TimerInterval = 1000 / 60;
+
+		/// <summary>
 		/// Дистанция для начала перемещения. может меняться в зависимости от разрешения экрана
 		/// </summary>
 		public const int DragDistance = 5;

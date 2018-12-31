@@ -14,8 +14,8 @@ namespace SpaceConstruction.Game
 
 		public override string ToString()
 		{
-			return base.ToString() +
-				" o=" + (Order != null);
+			return base.ToString()
+				+ " o=" + (Order != null);
 		}
 	}
 }
