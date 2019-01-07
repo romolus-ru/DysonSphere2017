@@ -19,19 +19,20 @@ namespace SpaceConstruction.Game.Windows
 			_onBuy = onBuy;
 			_onClose = onClose;
 
-			InitWindow("Покупка результатов исследований", viewManager, showOkButton: true, showNewButton: false, showCancelButton: false);
+			InitWindow("Покупка результатов исследований", viewManager, showOkButton: false, showNewButton: false);
 		}
 
 		protected override void InitScrollItems()
 		{
-			var items = _researches.Where(x => x.PlayerCount < 1).ToList();
+			var items = _researches.Where(x => x.PlayerCount < 1).OrderBy(x => x.Item.Cost.PlayerCount).ToList();
 			items.AddRange(_researches.Where(x => x.PlayerCount > 0));
 			var i = 1;
 			foreach (var item in items) {
 				var scrollItem = new ResearchesBuyScrollItem(item);
-				scrollItem.OnBuyed = StartBuy;
 				ViewScroll.AddComponent(scrollItem);
+				scrollItem.OnBuyed = StartBuy;
 				scrollItem.SetParams(1, 1, 980, 100, "ri" + i + " " + item.Item.Name);
+				scrollItem.ActivateButton();
 				i++;
 			}
 		}
@@ -44,17 +45,26 @@ namespace SpaceConstruction.Game.Windows
 			UpdateScrollViewSize();
 		}
 
-		protected override void InitButtonOk(ViewButton btnOk)
+		protected override void InitButtonCancel(ViewButton btnCancel)
 		{
-			base.InitButtonOk(btnOk);
-			btnOk.Caption = "закрыть";
-			btnOk.Hint = "закрыть окно";
+			base.InitButtonCancel(btnCancel);
+			btnCancel.SetCoordinatesRelative(-100, 0, 0);
+			btnCancel.Caption = "закрыть";
+			btnCancel.Hint = "закрыть исследования";
 		}
 
 		protected override void CloseWindow()
 		{
 			base.CloseWindow();
 			_onClose?.Invoke();
+		}
+
+		internal void UpdateBuyButtons()
+		{
+			foreach (var scrollItem in ViewScroll.GetItems()) {
+				var item = scrollItem as ResearchesBuyScrollItem;
+				item?.UpdateBuyButton();
+			}
 		}
 	}
 }

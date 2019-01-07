@@ -23,7 +23,7 @@ namespace Engine.Helpers
 				bytes[i] = dtBytes[i];
 			}
 
-			bytes[4] = _counter;// пригодится только или еслибудет сервис или несколько раз подряд будет генерироваться на одном компе
+			bytes[4] = _counter;// пригодится только или если будет сервис или несколько раз подряд будет генерироваться на одном компе
 			bytes[5] = 1;// type of operation system
 			bytes[6] = 1;// OS version 
 			for (int i = 7; i < totalLength; i++) {

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SpaceConstruction.Game.Items
+﻿namespace SpaceConstruction.Game.Items
 {
 	/// <summary>
 	/// Общее определение вещи из магазина

@@ -5,6 +5,7 @@ using SpaceConstruction.Game.States;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Policy;
 
 namespace SpaceConstruction.Game
 {
@@ -25,14 +26,11 @@ namespace SpaceConstruction.Game
 		public Action OnFinishOrder;
 		
 		private Func<ScreenPoint, ScreenPoint, List<ScreenPoint>> _onGetShipRoad;
-		private const int _defaultMaxShips = 1;
-		private Orders.Orders _orders;
 		private List<ResourceInfo> _resourceInfos;
 
 		public Ships(Orders.Orders orders)
 		{
-			_orders = orders;
-			_resourceInfos = _orders.ResourceInfos;
+			_resourceInfos = orders.ResourceInfos;
 		}
 
 		public void Clear() => _ships.Clear();
@@ -47,9 +45,7 @@ namespace SpaceConstruction.Game
 			return _ships.GetEnumerator();
 		}
 
-		public Ship this[int i] {
-			get { return _ships[i]; }
-		}
+		public Ship this[int i] => _ships[i];
 
 		private void CreateShipOne()
 		{
@@ -65,7 +61,7 @@ namespace SpaceConstruction.Game
 
 		internal void CreateShip(int count = 1)
 		{
-			for (int i = 0; i < count; i++)
+			for (var i = 0; i < count; i++)
 				CreateShipOne();
 		}
 
@@ -85,62 +81,60 @@ namespace SpaceConstruction.Game
 		/// <returns>если false - то все корабли заняты</returns>
 		internal bool SendShip(Planet start, Planet end)
 		{
-			Ship ship = GetFreeShip();
-			if (ship == null) return false;
-			return ship.MoveToOrder(start, end);
+			var ship = GetFreeShip();
+			return ship?.MoveToOrder(start, end) ?? false;
 		}
 
-		public int AddVolume1 { get; private set; } = 0;
-		public int AddWeight1 { get; private set; } = 0;
-		public int AddVolume2 { get; private set; } = 0;
-		public int AddWeight2 { get; private set; } = 0;
+		public int AddVolume1 { get; private set; }
+		public int AddWeight1 { get; private set; }
+		public int AddVolume2 { get; private set; }
+		public int AddWeight2 { get; private set; }
 
 		private int GlobalShipsVolume() => AddVolume1 + AddVolume2;
 		private int GlobalShipsWeight() => AddWeight1 + AddWeight2;
 
-		private bool _shipVolume = false;
-		private bool _shipWeight = false;
-		private bool _shipVolume2 = false;
-		private bool _shipWeight2 = false;
-		private bool _addShips1 = false;
-		private bool _addShips2 = false;
-		private bool _addShips3 = false;
+		private bool _shipVolume;
+		private bool _shipWeight;
+		private bool _shipVolume2;
+		private bool _shipWeight2;
+		private bool _addShips1;
+		private bool _addShips2;
+		private bool _addShips3;
 
 		public void UpdateResearchInfo()
 		{
 			if (!_shipVolume && ItemsManager.IsResearchItemBuyed("ShipVolume")) {
 				_shipVolume = true;
-				AddVolume1 = 50;
+				AddVolume1 = GameConstants.ShipVolume;
 				UpdateShipsValues();
 			}
 			if (!_shipWeight && ItemsManager.IsResearchItemBuyed("ShipWeight")) {
 				_shipWeight = true;
-				AddWeight1 = 50;
+				AddWeight1 = GameConstants.ShipWeight;
 				UpdateShipsValues();
 			}
 			if (!_shipVolume2 && ItemsManager.IsResearchItemBuyed("ShipVolume2")) {
 				_shipVolume2 = true;
-				AddVolume2 = 30;
+				AddVolume2 = GameConstants.ShipVolume2;
 				UpdateShipsValues();
 			}
 			if (!_shipWeight2 && ItemsManager.IsResearchItemBuyed("ShipWeight2")) {
 				_shipWeight2 = true;
-				AddWeight2 = 10;
+				AddWeight2 = GameConstants.ShipWeight2;
 				UpdateShipsValues();
 			}
 
-
 			if (!_addShips1 && ItemsManager.IsResearchItemBuyed("AddShips1")) {
 				_addShips1 = true;
-				CreateShip(4);
+				CreateShip(GameConstants.AddShips1);
 			}
 			if (!_addShips2 && ItemsManager.IsResearchItemBuyed("AddShips2")) {
 				_addShips2 = true;
-				CreateShip(3);
+				CreateShip(GameConstants.AddShips2);
 			}
 			if (!_addShips3 && ItemsManager.IsResearchItemBuyed("AddShips3")) {
 				_addShips3 = true;
-				CreateShip(2);
+				CreateShip(GameConstants.AddShips3);
 			}
 		}
 
@@ -153,21 +147,43 @@ namespace SpaceConstruction.Game
 			}
 		}
 
-		private bool UpdateResearchInfoShips(string upgradeName, int count)
-		{
-			var mItem = ItemsManager.GetResearchItem(upgradeName);
-			if (mItem != null && mItem.PlayerCount > 0) {
-				CreateShip(count);
-				return true;
-			}
-			return false;
-		}
-
 		private void UpdateShipsValues()
 		{
 			foreach (var ship in _ships) {
 				ship.UpdateShipValues();
 			}
+		}
+
+		/// <summary>
+		/// Для редактирования кораблей
+		/// </summary>
+		/// <param name="ship"></param>
+		/// <returns></returns>
+		public Ship GetNextShip(Ship ship)
+		{
+			int num = 0;
+			if (ship != null) {
+				num = _ships.IndexOf(ship);
+				num++;
+			}
+
+			if (num >= _ships.Count)
+				num = 0;
+			return _ships[num];
+		}
+
+		/// <summary>
+		/// Для редактирования кораблей
+		/// </summary>
+		/// <param name="ship"></param>
+		/// <returns></returns>
+		public Ship GetPrevShip(Ship ship)
+		{
+			var num = _ships.IndexOf(ship);
+			num--;
+			if (num < 0)
+				num = _ships.Count - 1;
+			return _ships[num];
 		}
 	}
 }

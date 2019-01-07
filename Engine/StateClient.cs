@@ -1,15 +1,10 @@
-﻿using Engine.Data;
-using Engine.DataPlus;
+﻿using Engine.DataPlus;
 using Engine.Enums;
 using Engine.Enums.Client;
 using Engine.Helpers;
 using Engine.Utils;
 using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Engine
 {
@@ -49,10 +44,8 @@ namespace Engine
 		public static Dictionary<string, string> values = new Dictionary<string, string>();
 
 		private StateClient() { }
-		/// <summary>
-		/// для сохранения в json
-		/// </summary>
-		public RegistrationState _RegistrationState { get { return RegistrationState; } set { RegistrationState = value; } }
+		// <summary>для сохранения в json</summary>
+		//public RegistrationState _RegistrationState { get { return RegistrationState; } set { RegistrationState = value; } }
 
 		public static void ChangeState(ResultOperation result)
 		{

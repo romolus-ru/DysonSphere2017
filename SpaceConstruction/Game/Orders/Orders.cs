@@ -13,7 +13,7 @@ namespace SpaceConstruction.Game.Orders
 	/// </summary>
 	public class Orders
 	{
-		private const int INITORDERSCOUNT = 3;
+		private const int InitOrdersCount = 7;
 		private List<Order> _actualOrders;
 		/// <summary>
 		/// Описания заказов
@@ -23,12 +23,12 @@ namespace SpaceConstruction.Game.Orders
 		/// исходная информация о ресурсах
 		/// </summary>
 		public List<ResourceInfo> ResourceInfos { get; private set; } = new List<ResourceInfo>();
-		public int ActualOrdersCount { get { return _actualOrders.Count; } }
+		public int ActualOrdersCount => _actualOrders.Count;
 		public int MaxOrders { get; private set; }
 
 		public Orders()
 		{
-			MaxOrders = INITORDERSCOUNT;
+			MaxOrders = InitOrdersCount;
 			OrderInfos = new List<OrderInfo>();
 			_actualOrders = new List<Order>();
 			InitOrderInfos();
@@ -66,29 +66,28 @@ namespace SpaceConstruction.Game.Orders
 		{
 			foreach (var resGroup in orderInfo.ResourceGroupValues) {
 				var resGroupInfo = GetResourceGroupInfo(resourceInfos, resGroup, level);
-				FillOrderResources(level, order, orderInfo, resourceInfos, resGroupInfo, resGroup.Value);
+				FillOrderResources(order, resourceInfos, resGroupInfo, resGroup.Value);
 			}
 		}
 
-		private void FillOrderResources(int level, Order order, OrderInfo orderInfo, List<ResourceInfo> resourceInfos,
+		private void FillOrderResources(Order order, List<ResourceInfo> resourceInfos,
 			List<ResourceInfo> resGroupInfo, int resGroupValue)
 		{
 			var amount = new ResourcesHolder(resourceInfos);
 			int fill = 0;
-			var need = 0;
 			foreach (var res in resGroupInfo) {
-				need = resGroupValue - fill;// сколько осталось
-				var rvalue = RandomHelper.Random(need);
-				int vvalue = (int)(rvalue / res.VolumeCoefficient);
+				var available = resGroupValue - fill;// сколько осталось
+				var rvalue = RandomHelper.Random(available);
+				var vvalue = (int)(rvalue / res.VolumeCoefficient);
 				if (vvalue > 0) {
 					amount.Add(res.ResourceType, vvalue);
 					fill += vvalue;// сохраняем ресурс
 				}
 			}
-			need = resGroupValue - fill;
+			var need = resGroupValue - fill;
 			if (resGroupValue - fill > 0) {// добавляем оставшееся из первого ресурса
 				var res = resGroupInfo[0];
-				int vvalue = (int)(need / res.VolumeCoefficient);
+				var vvalue = (int)(need / res.VolumeCoefficient);
 				if (vvalue > 0)
 					amount.Add(res.ResourceType, vvalue);
 			}
@@ -113,29 +112,47 @@ namespace SpaceConstruction.Game.Orders
 
 		private void InitOrderInfos()
 		{
-			AddOrderInfo("Домик", "Строительство маленького домика", 0, "",
-				200, 0, 0, 0);
+			AddOrderInfo("Домик", "Строительство маленького домика", 1, "",
+				150, 50, 50, 50);
 
-			AddOrderInfo("Фазенда", "Строительство фазенды", 0, "",
-				 300, 0, 0, 0);
+			AddOrderInfo("Фазенда", "Строительство фазенды", 1, "",
+				 250, 20, 20, 20);
 
-			AddOrderInfo("Магазин", "Строительство магазина", 0, "",
-				 200, 150, 100, 0);
+			AddOrderInfo("Магазин", "Строительство магазина", 1, "",
+				 100, 150, 100, 0);
 
-			AddOrderInfo("Торговый центр", "Строительство торгового центра", 0, "",
+			AddOrderInfo("Пристройка", "Строительство небольшой пристройки", 1, "",
+				200, 50, 10, 20);
+
+			AddOrderInfo("Торговый центр", "Строительство торгового центра", 2, "",
 				 300, 100, 200, 100);
 
-			AddOrderInfo("Товары", "Перевозка товаров для магазина", 0, "",
-				 0, 100, 100, 100);
+			AddOrderInfo("Товары", "Перевозка товаров для магазина", 2, "",
+				 400, 100, 100, 0);
 
-			AddOrderInfo("Товары", "Перевозка товаров для магазина", 0, "",
-				 0, 100, 100, 100);
+			AddOrderInfo("Товары", "Перевозка товаров для магазина", 2, "",
+				 0, 200, 200, 200);
 
-			AddOrderInfo("Инструменты", "Перевозка инструментов для магазина", 0, "",
-				0, 0, 0, 400);
+			AddOrderInfo("Товары", "Перевозка отделочных материалов", 2, "",
+				0, 600, 0, 0);
 
-			AddOrderInfo("Парк", "Разбить большой парк", 0, "",
+			AddOrderInfo("Товары", "Перевозка мебели для магазина", 2, "",
+				0, 0, 600, 0);
+
+			AddOrderInfo("Инструменты", "Перевозка инструментов для магазина", 2, "",
+				0, 0, 0, 600);
+
+			AddOrderInfo("Парк", "Разбить большой парк", 2, "",
 				200, 300, 100, 100);
+
+			AddOrderInfo("Парк", "Облагородить территорию", 2, "",
+				100, 100, 100, 300);
+
+			AddOrderInfo("Дом", "Построить дом", 2, "",
+				300, 200, 0, 100);
+
+			AddOrderInfo("Ресторан", "Построить ресторан", 2, "",
+				300, 200, 0, 100);
 
 		}
 
@@ -201,28 +218,37 @@ namespace SpaceConstruction.Game.Orders
 			ResourceInfos.Add(resInfo);
 		}
 
-		private bool _addOrders1 = false;
-		private bool _addOrders2 = false;
-		private bool _addOrders3 = false;
+		private bool _addOrders1;
+		private bool _addOrders2;
+		private bool _addOrders3;
 
 		public void UpdateResearchInfo()
 		{
 			if (!_addOrders1 && ItemsManager.IsResearchItemBuyed("AddOrders1")) {
 				_addOrders1 = true;
-				MaxOrders += 3;
+				MaxOrders += GameConstants.AddOrders1;
 				StateEngine.Log.AddLog("Количество заказов увеличено");
 			}
 			if (!_addOrders2 && ItemsManager.IsResearchItemBuyed("AddOrders2")) {
 				_addOrders2 = true;
-				MaxOrders += 2;
+				MaxOrders += GameConstants.AddOrders2;
 				StateEngine.Log.AddLog("Количество заказов увеличено");
 			}
 			if (!_addOrders3 && ItemsManager.IsResearchItemBuyed("AddOrders3")) {
 				_addOrders3 = true;
-				MaxOrders += 1;
+				MaxOrders += GameConstants.AddOrders3;
 				StateEngine.Log.AddLog("Количество заказов увеличено");
 			}
 		}
 
+		private int _randomCounter;
+
+		public Order GetRandomOrder()
+		{
+			_randomCounter++;
+			if (_randomCounter >= ActualOrdersCount)
+				_randomCounter = 0;
+			return _actualOrders[_randomCounter];
+		}
 	}
 }

@@ -133,10 +133,10 @@ namespace VisualizationOpenGL
 			}
 		}*/
 
-		private float colorR = 0;
-		private float colorG = 0;
-		private float colorB = 0;
-		private float colorA = 0;
+		private float _colorR = 0;
+		private float _colorG = 0;
+		private float _colorB = 0;
+		private float _colorA = 0;
 
 		/// <summary>
 		/// OpenGL установка цвета
@@ -147,17 +147,17 @@ namespace VisualizationOpenGL
 		/// <param name="a"></param>
 		public override void SetColor(int r, int g, int b, int a)
 		{
-			colorR = (float)r / 255;
-			colorG = (float)g / 255;
-			colorB = (float)b / 255;
-			colorA = (float)a / 255;
-			gl.Color4f(colorR, colorG, colorB, colorA);
+			_colorR = (float)r / 255;
+			_colorG = (float)g / 255;
+			_colorB = (float)b / 255;
+			_colorA = (float)a / 255;
+			gl.Color4f(_colorR, _colorG, _colorB, _colorA);
 		}
 
-		private float _backgroundColorR = 0;
-		private float _backgroundColorG = 0;
-		private float _backgroundColorB = 0;
-		private float _backgroundColorA = 0;
+		private float _backgroundColorR;
+		private float _backgroundColorG;
+		private float _backgroundColorB;
+		private float _backgroundColorA;
 
 		/// <summary>
 		/// OpenGL установка фонового цвета
@@ -477,8 +477,8 @@ namespace VisualizationOpenGL
 
 			float x1 = texInfo.X;
 			float x2 = texInfo.X + texInfo.Width;
-			float y1 = texInfo.Y;
-			float y2 = texInfo.Y + texInfo.Height;
+			float y1 = texInfo.AtlasHeight - texInfo.Y;
+			float y2 = texInfo.AtlasHeight - texInfo.Y - texInfo.Height;
 
 			x1 = x1 / texInfo.AtlasWidth;
 			x2 = x2 / texInfo.AtlasWidth;
@@ -493,10 +493,14 @@ namespace VisualizationOpenGL
 
 			gl.Begin(GL.QUADS);
 			// указываем поочередно вершины и текстурные координаты
-			gl.TexCoord2f(x2, y1); gl.Vertex3d(w / 2, h / 2, z);
-			gl.TexCoord2f(x2, y2); gl.Vertex3d(w / 2, -h / 2, z);
-			gl.TexCoord2f(x1, y2); gl.Vertex3d(-w / 2, -h / 2, z);
-			gl.TexCoord2f(x1, y1); gl.Vertex3d(-w / 2, h / 2, z);
+			gl.TexCoord2f(x1, y2); gl.Vertex3d(0, h, z);
+			gl.TexCoord2f(x1, y1); gl.Vertex3d(0, 0, z);
+			gl.TexCoord2f(x2, y1); gl.Vertex3d(w, 0, z);
+			gl.TexCoord2f(x2, y2); gl.Vertex3d(w, h, z);
+			//gl.TexCoord2f(x1, y2); gl.Vertex3d(-w / 2, h / 2, z);
+			//gl.TexCoord2f(x1, y1); gl.Vertex3d(-w / 2, -h / 2, z);
+			//gl.TexCoord2f(x2, y1); gl.Vertex3d(w / 2, -h / 2, z);
+			//gl.TexCoord2f(x2, y2); gl.Vertex3d(w / 2, h / 2, z);
 
 			gl.End();
 
@@ -622,8 +626,6 @@ namespace VisualizationOpenGL
 			float x2 = x2a / textureWidth;
 			float y1 = y1a / textureHeight;
 			float y2 = y2a / textureHeight;
-			width += 15;
-			height += 5;
 
 			gl.Begin(GL.QUADS);
 			// указываем поочередно вершины и текстурные координаты

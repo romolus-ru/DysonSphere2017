@@ -139,6 +139,7 @@
     <Compile Include="Exceptions\NoConnectionException.cs" />
     <Compile Include="Extensions\DictionaryExtensions.cs" />
     <Compile Include="Extensions\ListExtensions.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="GameInitializer.cs" />
     <Compile Include="Helpers\AttributesHelper.cs" />
     <Compile Include="Helpers\CryptoHelper.cs" />
@@ -177,6 +178,7 @@
     <Compile Include="Utils\LogData.cs" />
     <Compile Include="Utils\LogSystem.cs" />
     <Compile Include="Utils\Query\Dynamic.cs" />
+    <Compile Include="Utils\SafeInt.cs" />
     <Compile Include="Visualization\Console\ViewConsole.cs" />
     <Compile Include="Visualization\Debug\Modules\StateClientView.cs" />
     <Compile Include="Visualization\Debug\Modules\ComponentsView.cs" />
@@ -210,6 +212,7 @@
     <Compile Include="Visualization\ViewBigMessage.cs" />
     <Compile Include="Visualization\ViewBigMessages.cs" />
     <Compile Include="Visualization\ViewButton.cs" />
+    <Compile Include="Visualization\ViewButtonPic.cs" />
     <Compile Include="Visualization\ViewComponent.cs" />
     <Compile Include="Visualization\ViewCursor.cs" />
     <Compile Include="Visualization\ViewDragable.cs" />

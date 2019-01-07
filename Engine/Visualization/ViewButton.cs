@@ -12,7 +12,7 @@ namespace Engine.Visualization
 		/// </summary>
 		public Action OnClick;
 
-		private string _btnTexture = null;
+		protected string _btnTexture = null;
 		private string _btnTextureOver = null;
 		private Keys[] _keys;
 

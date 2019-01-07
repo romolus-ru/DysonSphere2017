@@ -1,5 +1,8 @@
 ﻿namespace SpaceConstruction.Game
 {
+	/// <summary>
+	/// Команда корабля. позволяет корректировать список состояний
+	/// </summary>
 	public enum ShipCommandsEnum
 	{
 		/// <summary>

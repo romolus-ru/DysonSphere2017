@@ -5,12 +5,12 @@ namespace SpaceConstruction.Game
 {
 	public class Planet : ScreenPoint
 	{
-		public bool IsDepot = false;
+		public bool IsDepot;
 
 		/// <summary>
 		/// Заказ на перевозку ресурсов
 		/// </summary>
-		public Order Order = null;
+		public Order Order;
 
 		public override string ToString()
 		{

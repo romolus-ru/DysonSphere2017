@@ -84,20 +84,21 @@ namespace SpaceConstruction.Game.States
 		/// <summary>
 		/// Пришёл сигнал извне или корабль завершил выполнение команды - переключаем на другую команду
 		/// </summary>
-		public void SwitchCommandTo(ShipCommandsEnum newCommand, List<ShipStatesEnum> listStates, bool cargoLoaded, bool shipOnPlanet)
+		public void SwitchCommandTo(ShipCommandsEnum newCommand, List<ShipStatesEnum> listStates, bool cargoLoaded,
+			bool shipOnPlanet)
 		{
 			listStates.Clear();
-			var prepareCommand = _prepareStates.Where(pair => pair.Key == newCommand);// добавляем подготовочные команды
-			if (prepareCommand != null) {
-				var listPrep = _states[prepareCommand.First().Value];
-				if (!cargoLoaded)
-					listPrep.Remove(ShipStatesEnum.Unloading);
-				if (!shipOnPlanet)
-					listPrep.Remove(ShipStatesEnum.Takeoff);
-				if (listPrep != null && listPrep.Count > 0)
-					listStates.AddRange(listPrep);
-			}
-			var listCommand = _states[newCommand];// добавляем команды самой команды
+			var prepareCommand =
+				_prepareStates.Where(pair => pair.Key == newCommand); // добавляем подготовочные команды
+			var listPrep = _states[prepareCommand.First().Value];
+			if (!cargoLoaded)
+				listPrep.Remove(ShipStatesEnum.Unloading);
+			if (!shipOnPlanet)
+				listPrep.Remove(ShipStatesEnum.Takeoff);
+			if (listPrep != null && listPrep.Count > 0)
+				listStates.AddRange(listPrep);
+
+			var listCommand = _states[newCommand]; // добавляем команды самой команды
 			if (listCommand != null)
 				listStates.AddRange(listCommand);
 		}
@@ -105,17 +106,16 @@ namespace SpaceConstruction.Game.States
 		/// <summary>
 		/// Корабль запросил следующую команду - находим и формируем список команд. если нету - то nocommand
 		/// </summary>
-		public void SetChainCommand(out ShipCommandsEnum newCommand, ShipCommandsEnum currCommand, List<ShipStatesEnum> listStates)
+		public void SetChainCommand(out ShipCommandsEnum newCommand, ShipCommandsEnum currentCommand,
+			List<ShipStatesEnum> listStates)
 		{
 			newCommand = ShipCommandsEnum.NoCommand;
 			listStates.Clear();
-			var chain = _chainCommands.Where(pair => pair.Key == currCommand);
-			if (chain != null) {
-				newCommand = chain.First().Value;
-				var list = _states[newCommand];
-				if (list != null) {
-					listStates.AddRange(list);
-				}
+			var chain = _chainCommands.Where(pair => pair.Key == currentCommand);
+			newCommand = chain.First().Value;
+			var list = _states[newCommand];
+			if (list != null) {
+				listStates.AddRange(list);
 			}
 		}
 	}

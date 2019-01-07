@@ -1,6 +1,6 @@
-﻿
-using System;
+﻿using System;
 using System.Diagnostics;
+using Engine.Utils;
 
 namespace SpaceConstruction.Game.Items
 {
@@ -13,7 +13,7 @@ namespace SpaceConstruction.Game.Items
 		/// <summary>
 		/// Количество айтемов у игрока
 		/// </summary>
-		public int PlayerCount { get; private set; }
+		public SafeInt PlayerCount { get; private set; }
 		/// <summary>
 		/// Количество установленных айтемов
 		/// </summary>
@@ -21,11 +21,14 @@ namespace SpaceConstruction.Game.Items
 		/// <summary>
 		/// Какой айтем хранится
 		/// </summary>
-		public Item Item { get; private set; }
+		public Item Item { get; }
 		/// <summary>
 		/// Имя таймера блокировки покупки
 		/// </summary>
-		public string RestrictBuyTimerName { get; private set; }
+		public string RestrictBuyTimerName { get; }
+
+		public int AvailableCount
+			=> PlayerCount - SetupCount;
 
 		public ItemManager(Item item, int count, string restrictBuyTimerName = null)
 		{
@@ -34,35 +37,46 @@ namespace SpaceConstruction.Game.Items
 			RestrictBuyTimerName = restrictBuyTimerName;
 		}
 
-		public bool IsActive {
-			get {
-				return PlayerCount - SetupCount > 0;
-			}
-		}
+		public bool IsAvailable => AvailableCount > 0;
 
 		/// <summary>
-		/// покупаем предмет
+		/// Покупаем предмет
 		/// </summary>
 		/// <param name="moneyItem">Количество денег у игрока</param>
 		public bool BuyItem(ItemManager moneyItem)
 		{
-			if (moneyItem.Item.Code != Item.Cost.Item.Code)
-				return false;// фальшивка
-			var cost = Item.Cost.PlayerCount;
-			var money = moneyItem.PlayerCount;
-			if (money < cost)
-				return false;// мало денег
-
-			moneyItem.PlayerCount -= cost;
-			PlayerCount++;
-			return true;
+			var canBuy = CanBuyItem(moneyItem);
+			if (canBuy) {
+				var cost = Item.Cost.PlayerCount;
+				moneyItem.PlayerCount -= cost;
+				if (moneyItem.PlayerCount < 0)
+					throw new InvalidOperationException("Нельзя купить предмет!");
+				PlayerCount++;
+			}
+			return canBuy;
 		}
 
-		internal void BuySign()
+		/// <summary>
+		/// Проверяем, можно ли купить предмет
+		/// </summary>
+		/// <param name="moneyItem">Количество денег у игрока</param>
+		public bool CanBuyItem(ItemManager moneyItem)
+		{
+			if (moneyItem.Item.Code != Item.Cost.Item.Code)
+				return false;
+			var cost = Item.Cost.PlayerCount;
+			var money = moneyItem.PlayerCount;
+			return money >= cost;
+		}
+
+		/// <summary>
+		/// Выдать знак
+		/// </summary>
+		internal void GrantSigns(int count)
 		{
 			if (Item.Type != ItemTypeEnum.Signs)
 				return;
-			PlayerCount++;
+			PlayerCount += count;
 		}
 	}
 }

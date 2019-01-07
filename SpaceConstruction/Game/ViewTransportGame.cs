@@ -24,31 +24,32 @@ namespace SpaceConstruction.Game
 		public Action OnUpdateMoneyInfo;
 
 		private ViewManager _viewManager;
-		private List<Planet> _RoadPoints = new List<Planet>();
-		private List<ScreenEdge> _RoadEdgesMST = new List<ScreenEdge>();
+		private List<Planet> _roadPoints = new List<Planet>();
+		private List<ScreenEdge> _roadEdgesMST = new List<ScreenEdge>();
 		private Ships _ships = null;
 		private int _mapX = 50;
 		private int _mapY = 300;
 		private int _curX;
 		private int _curY;
-		private int _oldCurX;
-		private int _oldCurY;
-		private ScreenPoint _nearest = null;
-		private ViewLabelIcon _showMoney = null;
-		private ViewShipsPanel _shipsPanel = null;
-		private ViewButton _btnResearches = null;
-		private ViewButton _btnShop = null;
-		private ViewButton _btnRecreatePoints = null;
+		private ScreenPoint _nearest;
+		private ViewLabelIcon _showMoney;
+		private ViewShipsPanel _shipsPanel;
+		private ViewButton _btnResearches;
+		private ViewButton _btnShop;
+		private ViewButton _btnRecreatePoints;
+		private bool _availableResearchesToBuy;
+		private ResearchesBuyWindow _researchesBuyWindow;
+		private ShopUpgradesBuyWindow _shopUpgradesBuyWindow;
 
 		public void InitTransportGame(ViewManager viewManager)
 		{
 			_viewManager = viewManager;
 		}
 
-		public void SetPoints(List<Planet> points, List<ScreenEdge> MST, Ships ships)
+		public void SetPoints(List<Planet> points, List<ScreenEdge> edgesMST, Ships ships)
 		{
-			_RoadPoints = points;
-			_RoadEdgesMST = MST;
+			_roadPoints = points;
+			_roadEdgesMST = edgesMST;
 			_ships = ships;
 			_shipsPanel.SetShips(_ships);
 		}
@@ -61,8 +62,9 @@ namespace SpaceConstruction.Game
 			visualizationProvider.LoadAtlas("Money");
 			visualizationProvider.LoadAtlas("Resources");
 			visualizationProvider.LoadAtlas("Result");
+			visualizationProvider.LoadAtlas("ResearchBuyButton");
 			SetParams(0, 0, visualizationProvider.CanvasWidth, visualizationProvider.CanvasHeight, "ViewTransportGame");
-			
+
 			/*var debugView = new DebugView();
 			AddComponent(debugView, true);
 			debugView.SetParams(1100, 0, debugView.Width, debugView.Height, "DebugView");*/
@@ -81,13 +83,19 @@ namespace SpaceConstruction.Game
 			btnRIView.SetParams(250, 135, 60, 30, "btnRIView");
 			btnRIView.InitTexture("textRB", "textRB");*/
 
+			var btnShipsEdit = new ViewButton();
+			AddComponent(btnShipsEdit);
+			btnShipsEdit.InitButton(OIView, "Установка улучшений", "Установка улучшений", Keys.E);
+			btnShipsEdit.SetParams(720, 15, 110, 25, "btnShipEdit");
+			btnShipsEdit.InitTexture("textRB", "textRB");
+
 			// нужно что бы смотреть имеющиеся заказы
 			var btnOIView = new ViewButton();
 			AddComponent(btnOIView);
 			btnOIView.InitButton(OIView, "Заказы", "Просмотр информации о заказах", Keys.Q);
-			btnOIView.SetParams(720, 15, 110, 25, "btnOIView");
+			btnOIView.SetParams(1460, 15, 110, 25, "btnOIView");
 			btnOIView.InitTexture("textRB", "textRB");
-
+			
 			_btnShop = new ViewButton();
 			AddComponent(_btnShop);
 			_btnShop.InitButton(ShowShop, "Магазин", "hint", Keys.S);
@@ -120,8 +128,14 @@ namespace SpaceConstruction.Game
 
 		private void ShowShop()
 		{
-			var upgrades = ItemsManager.GetUpgrades(_canBuyNormalUpgrades, _canBuyExtraUpgrades);
-			new ShopUpgradesBuyWindow().InitWindow(_viewManager, upgrades);
+			var upgrades = ItemsManager.GetUpgrades(_canBuyNormalUpgrades, _canBuyExtraUpgrades, _canBuyAutopilot);
+			_shopUpgradesBuyWindow = new ShopUpgradesBuyWindow();
+			_shopUpgradesBuyWindow.InitWindow(_viewManager, upgrades, OnUpdateMoneyInfo, ShowShopClose);
+		}
+
+		private void ShowShopClose()
+		{
+			_shopUpgradesBuyWindow = null;
 		}
 
 		private void RIView()
@@ -136,19 +150,21 @@ namespace SpaceConstruction.Game
 
 		private void SUEView(Ship ship)
 		{
-			new ShipUpgradesEditWindow().InitWindow(_viewManager, ship);
+			new ShipUpgradesEditWindow().InitWindow(_viewManager, _ships, ship);
 		}
 
 		private void ResearchesView()
 		{
 			var researches = ItemsManager.GetResearches().ToList();
-			new ResearchesBuyWindow().InitWindow(_viewManager, researches, OnUpdateMoneyInfo, ResearchesViewClosed);
+			_researchesBuyWindow = new ResearchesBuyWindow();
+			_researchesBuyWindow.InitWindow(_viewManager, researches, OnUpdateMoneyInfo, ResearchesViewClosed);
 		}
 
 		private void ResearchesViewClosed()
 		{
 			// из-за модального режима нельзя создавать графические объекты - их события будут потом удалены при выключении модального режима
 			_shipsPanel.CreateNewShipPanels();
+			_researchesBuyWindow = null;
 		}
 
 		private void RecreatePoints()
@@ -157,11 +173,11 @@ namespace SpaceConstruction.Game
 			OnRecreatePoints?.Invoke();
 			_btnResearches.Enabled = true;
 		}
+
 		private void StartShip()
 		{
-			if (_nearest == null) return;
 			var planet = _nearest as Planet;
-			if (planet.Order == null) return;
+			if (planet?.Order == null) return;
 			var res = _ships.SendShip(planet.Order.Source, planet.Order.Destination);
 			if (!res)
 				ViewHelper.ShowBigMessage("корабль не запустился");
@@ -170,14 +186,15 @@ namespace SpaceConstruction.Game
 		public void MoneyChanged(int amount)
 		{
 			_showMoney.Text = amount.ToString();
+			_availableResearchesToBuy = ItemsManager.IsAvailableResearchesToBuy();
+			_researchesBuyWindow?.UpdateBuyButtons();
+			_shopUpgradesBuyWindow?.UpdateBuyButtons();
 		}
 
 		protected override void Cursor(int cursorX, int cursorY)
 		{
 			if (cursorX == _curX && cursorY == _curY) return;
-			if (_RoadPoints.Count == 0) return;
-			_oldCurX = _curX;
-			_oldCurY = _curY;
+			if (_roadPoints.Count == 0) return;
 			_curX = cursorX;
 			_curY = cursorY;
 			_nearest = OnFindNearest(_curX - _mapX, _curY - _mapY);
@@ -190,10 +207,17 @@ namespace SpaceConstruction.Game
 
 		public override void DrawObject(VisualizationProvider visualizationProvider)
 		{
+			if (_availableResearchesToBuy && _btnResearches.Enabled) {
+				visualizationProvider.SetColor(Color.Red);
+				var x = _btnResearches.X + _btnResearches.Width;
+				var y = _btnResearches.Y;
+				visualizationProvider.DrawTexture(x - 8, y - 8, "RoundDigits.red");
+			}
+
 			visualizationProvider.SetColor(Color.White);
 			visualizationProvider.OffsetAdd(_mapX, _mapY);
 
-			foreach (var e in _RoadEdgesMST) {
+			foreach (var e in _roadEdgesMST) {
 				visualizationProvider.Line(e.A.X, e.A.Y, e.B.X, e.B.Y);
 			}
 
@@ -209,7 +233,7 @@ namespace SpaceConstruction.Game
 				}
 			}
 
-			foreach (var p in _RoadPoints) {
+			foreach (var p in _roadPoints) {
 				DrawPlanetInfo(visualizationProvider, p);
 			}
 
@@ -292,15 +316,14 @@ namespace SpaceConstruction.Game
 		/// </summary>
 		public void OrdersChanged()
 		{
-			if (_nearest != null && (_nearest as Planet).Order == null)
+			if (_nearest != null && (_nearest as Planet)?.Order == null)
 				_nearest = null;
 		}
 
-		private bool _openShop = false;
-		private bool _canBuyNormalUpgrades = false;
-		private bool _canBuyExtraUpgrades = false;
-		private bool _openTopOrders = false;
-		private bool _finalOrderActive = false;
+		private bool _openShop;
+		private bool _canBuyNormalUpgrades;
+		private bool _canBuyExtraUpgrades;
+		private bool _canBuyAutopilot;
 		public void UpdateResearchInfo()
 		{
 			if (!_openShop && ItemsManager.IsResearchItemBuyed("OpenShop")) {
@@ -313,11 +336,8 @@ namespace SpaceConstruction.Game
 			if (!_canBuyExtraUpgrades && ItemsManager.IsResearchItemBuyed("CanBuyExtraUpgrades")) {
 				_canBuyExtraUpgrades = true;
 			}
-			if (!_openTopOrders && ItemsManager.IsResearchItemBuyed("OpenTopOrders")) {
-				_openTopOrders = true;
-			}
-			if (!_finalOrderActive && ItemsManager.IsResearchItemBuyed("StartFinalOrder")) {
-				_finalOrderActive = true;
+			if (!_canBuyAutopilot && ItemsManager.IsResearchItemBuyed("CanBuyAutopilot")) {
+				_canBuyAutopilot = true;
 			}
 		}
 	}

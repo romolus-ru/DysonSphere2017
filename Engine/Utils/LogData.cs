@@ -15,7 +15,7 @@ namespace Engine.Utils
 
 		public override string ToString()
 		{
-			return "" + Time.ToString() + " id=" + Id + " lvl=" + Level +
+			return "" + Time + " id=" + Id + " lvl=" + Level +
 				" tag=" + Tag + " msg=" + Message;
 		}
 	}

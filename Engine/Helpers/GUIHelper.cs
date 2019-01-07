@@ -67,10 +67,10 @@ namespace Engine.Helpers
 			visualizationProvider.SetColor(HintBackgroundColor);
 			visualizationProvider.Box(component.X + 5, component.Y + component.Height + 5 - f, l + 15, (int)(f * 2.6f));
 
-			visualizationProvider.SetColor(GUIHelper.ButtonHintColor);
+			visualizationProvider.SetColor(ButtonHintColor);
 			visualizationProvider.Print(component.X + 10, component.Y + component.Height + 5 - f, hintText);
 			if (!string.IsNullOrEmpty(hintKeys)) {
-				visualizationProvider.SetColor(GUIHelper.ButtonHintKeysColor);
+				visualizationProvider.SetColor(ButtonHintKeysColor);
 				visualizationProvider.Print(" " + hintKeys);
 			}
 		}

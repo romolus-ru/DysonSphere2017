@@ -45,7 +45,7 @@ namespace Engine
 		private int _pauseState = Constants.PauseStateNone;
 		private string _oldInputValue = null;
 		private bool _isAnyKeyPressed;
-		private bool ModalStateChanged;
+		private bool _modalStateChanged;
 		private int _cursorX;
 		private int _cursorY;
 		private int _windowPosX;
@@ -63,7 +63,7 @@ namespace Engine
 		/// <summary>
 		/// Событие остановки модального режима
 		/// </summary>
-		public Action OnModalStateStoped;
+		public Action OnModalStateStopped;
 
 		/// <summary>
 		/// Кнопки в комбинациях, которые можно держать нажатыми, но комбинация будет считаться сработавшей
@@ -79,17 +79,15 @@ namespace Engine
 		private List<Keys> clickKeys = new List<Keys> {
 			Keys.LButton, Keys.RButton, Keys.MButton,
 		};
-
-		public Input() { }
-
+		
 		public void ProcessInput()
 		{
 			if (_initWinPos) InitWindowPos();
-			ModalStateChanged = false;
+			_modalStateChanged = false;
 			_isAnyKeyPressed = UpdateKeyboardState();
 			var curNew = UpdateCursorState();
-			if (curNew && _cursorMoved != null) _cursorMoved(CursorX, CursorY);
-			if (curNew && _cursorMovedSystem != null) _cursorMovedSystem(CursorX, CursorY);
+			if (curNew) _cursorMoved?.Invoke(CursorX, CursorY);
+			if (curNew) _cursorMovedSystem?.Invoke(CursorX, CursorY);
 
 			GetInput();// обработка обычных (игровых) нажатий
 			GetInputPaused();// обработка управляющих кнопок и разных комбинаций при вводе текста
@@ -177,7 +175,7 @@ namespace Engine
 		private void GetInput()
 		{
 			foreach (var keyComb in _keyActionSimple.Keys) {
-				if (ModalStateChanged) return;
+				if (_modalStateChanged) return;
 				var keyFounded = true;
 				foreach (var k1 in keyComb) {
 					if (IsKeyPressed(k1)) continue;
@@ -219,7 +217,7 @@ namespace Engine
 		{
 			var listPressedCombs = new List<List<Keys>>();
 			foreach (var keyComb in _keyActionPaused.Keys) {
-				if (ModalStateChanged) return;
+				if (_modalStateChanged) return;
 				// комбинация кнопок нажата - сохраняем
 				if (IsСombPressed(keyComb)) listPressedCombs.Add(keyComb);
 			}
@@ -237,7 +235,7 @@ namespace Engine
 			// добавляем те которых еще нету и запускаем их первый раз
 			var now = DateTime.Now;
 			foreach (var key in listPressedCombs) {
-				var keyState = _keyPausedStates.Where(a => a.KeyCombination == key).FirstOrDefault();
+				var keyState = _keyPausedStates.FirstOrDefault(a => a.KeyCombination == key);
 				if (keyState == null) {
 					_keyPausedStates.Add(new InputKeyStatePause
 					{
@@ -294,7 +292,7 @@ namespace Engine
 		/// </summary>
 		private void GetInputStringPaused()
 		{
-			if (ModalStateChanged) return;
+			if (_modalStateChanged) return;
 			if (_setStringInput == null) return;
 			if (_keyPausedStates.Count > 0) return;// есть нажатые управляющие кнопки (например ctrl+C) - значит уже вводим не текст
 			var keys = KeysToUnicode();
@@ -350,7 +348,7 @@ namespace Engine
 		{
 			Action start = null;
 			foreach (var keyComb in _keyActionSticked.Keys) {
-				if (ModalStateChanged) return;
+				if (_modalStateChanged) return;
 				if (IsСombPressed(keyComb)) {
 					if (!_listKeySticked.Contains(keyComb))
 						_listKeySticked.Add(keyComb);// save
@@ -417,7 +415,7 @@ namespace Engine
 		/// </summary>
 		public void ModalStateStart()
 		{
-			ModalStateChanged = true;
+			_modalStateChanged = true;
 			OnModalStateChanged?.Invoke();
 			_keyActionStack.Push(_keyActionSimple);
 			_keyActionSimple = new Dictionary<List<Keys>, Action>();
@@ -442,7 +440,7 @@ namespace Engine
 		/// </summary>
 		public void ModalStateStop()
 		{
-			ModalStateChanged = true;
+			_modalStateChanged = true;
 			OnModalStateChanged?.Invoke();
 			if (_keyActionStack.Count == 0) throw new Exception("Модальный режим не запускался");
 			_keyActionSimple = _keyActionStack.Pop();
@@ -463,7 +461,7 @@ namespace Engine
 			CursorX = -1;
 			CursorY = -1;
 			ProcessInput();
-			OnModalStateStoped?.Invoke();
+			OnModalStateStopped?.Invoke();
 		}
 
 		private void AddKeyActionDict(Dictionary<List<Keys>, Action> dict, Action action, params Keys[] keyCombination)
@@ -507,7 +505,7 @@ namespace Engine
 		private void RunEachAction(MulticastDelegate actions)
 		{
 			foreach (var action in actions.GetInvocationList()) {
-				if (ModalStateChanged) break;
+				if (_modalStateChanged) break;
 				action.DynamicInvoke();
 			}
 		}
@@ -566,7 +564,6 @@ namespace Engine
 		{
 			var list = new List<Keys>();
 			var keyComb = new List<Keys> { Keys.LMenu, Keys.X };
-			var keyFounded = true;
 			var str1 = "";
 			/*foreach (var k1 in keyComb) {
 				str1 += " k " + k1 + " p=" + IsKeyPressed(k1) + " s=" + shiftKeys.Contains(k1) + " l=" + _listKeySticked.Contains(keyComb) 
@@ -584,11 +581,7 @@ namespace Engine
 				}
 				if (IsKeyPressed(k1)) onlyShiftedKeysPressed = false;
 			}
-			if (shiftedKeysPresentInCombination)
-				keyFounded = onlyShiftedKeysPressed;
 			str1 += " sk=" + shiftedKeysPresentInCombination + " onlys=" + onlyShiftedKeysPressed;
-
-
 
 			for (int i = 0; i < 255; i++) {
 				var key = (Keys)i;

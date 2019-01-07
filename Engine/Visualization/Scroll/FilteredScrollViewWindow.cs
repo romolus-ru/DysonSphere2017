@@ -138,18 +138,6 @@ namespace Engine.Visualization.Scroll
 		{
 		}
 
-		private void Select(ScrollItem item)
-		{
-			SelectCommand(item);
-			CloseWindow();
-		}
-
-		/// <summary>
-		/// Выбрали элемент из списка
-		/// </summary>
-		/// <param name="item"></param>
-		protected virtual void SelectCommand(ScrollItem item) { }
-
 		protected virtual void CloseWindow()
 		{
 			ViewManager.RemoveViewModal(this);

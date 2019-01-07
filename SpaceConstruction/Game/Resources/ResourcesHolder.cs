@@ -10,9 +10,9 @@ namespace SpaceConstruction.Game.Resources
 	public class ResourcesHolder
 	{
 		private List<ResourceValue> _resources = new List<ResourceValue>();
-		private List<ResourceInfo> _resourceInfos = null;
+		private List<ResourceInfo> _resourceInfos;
 
-		public static ResourcesHolder operator + (ResourcesHolder r1, ResourcesHolder r2)
+		public static ResourcesHolder operator +(ResourcesHolder r1, ResourcesHolder r2)
 		{
 			r1.Add(r2);
 			return r1;
@@ -29,6 +29,7 @@ namespace SpaceConstruction.Game.Resources
 			_resourceInfos = resourceInfos;
 			Clear();
 		}
+
 		public void Clear()
 		{
 			_resources.Clear();
@@ -41,24 +42,30 @@ namespace SpaceConstruction.Game.Resources
 
 		public bool IsEmpty() => _resources.Sum(v => v.Value) == 0;
 
-		private ResourceValue GetResource(ResourcesEnum resource) => _resources.FirstOrDefault(v => v.ResType == resource);
-		private ResourceInfo GetResourceInfo(ResourcesEnum resource) => _resourceInfos.FirstOrDefault(v => v.ResourceType == resource);
+		private ResourceValue GetResource(ResourcesEnum resource) =>
+			_resources.FirstOrDefault(v => v.ResType == resource);
+
+		private ResourceInfo GetResourceInfo(ResourcesEnum resource) =>
+			_resourceInfos.FirstOrDefault(v => v.ResourceType == resource);
+
 		private int GetResourceValue(ResourcesEnum resource)
 		{
 			var r = GetResource(resource);
-			return r != null ? r.Value : 0;
+			return r?.Value ?? 0;
 		}
 
 		public ResourceValue GetResourceOrCreate(ResourcesEnum resource)
 		{
 			var r = GetResource(resource);
-			if (r == null) {
-				var ri = GetResourceInfo(resource);
-				if (ri == null)
-					throw new NullReferenceException("ResourceInfos not found : " + resource);
-				r = new ResourceValue(ri);
-				_resources.Add(r);
-			}
+			if (r != null)
+				return r;
+
+			var ri = GetResourceInfo(resource);
+			if (ri == null)
+				throw new NullReferenceException("ResourceInfos not found : " + resource);
+			r = new ResourceValue(ri);
+			_resources.Add(r);
+
 			return r;
 		}
 
@@ -71,7 +78,8 @@ namespace SpaceConstruction.Game.Resources
 
 		public void Add(ResourcesHolder resources)
 		{
-			foreach (var value in resources._resources) {
+			foreach (var value in resources._resources)
+			{
 				var r = GetResourceOrCreate(value.ResType);
 				r.Value += value.Value;
 			}
@@ -85,16 +93,11 @@ namespace SpaceConstruction.Game.Resources
 
 		public void Remove(ResourcesHolder resources)
 		{
-			foreach (var value in resources._resources) {
+			foreach (var value in resources._resources)
+			{
 				var r = GetResourceOrCreate(value.ResType);
 				r.Value -= value.Value;
 			}
-		}
-
-		public int Value(ResourcesEnum resource)
-		{
-			var r = GetResource(resource);
-			return r != null ? r.Value : 0;
 		}
 
 		/// <summary>
@@ -103,23 +106,26 @@ namespace SpaceConstruction.Game.Resources
 		/// <returns></returns>
 		public bool GreaterThen(ResourcesHolder toVerify)
 		{
-			var res = true;
-			foreach (var value in _resources) {
-				if (value.Value < toVerify.GetResourceValue(value.ResType)) {
-					res = false;
-					break;
-				}
+			foreach (var value in _resources)
+			{
+				if (value.Value < toVerify.GetResourceValue(value.ResType)) 
+					return false;
 			}
-			return res;
+
+			return true;
 		}
 
 		public List<string> GetInfo()
 		{
 			var s = new List<string>();
-			foreach (var res in _resources) {
+			foreach (var res in _resources)
+			{
 				if (res.Value == 0) continue;
-				s.Add("(" + res.ResType.ToString() + "," + res.Value.ToString() + ")");
+				s.Add("(" + res.ResInfo.Name + "," + res.Value
+				      + " v=" + res.Volume + " w=" + res.Weight
+				      + ")");
 			}
+
 			return s;
 		}
 
@@ -130,19 +136,20 @@ namespace SpaceConstruction.Game.Resources
 		public ResourcesHolder GetCopy()
 		{
 			var res = new ResourcesHolder(_resourceInfos);
-			foreach (var res1 in _resources) {
+			foreach (var res1 in _resources)
 				res._resources.Add(res1.GetCopy());
-			}
+
 			return res;
 		}
 
 		/// <summary>
-		/// Умножить количество ресурсов
+		/// Увеличить количество ресурсов
 		/// </summary>
 		public void Increase(float multiplier)
 		{
-			foreach (var res in _resources) {
-				int increase = (int)(res.Value * multiplier);
+			foreach (var res in _resources)
+			{
+				var increase = (int) (res.Value * multiplier);
 				if (increase == 0) continue;
 				res.Value += increase;
 			}
@@ -154,6 +161,7 @@ namespace SpaceConstruction.Game.Resources
 			foreach (var res in _resources) {
 				volume += res.Volume;
 			}
+
 			return volume;
 		}
 

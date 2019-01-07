@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SpaceConstruction.Game.Items
+﻿namespace SpaceConstruction.Game.Items
 {
 	/// <summary>
 	/// Одно улучшение корабля
@@ -20,5 +14,9 @@ namespace SpaceConstruction.Game.Items
 		/// Величина улучшаемого значения
 		/// </summary>
 		public int UpValue;
+		/// <summary>
+		/// Качество улучшения для отображения в магазине
+		/// </summary>
+		public ItemUpgradeQualityEnum Quality;
 	}
 }

@@ -14,17 +14,21 @@ namespace SpaceConstruction.Game.Windows
 		private ItemManager _mUpgrade;
 		private ItemUpgrade _upgradeItem;
 		private ViewButton _btnBuy;
-		private List<string> _upgrades = null;
+		public Action OnAfterBuy;
+		private List<string> _upgrades;
+		private List<Color> _upgradesColor;
 
 		public ShopUpgradesBuyScrollItem(ItemManager upgrade)
 		{
 			_mUpgrade = upgrade;
 			_upgradeItem = upgrade.Item as ItemUpgrade;
+			if (_upgradeItem == null) return;
 			_upgrades = new List<string>();
-			for (int i = 0; i < _upgradeItem.Upgrades.Count; i++) {
-				var u = _upgradeItem.Upgrades[i];
-				var s = u.Name + " " + u.UpName + " " + u.UpValue;
+			_upgradesColor = new List<Color>();
+			foreach (var upgradeValue in _upgradeItem.Upgrades) {
+				var s = upgradeValue.Name + " " + upgradeValue.UpName + " " + upgradeValue.UpValue;
 				_upgrades.Add(s);
+				_upgradesColor.Add(ViewUpgradeHelper.GetQualityColor(upgradeValue.Quality));
 			}
 		}
 
@@ -36,38 +40,37 @@ namespace SpaceConstruction.Game.Windows
 			AddComponent(_btnBuy);
 			_btnBuy.InitButton(Buy, "Купить улучшение", "Купить улучшение", Keys.None);
 			_btnBuy.SetParams(100, 40, 200, 40, "buy button");
+			UpdateBuyButton();
 		}
 
 		private void Buy()
 		{
-			if (!ItemsManager.BuyUpgrade(_mUpgrade))
+			if (ItemsManager.BuyItem(_mUpgrade))
+				OnAfterBuy?.Invoke();
+			else
 				StateEngine.Log?.AddLog("нету наличности");
 		}
 
 		public override void DrawObject(VisualizationProvider visualizationProvider)
 		{
-			visualizationProvider.SetColor(Color.White);
+			visualizationProvider.SetColor(ViewUpgradeHelper.GetQualityColor(_upgradeItem.Quality));
 			visualizationProvider.Print(X + 100, Y, _upgradeItem.Name);
 			//visualizationProvider.Print(X + 100, Y + 20, _researchItem.Description);
+			visualizationProvider.SetColor(Color.White);
 			visualizationProvider.Print(X + 100, Y + 20, "цена " + _upgradeItem.Cost.PlayerCount + " ");
 			visualizationProvider.PrintTexture(_upgradeItem.Cost.Item.Texture);
 			if (!string.IsNullOrEmpty(_upgradeItem.Texture))
 				visualizationProvider.DrawTexture(X + 40, Y + 40, _upgradeItem.Texture);
-			DrawUpgradeInfo(visualizationProvider, X + 400, Y + 20, _upgradeItem.Quality);
+			DrawUpgradeInfo(visualizationProvider, X + 400, Y + 20);
 			DrawUpgradesCounters(visualizationProvider, X + 400, Y, _mUpgrade);
 			visualizationProvider.SetColor(Color.GreenYellow);
 			visualizationProvider.Rectangle(X, Y, Width, Height);
 		}
 
-		private void DrawUpgradeInfo(VisualizationProvider visualizationProvider, int x, int y, ItemUpgradeQualityEnum quality)
+		private void DrawUpgradeInfo(VisualizationProvider visualizationProvider, int x, int y)
 		{
-			var color = Color.SandyBrown;
-			if (quality == ItemUpgradeQualityEnum.Normal)
-				color = Color.Silver;
-			if (quality == ItemUpgradeQualityEnum.Extra)
-				color = Color.Gold;
-			visualizationProvider.SetColor(color);
 			for (int i = 0; i < _upgrades.Count; i++) {
+				visualizationProvider.SetColor(_upgradesColor[i]);
 				visualizationProvider.Print(x, y + i * 20, _upgrades[i]);
 			}
 		}
@@ -92,10 +95,17 @@ namespace SpaceConstruction.Game.Windows
 				visualizationProvider.SetColor(Color.White);
 				visualizationProvider.Print(" в запасе:  ");
 				visualizationProvider.SetColor(Color.Red);
-				visualizationProvider.Print((upgrade.PlayerCount - upgrade.SetupCount).ToString());
+				visualizationProvider.Print((upgrade.AvailableCount).ToString());
 			}
 
 		}
 
+		internal void UpdateBuyButton()
+		{
+			_btnBuy.Enabled = ItemsManager.IsCanBuyItem(_mUpgrade);
+			var u = _mUpgrade.Item as ItemUpgrade;// автопилотов можно купить только 10
+			if (u != null && u.Quality == ItemUpgradeQualityEnum.Autopilot && _mUpgrade.PlayerCount >= 10)
+				_btnBuy.Enabled = false;
+		}
 	}
 }

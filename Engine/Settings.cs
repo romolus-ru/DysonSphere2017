@@ -1,26 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Engine
+﻿namespace Engine
 {
 	public static class Settings
 	{
-		private static bool _inited = false;
+		private static bool _isInited = false;
 		public static void Init()
 		{
-			if (_inited) return;
-			_inited = true;
-			_keyBoardRepeatPauseFirst = 500;
-			_keyBoardRepeatPause = 200;
+			if (_isInited) return;
+			_isInited = true;
+			KeyBoardRepeatPauseFirst = 500;
+			KeyBoardRepeatPause = 200;
 		}
 
-		private static int _keyBoardRepeatPauseFirst = 0;
-		public static int KeyBoardRepeatPauseFirst { get { return _keyBoardRepeatPauseFirst; } }
+		public static int KeyBoardRepeatPauseFirst { get; private set; }
 
-		private static int _keyBoardRepeatPause = 0;
-		public static int KeyBoardRepeatPause { get { return _keyBoardRepeatPause; } }
+		public static int KeyBoardRepeatPause { get; private set; }
 	}
 }

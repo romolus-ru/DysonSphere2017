@@ -49,6 +49,9 @@ namespace SpaceConstruction.Game
 
 		public void SetShips(Ships ships)
 		{
+			foreach (var shipPanel in _shipsPanels)
+				RemoveComponent(shipPanel);
+			_shipsPanels.Clear();
 			_ships = ships;
 			CreateShipPanel();
 		}

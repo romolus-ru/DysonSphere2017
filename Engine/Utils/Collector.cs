@@ -2,9 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Text;
 
 namespace Engine.Utils
 {
@@ -18,21 +16,21 @@ namespace Engine.Utils
 		/// </summary>
 		private readonly Dictionary<int, Type> _collection = new Dictionary<int, Type>();
 
-		public object GetObject(int ID)
+		public object GetObject(int id)
 		{
 			object o = null;// создаём объект активатором или возвращаем нул
-			if (_collection.ContainsKey(ID)) {
-				var type = _collection[ID];
+			if (_collection.ContainsKey(id)) {
+				var type = _collection[id];
 				o = Activator.CreateInstance(type);
 			}
 			return o;
 		}
 
-		public Type GetObjectType(int ID)
+		public Type GetObjectType(int id)
 		{
 			Type type = null;
-			if (_collection.ContainsKey(ID)) {
-				type = _collection[ID];
+			if (_collection.ContainsKey(id)) {
+				type = _collection[id];
 			}
 			return type;
 		}
@@ -66,7 +64,7 @@ namespace Engine.Utils
 			}
 		}
 
-		private void LoadClass(int ID, string fileName, string className)
+		private void LoadClass(int id, string fileName, string className)
 		{
 			Assembly assembly; // объявляем сборку
 							   // ищем имя сборки чтоб её загрузить
@@ -76,40 +74,39 @@ namespace Engine.Utils
 			try {
 				assembly = Assembly.Load(assemblyName);
 			}
-			catch (Exception e) {
-				var a = e.HResult;
-				a++;
-				// если не загрузилось то показываем что к чему
+			catch {
+				// не загрузилось
+				AddLog("not found assembly " + id + " " + fileName);
 				return; // и выходим
 			}
 			// ищем нужные типы в объектах и сохраняем их для последующего использования
 			var type = SearchType(assembly, className);
 			if (type != null) {
-				_collection.Add(ID, type);
+				_collection.Add(id, type);
 			} else
-				AddLog("not found " + ID.ToString() + " " + fileName + " " + className);
+				AddLog("not found " + id + " " + fileName + " " + className);
 		}
 
 		/// <summary>
 		/// Сохранить класс, находящийся в движке
 		/// </summary>
-		/// <param name="ID"></param>
+		/// <param name="id"></param>
 		/// <param name="fileName"></param>
 		/// <param name="className"></param>
-		private void LoadClassEngine(int ID, string fileName, string className)
+		private void LoadClassEngine(int id, string fileName, string className)
 		{
 			var assemblies = AppDomain.CurrentDomain.GetAssemblies();
 			Type type = null;
 			// ищем нужные типы в объектах и сохраняем их для последующего использования
 			foreach (var assembly in assemblies) {
-				if (!assembly.FullName.StartsWith("Engine,")) continue;
+				if (!assembly.FullName.StartsWith("Engine,", StringComparison.Ordinal)) continue;
 				type = SearchType(assembly, className);
 				if (type != null) break;
 			}
 			if (type != null) {
-				_collection.Add(ID, type);
+				_collection.Add(id, type);
 			} else
-				AddLog("not found " + ID.ToString() + " " + fileName + " " + className);
+				AddLog("not found " + id + " " + fileName + " " + className);
 		}
 
 		public Type SearchType(Assembly assembly, string className)

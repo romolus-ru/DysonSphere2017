@@ -1,5 +1,4 @@
 ﻿using Engine;
-using Engine.Data;
 using Engine.Models;
 using Engine.Visualization;
 using SpaceConstruction.Game;
@@ -18,7 +17,6 @@ namespace SpaceConstruction
 
 		private ViewManager _viewManager;
 		private ModelMainClient _modelMainClient;
-		private UserRegistration _rplayer;
 
 		private GameView _gv;
 		private ViewProgressBar _vp;
@@ -28,12 +26,11 @@ namespace SpaceConstruction
 
 		public Action OnExit;
 
-		public void Start(ModelMainClient modelMainClient, ViewManager viewManager, UserRegistration userRegistration)
+		public void Start(ModelMainClient modelMainClient, ViewManager viewManager)
 		{
 			_stopwatch = Stopwatch.StartNew();
 			_modelMainClient = modelMainClient;
 			_viewManager = viewManager;
-			_rplayer = userRegistration;
 
 			ModelIntro mi = new ModelIntro();
 			mi.OnComplete += IntroEnded;
@@ -106,6 +103,7 @@ namespace SpaceConstruction
 			_vtg.ResourceInfos = orders.ResourceInfos;
 			_vtg.OrderInfos = orders.OrderInfos;
 			_vtg.OnUpdateMoneyInfo = _mtg.UpdateMoneyInfo;
+			_vtg.OnUpdateMoneyInfo += _mtg.UpdateResearchInfo;
 			_vtg.OnUpdateMoneyInfo += ships.UpdateResearchInfo;
 			_vtg.OnUpdateMoneyInfo += orders.UpdateResearchInfo;
 			_vtg.OnUpdateMoneyInfo += _vtg.UpdateResearchInfo;
@@ -113,6 +111,7 @@ namespace SpaceConstruction
 			//_vtg.OnGetPath += _mtg.GetPath;
 			_mtg.OnMoneyChanged += _vtg.MoneyChanged;
 			_mtg.OnOrdersChanged += _vtg.OrdersChanged;
+			_mtg.UpdateMoneyInfo();
 		}
 	}
 }

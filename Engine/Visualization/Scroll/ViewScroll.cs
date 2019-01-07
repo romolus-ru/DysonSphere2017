@@ -44,6 +44,7 @@ namespace Engine.Visualization
 		/// </summary>
 		/// <returns></returns>
 		public List<IScrollItem> GetItems() => new List<IScrollItem>(_items);
+
 		public void ClearItems()
 		{
 			var items = GetItems();

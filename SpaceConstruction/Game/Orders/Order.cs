@@ -1,5 +1,4 @@
-﻿using Engine;
-using Engine.Helpers;
+﻿using Engine.Helpers;
 using SpaceConstruction.Game.Resources;
 using System;
 using System.Collections.Generic;
@@ -49,7 +48,8 @@ namespace SpaceConstruction.Game.Orders
 			OrderInfo = orderInfo;
 			OrderName = orderInfo.Name;
 			OrderDescription = orderInfo.Description;
-			// генерируем сколько  нужно для заказа
+			Level = orderInfo.Level;
+			// генерируем сколько нужно для заказа
 
 			if (hardness > 1) {
 				var multiplier = RandomHelper.Random(hardness) / hardness;
@@ -69,10 +69,10 @@ namespace SpaceConstruction.Game.Orders
 			var ret = new List<string>();
 			var rows = AmountResources.GetInfo();
 			if (rows.Count > 0) {
-				ret.Add("Требуется перевезти");
+				ret.Add("Требуется перевезти (" + Level + ")");
 				ret.AddRange(rows);
 			} else
-				ret.Add("Выполнение заказа завершается");
+				ret.Add("Ожидается завершение заказа (" + Level + ")");
 			return ret;
 		}
 
@@ -112,13 +112,13 @@ namespace SpaceConstruction.Game.Orders
 		/// <summary>
 		/// Сгрузить всё с корабля на склад заказчика
 		/// </summary>
-		/// <param name="_cargoCurrent"></param>
-		public void UnloadToPlanetStore(ResourcesHolder _cargoCurrent)
+		/// <param name="cargoCurrent"></param>
+		public void UnloadToPlanetStore(ResourcesHolder cargoCurrent)
 		{
-			AmountResourcesInProgress -= _cargoCurrent;
-			AmountResourcesDelivered += _cargoCurrent;
-			ProgressInMove -= _cargoCurrent.Volume();
-			ProgressMoved += _cargoCurrent.Volume();
+			AmountResourcesInProgress -= cargoCurrent;
+			AmountResourcesDelivered += cargoCurrent;
+			ProgressInMove -= cargoCurrent.Volume();
+			ProgressMoved += cargoCurrent.Volume();
 			//StateEngine.Log.AddLog("-- cargo = " + _cargoCurrent.Volume() + " A=" + AmountResources.Volume()
 			//	+ " I=" + AmountResourcesInProgress.Volume() + " M=" + ProgressInMove);
 		}
@@ -126,12 +126,12 @@ namespace SpaceConstruction.Game.Orders
 		/// <summary>
 		/// Отменить перевозку
 		/// </summary>
-		/// <param name="_cargoCurrent"></param>
-		public void CancelShipDelivery(ResourcesHolder _cargoCurrent)
+		/// <param name="cargoCurrent"></param>
+		public void CancelShipDelivery(ResourcesHolder cargoCurrent)
 		{
-			AmountResourcesInProgress -= _cargoCurrent;
-			AmountResources += _cargoCurrent;
-			ProgressInMove -= _cargoCurrent.Volume();
+			AmountResourcesInProgress -= cargoCurrent;
+			AmountResources += cargoCurrent;
+			ProgressInMove -= cargoCurrent.Volume();
 		}
 	}
 }

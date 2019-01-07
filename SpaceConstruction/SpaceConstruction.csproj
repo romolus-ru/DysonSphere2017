@@ -48,9 +48,9 @@
   <ItemGroup>
     <Compile Include="Client.cs" />
     <Compile Include="GameState.cs" />
+    <Compile Include="Game\GameConstants.cs" />
     <Compile Include="Game\Items\Item.cs" />
     <Compile Include="Game\Items\ItemManager.cs" />
-    <Compile Include="Game\Items\ItemResearch.cs" />
     <Compile Include="Game\Items\ItemsManager.cs" />
     <Compile Include="Game\Items\ItemTypeEnum.cs" />
     <Compile Include="Game\Items\ItemUpgrade.cs" />
@@ -74,6 +74,7 @@
     <Compile Include="Game\States\PlayerState.cs" />
     <Compile Include="Game\States\ShipStates.cs" />
     <Compile Include="Game\States\ShipStatesEnum.cs" />
+    <Compile Include="Game\ViewUpgradeHelper.cs" />
     <Compile Include="Game\ViewLabelIcon.cs" />
     <Compile Include="Game\ViewShipPanel.cs" />
     <Compile Include="Game\ViewShipsPanel.cs" />

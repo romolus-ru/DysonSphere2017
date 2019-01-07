@@ -10,57 +10,50 @@ namespace SpaceConstruction.Game.Windows
 {
 	internal class ShipUpgradesScrollItem : ScrollItem
 	{
-		public ItemManager _itemManager { get; private set; }
-		private ViewButton btnToShip;
-		private ViewButton btnToInventory;
-		public Action<ShipUpgradesScrollItem> MoveUpgradeToShip;
-		public Action MoveToInventory;
+		public ItemManager ItemManager { get; }
+		private ViewButton _btnToShip;
+		public Action<ShipUpgradesScrollItem> OnMoveUpgradeToShip { get; set; }
 
 		public ShipUpgradesScrollItem(ItemManager itemManager)
 		{
-			_itemManager = itemManager;
+			ItemManager = itemManager;
 		}
 
 		protected override void InitObject(VisualizationProvider visualizationProvider, Input input)
 		{
 			base.InitObject(visualizationProvider, input);
 
-			btnToShip = new ViewButton();
-			AddComponent(btnToShip);
-			btnToShip.InitButton(MoveToShip, "Установить", "hint", Keys.S);
-			btnToShip.SetParams(10, 55, 140, 20, "btnToShip");
-			btnToShip.InitTexture("textRB", "textRB");
-
-			btnToInventory = new ViewButton();
-			AddComponent(btnToInventory);// возможно надо будет удалить эту кнопку - она заменена на ShipUpgradesScrollItem
-			btnToInventory.InitButton(MoveToInventory, "Установить", "hint", Keys.S);
-			btnToInventory.SetParams(10, 55, 140, 20, "btnToInventory");
-			btnToInventory.InitTexture("textRB", "textRB");
+			_btnToShip = new ViewButton();
+			AddComponent(_btnToShip);
+			_btnToShip.InitButton(MoveToShip, "Установить", "hint", Keys.None);
+			_btnToShip.SetParams(10, 55, 140, 20, "btnToShip");
+			_btnToShip.InitTexture("textRB", "textRB");
 		}
 
-		private void MoveToShip() => MoveUpgradeToShip?.Invoke(this);
+		private void MoveToShip() => OnMoveUpgradeToShip?.Invoke(this);
 
 		/// <summary>
 		/// Устанавливаем состояние кнопок
 		/// </summary>
 		/// <param name="active">Активные или не активные</param>
-		/// <param name="isInventory">Видима кнопка инвентарь или кнопка корабль</param>
-		public void SetCurrentState(bool active, bool isInventory)
+		public void SetCurrentState(bool active)
 		{
-			btnToShip.Enabled = active;
-			btnToInventory.Enabled = active;
+			_btnToShip.Enabled = active;
+		}
 
-			btnToShip.SetVisible(!isInventory);
-			btnToInventory.SetVisible(isInventory);
+		internal void ActivateButton()
+		{
+			// что бы на кнопку можно было нажать без перемещения курсора
+			_btnToShip.CursorOver = true;
 		}
 
 		public override void DrawObject(VisualizationProvider visualizationProvider)
 		{
 			visualizationProvider.SetColor(Color.White);
-			visualizationProvider.Print(X + 10, Y, _itemManager.PlayerCount + " " + _itemManager.Item.Name);
-			visualizationProvider.Print(X + 10, Y + 20, _itemManager.Item.Description);
-			if (!string.IsNullOrEmpty(_itemManager.Item.Texture))
-				visualizationProvider.DrawTexture(X + 40, Y + 40, _itemManager.Item.Texture);
+			visualizationProvider.Print(X + 10, Y, ItemManager.AvailableCount + " " + ItemManager.Item.Name);
+			visualizationProvider.Print(X + 10, Y + 20, ItemManager.Item.Description);
+			if (!string.IsNullOrEmpty(ItemManager.Item.Texture))
+				visualizationProvider.DrawTexture(X + 40, Y + 40, ItemManager.Item.Texture);
 			visualizationProvider.SetColor(Color.GreenYellow);
 			visualizationProvider.Rectangle(X, Y, Width, Height);
 		}

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SpaceConstruction.Game.Items
 {
@@ -18,44 +16,48 @@ namespace SpaceConstruction.Game.Items
 		/// <summary>
 		/// Предметы которые доступны пользователю
 		/// </summary>
-		public readonly static List<ItemManager> ItemsManaged = new List<ItemManager>();
+		public static List<ItemManager> ItemsManaged = new List<ItemManager>();
 
 		static ItemsManager()
 		{
 			CreateItems();
 		}
 
-		const string small = " малое";
-		const string big = " большое";
+		const string Small = " малое";
+		const string Big = " большое";
 
-		const string strUpVolume = "Увеличение объема грузоперевозок";
-		const string strUpVolumePlus = strUpVolume + small;
-		const string strUpVolumeExtra = strUpVolume + big;
+		const string StrUpVolume = "Увеличение объема грузоперевозок";
+		const string StrUpVolumePlus = StrUpVolume + Small;
+		const string StrUpVolumeExtra = StrUpVolume + Big;
 
-		const string strUpWeight = "Увеличение перевозимого веса";
-		const string strUpWeightPlus = strUpWeight + small;
-		const string strUpWeightExtra = strUpWeight + big;
+		const string StrUpWeight = "Увеличение перевозимого веса";
+		const string StrUpWeightPlus = StrUpWeight + Small;
+		const string StrUpWeightExtra = StrUpWeight + Big;
 
-		const string strUpExp = "Увеличение опыта";
-		const string strUpExpPlus = strUpExp + small;
-		const string strUpExpExtra = strUpExp + big;
+		//const string StrUpExp = "Увеличение опыта";
+		//const string StrUpExpPlus = StrUpExp + Small;
+		//const string StrUpExpExtra = StrUpExp + Big;
 
-		const string strUpTeleport = "Телепорт";
-		const string strUpTeleportDistance = "Увеличение дальности телепорта";
-		const string strUpTeleportDistancePlus = strUpTeleport + small;
-		const string strUpTeleportDistanceExtra = strUpTeleport + big;
+		//const string StrUpTeleport = "Телепорт";
+		//const string StrUpTeleportDistance = "Увеличение дальности телепорта";
+		//const string StrUpTeleportDistancePlus = StrUpTeleport + Small;
+		//const string StrUpTeleportDistanceExtra = StrUpTeleport + Big;
 
-		const string strUpEngine = "Увеличение мощности двигателя";
-		const string strUpEnginePlus = strUpEngine + small;
-		const string strUpEngineExtra = strUpEngine + big;
+		const string StrUpEngine = "Увеличение мощности двигателя";
+		const string StrUpEnginePlus = StrUpEngine + Small;
+		const string StrUpEngineExtra = StrUpEngine + Big;
 
-		const string strUpTakeOff = "Увеличение скорости взлёта/посадки";
-		const string strUpTakeOffPlus = strUpTakeOff + small;
-		const string strUpTakeOffExtra = strUpTakeOff + big;
+		const string StrUpTakeOff = "Увеличение скорости взлёта/посадки";
+		const string StrUpTakeOffPlus = StrUpTakeOff + Small;
+		const string StrUpTakeOffExtra = StrUpTakeOff + Big;
 
-		const string strUpLoading = "Увеличение скорости загрузки/разгрузки";
-		const string strUpLoadingPlus = strUpLoading + small;
-		const string strUpLoadingExtra = strUpLoading + big;
+		const string StrUpLoading = "Увеличение скорости загрузки/разгрузки";
+		const string StrUpLoadingPlus = StrUpLoading + Small;
+		const string StrUpLoadingExtra = StrUpLoading + Big;
+
+		const string StrUpAutoPilot = "Автоматическая система обработки заказов";
+		const string StrUpAutoPilotVolume = "Уменьшение перевозимого объема в процентах";
+		const string StrUpAutoPilotWeight = "Уменьшение перевозимого веса в процентах";
 
 		internal static ItemManager GetItemManager(ItemUpgrade itemUpgrade)
 		{
@@ -69,17 +71,16 @@ namespace SpaceConstruction.Game.Items
 			return ret;
 		}
 
-		const string strUpAutoPilot = "Автоматическая система обработки заказов";
 
 		private static void CreateItems()
 		{
 			Items.Clear();
 
 			var costSign =
-			CreateItemSigns("Знак выполненного контракта", "Знак выполненного контракта", 
+			CreateItemSigns("Знак выполненного контракта", "Знак выполненного контракта",
 			texture: "Resources.Sign1", code: "Sign1");
-			var costSign2 =
-			CreateItemSigns("Особый знак выполненного контракта", "Особый знак выполненного контракта", 
+			
+			CreateItemSigns("Особый знак выполненного контракта", "Особый знак выполненного контракта",
 			texture: "Resources.Sign2", code: "Sign2");
 
 			var itemCost1 = new ItemManager(costSign, 1);
@@ -87,19 +88,21 @@ namespace SpaceConstruction.Game.Items
 			var itemCost5 = new ItemManager(costSign, 5);
 
 			#region UpgradesForShip
-			var upgradeVolumeExtra = CreateUpgradeValue(strUpVolumeExtra, "CargoVolumeMax", 15);
-			var upgradeVolume = CreateUpgradeValue(strUpVolume, "CargoVolumeMax", 10);
-			var upgradeVolumePlus = CreateUpgradeValue(strUpVolumePlus, "CargoVolumeMax", 7);
+			var upgradeVolumeExtra = CreateUpgradeValue(StrUpVolumeExtra, "CargoVolumeMax", 70, ItemUpgradeQualityEnum.Extra);
+			var upgradeVolume = CreateUpgradeValue(StrUpVolume, "CargoVolumeMax", 40, ItemUpgradeQualityEnum.Normal);
+			var upgradeVolumePlus = CreateUpgradeValue(StrUpVolumePlus, "CargoVolumeMax", 20, ItemUpgradeQualityEnum.Poor);
 
-			var upgradeWeightExtra = CreateUpgradeValue(strUpWeightExtra, "CargoWeightMax", 15);
-			var upgradeWeight = CreateUpgradeValue(strUpWeight, "CargoWeightMax", 10);
-			var upgradeWeightPlus = CreateUpgradeValue(strUpWeightPlus, "CargoWeightMax", 7);
+			var upgradeWeightExtra = CreateUpgradeValue(StrUpWeightExtra, "CargoWeightMax", 70, ItemUpgradeQualityEnum.Extra);
+			var upgradeWeight = CreateUpgradeValue(StrUpWeight, "CargoWeightMax", 40, ItemUpgradeQualityEnum.Normal);
+			var upgradeWeightPlus = CreateUpgradeValue(StrUpWeightPlus, "CargoWeightMax", 20, ItemUpgradeQualityEnum.Poor);
 
-			var upgradeExpExtra = CreateUpgradeValue(strUpExpExtra, "Exp", 7);
-			var upgradeExp = CreateUpgradeValue(strUpExp, "Exp", 5);
-			var upgradeExpPlus = CreateUpgradeValue(strUpExpPlus, "Exp", 3);
+			//var upgradeExpExtra = CreateUpgradeValue(strUpExpExtra, "Exp", 7);
+			//var upgradeExp = CreateUpgradeValue(strUpExp, "Exp", 5);
+			//var upgradeExpPlus = CreateUpgradeValue(strUpExpPlus, "Exp", 3);
 
-			var upgradeAutopilot = CreateUpgradeValue(strUpAutoPilot, "AutoPilot", 1);
+			var upgradeAutopilot = CreateUpgradeValue(StrUpAutoPilot, "AutoPilot", 1, ItemUpgradeQualityEnum.Extra);
+			var upgradeAutopilotVolume = CreateUpgradeValue(StrUpAutoPilotVolume, "CargoVolumePercent", -35, ItemUpgradeQualityEnum.Bad);
+			var upgradeAutopilotWeight = CreateUpgradeValue(StrUpAutoPilotWeight, "CargoWeightPercent", -35, ItemUpgradeQualityEnum.Bad);
 			//var upgradeTeleport = CreateUpgradeValue(strUpTeleport, "Teleport", 1);// по умолчанию дистанция телепорта 1
 
 			//var upgradeTeleportDistanceExtra = CreateUpgradeValue(strUpTeleportDistanceExtra, "TeleportDistance", 3);
@@ -107,33 +110,33 @@ namespace SpaceConstruction.Game.Items
 			//var upgradeTeleportDistancePlus = CreateUpgradeValue(strUpTeleportDistancePlus, "TeleportDistance", 1);
 
 			// накапливается расстояние и когда есть возможность - корабль перемещается на 2 точки вместо одной
-			var upgradeEngineExtra = CreateUpgradeValue(strUpEngineExtra, "EngineSpeed", 3);
-			var upgradeEngine = CreateUpgradeValue(strUpEnginePlus, "EngineSpeed", 2);
-			var upgradeEnginePlus = CreateUpgradeValue(strUpEnginePlus, "EngineSpeed", 1);
+			var upgradeEngineExtra = CreateUpgradeValue(StrUpEngineExtra, "EngineSpeed", 70, ItemUpgradeQualityEnum.Extra);
+			var upgradeEngine = CreateUpgradeValue(StrUpEnginePlus, "EngineSpeed", 40, ItemUpgradeQualityEnum.Normal);
+			var upgradeEnginePlus = CreateUpgradeValue(StrUpEnginePlus, "EngineSpeed", 15, ItemUpgradeQualityEnum.Poor);
 
 			// уменьшается время взлета. при всех установленных улучшениях должно быть не меньше 1 секунды
-			var upgradeTakeOffExtra = CreateUpgradeValue(strUpTakeOffExtra, "TakeOff", 3);
-			var upgradeTakeOff = CreateUpgradeValue(strUpTakeOff, "TakeOff", 2);
-			var upgradeTakeOffPlus = CreateUpgradeValue(strUpTakeOffPlus, "TakeOff", 1);
+			var upgradeTakeOffExtra = CreateUpgradeValue(StrUpTakeOffExtra, "TakeOff", 1800, ItemUpgradeQualityEnum.Extra);
+			var upgradeTakeOff = CreateUpgradeValue(StrUpTakeOff, "TakeOff", 1200, ItemUpgradeQualityEnum.Normal);
+			var upgradeTakeOffPlus = CreateUpgradeValue(StrUpTakeOffPlus, "TakeOff", 800, ItemUpgradeQualityEnum.Poor);
 
 			// уменьшается время погрузки/разгрузки. при всех установленных улучшениях должно быть не меньше 1 секунды
-			var upgradeUploadingExtra = CreateUpgradeValue(strUpLoadingExtra, "Uploading", 3);
-			var upgradeUploading = CreateUpgradeValue(strUpLoadingPlus, "Uploading", 2);
-			var upgradeUploadingPlus = CreateUpgradeValue(strUpLoadingExtra, "Uploading", 1);
+			var upgradeUploadingExtra = CreateUpgradeValue(StrUpLoadingExtra, "Uploading", 1800, ItemUpgradeQualityEnum.Extra);
+			var upgradeUploading = CreateUpgradeValue(StrUpLoadingPlus, "Uploading", 1200, ItemUpgradeQualityEnum.Normal);
+			var upgradeUploadingPlus = CreateUpgradeValue(StrUpLoadingExtra, "Uploading", 800, ItemUpgradeQualityEnum.Poor);
 			#endregion
 
-			CreateUpgradeItem(strUpVolume, strUpVolume, null, itemCost1, ItemUpgradeQualityEnum.Poor,
+			CreateUpgradeItem(StrUpVolume, StrUpVolume, null, itemCost1, ItemUpgradeQualityEnum.Poor,
 				new List<ItemUpgradeValue>() { upgradeVolume });
-			CreateUpgradeItem(strUpVolume, strUpVolume, null, itemCost3, ItemUpgradeQualityEnum.Normal,
+			CreateUpgradeItem(StrUpVolume, StrUpVolume, null, itemCost3, ItemUpgradeQualityEnum.Normal,
 				new List<ItemUpgradeValue>() { upgradeVolume, upgradeWeightPlus });
-			CreateUpgradeItem(strUpVolume, strUpVolume, null, itemCost5, ItemUpgradeQualityEnum.Extra,
+			CreateUpgradeItem(StrUpVolume, StrUpVolume, null, itemCost5, ItemUpgradeQualityEnum.Extra,
 				new List<ItemUpgradeValue>() { upgradeVolumeExtra });
 
-			CreateUpgradeItem(strUpWeight, strUpWeight, null, itemCost1, ItemUpgradeQualityEnum.Poor,
+			CreateUpgradeItem(StrUpWeight, StrUpWeight, null, itemCost1, ItemUpgradeQualityEnum.Poor,
 				new List<ItemUpgradeValue>() { upgradeWeight });
-			CreateUpgradeItem(strUpWeight, strUpWeight, null, itemCost3, ItemUpgradeQualityEnum.Normal,
+			CreateUpgradeItem(StrUpWeight, StrUpWeight, null, itemCost3, ItemUpgradeQualityEnum.Normal,
 				new List<ItemUpgradeValue>() { upgradeWeight, upgradeVolumePlus });
-			CreateUpgradeItem(strUpWeight, strUpWeight, null, itemCost5, ItemUpgradeQualityEnum.Extra,
+			CreateUpgradeItem(StrUpWeight, StrUpWeight, null, itemCost5, ItemUpgradeQualityEnum.Extra,
 				new List<ItemUpgradeValue>() { upgradeWeightExtra });
 
 			/*CreateUpgradeItem(strUpExp, strUpExp, null, itemCost1, ItemUpgradeQualityEnum.Poor,
@@ -143,54 +146,54 @@ namespace SpaceConstruction.Game.Items
 			CreateUpgradeItem(strUpExp, strUpExp, null, itemCost5, ItemUpgradeQualityEnum.Extra,
 				new List<ItemUpgradeValue>() { upgradeExpExtra });*/
 
-			CreateUpgradeItem(strUpAutoPilot, strUpAutoPilot, null, itemCost5, ItemUpgradeQualityEnum.Extra,
-				new List<ItemUpgradeValue>() { upgradeAutopilot });
+			CreateUpgradeItem(StrUpAutoPilot, StrUpAutoPilot, null, itemCost1, ItemUpgradeQualityEnum.Autopilot,
+				new List<ItemUpgradeValue>() { upgradeAutopilot, upgradeAutopilotVolume, upgradeAutopilotWeight });
 
-			CreateUpgradeItem(strUpEngine, strUpEngine, null, itemCost1, ItemUpgradeQualityEnum.Poor,
+			CreateUpgradeItem(StrUpEngine, StrUpEngine, null, itemCost1, ItemUpgradeQualityEnum.Poor,
 				new List<ItemUpgradeValue>() { upgradeEngine });
-			CreateUpgradeItem(strUpEngine, strUpEngine, null, itemCost3, ItemUpgradeQualityEnum.Normal,
+			CreateUpgradeItem(StrUpEngine, StrUpEngine, null, itemCost3, ItemUpgradeQualityEnum.Normal,
 				new List<ItemUpgradeValue>() { upgradeEngine, upgradeTakeOffPlus });
-			CreateUpgradeItem(strUpEngine, strUpEngine, null, itemCost5, ItemUpgradeQualityEnum.Extra,
+			CreateUpgradeItem(StrUpEngine, StrUpEngine, null, itemCost5, ItemUpgradeQualityEnum.Extra,
 				new List<ItemUpgradeValue>() { upgradeEngineExtra });
 
-			CreateUpgradeItem(strUpTakeOff, strUpTakeOff, null, itemCost1, ItemUpgradeQualityEnum.Poor,
+			CreateUpgradeItem(StrUpTakeOff, StrUpTakeOff, null, itemCost1, ItemUpgradeQualityEnum.Poor,
 				new List<ItemUpgradeValue>() { upgradeTakeOff });
-			CreateUpgradeItem(strUpTakeOff, strUpTakeOff, null, itemCost3, ItemUpgradeQualityEnum.Normal,
+			CreateUpgradeItem(StrUpTakeOff, StrUpTakeOff, null, itemCost3, ItemUpgradeQualityEnum.Normal,
 				new List<ItemUpgradeValue>() { upgradeTakeOff, upgradeEnginePlus });
-			CreateUpgradeItem(strUpTakeOff, strUpTakeOff, null, itemCost5, ItemUpgradeQualityEnum.Extra,
+			CreateUpgradeItem(StrUpTakeOff, StrUpTakeOff, null, itemCost5, ItemUpgradeQualityEnum.Extra,
 				new List<ItemUpgradeValue>() { upgradeTakeOffExtra });
 
-			CreateUpgradeItem(strUpLoading, strUpLoading, null, itemCost1, ItemUpgradeQualityEnum.Poor,
+			CreateUpgradeItem(StrUpLoading, StrUpLoading, null, itemCost1, ItemUpgradeQualityEnum.Poor,
 				new List<ItemUpgradeValue>() { upgradeUploadingPlus });
-			CreateUpgradeItem(strUpLoading, strUpLoading, null, itemCost3, ItemUpgradeQualityEnum.Normal,
+			CreateUpgradeItem(StrUpLoading, StrUpLoading, null, itemCost3, ItemUpgradeQualityEnum.Normal,
 				new List<ItemUpgradeValue>() { upgradeUploading });
-			CreateUpgradeItem(strUpLoading, strUpLoading, null, itemCost5, ItemUpgradeQualityEnum.Extra,
+			CreateUpgradeItem(StrUpLoading, StrUpLoading, null, itemCost5, ItemUpgradeQualityEnum.Extra,
 				new List<ItemUpgradeValue>() { upgradeUploadingExtra });
 
-			CreateResearchItem("улучшить перевозимый объем у кораблей", "улучшить перевозимый объем у кораблей", costSign, 5, null, "ShipVolume");
-			CreateResearchItem("улучшить перевозимый вес у кораблей", "улучшить перевозимый вес у кораблей", costSign, 5, null, "ShipWeight");
+			CreateResearchItem("увеличить у всех кораблей перевозимый объем", "увеличить у всех кораблей перевозимый объем", costSign, 5, null, "ShipVolume");
+			CreateResearchItem("увеличить у всех кораблей перевозимый вес", "увеличить у всех кораблей перевозимый вес", costSign, 5, null, "ShipWeight");
 
-			CreateResearchItem("улучшить перевозимый объем у кораблей 2", "улучшить перевозимый объем у кораблей 2", costSign, 5, null, "ShipVolume2");
-			CreateResearchItem("улучшить перевозимый вес у кораблей 2", "улучшить перевозимый вес у кораблей 2", costSign, 5, null, "ShipWeight2");
+			CreateResearchItem("увеличить у всех кораблей перевозимый объем 2", "увеличить у всех кораблей перевозимый объем 2", costSign, 25, null, "ShipVolume2");
+			CreateResearchItem("увеличить у всех кораблей перевозимый вес 2", "увеличить у всех кораблей перевозимый вес 2", costSign, 25, null, "ShipWeight2");
 
 			CreateResearchItem("дополнительные 4 корабля", "дополнительные 4 корабля", costSign, 1, null, "AddShips1");
-			CreateResearchItem("дополнительные 3 корабля", "дополнительные 3 корабля", costSign, 2, null, "AddShips2");
-			CreateResearchItem("дополнительные 2 корабля", "дополнительные 2 корабля", costSign, 3, null, "AddShips3");
+			CreateResearchItem("дополнительные 3 корабля", "дополнительные 3 корабля", costSign, 3, null, "AddShips2");
+			CreateResearchItem("дополнительные 2 корабля", "дополнительные 2 корабля", costSign, 5, null, "AddShips3");
 
-			CreateResearchItem("дополнительные 3 заказа", "дополнительные 3 заказа", costSign, 20, null, "AddOrders1");
-			CreateResearchItem("дополнительные 2 заказа", "дополнительные 2 заказа", costSign, 50, null, "AddOrders2");
-			CreateResearchItem("дополнительный заказ", "дополнительный заказ", costSign, 500, null, "AddOrders3");
+			CreateResearchItem("дополнительные 3 заказа", "дополнительные 3 заказа", costSign, 15, null, "AddOrders1");
+			CreateResearchItem("дополнительные 2 заказа", "дополнительные 2 заказа", costSign, 30, null, "AddOrders2");
+			CreateResearchItem("дополнительный 1 заказ",  "дополнительный 1 заказ",  costSign, 40, null, "AddOrders3");
 
-			CreateResearchItem("купить доступ к магазину", "купить доступ к магазину", costSign, 50, null, "OpenShop");
+			CreateResearchItem("Магазин улучшений для корабля", "Доступ к магазину улучшений для корабля", costSign, 10, null, "OpenShop");
 
-			CreateResearchItem("покупка обычных улучшений", "покупка обычных улучшений", costSign, 100, null, "CanBuyNormalUpgrades");
-			CreateResearchItem("покупка особых улучшений", "покупка особых улучшений", costSign, 250, null, "CanBuyExtraUpgrades");
+			CreateResearchItem("покупка обычных улучшений", "в магазине будут доступны обычные улучшения", costSign, 50, null, "CanBuyNormalUpgrades");
+			CreateResearchItem("покупка особых улучшений", "в магазине будут доступны особые улучшения", costSign, 150, null, "CanBuyExtraUpgrades");
+			CreateResearchItem("Купить технологию автопилотирования", "ассортимент магазина пополнится автопилотом", costSign, 11, null, "CanBuyAutopilot");
 
-			//CreateResearchItem("открыть доступ к лучшим заказам", "открыть доступ к лучшим заказам", costSign, 500, null, "OpenTopOrders");
+			CreateResearchItem("Лучшие заказы", "Более тяжелые но и лучше оплачиваемые заказы", costSign, 30, null, "OpenTopOrders");
 
-			CreateResearchItem("запустить финальный заказ (на время)", "запустить финальный заказ (на время)", costSign, 300, null, "StartFinalOrder");
-
-
+			CreateResearchItem("запустить финальный заказ (на время)", "запустить финальный заказ (на время)", costSign, 60, null, "StartFinalOrder");
+			
 			ItemsManaged.Clear();
 			foreach (var item in Items) {
 				var im = new ItemManager(item, 0);
@@ -199,26 +202,59 @@ namespace SpaceConstruction.Game.Items
 
 			var it1 = GetItemByCode("Sign1");
 			ItemsManaged.Remove(it1);
-			it1 = new ItemManager(costSign, 1000);
+			it1 = new ItemManager(costSign, 100);
 			ItemsManaged.Add(it1);
 		}
 
-		internal static List<ItemManager> GetUpgrades(bool buyNormalUpgrades, bool buyExtraUpgrades)
+		internal static bool IsAvailableResearchesToBuy()
+		{
+			var researches = GetResearches();
+			foreach (var research in researches) {
+				if (IsCanBuyResearch(research))
+					return true;
+			}
+			return false;
+		}
+
+		/// <summary>
+		/// Исследование покупается только одно, поэтому проверяем что оно уже куплено
+		/// </summary>
+		/// <param name="item"></param>
+		/// <returns></returns>
+		internal static bool IsCanBuyResearch(ItemManager item)
+		{
+			return item.PlayerCount <= 0 && IsCanBuyItem(item);
+		}
+
+		internal static bool IsCanBuyItem(ItemManager item)
+		{
+			var cost = item.Item.Cost;// ищем предмет который является деньгами для этого предмета
+			var moneyItem = GetItemByCode(cost.Item.Code);
+
+			return item.CanBuyItem(moneyItem);
+		}
+
+		internal static List<ItemManager> GetUpgrades(bool buyNormalUpgrades, bool buyExtraUpgrades, bool buyAutopilot)
 		{
 			var result = new List<ItemManager>();
-			var upgrades = ItemsManaged.Where(item => item.Item.Type == ItemTypeEnum.Upgrade);
+			var upgrades = ItemsManaged.Where(item => item.Item.Type == ItemTypeEnum.Upgrade).ToList();
+			if (buyAutopilot)
+				foreach (var upgrade in upgrades) {
+					if (((ItemUpgrade) upgrade.Item).Quality == ItemUpgradeQualityEnum.Autopilot)
+						result.Add(upgrade);
+				}
 			if (buyExtraUpgrades)
 				foreach (var upgrade in upgrades) {
-					if ((upgrade.Item as ItemUpgrade).Quality == ItemUpgradeQualityEnum.Extra)
+					if (((ItemUpgrade) upgrade.Item).Quality == ItemUpgradeQualityEnum.Extra)
 						result.Add(upgrade);
 				}
 			if (buyNormalUpgrades)
 				foreach (var upgrade in upgrades) {
-					if ((upgrade.Item as ItemUpgrade).Quality == ItemUpgradeQualityEnum.Normal)
+					if (((ItemUpgrade) upgrade.Item).Quality == ItemUpgradeQualityEnum.Normal)
 						result.Add(upgrade);
 				}
 			foreach (var upgrade in upgrades) {
-				if ((upgrade.Item as ItemUpgrade).Quality == ItemUpgradeQualityEnum.Poor)
+				if (((ItemUpgrade) upgrade.Item).Quality == ItemUpgradeQualityEnum.Poor)
 					result.Add(upgrade);
 			}
 			return result;
@@ -255,43 +291,41 @@ namespace SpaceConstruction.Game.Items
 		internal static bool BuyItem(string itemCode)
 		{
 			var item = GetItemByCode(itemCode);
-			var cost = item.Item.Cost;
-			var moneyItem = GetItemByCode(cost.Item.Code);
-			return item.BuyItem(moneyItem);
+			return BuyItem(item);
 		}
 
 		/// <summary>
 		/// Купить предмет. возвращаем успешность покупки
 		/// </summary>
 		/// <returns></returns>
-		internal static bool BuyUpgrade(ItemManager upgrade)
+		internal static bool BuyItem(ItemManager item)
 		{
-			var cost = upgrade.Item.Cost;
+			var cost = item.Item.Cost;
 			var moneyItem = GetItemByCode(cost.Item.Code);
-			return upgrade.BuyItem(moneyItem);
+			return item.BuyItem(moneyItem);
 		}
 
-		public static void BuySign(string itemCode)
+		public static void GrantSigns(string itemCode, int count)
 		{
 			var item = GetItemByCode(itemCode);
-			item.BuySign();
+			item.GrantSigns(count);
 		}
 
 		internal static ItemManager GetItemByCode(string code)
 		{
-			var result = ItemsManaged.Where(it => it.Item.Code == code);
-			if (result.Count() > 1)
+			var result = ItemsManaged.Where(it => it.Item.Code == code).ToList();
+			if (result.Count > 1)
 				throw new Exception("не уникальный айтем с кодом " + code);
 			return result.FirstOrDefault();
 		}
 
-		private static ItemUpgradeValue CreateUpgradeValue(string name, string upName, int upValue)
+		private static ItemUpgradeValue CreateUpgradeValue(string name, string upName, int upValue, ItemUpgradeQualityEnum quality)
 		{
-			var iv = new ItemUpgradeValue()
-			{
+			var iv = new ItemUpgradeValue() {
 				Name = name,
 				UpName = upName,
 				UpValue = upValue,
+				Quality = quality,
 			};
 			return iv;
 		}
@@ -319,7 +353,7 @@ namespace SpaceConstruction.Game.Items
 		/// Создать предмет-улучшение
 		/// </summary>
 		private static void CreateUpgradeItem(string itemName, string itemDescription, string texture = null, ItemManager cost = null,
-			ItemUpgradeQualityEnum quality = ItemUpgradeQualityEnum.Poor, List<ItemUpgradeValue> upgrades = null)
+			ItemUpgradeQualityEnum quality = ItemUpgradeQualityEnum.Poor, List<ItemUpgradeValue> upgrades = null, int installOrder = 0)
 		{
 			if (upgrades == null) return;
 
@@ -331,6 +365,7 @@ namespace SpaceConstruction.Game.Items
 				Texture = texture,
 				Cost = cost,
 				Quality = quality,
+				InstallOrder = installOrder,
 				Upgrades = upgrades,
 			};
 			Items.Add(i);
@@ -345,7 +380,7 @@ namespace SpaceConstruction.Game.Items
 			if (string.IsNullOrEmpty(researchCode)) return;
 
 			var cost = new ItemManager(costItem, costCount);
-			var i = new ItemResearch()
+			var i = new Item()
 			{
 				Type = ItemTypeEnum.Research,
 				Name = itemName,

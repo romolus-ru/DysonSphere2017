@@ -12,16 +12,34 @@ namespace SpaceConstruction.Game
 	/// </summary>
 	public class Paths
 	{
-		//private Dictionary<ScreenPoint, Dictionary<ScreenPoint, List<ScreenPoint>>> paths;
+		private Dictionary<ScreenPoint, Dictionary<ScreenPoint, List<ScreenPoint>>> _pathsCache =
+			new Dictionary<ScreenPoint, Dictionary<ScreenPoint, List<ScreenPoint>>>();
+
+		internal void ClearCache()
+			=> _pathsCache.Clear();
+		
 
 		/// <summary>
 		/// Получаем путь корабля от одной точки до другой
 		/// </summary>
 		/// <returns></returns>
-		public List<ScreenPoint> GetShipRoad(List<ScreenEdge> roadMST, ScreenPoint A, ScreenPoint B)
+		public List<ScreenPoint> GetShipRoad(List<ScreenEdge> roadMST, ScreenPoint a, ScreenPoint b)
 		{
-			var shortRoad = GetShortRoad(roadMST, A, B);
-			return GetPath(shortRoad, A);
+			List<ScreenPoint> result = null;
+			if (_pathsCache.ContainsKey(a) && _pathsCache[a].ContainsKey(b)) {
+				result = _pathsCache[a][b];
+			}
+
+			if (result == null) {
+				var shortRoad = GetShortRoad(roadMST, a, b);
+				result = GetPath(shortRoad, a);
+				if (!_pathsCache.ContainsKey(a))
+					_pathsCache.Add(a, new Dictionary<ScreenPoint, List<ScreenPoint>>());
+				if (!_pathsCache[a].ContainsKey(b))
+					_pathsCache[a].Add(b, result);
+			}
+
+			return result;
 		}
 
 		/// <summary>
@@ -29,10 +47,11 @@ namespace SpaceConstruction.Game
 		/// распространяем сигнал по всем направлениям. как только достигли целевой точки - 
 		/// двигаемся назад по граням с меньшим весом
 		/// </summary>
-		/// <param name="A"></param>
-		/// <param name="B"></param>
+		/// <param name="roadMST"></param>
+		/// <param name="a"></param>
+		/// <param name="b"></param>
 		/// <returns></returns>
-		private List<ScreenEdge> GetShortRoad(List<ScreenEdge> roadMST, ScreenPoint A, ScreenPoint B)
+		private List<ScreenEdge> GetShortRoad(List<ScreenEdge> roadMST, ScreenPoint a, ScreenPoint b)
 		{
 			var edges = new List<ScreenEdge>();
 			var pointsSearched = new List<ScreenPoint>();
@@ -43,9 +62,9 @@ namespace SpaceConstruction.Game
 			}
 
 			var path = new List<ScreenEdge>();
-			var beginEdges = edges.Where(e => (e.A == A || e.B == A)).DefaultIfEmpty().ToList();
+			var beginEdges = edges.Where(e => (e.A == a || e.B == a)).DefaultIfEmpty().ToList();
 			if (/*beginEdges == null || */beginEdges.Count == 0) return null;
-			pointsSearched.Add(A);
+			pointsSearched.Add(a);
 			path.AddRange(beginEdges);
 			beginEdges.ForEach(e =>
 			{
@@ -80,7 +99,7 @@ namespace SpaceConstruction.Game
 				).ToList();
 				foreach (var e in edgesSearch) {
 					e.Weight = searchEdge.Weight + e.A.distanceTo(e.B);
-					if (e.A == B || e.B == B) { founded = true; }
+					if (e.A == b || e.B == b) { founded = true; }
 				}
 
 				pointsSearched.Add(search);// запоминаем
@@ -90,11 +109,11 @@ namespace SpaceConstruction.Game
 
 			// выбираем только нужные вершины
 			var ret = new List<ScreenEdge>();
-			ScreenPoint searchPoint = B;
+			ScreenPoint searchPoint = b;
 			var edge = path.Where(e => e.A == searchPoint || e.B == searchPoint).OrderBy(e => e.Weight).First();
 			ret.Add(edge);
 			searchPoint = edge.A == searchPoint ? edge.B : edge.A;
-			while (searchPoint != A) {// ищем вершины по точке и берём из них только с меньшим весом. из нее берём следующую точку
+			while (searchPoint != a) {// ищем вершины по точке и берём из них только с меньшим весом. из нее берём следующую точку
 				edge = path.Where(e => e.A == searchPoint || e.B == searchPoint)
 					.OrderBy(e => e.Weight).First();
 				ret.Add(edge);
@@ -114,10 +133,10 @@ namespace SpaceConstruction.Game
 		private List<ScreenPoint> GetPath(List<ScreenEdge> basePath, ScreenPoint firstPoint)
 		{
 			var bc = new BezierCurve();
-			var pathlength = (int)(basePath/*.Count * 20);//*/ .Sum(e => e.Weight) / 5 / basePath.Count);
+			var pathLength = (int)(basePath/*.Count * 20);//*/ .Sum(e => e.Weight) / 5 / basePath.Count);
 			var basePoints = GetPathFromEdges(basePath, firstPoint);
 			var ret = new List<ScreenPoint>();
-			bc.Bezier2D(basePoints, pathlength, ret);
+			bc.Bezier2D(basePoints, pathLength, ret);
 			return ret;
 		}
 
@@ -136,15 +155,15 @@ namespace SpaceConstruction.Game
 		/// <summary>
 		/// Ищем минимальное остовное дерево
 		/// </summary>
-		public List<ScreenEdge> AlgorithmByPrim(List<ScreenEdge> E, IEnumerable<ScreenPoint> points)
+		public List<ScreenEdge> AlgorithmByPrim(List<ScreenEdge> e, IEnumerable<ScreenPoint> points)
 		{
-			List<ScreenEdge> MST = new List<ScreenEdge>();
+			var rMST = new List<ScreenEdge>();
 			//неиспользованные ребра
-			List<ScreenEdge> notUsedE = new List<ScreenEdge>(E);
+			var notUsedE = new List<ScreenEdge>(e);
 			//использованные вершины
-			List<ScreenPoint> usedV = new List<ScreenPoint>();
+			var usedV = new List<ScreenPoint>();
 			//неиспользованные вершины
-			List<ScreenPoint> notUsedV = new List<ScreenPoint>(points);
+			var notUsedV = new List<ScreenPoint>(points);
 			//выбираем случайную начальную вершину
 			var num = RandomHelper.Random(notUsedV.Count);
 			usedV.Add(notUsedV[num]);
@@ -171,10 +190,10 @@ namespace SpaceConstruction.Game
 					notUsedV.Remove(notUsedE[minE].A);
 				}
 				//заносим новое ребро в дерево и удаляем его из списка неиспользованных
-				MST.Add(notUsedE[minE]);
+				rMST.Add(notUsedE[minE]);
 				notUsedE.RemoveAt(minE);
 			}
-			return MST;
+			return rMST;
 		}
 
 		/// <summary>

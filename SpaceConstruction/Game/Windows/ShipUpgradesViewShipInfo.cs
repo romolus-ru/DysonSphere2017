@@ -8,10 +8,8 @@ namespace SpaceConstruction.Game.Windows
 	{
 		private Ship _ship;
 		private List<string> _info = new List<string>();
-		public ShipUpgradesViewShipInfo(Ship ship)
-		{
-			_ship = ship;
-		}
+
+		public void SetShip(Ship ship) => _ship = ship;
 
 		public void UpdateShipInfo()
 		{
@@ -30,8 +28,8 @@ namespace SpaceConstruction.Game.Windows
 			_info.Add("Вес перевозимого груза");
 			_info.Add(_ship.CargoWeightMax.ToString());
 
-			_info.Add("Опыт за рейс");
-			_info.Add(_ship.XPAdd.ToString());
+			//_info.Add("Опыт за рейс");
+			//_info.Add(_ship.XPAdd.ToString());
 
 			_info.Add("Усиление двигателя");
 			_info.Add(_ship.EngineForce.ToString());

@@ -64,7 +64,7 @@ namespace SpaceConstruction
 
 			_modelClientManager = new ModelViewManager();
 			_modelClientManager.OnExit += OnExit;
-			_modelClientManager.Start(_model, _viewManager, _rplayer);
+			_modelClientManager.Start(_model, _viewManager);
 
 			Log("Клиент работает");
 		}
