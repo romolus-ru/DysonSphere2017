@@ -1,7 +1,6 @@
 ﻿using Engine.Visualization;
 using Engine.Visualization.Scroll;
 using SpaceConstruction.Game.Orders;
-using SpaceConstruction.Game.Windows;
 using System.Collections.Generic;
 
 namespace SpaceConstruction.Game.Windows

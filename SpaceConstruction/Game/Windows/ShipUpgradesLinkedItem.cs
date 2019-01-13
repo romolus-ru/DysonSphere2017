@@ -32,7 +32,7 @@ namespace SpaceConstruction.Game.Windows
 
 			_text = new ViewText();
 			AddComponent(_text);
-			_text.SetParams(35, 1, 300, 20, "ViewText");
+			_text.SetParams(35, 1, 400, 20, "ViewText");
 			_text.ClearTexts();
 		}
 

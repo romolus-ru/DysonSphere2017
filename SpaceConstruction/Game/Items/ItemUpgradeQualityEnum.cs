@@ -7,8 +7,8 @@
 	{
 		Error,
 		Bad,
-		Poor,
 		Normal,
+		Good,
 		Extra,
 		Autopilot,
 	}

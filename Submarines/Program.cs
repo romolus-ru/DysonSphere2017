@@ -1,7 +1,7 @@
-﻿using Engine;
-using Engine.Utils;
+﻿using Engine.Utils;
+using Engine;
 
-namespace SpaceConstruction
+namespace Submarines
 {
 	static class Program
 	{

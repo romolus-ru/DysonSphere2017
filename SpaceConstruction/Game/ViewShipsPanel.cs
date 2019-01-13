@@ -47,11 +47,18 @@ namespace SpaceConstruction.Game
 			}
 		}
 
-		public void SetShips(Ships ships)
+		public void ClearShipsPanel()
 		{
 			foreach (var shipPanel in _shipsPanels)
 				RemoveComponent(shipPanel);
 			_shipsPanels.Clear();
+			_shipsCount = 0;
+
+		}
+
+		public void SetShips(Ships ships)
+		{
+			ClearShipsPanel();
 			_ships = ships;
 			CreateShipPanel();
 		}

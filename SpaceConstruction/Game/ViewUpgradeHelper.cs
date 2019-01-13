@@ -7,8 +7,8 @@ namespace SpaceConstruction.Game
 	{
 		internal static Color GetQualityColor(ItemUpgradeQualityEnum quality)
 		{
-			var color = Color.SandyBrown; // poor
-			if (quality == ItemUpgradeQualityEnum.Normal)
+			var color = Color.SandyBrown; // normal
+			if (quality == ItemUpgradeQualityEnum.Good)
 				color = Color.Silver;
 			if (quality == ItemUpgradeQualityEnum.Extra
 			    || quality == ItemUpgradeQualityEnum.Autopilot)

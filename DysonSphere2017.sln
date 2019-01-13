@@ -26,6 +26,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EngineTools", "EngineTools\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpaceConstruction", "SpaceConstruction\SpaceConstruction.csproj", "{9D9E21FB-54B9-4F82-83C9-390AA2879BFF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Submarines", "Submarines\Submarines.csproj", "{E6457D76-F3AE-4A9B-B236-61B2AB23EF37}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -72,6 +74,10 @@ Global
 		{9D9E21FB-54B9-4F82-83C9-390AA2879BFF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9D9E21FB-54B9-4F82-83C9-390AA2879BFF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9D9E21FB-54B9-4F82-83C9-390AA2879BFF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E6457D76-F3AE-4A9B-B236-61B2AB23EF37}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E6457D76-F3AE-4A9B-B236-61B2AB23EF37}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E6457D76-F3AE-4A9B-B236-61B2AB23EF37}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E6457D76-F3AE-4A9B-B236-61B2AB23EF37}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

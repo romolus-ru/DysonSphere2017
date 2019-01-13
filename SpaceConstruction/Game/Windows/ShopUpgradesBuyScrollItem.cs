@@ -26,7 +26,7 @@ namespace SpaceConstruction.Game.Windows
 			_upgrades = new List<string>();
 			_upgradesColor = new List<Color>();
 			foreach (var upgradeValue in _upgradeItem.Upgrades) {
-				var s = upgradeValue.Name + " " + upgradeValue.UpName + " " + upgradeValue.UpValue;
+				var s = upgradeValue.Name;// + " " + upgradeValue.UpName + " " + upgradeValue.UpValue;
 				_upgrades.Add(s);
 				_upgradesColor.Add(ViewUpgradeHelper.GetQualityColor(upgradeValue.Quality));
 			}

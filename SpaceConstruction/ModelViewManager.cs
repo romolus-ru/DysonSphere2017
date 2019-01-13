@@ -107,11 +107,16 @@ namespace SpaceConstruction
 			_vtg.OnUpdateMoneyInfo += ships.UpdateResearchInfo;
 			_vtg.OnUpdateMoneyInfo += orders.UpdateResearchInfo;
 			_vtg.OnUpdateMoneyInfo += _vtg.UpdateResearchInfo;
+			_vtg.OnStartFinalOrderPressed += _mtg.StartFinalOrder;
 
 			//_vtg.OnGetPath += _mtg.GetPath;
 			_mtg.OnMoneyChanged += _vtg.MoneyChanged;
 			_mtg.OnOrdersChanged += _vtg.OrdersChanged;
 			_mtg.UpdateMoneyInfo();
+
+			_mtg.OnFinalOrderStart += _vtg.FinalOrderStart;
+			_mtg.OnFinalOrderComplete += _vtg.FinalOrderComplete;
+			_mtg.OnFinalOrderNotComplete += _vtg.FinalOrderNotComplete;
 		}
 	}
 }

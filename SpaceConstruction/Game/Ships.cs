@@ -5,7 +5,6 @@ using SpaceConstruction.Game.States;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Policy;
 
 namespace SpaceConstruction.Game
 {
@@ -33,7 +32,17 @@ namespace SpaceConstruction.Game
 			_resourceInfos = orders.ResourceInfos;
 		}
 
-		public void Clear() => _ships.Clear();
+		public void Clear()
+		{
+			_ships.Clear();
+			_shipVolume = false;
+			_shipWeight = false;
+			_shipVolume2 = false;
+			_shipWeight2 = false;
+			_addShips1 = false;
+			_addShips2 = false;
+			_addShips3 = false;
+		}
 
 		public Ship GetFreeShip() =>
 			_ships.FirstOrDefault(ship => ship.ShipCommand == ShipCommandsEnum.NoCommand);

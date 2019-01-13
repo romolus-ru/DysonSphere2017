@@ -18,7 +18,10 @@ namespace SpaceConstruction.Game.Orders
 		/// <summary>
 		/// Описания заказов
 		/// </summary>
-		public readonly List<OrderInfo> OrderInfos;
+		public List<OrderInfo> OrderInfos;
+
+		private OrderInfo _finalOrder;
+
 		/// <summary>
 		/// исходная информация о ресурсах
 		/// </summary>
@@ -33,6 +36,14 @@ namespace SpaceConstruction.Game.Orders
 			_actualOrders = new List<Order>();
 			InitOrderInfos();
 			InitResourceInfos();
+		}
+
+		public Order GetFinalOrder()
+		{
+			var order = new Order(_finalOrder);
+			FillOrderResources(1, order, _finalOrder, ResourceInfos);
+			_actualOrders.Add(order);
+			return order;
 		}
 
 		public Order GetNewOrder(int level)
@@ -57,6 +68,9 @@ namespace SpaceConstruction.Game.Orders
 		public void Clear()
 		{
 			_actualOrders.Clear();
+			_addOrders1 = false;
+			_addOrders2 = false;
+			_addOrders3 = false;
 		}
 
 		/// <summary>
@@ -154,9 +168,17 @@ namespace SpaceConstruction.Game.Orders
 			AddOrderInfo("Ресторан", "Построить ресторан", 2, "",
 				300, 200, 0, 100);
 
+			_finalOrder = CreateOrderInfo("Главная стройка года", "Завезти материалы для стройки года", 99, "",
+				8000000, 500000, 100000, 1200000);
 		}
 
 		private void AddOrderInfo(string name, string description, int level, string logo, int strMat, int decMat, int frnMat, int mchMat)
+		{
+			var order = CreateOrderInfo(name, description, level, logo, strMat, decMat, frnMat, mchMat);
+			OrderInfos.Add(order);
+		}
+
+		private OrderInfo CreateOrderInfo(string name, string description, int level, string logo, int strMat, int decMat, int frnMat, int mchMat)
 		{
 			var order = new OrderInfo()
 			{
@@ -172,7 +194,7 @@ namespace SpaceConstruction.Game.Orders
 			if (decMat > 0) order.ResourceGroupValues.Add(new ResourceGroupValue(ResourcesGroupEnum.DecorationMaterial, decMat));
 			if (mchMat > 0) order.ResourceGroupValues.Add(new ResourceGroupValue(ResourcesGroupEnum.Mechs, mchMat));
 
-			OrderInfos.Add(order);
+			return order;
 		}
 
 		private void InitResourceInfos()

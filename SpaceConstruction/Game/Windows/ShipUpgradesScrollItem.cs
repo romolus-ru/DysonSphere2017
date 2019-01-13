@@ -11,12 +11,17 @@ namespace SpaceConstruction.Game.Windows
 	internal class ShipUpgradesScrollItem : ScrollItem
 	{
 		public ItemManager ItemManager { get; }
+		private Color _itemColor;
 		private ViewButton _btnToShip;
 		public Action<ShipUpgradesScrollItem> OnMoveUpgradeToShip { get; set; }
 
 		public ShipUpgradesScrollItem(ItemManager itemManager)
 		{
 			ItemManager = itemManager;
+			var item = itemManager.Item as ItemUpgrade;
+			_itemColor = item == null
+				? Color.PaleVioletRed
+				: ViewUpgradeHelper.GetQualityColor(item.Quality);
 		}
 
 		protected override void InitObject(VisualizationProvider visualizationProvider, Input input)
@@ -25,8 +30,8 @@ namespace SpaceConstruction.Game.Windows
 
 			_btnToShip = new ViewButton();
 			AddComponent(_btnToShip);
-			_btnToShip.InitButton(MoveToShip, "Установить", "hint", Keys.None);
-			_btnToShip.SetParams(10, 55, 140, 20, "btnToShip");
+			_btnToShip.InitButton(MoveToShip, "Установить", "Установить улучшение", Keys.None);
+			_btnToShip.SetParams(10, 60, 140, 20, "btnToShip");
 			_btnToShip.InitTexture("textRB", "textRB");
 		}
 
@@ -50,8 +55,10 @@ namespace SpaceConstruction.Game.Windows
 		public override void DrawObject(VisualizationProvider visualizationProvider)
 		{
 			visualizationProvider.SetColor(Color.White);
-			visualizationProvider.Print(X + 10, Y, ItemManager.AvailableCount + " " + ItemManager.Item.Name);
-			visualizationProvider.Print(X + 10, Y + 20, ItemManager.Item.Description);
+			visualizationProvider.Print(X + 10, Y, "В наличии " + ItemManager.AvailableCount + GameConstants.MeasureUnits);
+			visualizationProvider.SetColor(_itemColor);
+			visualizationProvider.Print(X + 10, Y + 20, ItemManager.Item.Name);
+			visualizationProvider.Print(X + 10, Y + 40, ItemManager.Item.Description);
 			if (!string.IsNullOrEmpty(ItemManager.Item.Texture))
 				visualizationProvider.DrawTexture(X + 40, Y + 40, ItemManager.Item.Texture);
 			visualizationProvider.SetColor(Color.GreenYellow);

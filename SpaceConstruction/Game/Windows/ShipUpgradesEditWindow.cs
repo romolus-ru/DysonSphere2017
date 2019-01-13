@@ -20,7 +20,7 @@ namespace SpaceConstruction.Game.Windows
 			_ships = ships;
 			_ship = ship ?? _ships.GetNextShip(null);
 
-			InitWindow("Установка улучшений на корабль", viewManager, showOkButton: true, showCancelButton: false, showNewButton: false);
+			InitWindow("Установка улучшений на корабль", viewManager, showOkButton: false, showCancelButton: true, showNewButton: false);
 
 			_viewShip = new ShipUpgradesViewShipInfo();
 			_viewShip.SetShip(_ship);
@@ -97,7 +97,6 @@ namespace SpaceConstruction.Game.Windows
 			btnPrevShip.InitButton(PrevShip, "Предыдущий корабль", "Переключиться на предыдущий корабль", Keys.Left);
 			btnPrevShip.SetParams(10, 260, 200, 20, "btnPrevShip");
 			btnPrevShip.InitTexture("textRB", "textRB");
-
 		}
 
 		private void ShipUpgradesViewUpdate()
@@ -130,6 +129,14 @@ namespace SpaceConstruction.Game.Windows
 			viewScroll.SetParams(250, 200, 800, 460, "ViewScroll");
 		}
 
+		protected override void InitButtonCancel(ViewButton btnCancel)
+		{
+			base.InitButtonCancel(btnCancel);
+			btnCancel.SetCoordinatesRelative(-100, 0, 0);
+			btnCancel.Caption = "закрыть";
+			btnCancel.Hint = "закрыть улучшения";
+		}
+
 		private void NextShip()
 		{
 			SwitchTo(_ships.GetNextShip(_ship));
@@ -142,6 +149,10 @@ namespace SpaceConstruction.Game.Windows
 
 		private void SwitchTo(Ship ship)
 		{
+			if (ship == null) {
+				CloseWindow();
+				return;
+			}
 			_ship = ship;
 			_viewShip.SetShip(_ship);
 			ViewScroll.ClearItems();

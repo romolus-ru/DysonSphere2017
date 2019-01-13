@@ -27,6 +27,8 @@ namespace SpaceConstruction.Game.Orders
 		/// Уровень заказа, для различных стадий игры
 		/// </summary>
 		public int Level;
+
+		public int Reward;
 		public string OrderName;
 		public string OrderDescription;
 		/// <summary>
@@ -49,6 +51,7 @@ namespace SpaceConstruction.Game.Orders
 			OrderName = orderInfo.Name;
 			OrderDescription = orderInfo.Description;
 			Level = orderInfo.Level;
+			Reward = Level == 1 ? 1 : GameConstants.OrderLevel1Reward;
 			// генерируем сколько нужно для заказа
 
 			if (hardness > 1) {

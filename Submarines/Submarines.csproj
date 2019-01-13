@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{9D9E21FB-54B9-4F82-83C9-390AA2879BFF}</ProjectGuid>
+    <ProjectGuid>{E6457D76-F3AE-4A9B-B236-61B2AB23EF37}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SpaceConstruction</RootNamespace>
-    <AssemblyName>SpaceConstruction</AssemblyName>
+    <RootNamespace>Submarines</RootNamespace>
+    <AssemblyName>Submarines</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -35,61 +35,28 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Client.cs" />
-    <Compile Include="GameState.cs" />
-    <Compile Include="Game\GameConstants.cs" />
-    <Compile Include="Game\Items\Item.cs" />
-    <Compile Include="Game\Items\ItemManager.cs" />
-    <Compile Include="Game\Items\ItemsManager.cs" />
-    <Compile Include="Game\Items\ItemTypeEnum.cs" />
-    <Compile Include="Game\Items\ItemUpgrade.cs" />
-    <Compile Include="Game\Items\ItemUpgradeQualityEnum.cs" />
-    <Compile Include="Game\Items\ItemUpgradeValue.cs" />
-    <Compile Include="Game\ModelTransportGame.cs" />
-    <Compile Include="Game\Orders\Order.cs" />
-    <Compile Include="Game\Orders\OrderInfo.cs" />
-    <Compile Include="Game\Orders\Orders.cs" />
-    <Compile Include="Game\Paths.cs" />
-    <Compile Include="Game\Planet.cs" />
-    <Compile Include="Game\Resources\ResourceGroupValue.cs" />
-    <Compile Include="Game\Resources\ResourceInfo.cs" />
-    <Compile Include="Game\Resources\ResourcesEnum.cs" />
-    <Compile Include="Game\Resources\ResourcesGroupEnum.cs" />
-    <Compile Include="Game\Resources\ResourcesHolder.cs" />
-    <Compile Include="Game\Resources\ResourceValue.cs" />
-    <Compile Include="Game\Ship.cs" />
-    <Compile Include="Game\ShipCommandsEnum.cs" />
-    <Compile Include="Game\Ships.cs" />
-    <Compile Include="Game\States\PlayerState.cs" />
-    <Compile Include="Game\States\ShipStates.cs" />
-    <Compile Include="Game\States\ShipStatesEnum.cs" />
-    <Compile Include="Game\ViewUpgradeHelper.cs" />
-    <Compile Include="Game\ViewLabelIcon.cs" />
-    <Compile Include="Game\ViewShipPanel.cs" />
-    <Compile Include="Game\ViewShipsPanel.cs" />
-    <Compile Include="Game\ViewTransportGame.cs" />
-    <Compile Include="Game\Windows\OrdersInfosScrollIem.cs" />
-    <Compile Include="Game\Windows\OrdersInfosViewWindow.cs" />
-    <Compile Include="Game\Windows\ResearchesBuyScrollItem.cs" />
-    <Compile Include="Game\Windows\ResearchesBuyWindow.cs" />
-    <Compile Include="Game\Windows\ResourcesInfosScrollItem.cs" />
-    <Compile Include="Game\Windows\ResourcesInfosViewWindow.cs" />
-    <Compile Include="Game\Windows\ShipUpgradesEditWindow.cs" />
-    <Compile Include="Game\Windows\ShipUpgradesLinkedItem.cs" />
-    <Compile Include="Game\Windows\ShipUpgradesScrollItem.cs" />
-    <Compile Include="Game\Windows\ShipUpgradesViewShipInfo.cs" />
-    <Compile Include="Game\Windows\ShopUpgradesBuyScrollItem.cs" />
-    <Compile Include="Game\Windows\ShopUpgradesBuyWindow.cs" />
-    <Compile Include="ModelIntro.cs" />
-    <Compile Include="ModelLoadResources.cs" />
+    <Compile Include="ModelGame.cs" />
     <Compile Include="ModelViewManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ViewMenu.cs" />
+    <Compile Include="Ship.cs" />
+    <Compile Include="ShipController.cs" />
+    <Compile Include="Vector.cs" />
+    <Compile Include="ViewGame.cs" />
+    <Compile Include="ViewShip.cs" />
+    <Compile Include="ViewShipController.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -117,18 +84,6 @@
       <Project>{5EF366CA-251D-44C6-873E-B51C8D42A6C8}</Project>
       <Name>Engine</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <BootstrapperPackage Include=".NETFramework,Version=v4.5.2">
-      <Visible>False</Visible>
-      <ProductName>Microsoft .NET Framework 4.5.2 %28x86 and x64%29</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

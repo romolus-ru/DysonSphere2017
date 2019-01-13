@@ -6,6 +6,7 @@ using SpaceConstruction.Game.Items;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using SpaceConstruction.Game.Orders;
 
 namespace SpaceConstruction.Game
 {
@@ -22,24 +23,56 @@ namespace SpaceConstruction.Game
 		public Action OnOrdersChanged;
 		private int _ordersLevel = 1;
 		/// <summary>
+		/// Запускаем главный заказ
+		/// </summary>
+		public Action<DateTime> OnFinalOrderStart;
+		/// <summary>
+		/// Выполнен главный заказ - прячем всё, выводим приветствие
+		/// </summary>
+		public Action OnFinalOrderComplete;
+		/// <summary>
+		/// Останавливаем таймер и показываем кнопку запуска заказа
+		/// </summary>
+		public Action OnFinalOrderNotComplete;
+
+		/// <summary>
 		/// Минимальное расстояние на котором точка будет реагировать на курсор
 		/// </summary>
 		private const int MouseMinimalDistance = 50;
+
+		private bool _finalOrderStarted;
+		private DateTime _finalOrderTimer;
+		private Order _finalOrder;
+		private bool _stopForRestart;
 
 		public ModelTransportGame(Ships ships, Orders.Orders orders)
 		{
 			_ships = ships;
 			_orders = orders;
 			_ships.OnFinishOrder = CreateRandomOrders;
+			ItemsManager.CreateItems();
 		}
-		
-		public void RecreatePoints()
+
+		/// <summary>
+		/// Приводим систему к начальному состоянию
+		/// </summary>
+		private void Restart()
 		{
+			_openTopOrders = false;
+			_stopForRestart = false;
+			_ordersLevel = 1;
 			_paths.ClearCache();
 			_orders.Clear();
-			var roadEdges = new List<ScreenEdge>();
 			_roadPoints.Clear();
-			_roadPoints.AddRange(_paths.CreateGalaxy(70, 1500, 600, 100));
+			_ships.Clear();
+		}
+
+		public void RecreatePoints()
+		{
+			ItemsManager.CreateItems();
+			Restart();
+			var roadEdges = new List<ScreenEdge>();
+			_roadPoints.AddRange(_paths.CreateGalaxy(70, 1400, 600, 100));
 			_roadPoints[0].IsDepot = true;
 			CreateRandomOrders();
 			var tmpPoints = new List<Vertex>();
@@ -61,7 +94,6 @@ namespace SpaceConstruction.Game
 				if (!ContainsScreenEdge(roadEdges, bc)) roadEdges.Add(bc);
 			}
 
-			_ships.Clear();
 			_ships.Init(_roadPoints[0], GetShipRoad);
 			_roadMST = _paths.AlgorithmByPrim(roadEdges, _roadPoints);
 			OnSetPoints?.Invoke(_roadPoints, _roadMST, _ships);
@@ -93,6 +125,8 @@ namespace SpaceConstruction.Game
 		private void CreateRandomOrders()
 		{
 			DeleteEmptyOrders();
+			if (_stopForRestart)
+				return;
 			var countOrders = _orders.ActualOrdersCount;
 			var needOrders = _orders.MaxOrders - countOrders;
 			if (needOrders <= 0) return;
@@ -114,14 +148,24 @@ namespace SpaceConstruction.Game
 					continue;
 
 				// всё перевезено и нету перевозимых ресурсов - удаляем заказ
-				_ships.CancelOrder(point);
-				point.Order = null;
-				_orders.EndOrder(order);
-				ItemsManager.GrantSigns("Sign1", order.Level);
+				StopOrder(order);
+				if (order == _finalOrder) {
+					_finalOrderStarted = false;
+					_stopForRestart = true;
+					return;
+				}
+				ItemsManager.GrantSigns("Sign1", order.Reward);
 				endedOrders = true;
 			}
 			if (endedOrders)
 				UpdateMoneyInfo();
+		}
+
+		private void StopOrder(Order order)
+		{
+			_ships.CancelOrder(order.Destination);
+			order.Destination.Order = null;
+			_orders.EndOrder(order);
 		}
 
 		public void UpdateMoneyInfo()
@@ -130,23 +174,38 @@ namespace SpaceConstruction.Game
 			OnMoneyChanged?.Invoke(item.PlayerCount);
 		}
 
+		internal void StartFinalOrder()
+		{	
+			var order = _orders.GetFinalOrder();
+			int num = GetRandomRoadPointWithoutOrder();
+			_roadPoints[num].Order = order;
+			order.Destination = _roadPoints[num];
+			int numSource = GetRandomRoadPointWithoutOrder();
+			order.Source = _roadPoints[numSource];
+			_finalOrderStarted = true;
+			_finalOrderTimer = DateTime.Now + GameConstants.FinalOrderTimer;
+			_finalOrder = order;
+			OnFinalOrderStart?.Invoke(_finalOrderTimer);
+		}
+
 		private void CreateRandomOrder()
 		{
 			var order = _orders.GetNewOrder(_ordersLevel);
+			int num = GetRandomRoadPointWithoutOrder();
+			_roadPoints[num].Order = order;
+			order.Destination = _roadPoints[num];
+			int numSource = GetRandomRoadPointWithoutOrder();
+			order.Source = _roadPoints[numSource];
+		}
+
+		private int GetRandomRoadPointWithoutOrder()
+		{
 			int num;
 			do {
 				num = RandomHelper.Random(_roadPoints.Count - 1) + 1;
 			} while (_roadPoints[num].Order != null);
-			_roadPoints[num].Order = order;
-			order.Destination = _roadPoints[num];
-			Planet source = null;
-			do {
-				num = RandomHelper.Random(_roadPoints.Count - 1) + 1;
-				if (_roadPoints[num].Order != null)
-					continue;
-				source = _roadPoints[num];
-			} while (source == null);
-			order.Source = source;
+
+			return num;
 		}
 
 		private bool ExistsFreePlanetsForOrder()
@@ -163,7 +222,16 @@ namespace SpaceConstruction.Game
 
 		public override void Tick()
 		{
+			if (_finalOrderStarted && DateTime.Now > _finalOrderTimer) {
+				_finalOrderStarted = false;
+				StopOrder(_finalOrder);
+				_finalOrder = null;
+				OnFinalOrderNotComplete?.Invoke();
+			}
+
 			foreach (var ship in _ships) {
+				if (_stopForRestart)
+					break;
 				if (ship.ShipCommand == ShipCommandsEnum.NoCommand && ship.AutoPilot) {
 					var order = _orders.GetRandomOrder();
 					ship.MoveToOrder(order.Source, order.Destination);
@@ -171,15 +239,17 @@ namespace SpaceConstruction.Game
 
 				ship.MoveNext();
 			}
+
+			if (_stopForRestart) {
+				_finalOrder = null;
+				OnFinalOrderComplete?.Invoke();
+				Restart();
+			}
 		}
 
-		private bool _finalOrderActive;
 		private bool _openTopOrders;
 		public void UpdateResearchInfo()
 		{
-			if (!_finalOrderActive && ItemsManager.IsResearchItemBuyed("StartFinalOrder")) {
-				_finalOrderActive = true;
-			}
 			if (!_openTopOrders && ItemsManager.IsResearchItemBuyed("OpenTopOrders")) {
 				_openTopOrders = true;
 				_ordersLevel = GameConstants.OpenTopOrdersLevel;

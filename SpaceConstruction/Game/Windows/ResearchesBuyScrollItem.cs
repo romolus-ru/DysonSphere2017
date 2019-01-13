@@ -58,7 +58,7 @@ namespace SpaceConstruction.Game.Windows
 			visualizationProvider.SetColor(Color.White, _txtAlpha);
 			visualizationProvider.Print(X + 100, Y, _researchItem.Name);
 			visualizationProvider.Print(X + 100, Y + 20, _researchItem.Description);
-			visualizationProvider.Print(X + 100, Y + 40, "cost=" + _researchItem.Cost.PlayerCount + " ");
+			visualizationProvider.Print(X + 100, Y + 40, "цена " + _researchItem.Cost.PlayerCount + " ");
 			visualizationProvider.PrintTexture(_researchItem.Cost.Item.Texture);
 			if (!string.IsNullOrEmpty(_researchItem.Texture))
 				visualizationProvider.DrawTexture(X + 40, Y + 40, _researchItem.Texture);

@@ -12,7 +12,7 @@ namespace SpaceConstruction.Game.Windows
 		private List<ItemManager> _items;
 		private Action _onBuy;
 		private Action _onClose;
-		private ItemManager _itemA;// автопилот. меням его положение в списке, если уже куплено 10 автопилотов
+		private ItemManager _itemA; // автопилот. меняем его положение в списке, если уже куплено 10 автопилотов
 
 		public void InitWindow(ViewManager viewManager, List<ItemManager> items, Action onBuy, Action onClose)
 		{
@@ -23,16 +23,18 @@ namespace SpaceConstruction.Game.Windows
 			_itemA = _items.FirstOrDefault(x => ((ItemUpgrade) x.Item).Quality == ItemUpgradeQualityEnum.Autopilot);
 			_items.Remove(_itemA);
 
-			InitWindow("Покупка улучшений для кораблей", viewManager, showOkButton: true, showNewButton: false, showCancelButton: false);
+			InitWindow("Покупка улучшений для кораблей", viewManager, showOkButton: false, showCancelButton: true, showNewButton: false);
 		}
 
 		protected override void InitScrollItems()
 		{
 			var items = new List<ItemManager>(_items);
-			if (_itemA.PlayerCount >= 10)
-				items.Add(_itemA);
-			else
-				items.Insert(0, _itemA);
+			if (_itemA != null) {
+				if (_itemA.PlayerCount >= 10)
+					items.Add(_itemA);
+				else
+					items.Insert(0, _itemA);
+			}
 
 			var i = 1;
 			foreach (var item in items) {

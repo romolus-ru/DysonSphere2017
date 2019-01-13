@@ -120,9 +120,9 @@ namespace SpaceConstruction.Game
 			// полет между планетами
 			CurrentRoadPointNum++;
 			_currentEngineForce += EngineForce;
-			if (_currentEngineForce > 100) {
+			while (_currentEngineForce>100) {
 				CurrentRoadPointNum++;
-				_currentEngineForce = 0;
+				_currentEngineForce -= 100;
 			}
 			if (CurrentRoadPointNum >= (CurrentRoad?.Count ?? 0)) {
 				_needStateChange = true;
@@ -302,7 +302,7 @@ namespace SpaceConstruction.Game
 		public void UpdateShipValues()
 		{
 			CargoVolumeMax = 100 + OnGetGlobalVolume(); // что бы влезала по умолчанию 1 единица самого большого груза
-			CargoWeightMax = 50 + OnGetGlobalWeight();
+			CargoWeightMax = 90 + OnGetGlobalWeight();
 			TeleportInstalled = false;
 			TeleportDistance = 1;
 			AutoPilot = false;
@@ -354,10 +354,10 @@ namespace SpaceConstruction.Game
 						EngineForce += upgradeValue.UpValue;
 						break;
 					case "TakeOff":
-						TimeLandingUp += new TimeSpan(0, 0, 0, 0, milliseconds: upgradeValue.UpValue);
+						TimeLandingUp -= new TimeSpan(0, 0, 0, 0, milliseconds: upgradeValue.UpValue);
 						break;
-					case "Uploading":
-						TimeLoading += new TimeSpan(0, 0, 0, 0, milliseconds: upgradeValue.UpValue);
+					case "Loading":
+						TimeLoading -= new TimeSpan(0, 0, 0, 0, milliseconds: upgradeValue.UpValue);
 						break;
 				}
 			}

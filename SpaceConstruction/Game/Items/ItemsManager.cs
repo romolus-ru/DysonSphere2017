@@ -13,26 +13,22 @@ namespace SpaceConstruction.Game.Items
 		/// Список всех предметов которые только возможны
 		/// </summary>
 		public static List<Item> Items = new List<Item>();
+
 		/// <summary>
 		/// Предметы которые доступны пользователю
 		/// </summary>
 		public static List<ItemManager> ItemsManaged = new List<ItemManager>();
 
-		static ItemsManager()
-		{
-			CreateItems();
-		}
+		private const string StrUpVolumeBase = "Увеличение объема грузоперевозок";
+		private static string StrUpVolumeNormal = StrUpVolumeBase + " на " + GameConstants.CargoVolumeMaxNormal + GameConstants.MeasureUnits;
+		private static string StrUpVolumeGood = StrUpVolumeBase + " на " + GameConstants.CargoVolumeMaxGood + GameConstants.MeasureUnits;
+		private static string StrUpVolumeExtra = StrUpVolumeBase + " на " + GameConstants.CargoVolumeMaxExtra + GameConstants.MeasureUnits;
 
-		const string Small = " малое";
-		const string Big = " большое";
-
-		const string StrUpVolume = "Увеличение объема грузоперевозок";
-		const string StrUpVolumePlus = StrUpVolume + Small;
-		const string StrUpVolumeExtra = StrUpVolume + Big;
-
-		const string StrUpWeight = "Увеличение перевозимого веса";
-		const string StrUpWeightPlus = StrUpWeight + Small;
-		const string StrUpWeightExtra = StrUpWeight + Big;
+		private const string StrUpWeightBase = "Увеличение перевозимого веса";
+		private static string StrUpWeightNormal = StrUpWeightBase + " на " + GameConstants.CargoWeightMaxNormal + GameConstants.MeasureUnits;
+		private static string StrUpWeightGood = StrUpWeightBase + " на " + GameConstants.CargoWeightMaxGood + GameConstants.MeasureUnits;
+		private static string StrUpWeightGood2 = StrUpWeightBase + " на " + GameConstants.CargoWeightMaxGood2 + GameConstants.MeasureUnits;
+		private static string StrUpWeightExtra = StrUpWeightBase + " на " + GameConstants.CargoWeightMaxExtra + GameConstants.MeasureUnits;
 
 		//const string StrUpExp = "Увеличение опыта";
 		//const string StrUpExpPlus = StrUpExp + Small;
@@ -43,66 +39,79 @@ namespace SpaceConstruction.Game.Items
 		//const string StrUpTeleportDistancePlus = StrUpTeleport + Small;
 		//const string StrUpTeleportDistanceExtra = StrUpTeleport + Big;
 
-		const string StrUpEngine = "Увеличение мощности двигателя";
-		const string StrUpEnginePlus = StrUpEngine + Small;
-		const string StrUpEngineExtra = StrUpEngine + Big;
+		private const string StrUpEngineBase = "Увеличение мощности двигателя";
+		private static string StrUpEngineNormal = StrUpEngineBase + " на " + GameConstants.EngineSpeedNormal + GameConstants.MeasurePercent;
+		private static string StrUpEngineGood = StrUpEngineBase + " на " + GameConstants.EngineSpeedGood + GameConstants.MeasurePercent;
+		private static string StrUpEngineExtra = StrUpEngineBase + " на " + GameConstants.EngineSpeedExtra + GameConstants.MeasurePercent;
 
-		const string StrUpTakeOff = "Увеличение скорости взлёта/посадки";
-		const string StrUpTakeOffPlus = StrUpTakeOff + Small;
-		const string StrUpTakeOffExtra = StrUpTakeOff + Big;
+		private const string StrUpTakeOffBase = "Увеличение скорости взлёта/посадки";
+		private static string StrUpTakeOffNormal = StrUpTakeOffBase + " на " + GameConstants.TakeOffNormal + GameConstants.MeasureMSec;
+		private static string StrUpTakeOffGood = StrUpTakeOffBase + " на " + GameConstants.TakeOffGood + GameConstants.MeasureMSec;
+		private static string StrUpTakeOffExtra = StrUpTakeOffBase + " на " + GameConstants.TakeOffExtra + GameConstants.MeasureMSec;
 
-		const string StrUpLoading = "Увеличение скорости загрузки/разгрузки";
-		const string StrUpLoadingPlus = StrUpLoading + Small;
-		const string StrUpLoadingExtra = StrUpLoading + Big;
+		private const string StrUpLoadingBase = "Увеличение скорости загрузки/разгрузки";
+		private static string StrUpLoadingNormal = StrUpLoadingBase + " на " + GameConstants.LoadingNormal + GameConstants.MeasureMSec;
+		private static string StrUpLoadingGood = StrUpLoadingBase + " на " + GameConstants.LoadingGood + GameConstants.MeasureMSec;
+		private static string StrUpLoadingExtra = StrUpLoadingBase + " на " + GameConstants.LoadingExtra + GameConstants.MeasureMSec;
 
-		const string StrUpAutoPilot = "Автоматическая система обработки заказов";
-		const string StrUpAutoPilotVolume = "Уменьшение перевозимого объема в процентах";
-		const string StrUpAutoPilotWeight = "Уменьшение перевозимого веса в процентах";
+		const string StrUpAutoPilot = "Автопилот";
+		private static string StrUpAutoPilotVolume = "Уменьшение перевозимого объема на " 
+		                                             + Math.Abs(GameConstants.AutopilotVolumeDecrease) + GameConstants.MeasurePercent;
+		private static string StrUpAutoPilotWeight = "Уменьшение перевозимого веса на " 
+		                                             + Math.Abs(GameConstants.AutopilotWeightDecrease) + GameConstants.MeasurePercent;
 
 		internal static ItemManager GetItemManager(ItemUpgrade itemUpgrade)
 		{
-			ItemManager ret = null;
 			foreach (var item in ItemsManaged) {
-				if (item.Item != itemUpgrade)
-					continue;
-				ret = item;
-				break;
+				if (item.Item == itemUpgrade)
+					return item;
 			}
-			return ret;
+			return null;
 		}
 
 
-		private static void CreateItems()
+		public static void CreateItems()
 		{
 			Items.Clear();
 
 			var costSign =
-			CreateItemSigns("Знак выполненного контракта", "Знак выполненного контракта",
-			texture: "Resources.Sign1", code: "Sign1");
-			
+				CreateItemSigns("Знак выполненного контракта", "Знак выполненного контракта",
+					texture: "Resources.Sign1", code: "Sign1");
+
 			CreateItemSigns("Особый знак выполненного контракта", "Особый знак выполненного контракта",
-			texture: "Resources.Sign2", code: "Sign2");
+				texture: "Resources.Sign2", code: "Sign2");
 
 			var itemCost1 = new ItemManager(costSign, 1);
 			var itemCost3 = new ItemManager(costSign, 3);
 			var itemCost5 = new ItemManager(costSign, 5);
+			var itemCost10 = new ItemManager(costSign, 10);
 
 			#region UpgradesForShip
-			var upgradeVolumeExtra = CreateUpgradeValue(StrUpVolumeExtra, "CargoVolumeMax", 70, ItemUpgradeQualityEnum.Extra);
-			var upgradeVolume = CreateUpgradeValue(StrUpVolume, "CargoVolumeMax", 40, ItemUpgradeQualityEnum.Normal);
-			var upgradeVolumePlus = CreateUpgradeValue(StrUpVolumePlus, "CargoVolumeMax", 20, ItemUpgradeQualityEnum.Poor);
+			var upgradeVolumeExtra = CreateUpgradeValue(StrUpVolumeExtra, "CargoVolumeMax",
+				GameConstants.CargoVolumeMaxExtra, ItemUpgradeQualityEnum.Extra);
+			var upgradeVolumeGood = CreateUpgradeValue(StrUpVolumeGood, "CargoVolumeMax",
+				GameConstants.CargoVolumeMaxGood, ItemUpgradeQualityEnum.Good);
+			var upgradeVolumeNormal = CreateUpgradeValue(StrUpVolumeNormal, "CargoVolumeMax",
+				GameConstants.CargoVolumeMaxNormal, ItemUpgradeQualityEnum.Normal);
 
-			var upgradeWeightExtra = CreateUpgradeValue(StrUpWeightExtra, "CargoWeightMax", 70, ItemUpgradeQualityEnum.Extra);
-			var upgradeWeight = CreateUpgradeValue(StrUpWeight, "CargoWeightMax", 40, ItemUpgradeQualityEnum.Normal);
-			var upgradeWeightPlus = CreateUpgradeValue(StrUpWeightPlus, "CargoWeightMax", 20, ItemUpgradeQualityEnum.Poor);
+			var upgradeWeightExtra = CreateUpgradeValue(StrUpWeightExtra, "CargoWeightMax",
+				GameConstants.CargoWeightMaxExtra, ItemUpgradeQualityEnum.Extra);
+			var upgradeWeightGood2 = CreateUpgradeValue(StrUpWeightGood2, "CargoWeightMax",
+				GameConstants.CargoWeightMaxGood2, ItemUpgradeQualityEnum.Good);
+			var upgradeWeightGood = CreateUpgradeValue(StrUpWeightGood, "CargoWeightMax",
+				GameConstants.CargoWeightMaxGood, ItemUpgradeQualityEnum.Good);
+			var upgradeWeightNormal = CreateUpgradeValue(StrUpWeightNormal, "CargoWeightMax",
+				GameConstants.CargoWeightMaxNormal, ItemUpgradeQualityEnum.Normal);
 
 			//var upgradeExpExtra = CreateUpgradeValue(strUpExpExtra, "Exp", 7);
 			//var upgradeExp = CreateUpgradeValue(strUpExp, "Exp", 5);
 			//var upgradeExpPlus = CreateUpgradeValue(strUpExpPlus, "Exp", 3);
 
 			var upgradeAutopilot = CreateUpgradeValue(StrUpAutoPilot, "AutoPilot", 1, ItemUpgradeQualityEnum.Extra);
-			var upgradeAutopilotVolume = CreateUpgradeValue(StrUpAutoPilotVolume, "CargoVolumePercent", -35, ItemUpgradeQualityEnum.Bad);
-			var upgradeAutopilotWeight = CreateUpgradeValue(StrUpAutoPilotWeight, "CargoWeightPercent", -35, ItemUpgradeQualityEnum.Bad);
+			var upgradeAutopilotVolume = CreateUpgradeValue(StrUpAutoPilotVolume, "CargoVolumePercent",
+				GameConstants.AutopilotVolumeDecrease, ItemUpgradeQualityEnum.Bad);
+			var upgradeAutopilotWeight = CreateUpgradeValue(StrUpAutoPilotWeight, "CargoWeightPercent",
+				GameConstants.AutopilotWeightDecrease, ItemUpgradeQualityEnum.Bad);
 			//var upgradeTeleport = CreateUpgradeValue(strUpTeleport, "Teleport", 1);// по умолчанию дистанция телепорта 1
 
 			//var upgradeTeleportDistanceExtra = CreateUpgradeValue(strUpTeleportDistanceExtra, "TeleportDistance", 3);
@@ -110,90 +119,110 @@ namespace SpaceConstruction.Game.Items
 			//var upgradeTeleportDistancePlus = CreateUpgradeValue(strUpTeleportDistancePlus, "TeleportDistance", 1);
 
 			// накапливается расстояние и когда есть возможность - корабль перемещается на 2 точки вместо одной
-			var upgradeEngineExtra = CreateUpgradeValue(StrUpEngineExtra, "EngineSpeed", 70, ItemUpgradeQualityEnum.Extra);
-			var upgradeEngine = CreateUpgradeValue(StrUpEnginePlus, "EngineSpeed", 40, ItemUpgradeQualityEnum.Normal);
-			var upgradeEnginePlus = CreateUpgradeValue(StrUpEnginePlus, "EngineSpeed", 15, ItemUpgradeQualityEnum.Poor);
+			var upgradeEngineExtra = CreateUpgradeValue(StrUpEngineExtra, "EngineSpeed",
+				GameConstants.EngineSpeedExtra, ItemUpgradeQualityEnum.Extra);
+			var upgradeEngineGood = CreateUpgradeValue(StrUpEngineGood, "EngineSpeed",
+				GameConstants.EngineSpeedGood, ItemUpgradeQualityEnum.Good);
+			var upgradeEngineNormal = CreateUpgradeValue(StrUpEngineNormal, "EngineSpeed",
+				GameConstants.EngineSpeedNormal, ItemUpgradeQualityEnum.Normal);
 
-			// уменьшается время взлета. при всех установленных улучшениях должно быть не меньше 1 секунды
-			var upgradeTakeOffExtra = CreateUpgradeValue(StrUpTakeOffExtra, "TakeOff", 1800, ItemUpgradeQualityEnum.Extra);
-			var upgradeTakeOff = CreateUpgradeValue(StrUpTakeOff, "TakeOff", 1200, ItemUpgradeQualityEnum.Normal);
-			var upgradeTakeOffPlus = CreateUpgradeValue(StrUpTakeOffPlus, "TakeOff", 800, ItemUpgradeQualityEnum.Poor);
+			// уменьшается время взлета
+			var upgradeTakeOffExtra = CreateUpgradeValue(StrUpTakeOffExtra, "TakeOff",
+				GameConstants.TakeOffExtra, ItemUpgradeQualityEnum.Extra);
+			var upgradeTakeOffGood = CreateUpgradeValue(StrUpTakeOffGood, "TakeOff",
+				GameConstants.TakeOffGood, ItemUpgradeQualityEnum.Good);
+			var upgradeTakeOffNormal = CreateUpgradeValue(StrUpTakeOffNormal, "TakeOff",
+				GameConstants.TakeOffNormal, ItemUpgradeQualityEnum.Normal);
 
-			// уменьшается время погрузки/разгрузки. при всех установленных улучшениях должно быть не меньше 1 секунды
-			var upgradeUploadingExtra = CreateUpgradeValue(StrUpLoadingExtra, "Uploading", 1800, ItemUpgradeQualityEnum.Extra);
-			var upgradeUploading = CreateUpgradeValue(StrUpLoadingPlus, "Uploading", 1200, ItemUpgradeQualityEnum.Normal);
-			var upgradeUploadingPlus = CreateUpgradeValue(StrUpLoadingExtra, "Uploading", 800, ItemUpgradeQualityEnum.Poor);
+			// уменьшается время погрузки/разгрузки
+			var upgradeUploadingExtra = CreateUpgradeValue(StrUpLoadingExtra, "Loading",
+				GameConstants.LoadingExtra, ItemUpgradeQualityEnum.Extra);
+			var upgradeUploadingGood = CreateUpgradeValue(StrUpLoadingGood, "Loading",
+				GameConstants.LoadingGood, ItemUpgradeQualityEnum.Good);
+			var upgradeUploadingNormal = CreateUpgradeValue(StrUpLoadingNormal, "Loading",
+				GameConstants.LoadingNormal, ItemUpgradeQualityEnum.Normal);
 			#endregion
 
-			CreateUpgradeItem(StrUpVolume, StrUpVolume, null, itemCost1, ItemUpgradeQualityEnum.Poor,
-				new List<ItemUpgradeValue>() { upgradeVolume });
-			CreateUpgradeItem(StrUpVolume, StrUpVolume, null, itemCost3, ItemUpgradeQualityEnum.Normal,
-				new List<ItemUpgradeValue>() { upgradeVolume, upgradeWeightPlus });
-			CreateUpgradeItem(StrUpVolume, StrUpVolume, null, itemCost5, ItemUpgradeQualityEnum.Extra,
-				new List<ItemUpgradeValue>() { upgradeVolumeExtra });
+			CreateUpgradeItem("Улучшение скоростных характеристик корабля", "Улучшение скоростных характеристик корабля", 
+				null, itemCost10, ItemUpgradeQualityEnum.Extra,
+				new List<ItemUpgradeValue>() {upgradeEngineExtra, upgradeTakeOffExtra, upgradeUploadingExtra});
 
-			CreateUpgradeItem(StrUpWeight, StrUpWeight, null, itemCost1, ItemUpgradeQualityEnum.Poor,
-				new List<ItemUpgradeValue>() { upgradeWeight });
-			CreateUpgradeItem(StrUpWeight, StrUpWeight, null, itemCost3, ItemUpgradeQualityEnum.Normal,
-				new List<ItemUpgradeValue>() { upgradeWeight, upgradeVolumePlus });
-			CreateUpgradeItem(StrUpWeight, StrUpWeight, null, itemCost5, ItemUpgradeQualityEnum.Extra,
-				new List<ItemUpgradeValue>() { upgradeWeightExtra });
+			CreateUpgradeItem(StrUpVolumeBase, StrUpVolumeNormal, null, itemCost1, ItemUpgradeQualityEnum.Normal,
+				new List<ItemUpgradeValue>() {upgradeVolumeNormal});
+			//CreateUpgradeItem(StrUpVolumeBase, StrUpVolumeGood, null, itemCost3, ItemUpgradeQualityEnum.Good,
+			//	new List<ItemUpgradeValue>() {upgradeVolumeGood, upgradeWeightNormal});
+			CreateUpgradeItem(StrUpVolumeBase, StrUpVolumeExtra, null, itemCost5, ItemUpgradeQualityEnum.Extra,
+				new List<ItemUpgradeValue>() {upgradeVolumeExtra, upgradeWeightGood});
 
-			/*CreateUpgradeItem(strUpExp, strUpExp, null, itemCost1, ItemUpgradeQualityEnum.Poor,
+			CreateUpgradeItem(StrUpWeightBase, StrUpWeightNormal, null, itemCost1, ItemUpgradeQualityEnum.Normal,
+				new List<ItemUpgradeValue>() {upgradeWeightNormal});
+			//CreateUpgradeItem(StrUpWeightBase, StrUpWeightGood, null, itemCost3, ItemUpgradeQualityEnum.Good,
+			//	new List<ItemUpgradeValue>() {upgradeWeightGood, upgradeVolumeNormal});
+			CreateUpgradeItem(StrUpWeightBase, StrUpWeightExtra, null, itemCost5, ItemUpgradeQualityEnum.Extra,
+				new List<ItemUpgradeValue>() {upgradeWeightExtra, upgradeVolumeGood});
+
+			/*CreateUpgradeItem(strUpExp, strUpExp, null, itemCost1, ItemUpgradeQualityEnum.Normal,
 				new List<ItemUpgradeValue>() { upgradeExpPlus });
-			CreateUpgradeItem(strUpExp, strUpExp, null, itemCost3, ItemUpgradeQualityEnum.Normal,
+			CreateUpgradeItem(strUpExp, strUpExp, null, itemCost3, ItemUpgradeQualityEnum.Good,
 				new List<ItemUpgradeValue>() { upgradeExp, upgradeVolumePlus });
 			CreateUpgradeItem(strUpExp, strUpExp, null, itemCost5, ItemUpgradeQualityEnum.Extra,
 				new List<ItemUpgradeValue>() { upgradeExpExtra });*/
 
 			CreateUpgradeItem(StrUpAutoPilot, StrUpAutoPilot, null, itemCost1, ItemUpgradeQualityEnum.Autopilot,
-				new List<ItemUpgradeValue>() { upgradeAutopilot, upgradeAutopilotVolume, upgradeAutopilotWeight });
+				new List<ItemUpgradeValue>() {upgradeAutopilot, upgradeAutopilotVolume, upgradeAutopilotWeight});
 
-			CreateUpgradeItem(StrUpEngine, StrUpEngine, null, itemCost1, ItemUpgradeQualityEnum.Poor,
-				new List<ItemUpgradeValue>() { upgradeEngine });
-			CreateUpgradeItem(StrUpEngine, StrUpEngine, null, itemCost3, ItemUpgradeQualityEnum.Normal,
-				new List<ItemUpgradeValue>() { upgradeEngine, upgradeTakeOffPlus });
-			CreateUpgradeItem(StrUpEngine, StrUpEngine, null, itemCost5, ItemUpgradeQualityEnum.Extra,
-				new List<ItemUpgradeValue>() { upgradeEngineExtra });
+			CreateUpgradeItem(StrUpEngineBase, StrUpEngineNormal, null, itemCost1, ItemUpgradeQualityEnum.Normal,
+				new List<ItemUpgradeValue>() {upgradeEngineNormal});
+			//CreateUpgradeItem(StrUpEngineBase, StrUpEngineGood, null, itemCost3, ItemUpgradeQualityEnum.Good,
+			//	new List<ItemUpgradeValue>() {upgradeEngineGood, upgradeTakeOffNormal});
+			//CreateUpgradeItem(StrUpEngineBase, StrUpEngineExtra, null, itemCost5, ItemUpgradeQualityEnum.Extra,
+			//	new List<ItemUpgradeValue>() {upgradeEngineExtra, upgradeTakeOffGood});
 
-			CreateUpgradeItem(StrUpTakeOff, StrUpTakeOff, null, itemCost1, ItemUpgradeQualityEnum.Poor,
-				new List<ItemUpgradeValue>() { upgradeTakeOff });
-			CreateUpgradeItem(StrUpTakeOff, StrUpTakeOff, null, itemCost3, ItemUpgradeQualityEnum.Normal,
-				new List<ItemUpgradeValue>() { upgradeTakeOff, upgradeEnginePlus });
-			CreateUpgradeItem(StrUpTakeOff, StrUpTakeOff, null, itemCost5, ItemUpgradeQualityEnum.Extra,
-				new List<ItemUpgradeValue>() { upgradeTakeOffExtra });
+			//CreateUpgradeItem(StrUpTakeOffBase, StrUpTakeOffNormal, null, itemCost1, ItemUpgradeQualityEnum.Normal,
+			//	new List<ItemUpgradeValue>() {upgradeTakeOffNormal});
+			CreateUpgradeItem(StrUpTakeOffBase, StrUpTakeOffGood, null, itemCost3, ItemUpgradeQualityEnum.Good,
+				new List<ItemUpgradeValue>() {upgradeTakeOffGood, upgradeEngineNormal});
+			//CreateUpgradeItem(StrUpTakeOffBase, StrUpTakeOffExtra, null, itemCost5, ItemUpgradeQualityEnum.Extra,
+			//	new List<ItemUpgradeValue>() {upgradeTakeOffExtra, upgradeEngineGood});
 
-			CreateUpgradeItem(StrUpLoading, StrUpLoading, null, itemCost1, ItemUpgradeQualityEnum.Poor,
-				new List<ItemUpgradeValue>() { upgradeUploadingPlus });
-			CreateUpgradeItem(StrUpLoading, StrUpLoading, null, itemCost3, ItemUpgradeQualityEnum.Normal,
-				new List<ItemUpgradeValue>() { upgradeUploading });
-			CreateUpgradeItem(StrUpLoading, StrUpLoading, null, itemCost5, ItemUpgradeQualityEnum.Extra,
-				new List<ItemUpgradeValue>() { upgradeUploadingExtra });
+			//CreateUpgradeItem(StrUpLoadingBase, StrUpLoadingNormal, null, itemCost3, ItemUpgradeQualityEnum.Normal,
+			//	new List<ItemUpgradeValue>() {upgradeUploadingNormal});
+			//CreateUpgradeItem(StrUpLoadingBase, StrUpLoadingGood, null, itemCost3, ItemUpgradeQualityEnum.Good,
+			//	new List<ItemUpgradeValue>() {upgradeUploadingGood});
+			//CreateUpgradeItem(StrUpLoadingBase, StrUpLoadingExtra, null, itemCost5, ItemUpgradeQualityEnum.Extra,
+			//	new List<ItemUpgradeValue>() {upgradeUploadingExtra, upgradeWeightGood2});
 
-			CreateResearchItem("увеличить у всех кораблей перевозимый объем", "увеличить у всех кораблей перевозимый объем", costSign, 5, null, "ShipVolume");
-			CreateResearchItem("увеличить у всех кораблей перевозимый вес", "увеличить у всех кораблей перевозимый вес", costSign, 5, null, "ShipWeight");
+			CreateResearchItem("Увеличить у всех кораблей перевозимый объем",
+				"Перевозимый объем у всех кораблей увеличится на " + GameConstants.ShipVolume + GameConstants.MeasureUnits,
+				costSign, 5, null, "ShipVolume");
+			CreateResearchItem("Увеличить у всех кораблей перевозимый вес",
+				"Перевозимый вес у всех кораблей увеличится на " + GameConstants.ShipWeight + GameConstants.MeasureUnits,
+				costSign, 5, null, "ShipWeight");
 
-			CreateResearchItem("увеличить у всех кораблей перевозимый объем 2", "увеличить у всех кораблей перевозимый объем 2", costSign, 25, null, "ShipVolume2");
-			CreateResearchItem("увеличить у всех кораблей перевозимый вес 2", "увеличить у всех кораблей перевозимый вес 2", costSign, 25, null, "ShipWeight2");
+			CreateResearchItem("Увеличить у всех кораблей перевозимый объем 2",
+				"Перевозимый объем у всех кораблей увеличится на " + GameConstants.ShipVolume2 + GameConstants.MeasureUnits,
+				costSign, 25, null, "ShipVolume2");
+			CreateResearchItem("Увеличить у всех кораблей перевозимый вес 2",
+				"Перевозимый вес у всех кораблей увеличится на " + GameConstants.ShipWeight2 + GameConstants.MeasureUnits,
+				costSign, 25, null, "ShipWeight2");
 
-			CreateResearchItem("дополнительные 4 корабля", "дополнительные 4 корабля", costSign, 1, null, "AddShips1");
-			CreateResearchItem("дополнительные 3 корабля", "дополнительные 3 корабля", costSign, 3, null, "AddShips2");
-			CreateResearchItem("дополнительные 2 корабля", "дополнительные 2 корабля", costSign, 5, null, "AddShips3");
+			CreateResearchItem("Дополнительные корабли", "Получить " + GameConstants.AddShips1 + " дополнительных корабля", costSign, 1, null, "AddShips1");
+			CreateResearchItem("Дополнительные корабли", "Получить " + GameConstants.AddShips2 + " дополнительных корабля", costSign, 3, null, "AddShips2");
+			CreateResearchItem("Дополнительные корабли", "Получить " + GameConstants.AddShips3 + " дополнительных корабля", costSign, 5, null, "AddShips3");
 
-			CreateResearchItem("дополнительные 3 заказа", "дополнительные 3 заказа", costSign, 15, null, "AddOrders1");
-			CreateResearchItem("дополнительные 2 заказа", "дополнительные 2 заказа", costSign, 30, null, "AddOrders2");
-			CreateResearchItem("дополнительный 1 заказ",  "дополнительный 1 заказ",  costSign, 40, null, "AddOrders3");
+			//CreateResearchItem("дополнительные 3 заказа", "дополнительные 3 заказа", costSign, 15, null, "AddOrders1");
+			//CreateResearchItem("дополнительные 2 заказа", "дополнительные 2 заказа", costSign, 30, null, "AddOrders2");
+			//CreateResearchItem("дополнительный 1 заказ",  "дополнительный 1 заказ",  costSign, 40, null, "AddOrders3");
 
 			CreateResearchItem("Магазин улучшений для корабля", "Доступ к магазину улучшений для корабля", costSign, 10, null, "OpenShop");
+			//CreateResearchItem("Расширение ассортимента магазина", "В магазине будут доступны хорошие улучшения", costSign, 15, null, "CanBuyGoodUpgrades");
+			CreateResearchItem("Расширение ассортимента магазина", "В магазине будут доступны особые улучшения", costSign, 50, null, "CanBuyExtraUpgrades");
+			CreateResearchItem("Расширение ассортимента магазина", "В магазине будет доступен автопилот", costSign, 11, null, "CanBuyAutopilot");
 
-			CreateResearchItem("покупка обычных улучшений", "в магазине будут доступны обычные улучшения", costSign, 50, null, "CanBuyNormalUpgrades");
-			CreateResearchItem("покупка особых улучшений", "в магазине будут доступны особые улучшения", costSign, 150, null, "CanBuyExtraUpgrades");
-			CreateResearchItem("Купить технологию автопилотирования", "ассортимент магазина пополнится автопилотом", costSign, 11, null, "CanBuyAutopilot");
+			CreateResearchItem("Лучшие заказы", "Более сложные, но и лучше оплачиваемые заказы", costSign, 12, null, "OpenTopOrders");
 
-			CreateResearchItem("Лучшие заказы", "Более тяжелые но и лучше оплачиваемые заказы", costSign, 30, null, "OpenTopOrders");
+			CreateResearchItem("Заключить договор на Главный заказ (на время)", "Появится кнопка запуска выполнения главного заказа", costSign, 60, null, "StartFinalOrder");
 
-			CreateResearchItem("запустить финальный заказ (на время)", "запустить финальный заказ (на время)", costSign, 60, null, "StartFinalOrder");
-			
 			ItemsManaged.Clear();
 			foreach (var item in Items) {
 				var im = new ItemManager(item, 0);
@@ -202,7 +231,7 @@ namespace SpaceConstruction.Game.Items
 
 			var it1 = GetItemByCode("Sign1");
 			ItemsManaged.Remove(it1);
-			it1 = new ItemManager(costSign, 100);
+			it1 = new ItemManager(costSign, 1000);
 			ItemsManaged.Add(it1);
 		}
 
@@ -213,6 +242,7 @@ namespace SpaceConstruction.Game.Items
 				if (IsCanBuyResearch(research))
 					return true;
 			}
+
 			return false;
 		}
 
@@ -228,13 +258,13 @@ namespace SpaceConstruction.Game.Items
 
 		internal static bool IsCanBuyItem(ItemManager item)
 		{
-			var cost = item.Item.Cost;// ищем предмет который является деньгами для этого предмета
+			var cost = item.Item.Cost; // ищем предмет который является деньгами для этого предмета
 			var moneyItem = GetItemByCode(cost.Item.Code);
 
 			return item.CanBuyItem(moneyItem);
 		}
 
-		internal static List<ItemManager> GetUpgrades(bool buyNormalUpgrades, bool buyExtraUpgrades, bool buyAutopilot)
+		internal static List<ItemManager> GetUpgrades(bool buyGoodUpgrades, bool buyExtraUpgrades, bool buyAutopilot)
 		{
 			var result = new List<ItemManager>();
 			var upgrades = ItemsManaged.Where(item => item.Item.Type == ItemTypeEnum.Upgrade).ToList();
@@ -243,20 +273,24 @@ namespace SpaceConstruction.Game.Items
 					if (((ItemUpgrade) upgrade.Item).Quality == ItemUpgradeQualityEnum.Autopilot)
 						result.Add(upgrade);
 				}
+
 			if (buyExtraUpgrades)
 				foreach (var upgrade in upgrades) {
 					if (((ItemUpgrade) upgrade.Item).Quality == ItemUpgradeQualityEnum.Extra)
 						result.Add(upgrade);
 				}
-			if (buyNormalUpgrades)
+
+			if (buyGoodUpgrades)
 				foreach (var upgrade in upgrades) {
-					if (((ItemUpgrade) upgrade.Item).Quality == ItemUpgradeQualityEnum.Normal)
+					if (((ItemUpgrade) upgrade.Item).Quality == ItemUpgradeQualityEnum.Good)
 						result.Add(upgrade);
 				}
+
 			foreach (var upgrade in upgrades) {
-				if (((ItemUpgrade) upgrade.Item).Quality == ItemUpgradeQualityEnum.Poor)
+				if (((ItemUpgrade) upgrade.Item).Quality == ItemUpgradeQualityEnum.Normal)
 					result.Add(upgrade);
 			}
+
 			return result;
 		}
 
@@ -269,11 +303,12 @@ namespace SpaceConstruction.Game.Items
 		{
 			foreach (var mItem in ItemsManaged) {
 				if (mItem.PlayerCount == 0
-					|| mItem.Item.Type != ItemTypeEnum.Research
-					|| mItem.Item.Code != researchCode)
+				    || mItem.Item.Type != ItemTypeEnum.Research
+				    || mItem.Item.Code != researchCode)
 					continue;
 				return mItem;
 			}
+
 			return null;
 		}
 
@@ -336,8 +371,7 @@ namespace SpaceConstruction.Game.Items
 		/// <returns></returns>
 		private static Item CreateItemSigns(string itemName, string itemDescription, string texture = null, ItemManager cost = null, string code = null)
 		{
-			var i = new Item()
-			{
+			var i = new Item() {
 				Type = ItemTypeEnum.Signs,
 				Code = code,
 				Name = itemName,
@@ -353,12 +387,11 @@ namespace SpaceConstruction.Game.Items
 		/// Создать предмет-улучшение
 		/// </summary>
 		private static void CreateUpgradeItem(string itemName, string itemDescription, string texture = null, ItemManager cost = null,
-			ItemUpgradeQualityEnum quality = ItemUpgradeQualityEnum.Poor, List<ItemUpgradeValue> upgrades = null, int installOrder = 0)
+			ItemUpgradeQualityEnum quality = ItemUpgradeQualityEnum.Normal, List<ItemUpgradeValue> upgrades = null, int installOrder = 0)
 		{
 			if (upgrades == null) return;
 
-			var i = new ItemUpgrade()
-			{
+			var i = new ItemUpgrade() {
 				Type = ItemTypeEnum.Upgrade,
 				Name = itemName,
 				Description = itemDescription,
@@ -380,8 +413,7 @@ namespace SpaceConstruction.Game.Items
 			if (string.IsNullOrEmpty(researchCode)) return;
 
 			var cost = new ItemManager(costItem, costCount);
-			var i = new Item()
-			{
+			var i = new Item() {
 				Type = ItemTypeEnum.Research,
 				Name = itemName,
 				Description = itemDescription,
