@@ -14,6 +14,7 @@ namespace Submarines
 		}
 		public override void Tick()
 		{
+			_ship.CalculateMovement();
 		}
 
 	}

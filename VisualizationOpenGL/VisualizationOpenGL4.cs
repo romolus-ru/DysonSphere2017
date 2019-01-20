@@ -1151,5 +1151,40 @@ void main(void)
 			dx = 0;
 			dy = (int)(placeHeight * 1 / 7);
 		}
+
+		// https://habr.com/ru/post/347354/
+		// создание буфера кадра 
+		private int _fbuffer;
+		private int _fbTexture;
+
+		public int CreateFrameBufferTexture()
+		{
+			//unsigned int texture;
+			//glGenTextures(1, &texture);
+			//glBindTexture(GL_TEXTURE_2D, texture);
+
+			//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 800, 600, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+
+			//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			return 0;
+		}
+
+		public int CreateFrameBuffer()
+		{
+			int num = (int) gl.GenFramebuffer();
+			return num;
+		}
+
+		public void StartFrameBuffer(int num)
+		{
+			gl.BindFramebuffer(GL.FRAMEBUFFER, (uint) _fbuffer);
+		}
+
+		public void EndFrameBuffer()
+		{
+			gl.BindFramebuffer(GL.FRAMEBUFFER, 0);
+		}
+
 	}
 }
