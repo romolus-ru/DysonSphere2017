@@ -22,11 +22,12 @@ namespace Submarines
 
 			visualizationProvider.Line(450, 650, 450, 650 - _ship.EnginePercent);
 
+			visualizationProvider.Print(550, 500, "z  = " + _ship.CurrentVector.Z);
+			visualizationProvider.Print(550, 515, "VMax=" + _ship.VMax);
 
+			visualizationProvider.Line((int) (1000 + _ship.CurrentVector.Y * 2), 650, 1000, 650);
 
-			visualizationProvider.Line((int) (1000 + _ship.CurrentVector.Y * 400), 650, 1000, 650);
-
-			visualizationProvider.Line(1000, (int) (650 + _ship.CurrentVector.Z * 400), 1000, 650);
+			visualizationProvider.Line(1000, (int) (650 - _ship.CurrentVector.Z * 2), 1000, 650);
 		}
 	}
 }
