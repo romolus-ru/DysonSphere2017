@@ -47,12 +47,20 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Client.cs" />
+    <Compile Include="Submarines\Engine.cs" />
+    <Compile Include="IEngineSupport.cs" />
+    <Compile Include="IManeuverSupport.cs" />
     <Compile Include="ModelGame.cs" />
     <Compile Include="ModelViewManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Ship.cs" />
+    <Compile Include="Submarines\Submarine.cs" />
     <Compile Include="ShipController.cs" />
+    <Compile Include="Submarines\SubmarineBase.cs" />
+    <Compile Include="ManeuverDevice.cs" />
+    <Compile Include="Submarines\SubmarineCollisionResult.cs" />
+    <Compile Include="Submarines\SubmarinesBuilder.cs" />
+    <Compile Include="Submarines\SubmarineType.cs" />
     <Compile Include="Vector.cs" />
     <Compile Include="ViewGame.cs" />
     <Compile Include="ViewShip.cs" />
@@ -84,6 +92,9 @@
       <Project>{5EF366CA-251D-44C6-873E-B51C8D42A6C8}</Project>
       <Name>Engine</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Items\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

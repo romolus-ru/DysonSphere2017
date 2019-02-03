@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Submarines.Submarines;
 
 namespace Submarines
 {
@@ -11,21 +7,21 @@ namespace Submarines
 	/// </summary>
 	internal class ShipController
 	{
-		private Ship _ship;
+		private Submarine _submarine;
 
-		public ShipController(Ship ship)
+		public ShipController(Submarine submarine)
 		{
-			_ship = ship;
+			_submarine = submarine;
 		}
 
 		public void SpeedUp(int delta)
 		{
-			_ship.AddSpeed(delta);
+			_submarine.AddSpeed(delta);
 		}
 
 		public void StopEngine()
 		{
-			_ship.StopEngine();
+			_submarine.StopEngine();
 		}
 	}
 }

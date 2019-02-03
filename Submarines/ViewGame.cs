@@ -3,6 +3,7 @@ using Engine.Visualization;
 using System;
 using System.Drawing;
 using System.Windows.Forms;
+using Submarines.Submarines;
 
 namespace Submarines
 {
@@ -15,13 +16,13 @@ namespace Submarines
 		private int _mapY = 300;
 		private int _curX;
 		private int _curY;
-		private Ship _ship;
+		private Submarine _submarine;
 		private ShipController _shipController;
 
-		internal void InitGame(ViewManager viewManager, Ship ship, ShipController shipController)
+		internal void InitGame(ViewManager viewManager, Submarine submarine, ShipController shipController)
 		{
 			_viewManager = viewManager;
-			_ship = ship;
+			_submarine = submarine;
 			_shipController = shipController;
 		}
 
@@ -40,7 +41,7 @@ namespace Submarines
 
 			var viewShip = new ViewShip();
 			AddComponent(viewShip);
-			viewShip.SetShip(_ship);
+			viewShip.SetShip(_submarine);
 
 		}
 

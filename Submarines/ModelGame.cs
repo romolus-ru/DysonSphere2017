@@ -1,20 +1,21 @@
 ﻿using Engine.Models;
+using Submarines.Submarines;
 
 namespace Submarines
 {
 	internal class ModelGame : Model
 	{
-		private Ship _ship;
+		private Submarine _submarine;
 		private ShipController _shipController;
 
-		public ModelGame(Ship ship, ShipController shipController)
+		public ModelGame(Submarine submarine, ShipController shipController)
 		{
-			_ship = ship;
+			_submarine = submarine;
 			_shipController = shipController;
 		}
 		public override void Tick()
 		{
-			_ship.CalculateMovement();
+			_submarine.CalculateMovement();
 		}
 
 	}

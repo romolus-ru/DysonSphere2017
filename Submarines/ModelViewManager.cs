@@ -1,6 +1,7 @@
 ﻿using Engine;
 using Engine.Visualization;
 using System;
+using Submarines.Submarines;
 
 namespace Submarines
 {
@@ -22,14 +23,14 @@ namespace Submarines
 			_modelMainClient = modelMainClient;
 			_viewManager = viewManager;
 
-			Ship ship = new Ship();
-			ShipController shipController = new ShipController(ship);
+			Submarine submarine = new Submarine(null, null);
+			ShipController shipController = new ShipController(submarine);
 
-			_mtg = new ModelGame(ship, shipController);
+			_mtg = new ModelGame(submarine, shipController);
 			_modelMainClient.AddModel(_mtg);
 
 			_vtg = new ViewGame();
-			_vtg.InitGame(_viewManager, ship, shipController);
+			_vtg.InitGame(_viewManager, submarine, shipController);
 			_viewManager.AddView(_vtg);
 			_vtg.OnExitPressed += Close;
 

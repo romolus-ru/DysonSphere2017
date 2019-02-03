@@ -59,6 +59,7 @@
     <Compile Include="DataPlus\MemberSpecialEditorAttribute.cs" />
     <Compile Include="DataPlus\ResultOperation.cs" />
     <Compile Include="DataPlus\SkipEditEditorAttribute.cs" />
+    <Compile Include="DataPlus\TimePoint.cs" />
     <Compile Include="DataSupportBase.cs" />
     <Compile Include="DataSupportFiles.cs" />
     <Compile Include="Data\AchieveValues.cs" />
@@ -138,6 +139,7 @@
     <Compile Include="EventSystem\Event\MessageString.cs" />
     <Compile Include="Exceptions\NoConnectionException.cs" />
     <Compile Include="Extensions\DictionaryExtensions.cs" />
+    <Compile Include="Extensions\FloatExtensions.cs" />
     <Compile Include="Extensions\ListExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="GameInitializer.cs" />
@@ -217,6 +219,8 @@
     <Compile Include="Visualization\ViewCursor.cs" />
     <Compile Include="Visualization\ViewDragable.cs" />
     <Compile Include="Visualization\ViewFadeScreen.cs" />
+    <Compile Include="Visualization\ViewGraph.cs" />
+    <Compile Include="Visualization\ViewGraphTimeDynamic.cs" />
     <Compile Include="Visualization\ViewHint.cs" />
     <Compile Include="Visualization\ViewInput.cs" />
     <Compile Include="Visualization\ViewLabel.cs" />
