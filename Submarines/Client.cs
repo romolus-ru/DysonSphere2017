@@ -6,6 +6,7 @@ using Engine.Utils;
 using Engine.Visualization;
 using System;
 using System.Windows.Forms;
+using Submarines.Items;
 
 namespace Submarines
 {
@@ -26,6 +27,7 @@ namespace Submarines
 		public Client(DataSupportBase dataSupport, LogSystem logSystem)
 		{
 			Settings.Init();
+			ItemsManager.IsInited = false;
 			StateEngine.Log = logSystem;
 			StateClient.InitState();
 			_datasupport = dataSupport;

@@ -43,25 +43,21 @@ namespace Submarines.Submarines
 		public Engine Engine { get; private set; }
 
 		public ManeuverDevice ManeuverDevice { get; private set; }
-		
-		public DateTime CurrentTime;
 
 		public SubmarineBase(Engine engine, ManeuverDevice maneuverDevice)
 		{
 			Engine = engine;
 			ManeuverDevice = maneuverDevice;
-			CurrentTime = DateTime.Now;
 			VCurrentPrev = 0;
 		}
 
 		/// <summary>
 		/// Расчёт движения устройства
 		/// </summary>
-		public virtual void CalculateMovement()
+		public virtual void CalculateMovement(float deltaTime)
 		{
-			float dt = (DateTime.Now - CurrentTime).Milliseconds / 1000f;
-			VCurrent = Engine.CalculateSpeed(this, dt);
-			var deltaSteeringAngle = ManeuverDevice.CalculateSteering(this, dt);
+			VCurrent = Engine.CalculateSpeed(this, deltaTime);
+			var deltaSteeringAngle = ManeuverDevice.CalculateSteering(this, deltaTime);
 			SteeringAngle -= deltaSteeringAngle;
 
 			// TODO !!!! пока логика такая что не используется занос корабля - не сохраняются
@@ -83,8 +79,8 @@ namespace Submarines.Submarines
 				var radians = angle * (Math.PI / 180);
 				float cosRad = (float)Math.Cos(radians);
 				float sinRad = (float)Math.Sin(radians);
-				float x = VCurrent * dt * cosRad;
-				float y = VCurrent * dt * sinRad;
+				float x = VCurrent * deltaTime * cosRad;
+				float y = VCurrent * deltaTime * sinRad;
 				SpeedVector = new Vector(x, y, 0);
 				VCurrentPrev = VCurrent;
 			}
@@ -95,8 +91,6 @@ namespace Submarines.Submarines
 				var collision = OnCheckCollision(this, Position, newPos);
 				MoveToNewPos(collision, newPos);
 			}
-
-			CurrentTime = DateTime.Now;
 		}
 
 		/// <summary>

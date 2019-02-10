@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Submarines.Items;
 
 namespace Submarines.Submarines
 {
@@ -17,7 +14,6 @@ namespace Submarines.Submarines
 		/// <returns></returns>
 		public SubmarineBase Build()
 		{
-			тут. нужно внешнее описание предметов
 			return null;
 		}
 
@@ -37,6 +33,12 @@ namespace Submarines.Submarines
 		private ManeuverDevice CreateManeuverDevice()
 		{
 			return null;
+		}
+
+		internal static SubmarineBase Create(ItemSubmarine itemSubmarine)
+		{
+			тут
+			throw new NotImplementedException();
 		}
 	}
 }

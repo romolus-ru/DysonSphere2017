@@ -1,12 +1,13 @@
 ﻿using Engine;
 using Engine.Visualization;
 using System;
+using Submarines.Items;
 using Submarines.Submarines;
 
 namespace Submarines
 {
 	/// <summary>
-	/// Заставка, загрузка, начальное меню и запуск игр
+	/// Взаимодействие между моделью и визуализацией
 	/// </summary>
 	public class ModelViewManager
 	{
@@ -23,7 +24,8 @@ namespace Submarines
 			_modelMainClient = modelMainClient;
 			_viewManager = viewManager;
 
-			Submarine submarine = new Submarine(null, null);
+			ItemSubmarine itemSubmarine = (ItemSubmarine)ItemsManager.GetItemBase("Submarine");
+			Submarine submarine = SubmarinesBuilder.Create(itemSubmarine);// new Submarine(null, null);
 			ShipController shipController = new ShipController(submarine);
 
 			_mtg = new ModelGame(submarine, shipController);

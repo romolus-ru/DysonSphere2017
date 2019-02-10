@@ -42,7 +42,8 @@ namespace Submarines
 			var viewShip = new ViewShip();
 			AddComponent(viewShip);
 			viewShip.SetShip(_submarine);
-
+			visualizationProvider.LoadAtlas("Submarines_background");
+			visualizationProvider.LoadAtlas("Result");
 		}
 
 		protected override void Cursor(int cursorX, int cursorY)
@@ -61,6 +62,7 @@ namespace Submarines
 		{
 			visualizationProvider.SetColor(Color.White);
 			visualizationProvider.OffsetAdd(_mapX, _mapY);
+
 
 			visualizationProvider.OffsetRemove();
 		}
