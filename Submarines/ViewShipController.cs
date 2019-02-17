@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿using System;
+using System.Windows.Forms;
 using Engine;
 using Engine.Visualization;
 
@@ -23,7 +24,19 @@ namespace Submarines
 
 			input.AddKeyAction(SpeedUp, Keys.W);
 			input.AddKeyAction(SpeedDown, Keys.S);
+			input.AddKeyAction(SteeringLeft, Keys.A);
+			input.AddKeyAction(SteeringRight, Keys.D);
 			input.AddKeyAction(StopEngine, Keys.Back);
+		}
+
+		private void SteeringLeft()
+		{
+			_shipController.Steering(-5);
+		}
+
+		private void SteeringRight()
+		{
+			_shipController.Steering(5);
 		}
 
 		private void SpeedUp()

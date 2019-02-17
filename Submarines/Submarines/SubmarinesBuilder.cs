@@ -21,24 +21,48 @@ namespace Submarines.Submarines
 		/// Создать двигатель с заданными характеристиками
 		/// </summary>
 		/// <returns></returns>
-		private Engine CreateEngine()
+		private static Engine CreateEngine(ItemEngine info)
 		{
-			return null;
+			Engine engine = null;
+			switch (info.EngineType) {
+				case "Submarine":
+					engine = new SubmarineEngine(
+						info.EnginePower,
+						info.EnginePercentMin,
+						info.EnginePercentMax
+						);
+					break;
+			}
+
+			return engine;
 		}
 
 		/// <summary>
 		/// Создать устройство изменения курса
 		/// </summary>
 		/// <returns></returns>
-		private ManeuverDevice CreateManeuverDevice()
+		private static ManeuverDevice CreateManeuverDevice(ItemManeuverDevice info)
 		{
-			return null;
+			ManeuverDevice maneuverDevice = null;
+			switch (info.DeviceType) {
+					case "Submarine":
+						maneuverDevice = new SubmarineManeuverDevice(
+							info.MaxSteeringPerSecond, 
+							info.SteeringLimit
+							);
+						break;
+			}
+
+			return maneuverDevice;
 		}
 
 		internal static SubmarineBase Create(ItemSubmarine itemSubmarine)
 		{
-			тут
-			throw new NotImplementedException();
+			var md = CreateManeuverDevice(itemSubmarine.ManeuverDevice);
+			var en = CreateEngine(itemSubmarine.Engine);
+			var sub = new Submarine(en, md);
+
+			return sub;
 		}
 	}
 }

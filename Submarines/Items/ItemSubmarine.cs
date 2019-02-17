@@ -8,7 +8,6 @@ namespace Submarines.Items
 	/// </summary>
 	internal class ItemSubmarine : ItemBase
 	{
-		public bool IsCanBuy { get; private set; }
 
 		public ItemHull Hull { get; private set; }
 		public ItemEngine Engine { get; private set; }

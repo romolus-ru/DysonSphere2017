@@ -19,9 +19,8 @@ namespace Submarines
 
 		public override void Tick()
 		{
-			return;
-			var deltaTime = (DateTime.Now - _currentTime).Milliseconds / 1000f;
-			_submarine.CalculateMovement(deltaTime);
+			var timeCoefficient = (DateTime.Now - _currentTime).Milliseconds / 100f;
+			_submarine.CalculateMovement(timeCoefficient);
 			_currentTime = DateTime.Now;
 		}
 

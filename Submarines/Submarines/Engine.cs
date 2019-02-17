@@ -5,16 +5,23 @@
 	/// </summary>
 	public class Engine
 	{
-		public int EnginePower;
-		public const float g = 9.8f;
+		public const float G = 9.8f;
+		public float EnginePower;
 		public int EnginePercentMin;
 		public int EnginePercentMax;
+
+		public Engine(float enginePower, int enginePercentMin, int enginePercentMax)
+		{
+			EnginePower = enginePower;
+			EnginePercentMin = enginePercentMin;
+			EnginePercentMax = enginePercentMax;
+		}
 		
 		public virtual float CalculateSpeed(IEngineSupport parameters, float deltaTime)
 		{
 			// для примера. у разных двигателей разное вычисление и требования будут
 			var vMax = parameters.EnginePercent * EnginePower
-			           / (parameters.Mass * parameters.OpposingCoefficient * g);
+			           / (parameters.Mass * parameters.OpposingCoefficient * G);
 			return vMax;
 		}
 

@@ -34,5 +34,11 @@ namespace Submarines.Submarines
 
 		public void StopEngine() => AddSpeed(-EnginePercent);
 
+		/// <summary>
+		/// Направление в углах по часовой стрелке
+		/// </summary>
+		/// <param name="angle"></param>
+		public void AddSteering(float angle) => SteeringAngle += ManeuverDevice.AddSteering(this, angle);
+
 	}
 }

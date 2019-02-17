@@ -24,8 +24,8 @@ namespace Submarines
 			_modelMainClient = modelMainClient;
 			_viewManager = viewManager;
 
-			ItemSubmarine itemSubmarine = (ItemSubmarine)ItemsManager.GetItemBase("Submarine");
-			Submarine submarine = SubmarinesBuilder.Create(itemSubmarine);// new Submarine(null, null);
+			ItemSubmarine itemSubmarine = (ItemSubmarine)ItemsManager.GetItemBase("SubmarineDefault");
+			Submarine submarine = (Submarine)SubmarinesBuilder.Create(itemSubmarine);
 			ShipController shipController = new ShipController(submarine);
 
 			_mtg = new ModelGame(submarine, shipController);

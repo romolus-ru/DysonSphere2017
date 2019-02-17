@@ -493,14 +493,14 @@ namespace VisualizationOpenGL
 
 			gl.Begin(GL.QUADS);
 			// указываем поочередно вершины и текстурные координаты
-			gl.TexCoord2f(x1, y2); gl.Vertex3d(0, h, z);
-			gl.TexCoord2f(x1, y1); gl.Vertex3d(0, 0, z);
-			gl.TexCoord2f(x2, y1); gl.Vertex3d(w, 0, z);
-			gl.TexCoord2f(x2, y2); gl.Vertex3d(w, h, z);
-			//gl.TexCoord2f(x1, y2); gl.Vertex3d(-w / 2, h / 2, z);
-			//gl.TexCoord2f(x1, y1); gl.Vertex3d(-w / 2, -h / 2, z);
-			//gl.TexCoord2f(x2, y1); gl.Vertex3d(w / 2, -h / 2, z);
-			//gl.TexCoord2f(x2, y2); gl.Vertex3d(w / 2, h / 2, z);
+			//gl.TexCoord2f(x1, y2); gl.Vertex3d(0, h, z);
+			//gl.TexCoord2f(x1, y1); gl.Vertex3d(0, 0, z);
+			//gl.TexCoord2f(x2, y1); gl.Vertex3d(w, 0, z);
+			//gl.TexCoord2f(x2, y2); gl.Vertex3d(w, h, z);
+			gl.TexCoord2f(x1, y2); gl.Vertex3d(-w / 2, h / 2, z);
+			gl.TexCoord2f(x1, y1); gl.Vertex3d(-w / 2, -h / 2, z);
+			gl.TexCoord2f(x2, y1); gl.Vertex3d(w / 2, -h / 2, z);
+			gl.TexCoord2f(x2, y2); gl.Vertex3d(w / 2, h / 2, z);
 
 			gl.End();
 

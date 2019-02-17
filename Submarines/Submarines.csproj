@@ -52,6 +52,8 @@
   <ItemGroup>
     <Compile Include="Client.cs" />
     <Compile Include="GameConstants.cs" />
+    <Compile Include="Geometry\GeometryBase.cs" />
+    <Compile Include="Geometry\GeometryType.cs" />
     <Compile Include="Items\ItemBase.cs" />
     <Compile Include="Items\ItemEngine.cs" />
     <Compile Include="Items\ItemHolder.cs" />
@@ -78,6 +80,8 @@
     <Compile Include="Submarines\SubmarineBase.cs" />
     <Compile Include="ManeuverDevice.cs" />
     <Compile Include="Submarines\SubmarineCollisionResult.cs" />
+    <Compile Include="Submarines\SubmarineEngine.cs" />
+    <Compile Include="Submarines\SubmarineManeuverDevice.cs" />
     <Compile Include="Submarines\SubmarinesBuilder.cs" />
     <Compile Include="Submarines\SubmarineType.cs" />
     <Compile Include="Utils\StringExtensions.cs" />

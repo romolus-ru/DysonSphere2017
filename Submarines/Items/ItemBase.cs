@@ -11,6 +11,11 @@ namespace Submarines.Items
 	internal class ItemBase
 	{
 		/// <summary>
+		/// Можно ли купить этот предмет
+		/// </summary>
+		public bool IsCanBuy { get; private set; }
+
+		/// <summary>
 		/// Группа равнозначности - что бы можно было не показывать несколько одинаковых предметов а только 1 нужный в данный момент
 		/// </summary>
 		public string EqualityGroup { get; private set; }

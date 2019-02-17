@@ -5,30 +5,37 @@
 	/// </summary>
 	internal class ManeuverDevice
 	{
-		public int Power;
-		public const float g = 9.8f;
-
 		/// <summary>
-		/// Текущее значение поворота (на сколько ещё надо повернуться)
+		/// Максимальный угол поворота в секунду
 		/// </summary>
-		public float SteeringAngle { get; private set; }
+		protected float MaxSteeringPerSecond { get; }
 		
+		/// <summary>
+		/// Предельное значение задаваемого угла поворота (инерция поворота)
+		/// </summary>
+		protected float SteeringLimit { get; }
+
+		public ManeuverDevice(float maxSteeringPerSecond, float steeringLimit)
+		{
+			MaxSteeringPerSecond = maxSteeringPerSecond;
+			SteeringLimit = steeringLimit;
+		}
+
 		/// <summary>
 		/// Поворачиваемся
 		/// </summary>
 		/// <param name="parameters"></param>
-		/// <param name="deltaTime"></param>
+		/// <param name="timeCoefficient"></param>
 		/// <returns>На сколько градусов надо повернуться</returns>
-		public virtual float CalculateSteering(IManeuverSupport parameters, float deltaTime)
+		public virtual float CalculateSteering(IManeuverSupport parameters, float timeCoefficient)
 		{
 			// изменение поворота корабля если нужно
 			return 0;
 		}
 
-		public void AddSteering(float angle)
+		public virtual float AddSteering(IManeuverSupport parameters, float angle)
 		{
-			SteeringAngle += angle;
-			// проверяем границу чтоб постоянно не накручивалось
+			return angle;
 		}
 	}
 }

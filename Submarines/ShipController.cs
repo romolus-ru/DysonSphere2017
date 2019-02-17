@@ -23,5 +23,11 @@ namespace Submarines
 		{
 			_submarine.StopEngine();
 		}
+
+		public void Steering(int delta)
+		{
+			_submarine.AddSteering(delta);
+		}
+		
 	}
 }

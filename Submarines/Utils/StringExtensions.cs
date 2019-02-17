@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace Submarines.Utils
 {
 	/// <summary>
-	/// Преобразование строки в нужные типы игры
+	/// Преобразование строки в нужные типы
 	/// </summary>
 	internal static class StringExtensions
 	{
@@ -12,6 +12,22 @@ namespace Submarines.Utils
 		{
 			T result;
 			return Enum.TryParse(value, true, out result)
+				? result
+				: defaultValue;
+		}
+
+		public static float ToFloat(this string value, float defaultValue)
+		{
+			float result;
+			return float.TryParse(value, out result)
+				? result
+				: defaultValue;
+		}
+
+		public static int ToInt(this string value, int defaultValue)
+		{
+			int result;
+			return int.TryParse(value, out result)
 				? result
 				: defaultValue;
 		}

@@ -43,6 +43,8 @@ namespace Submarines
 			AddComponent(viewShip);
 			viewShip.SetShip(_submarine);
 			visualizationProvider.LoadAtlas("Submarines_background");
+			visualizationProvider.LoadAtlas("Submarines01");
+			visualizationProvider.LoadAtlas("Submarines01map");
 			visualizationProvider.LoadAtlas("Result");
 		}
 
@@ -60,6 +62,8 @@ namespace Submarines
 
 		public override void DrawObject(VisualizationProvider visualizationProvider)
 		{
+			//visualizationProvider.DrawTexturePart(0,0, "Submarines_background.main", 1650,1050);
+			//visualizationProvider.DrawTexture(300, 300, "Submarines01.pl01");
 			visualizationProvider.SetColor(Color.White);
 			visualizationProvider.OffsetAdd(_mapX, _mapY);
 

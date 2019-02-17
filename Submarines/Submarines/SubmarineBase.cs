@@ -35,6 +35,8 @@ namespace Submarines.Submarines
 		/// </summary>
 		public float SteeringAngle { get; protected set; }
 
+		public float CurrentAngle { get; protected set; } = 90;
+
 		/// <summary>
 		/// Позиция корабля относительно текущего центра квадранта
 		/// </summary>
@@ -54,41 +56,28 @@ namespace Submarines.Submarines
 		/// <summary>
 		/// Расчёт движения устройства
 		/// </summary>
-		public virtual void CalculateMovement(float deltaTime)
+		public virtual void CalculateMovement(float timeCoefficient)
 		{
-			VCurrent = Engine.CalculateSpeed(this, deltaTime);
-			var deltaSteeringAngle = ManeuverDevice.CalculateSteering(this, deltaTime);
+			VCurrent = Engine.CalculateSpeed(this, timeCoefficient);
+			var deltaSteeringAngle = ManeuverDevice.CalculateSteering(this, timeCoefficient);
 			SteeringAngle -= deltaSteeringAngle;
+			CurrentAngle += deltaSteeringAngle;
 
-			// TODO !!!! пока логика такая что не используется занос корабля - не сохраняются
-			// предыдущие векторы движения, лодка будет поворачиваться мгновенно (но скорее всего это будет незначительно из-за малых скоростей поворота)
-
-			// вычисляем поворот вектора скорости
-			if (!deltaSteeringAngle.IsZero()) {
-				var rad = deltaSteeringAngle * Math.PI / 180;
-				float cosRad = (float)Math.Cos(rad);
-				float sinRad = (float)Math.Sin(rad);
-				float rx = SpeedVector.X * cosRad - SpeedVector.Y - sinRad;
-				float ry = SpeedVector.X * sinRad - SpeedVector.Y - cosRad;
-				SpeedVector = new Vector(rx, ry, 0);
-			}
-
-			// меняем длину вектора скорости
-			if (!VCurrent.IsEqualTo(VCurrentPrev)) {
-				var angle = Math.Atan2(SpeedVector.Y, SpeedVector.X);
-				var radians = angle * (Math.PI / 180);
+			// вычисляем вектор скорости
+			if (!VCurrent.IsEqualTo(VCurrentPrev)|| !deltaSteeringAngle.IsZero()) {
+				var radians = CurrentAngle * (Math.PI / 180);
 				float cosRad = (float)Math.Cos(radians);
 				float sinRad = (float)Math.Sin(radians);
-				float x = VCurrent * deltaTime * cosRad;
-				float y = VCurrent * deltaTime * sinRad;
+				float x = VCurrent * timeCoefficient * cosRad;
+				float y = VCurrent * timeCoefficient * sinRad;
 				SpeedVector = new Vector(x, y, 0);
 				VCurrentPrev = VCurrent;
 			}
 
 			// меняем положение корабля
 			if (!VCurrent.IsZero()) {
-				var newPos = Position.MoveRelative(SpeedVector.X, SpeedVector.Y);
-				var collision = OnCheckCollision(this, Position, newPos);
+				Vector newPos = Position.MoveRelative(SpeedVector.X, SpeedVector.Y);
+				SubmarineCollisionResult collision = OnCheckCollision?.Invoke(this, Position, newPos);
 				MoveToNewPos(collision, newPos);
 			}
 		}
