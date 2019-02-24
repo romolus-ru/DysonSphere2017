@@ -10,7 +10,7 @@ namespace Engine.Visualization
 	/// <summary>
 	/// Заголовок окна за который можно перемещать
 	/// </summary>
-	public class ViewWindowCaption : ViewDragable
+	public class ViewWindowCaption : ViewDraggable
 	{
 		public override void DrawObject(VisualizationProvider visualizationProvider)
 		{

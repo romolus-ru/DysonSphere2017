@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Submarines.Geometry;
+using System;
 
 namespace Submarines.Submarines
 {
@@ -7,6 +8,7 @@ namespace Submarines.Submarines
 		public int EnginePercentMax { get; private set; }
 		public float VMax;
 		public float VMin;
+
 		/// <summary>
 		/// Допустимая обратная скорость (обычно меньше чем скорость вперед)
 		/// </summary>
@@ -14,7 +16,7 @@ namespace Submarines.Submarines
 
 		private DateTime _currentTime;
 
-		public Submarine(Engine engine, ManeuverDevice maneuverDevice) : base(engine, maneuverDevice)
+		public Submarine(GeometryBase geometry, Engine engine, ManeuverDevice maneuverDevice) : base(geometry, engine, maneuverDevice)
 		{
 			EnginePercentMax = 150;
 			EnginePercentMin = -50;

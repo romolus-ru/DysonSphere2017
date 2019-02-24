@@ -231,7 +231,7 @@ namespace SpaceConstruction.Game.Items
 
 			var it1 = GetItemByCode("Sign1");
 			ItemsManaged.Remove(it1);
-			it1 = new ItemManager(costSign, 1000);
+			it1 = new ItemManager(costSign, 0);
 			ItemsManaged.Add(it1);
 		}
 

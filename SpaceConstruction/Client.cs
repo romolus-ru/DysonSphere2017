@@ -49,7 +49,7 @@ namespace SpaceConstruction
 			// создаётся объект для вывода на экран
 			var visualizationId = _datasupport.ServerSettingsGetValue("visualization");
 			_visualization = _collector.GetObject(visualizationId) as VisualizationProvider;
-			_visualization.InitVisualization(_datasupport, logSystem, 500, 500, true);
+			_visualization.InitVisualization(_datasupport, logSystem, 1680, 1050, false);
 
 			// создаётся объект для работы с мат моделями
 			_rplayer = _datasupport.UserStatus;// загружаем данные игрока (основные)

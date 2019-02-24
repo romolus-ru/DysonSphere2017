@@ -31,13 +31,25 @@ namespace Submarines
 			visualizationProvider.Print(550, 565, "px=" + _submarine.Position.X);
 			visualizationProvider.Print(550, 575, "py=" + _submarine.Position.Y);
 
-			visualizationProvider.Rotate((int) _submarine.CurrentAngle - 90);
-			visualizationProvider.DrawTexture(
-				700 + (int)_submarine.Position.X, 
-				500 + (int)_submarine.Position.Y, 
-				"Submarines01map.pl01");
+			visualizationProvider.Rotate((int) _submarine.CurrentAngle + 90);
+			visualizationProvider.OffsetAdd(700 + (int) _submarine.Position.X, 500 + (int) _submarine.Position.Y);
+			visualizationProvider.DrawTexture(0, 0, "Submarines01map.pl01");
 			visualizationProvider.RotateReset();
 
+			if (_submarine.Geometry != null) {
+				visualizationProvider.SetColor(_submarine.Geometry.Color);
+				foreach (var line in _submarine.GeometryRotatedLines) {
+					DrawLine(visualizationProvider, line.From, line.To);
+				}
+			}
+
+			visualizationProvider.OffsetRemove();
+
+		}
+
+		private void DrawLine(VisualizationProvider visualizationProvider, Vector from, Vector to)
+		{
+			visualizationProvider.Line((int)from.X, (int)from.Y, (int)to.X, (int)to.Y);
 		}
 	}
 }

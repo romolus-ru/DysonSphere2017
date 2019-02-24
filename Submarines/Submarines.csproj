@@ -52,8 +52,12 @@
   <ItemGroup>
     <Compile Include="Client.cs" />
     <Compile Include="GameConstants.cs" />
+    <Compile Include="GeometryEditor\SelectGeometryScrollItem.cs" />
+    <Compile Include="GeometryEditor\SelectGeometryWindow.cs" />
+    <Compile Include="GeometryEditor\ViewGeometryEditor.cs" />
     <Compile Include="Geometry\GeometryBase.cs" />
     <Compile Include="Geometry\GeometryType.cs" />
+    <Compile Include="Geometry\LineInfo.cs" />
     <Compile Include="Items\ItemBase.cs" />
     <Compile Include="Items\ItemEngine.cs" />
     <Compile Include="Items\ItemHolder.cs" />
@@ -87,6 +91,7 @@
     <Compile Include="Utils\StringExtensions.cs" />
     <Compile Include="Vector.cs" />
     <Compile Include="ViewGame.cs" />
+    <Compile Include="ViewMainMenu.cs" />
     <Compile Include="ViewShip.cs" />
     <Compile Include="ViewShipController.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">

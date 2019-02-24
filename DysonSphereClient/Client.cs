@@ -86,7 +86,7 @@ namespace DysonSphereClient
 			_viewManager.AddView(debugView);
 			debugView.SetParams(1100, 0, debugView.Width, debugView.Height, "DebugView");*/
 
-			var dragable = new ViewDragable();
+			var dragable = new ViewDraggable();
 			dragable.SetParams(800, 250, 30, 30, "dragableObject");
 			_viewManager.AddView(dragable, true);
 

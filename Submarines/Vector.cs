@@ -70,5 +70,20 @@ namespace Submarines
 
 		public Vector MoveRelative(float x, float y, float z = 0)
 			=> new Vector(this.X + x, this.Y + y, this.Z + z);
+
+
+		private float Distance2To(Vector other)
+		{
+			float dx = X - other.X;
+			float dy = Y - other.Y;
+			return dx * dx + dy * dy;
+		}
+
+		public float DistanceTo(Vector other)
+		{
+			return (float)Math.Sqrt(Distance2To(other));
+		}
+
+
 	}
 }

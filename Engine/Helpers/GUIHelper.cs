@@ -15,6 +15,9 @@ namespace Engine.Helpers
 		public static Color ButtonHintColor = Color.ForestGreen;
 		public static Color ButtonHintKeysColor = Color.LawnGreen;
 		public static Color HintBackgroundColor = Color.FromArgb(210, Color.Black);
+		public static Color DraggableDefaultColor = Color.Beige;
+		public static Color DraggableCursorOverColor = Color.Aqua;
+		public static Color DraggableDragModeColor = Color.BurlyWood;
 		public static string DraggableTexture = "WindowSample";
 
 		public static void ViewGUIRectangle(VisualizationProvider visualizationProvider, ViewComponent component, string textureName)

@@ -217,7 +217,7 @@
     <Compile Include="Visualization\ViewButtonPic.cs" />
     <Compile Include="Visualization\ViewComponent.cs" />
     <Compile Include="Visualization\ViewCursor.cs" />
-    <Compile Include="Visualization\ViewDragable.cs" />
+    <Compile Include="Visualization\ViewDraggable.cs" />
     <Compile Include="Visualization\ViewFadeScreen.cs" />
     <Compile Include="Visualization\ViewGraph.cs" />
     <Compile Include="Visualization\ViewGraphTimeDynamic.cs" />

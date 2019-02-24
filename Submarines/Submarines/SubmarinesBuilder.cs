@@ -1,20 +1,15 @@
-﻿using System;
-using Submarines.Items;
+﻿using Submarines.Items;
 
 namespace Submarines.Submarines
 {
 	/// <summary>
-	/// Создать подлодку в зависимости от переданных параметров
+	/// Создать подлодку в соответствии с переданными параметрами
 	/// </summary>
-	internal class SubmarinesBuilder
+	internal static class SubmarinesBuilder
 	{
-		/// <summary>
-		/// Создать подлодку или боеприпас и оснастить его начинкой
-		/// </summary>
-		/// <returns></returns>
-		public SubmarineBase Build()
+		public static SubmarineBase CreateHull(ItemHull info, Engine engine, ManeuverDevice maneuverDevice)
 		{
-			return null;
+			return new Submarine(info.Geometry, engine, maneuverDevice);
 		}
 
 		/// <summary>
@@ -30,7 +25,7 @@ namespace Submarines.Submarines
 						info.EnginePower,
 						info.EnginePercentMin,
 						info.EnginePercentMax
-						);
+					);
 					break;
 			}
 
@@ -45,12 +40,12 @@ namespace Submarines.Submarines
 		{
 			ManeuverDevice maneuverDevice = null;
 			switch (info.DeviceType) {
-					case "Submarine":
-						maneuverDevice = new SubmarineManeuverDevice(
-							info.MaxSteeringPerSecond, 
-							info.SteeringLimit
-							);
-						break;
+				case "Submarine":
+					maneuverDevice = new SubmarineManeuverDevice(
+						info.MaxSteeringPerSecond,
+						info.SteeringLimit
+					);
+					break;
 			}
 
 			return maneuverDevice;
@@ -60,7 +55,7 @@ namespace Submarines.Submarines
 		{
 			var md = CreateManeuverDevice(itemSubmarine.ManeuverDevice);
 			var en = CreateEngine(itemSubmarine.Engine);
-			var sub = new Submarine(en, md);
+			var sub = CreateHull(itemSubmarine.Hull, en, md);
 
 			return sub;
 		}

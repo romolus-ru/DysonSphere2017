@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
+using System.IO;
 using Engine.Helpers;
 using Engine.Utils;
 using Newtonsoft.Json;
+using Submarines.Geometry;
 using Submarines.Utils;
 
 namespace Submarines.Items
@@ -20,11 +23,15 @@ namespace Submarines.Items
 		private const string ItemSubmarinesFile = DataSupportFileHelper.DataFileDirectory + GameConstants.DataDirectory +
 		                                     "/ItemsSubmarines" + DataSupportFileHelper.DataFileExtension;
 
+		private const string GeometrySubmarinesFile = DataSupportFileHelper.DataFileDirectory + GameConstants.DataDirectory +
+												  "/GeometrySubmarines" + DataSupportFileHelper.DataFileExtension;
+
 		private const string tstFile = DataSupportFileHelper.DataFileDirectory + GameConstants.DataDirectory +
 		                               "/tst" + DataSupportFileHelper.DataFileExtension;
 
 		private static Dictionary<string, ItemBase> _items = new Dictionary<string, ItemBase>();
-		private static Dictionary<string, ItemsCostContainer> _costs = new Dictionary<string, ItemsCostContainer>();
+		private static Dictionary<string, ItemsCostContainer> _money = new Dictionary<string, ItemsCostContainer>();
+		private static Dictionary<string, GeometryBase> _geometries = new Dictionary<string, GeometryBase>();
 
 		static ItemsManager()
 		{
@@ -38,18 +45,34 @@ namespace Submarines.Items
 		/// </summary>
 		private static void LoadItems()
 		{
-			//var tst = new List<ItemLoadRawValues>();
-			//tst.Add(new ItemLoadRawValues() {ObjectName = "1", ObjectType = "1", ObjectValues = new List<string>() {"1", "2", "3"}});
-			//tst.Add(new ItemLoadRawValues() {ObjectName = "2", ObjectType = "2", ObjectValues = new List<string>() {"1", "2", "3"}});
-			//tst.Add(new ItemLoadRawValues() {ObjectName = "3", ObjectType = "3", ObjectValues = new List<string>() {"1", "2", "3"}});
+			//var tst = new List<GeometryBase>();
+			//tst.Add(new GeometryBase() {
+			//	GeometryType = GeometryType.Hull,
+			//	Name = "name",
+			//	Color = Color.Red,
+			//	Lines = new List<LineInfo>() {
+			//		new LineInfo(new Vector(1, 1, 0), new Vector(1, 1, 1)),
+			//		new LineInfo(new Vector(1, 1, 0), new Vector(1, 1, 1))
+			//	}
+			//});
 			//var data1 = JsonConvert.SerializeObject(tst, Formatting.Indented);
 			//File.WriteAllText(tstFile, data1);
 
+			
 
-			//тут. загружаем основные данные
+
+			//загрузка линий и добавление их в корпусу для вывода на экран
+
+
+			var data = FileUtils.LoadStringFromFile(GeometrySubmarinesFile);
+			var listGeometries = JsonConvert.DeserializeObject<List<GeometryBase>>(data);
+			foreach (var geometry in listGeometries) {
+				_geometries.Add(geometry.Name, geometry);
+			}
+
 			Dictionary<string, Dictionary<string, string>> objValues = new Dictionary<string, Dictionary<string, string>>();
 
-			var data = FileUtils.LoadStringFromFile(ItemTypesFile);
+			data = FileUtils.LoadStringFromFile(ItemTypesFile);
 			var listValues = JsonConvert.DeserializeObject<List<List<string>>>(data);
 			foreach (var values in listValues) {
 				AddLoadedInfoToDictionary(objValues, values);
@@ -65,6 +88,7 @@ namespace Submarines.Items
 				var item = CreateAndInitItem(objData.Value);
 				_items.Add(item.Name, item);
 			}
+
 		}
 
 		private static ItemBase CreateAndInitItem(Dictionary<string, string> values)
@@ -114,6 +138,30 @@ namespace Submarines.Items
 			=> _items.ContainsKey(itemBaseName)
 				? _items[itemBaseName]
 				: null;
-		
+
+		internal static GeometryBase GetGeometry(string geometryName)
+			=> _geometries.ContainsKey(geometryName)
+				? _geometries[geometryName]
+				: null;
+
+		// for editor
+		internal static List<GeometryBase> GetAllGeometries()
+		{
+			var ret = new List<GeometryBase>();
+			foreach (var geometry in _geometries) {
+				ret.Add(geometry.Value);
+			}
+			return ret;
+		}
+
+		// for editor
+		internal static void SaveGeometries()
+		{
+			var geometries = GetAllGeometries();
+			var data = JsonConvert.SerializeObject(geometries, Formatting.Indented);
+			File.WriteAllText(GeometrySubmarinesFile, data);
+		}
+
+
 	}
 }

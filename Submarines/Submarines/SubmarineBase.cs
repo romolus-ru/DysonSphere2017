@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using Engine.Extensions;
+using Submarines.Geometry;
 
 namespace Submarines.Submarines
 {
@@ -35,7 +37,7 @@ namespace Submarines.Submarines
 		/// </summary>
 		public float SteeringAngle { get; protected set; }
 
-		public float CurrentAngle { get; protected set; } = 90;
+		public float CurrentAngle { get; protected set; } = -90;
 
 		/// <summary>
 		/// Позиция корабля относительно текущего центра квадранта
@@ -46,8 +48,14 @@ namespace Submarines.Submarines
 
 		public ManeuverDevice ManeuverDevice { get; private set; }
 
-		public SubmarineBase(Engine engine, ManeuverDevice maneuverDevice)
+		public GeometryBase Geometry { get; private set; }
+
+		тут. пересчитывать геометрию при поворотах
+		public List<LineInfo> GeometryRotatedLines { get; private set; }
+
+		public SubmarineBase(GeometryBase geometry, Engine engine, ManeuverDevice maneuverDevice)
 		{
+			Geometry = geometry;
 			Engine = engine;
 			ManeuverDevice = maneuverDevice;
 			VCurrentPrev = 0;

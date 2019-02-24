@@ -15,8 +15,8 @@ namespace Engine.Visualization
 	{
 		private string _btnTexture = null;
 		private int _btnTextureBorder = 0;
-		private ViewDragable _dragHeader = null;
-		private ViewDragable _resizer = null;
+		private ViewDraggable _dragHeader = null;
+		private ViewDraggable _resizer = null;
 		protected List<ViewInput> _inputs = null;
 
 		/// <summary>
@@ -48,11 +48,11 @@ namespace Engine.Visualization
 			_dragHeader = new ViewWindowCaption();
 			this.AddComponent(_dragHeader);
 			_dragHeader.SetParams(10, 0, 50, 10, "dragHeader");
-			_dragHeader.MoveObjectRelative += HeadMove;
-			_resizer = new ViewDragable();
+			_dragHeader.OnMoveObjectRelative += HeadMove;
+			_resizer = new ViewDraggable();
 			this.AddComponent(_resizer);
 			_resizer.SetParams(50, 50, 15, 10, "resizer");
-			_resizer.MoveObjectRelative += Resize;
+			_resizer.OnMoveObjectRelative += Resize;
 		}
 
 		private void HeadMove(int rx, int ry)

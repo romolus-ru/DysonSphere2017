@@ -1,17 +1,24 @@
 ﻿using System;
 using System.Windows.Forms;
+using Engine.Helpers;
 
 namespace Engine.Visualization
 {
 	/// <summary>
 	/// Генерирует событие перемещения
 	/// </summary>
-	public class ViewDragable : ViewComponent
+	public class ViewDraggable : ViewComponent
 	{
+		public delegate void MoveObjectRelativeDelegate(int dx, int dy);
+		
 		/// <summary>
 		/// Присылаются координаты относительного перемещения объекта
 		/// </summary>
-		public Action<int, int> MoveObjectRelative;
+		public MoveObjectRelativeDelegate OnMoveObjectRelative;
+
+		public Action OnDragModeStart;
+		public Action OnDragModeEnd;
+
 		protected bool IsDragMode = false;
 		private int _oldX;
 		private int _oldY;
@@ -37,6 +44,7 @@ namespace Engine.Visualization
 			if (IsDragMode) return;
 			if (!InRange(Input.CursorX, Input.CursorY)) return;
 			IsDragMode = true;
+			OnDragModeStart?.Invoke();
 			Input.ModalStateStart();
 			Input.AddKeyActionSticked(MouseUnPressed, Keys.LButton);
 			Input.AddCursorAction(CursorMove);
@@ -50,6 +58,7 @@ namespace Engine.Visualization
 			Input.ModalStateStop();
 			//Input.RemoveCursorAction(CursorMove);
 			IsDragMode = false;
+			OnDragModeEnd?.Invoke();
 		}
 
 		private void CursorMove(int newX, int newY)
@@ -60,10 +69,10 @@ namespace Engine.Visualization
 			if (deltaX == 0 && deltaY == 0) return;
 			_oldX = newX;
 			_oldY = newY;
-			if (MoveObjectRelative == null) {
+			if (OnMoveObjectRelative == null) {
 				SetCoordinatesRelative(deltaX, deltaY, 0);
 			} else {
-				MoveObjectRelative?.Invoke(deltaX, deltaY);
+				OnMoveObjectRelative?.Invoke(deltaX, deltaY);
 			}
 		}
 
@@ -75,9 +84,9 @@ namespace Engine.Visualization
 				visualizationProvider.DrawTexturePart(X + _btnTextureBorder, Y-4, texture + ".m2", Width - _btnTextureBorder * 2, Height);
 				visualizationProvider.DrawTexturePart(X + Width - _btnTextureBorder, Y-4, texture + ".m3", _btnTextureBorder, Height);
 			} else {
-				var color = System.Drawing.Color.Beige;
-				if (CursorOver) color = System.Drawing.Color.Aqua;
-				if (IsDragMode) color = System.Drawing.Color.BurlyWood;
+				var color = GUIHelper.DraggableDefaultColor;
+				if (CursorOver) color = GUIHelper.DraggableCursorOverColor;
+				if (IsDragMode) color = GUIHelper.DraggableDragModeColor;
 				visualizationProvider.SetColor(color);
 				visualizationProvider.Rectangle(X, Y, Width, Height);
 			}
