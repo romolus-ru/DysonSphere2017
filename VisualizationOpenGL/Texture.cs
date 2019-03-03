@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace VisualizationOpenGL
+﻿namespace VisualizationOpenGL
 {
 	/// <summary>
 	/// Описание текстуры из атласа
 	/// </summary>
-	public class Texture
+	internal class Texture
 	{
 		public uint TextureCode;
 		public int BlendParam;

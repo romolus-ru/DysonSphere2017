@@ -23,8 +23,8 @@ namespace Submarines.Items
 		private const string ItemSubmarinesFile = DataSupportFileHelper.DataFileDirectory + GameConstants.DataDirectory +
 		                                     "/ItemsSubmarines" + DataSupportFileHelper.DataFileExtension;
 
-		private const string GeometrySubmarinesFile = DataSupportFileHelper.DataFileDirectory + GameConstants.DataDirectory +
-												  "/GeometrySubmarines" + DataSupportFileHelper.DataFileExtension;
+		private const string GeometriesFile = DataSupportFileHelper.DataFileDirectory + GameConstants.DataDirectory +
+												  "/Geometries" + DataSupportFileHelper.DataFileExtension;
 
 		private const string tstFile = DataSupportFileHelper.DataFileDirectory + GameConstants.DataDirectory +
 		                               "/tst" + DataSupportFileHelper.DataFileExtension;
@@ -64,7 +64,7 @@ namespace Submarines.Items
 			//загрузка линий и добавление их в корпусу для вывода на экран
 
 
-			var data = FileUtils.LoadStringFromFile(GeometrySubmarinesFile);
+			var data = FileUtils.LoadStringFromFile(GeometriesFile);
 			var listGeometries = JsonConvert.DeserializeObject<List<GeometryBase>>(data);
 			foreach (var geometry in listGeometries) {
 				_geometries.Add(geometry.Name, geometry);
@@ -159,7 +159,7 @@ namespace Submarines.Items
 		{
 			var geometries = GetAllGeometries();
 			var data = JsonConvert.SerializeObject(geometries, Formatting.Indented);
-			File.WriteAllText(GeometrySubmarinesFile, data);
+			File.WriteAllText(GeometriesFile, data);
 		}
 
 

@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Drawing;
 using System.Windows.Forms;
 using Engine;
 using Tao.DevIl;
-using Tao.Platform.Windows;
 using OpenGL4NET;
 using Engine.Visualization;
 using Engine.Utils;
+using VisualizationOpenGL.Fonts;
 
 namespace VisualizationOpenGL
 {
@@ -68,7 +66,7 @@ namespace VisualizationOpenGL
 			//LoadTextureModify("clear", "Resources/clear256x256.tga", new TPTRounded(), Color.Empty, Color.Empty);
 		}
 
-		public override Point WindowLocation { get { return _formOpenGl.DesktopLocation; } }
+		public override Point WindowLocation => _formOpenGl.DesktopLocation;
 
 		private void FormClosed(object sender, FormClosedEventArgs e)
 		{
@@ -105,8 +103,8 @@ namespace VisualizationOpenGL
 
 		private void ResizeGlScene(int width, int height)
 		{
-			var aspect = width / height;
-			// задаётся размер экрана, влияет на искажение вида, поэтому  надо пересчитать размеры
+			float aspect = (float) width / height;
+			// задаётся размер экрана, влияет на искажение вида, поэтому надо пересчитать размеры
 			gl.Viewport(0, 0, width, height);
 			gl.MatrixMode(GL.PROJECTION);
 			gl.LoadIdentity();
@@ -472,8 +470,8 @@ namespace VisualizationOpenGL
 			//gl.BlendFunc(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA);// непрозрачно
 			gl.BlendFunc(GL.SRC_ALPHA, GL.ONE);// прозрачно, как в DrawTexturePart
 			gl.BindTexture(GL.TEXTURE_2D, texInfo.TextureCode);
-			int h = (int)(scale * texInfo.Height);
-			int w = (int)(scale * texInfo.Width);
+			float h = scale * texInfo.Height;
+			float w = scale * texInfo.Width;
 
 			float x1 = texInfo.X;
 			float x2 = texInfo.X + texInfo.Width;
@@ -710,8 +708,10 @@ namespace VisualizationOpenGL
 
 		public override void LoadFont(string fontCodeName, string fontName, int fontHeight = 12)
 		{
-			FontHeight = fontHeight;
-			BuildFont(fontCodeName, fontName, fontHeight);
+			if (_fonts.ContainsKey(fontCodeName))
+				return;
+			var font = new FontGdi(fontCodeName, fontName, fontHeight, _formOpenGl.Height);
+			_fonts.Add(fontCodeName, font);
 		}
 
 		public override void LoadFontTexture(string textureName)
@@ -721,103 +721,32 @@ namespace VisualizationOpenGL
 			//BuildFont();
 		}
 
-		private int TextLength(byte[] text)
-		{
-			//int len = text.Sum(с => ((int)(_glyphMetrics[с].gmfCellIncX * FontHeight * 1.22f + 0.5f)));
-			//double len = text.Sum(c => Math.Ceiling(_glyphMetrics[c].gmfCellIncX * FontHeight + FontHeight / 4));
-			double len = text.Sum(c =>
-			{
-				var glc = _glyphMetrics[c];
-				return Math.Ceiling((glc.gmfCellIncX + glc.gmfBlackBoxX / 2 - glc.gmfptGlyphOrigin.X * 2) * FontHeight);
-			}
-			);
-			return (int)Math.Ceiling(len);
-		}
+
 
 		public override int TextLength(string text)
 		{
-			var w1251Bytes = ConvertEncoding(text);
-			return TextLength(w1251Bytes);
+			return _currentFont.TextLength(text);
 		}
 
 		public override int TextLength(string font, string text)
 		{
-			var w1251Bytes = ConvertEncoding(text);
-			var glm = _glyphMetrics;// default
-			var fontHeight = FontHeight;
-			if (!string.IsNullOrEmpty(font) && _fontInfos.ContainsKey(font)) {
-				var fi = _fontInfos[font];
-				glm = fi.GlyphMetrics;
-			}
-
-			// https://gamedev.ru/code/forum/?id=32665
-			double len = w1251Bytes.Sum(c =>
-			{
-				var glc = glm[c];
-				return (glc.gmfCellIncX);
-			}
-			) * fontHeight;
-			return (int)len;
-
-			//// https://doxygen.reactos.org/d1/dbc/3dtext_8c.html // nope
-			//double len = w1251Bytes.Sum(c =>
-			//{
-			//	var glc = glm[c];
-			//	return ((glc.gmfCellIncX + glc.gmfBlackBoxX / 2 - glc.gmfptGlyphOrigin.X));
-			//}
-			//) * fontHeight;
-			//return (int)len;// Math.Ceiling(len);
+			if (!_fonts.ContainsKey(font))
+				return 0;
+			return _fonts[font].TextLength(text);
 		}
 
 		public override int GetFontSize(string font)
 		{
-			if (string.IsNullOrEmpty(font) || !_fontInfos.ContainsKey(font))
+			if (string.IsNullOrEmpty(font) || !_fonts.ContainsKey(font))
 				return FontHeight;
-			var fi = _fontInfos[font];
+			var fi = _fonts[font];
 			return fi.FontHeight;
 		}
 
-		/// <summary>
-		/// Вспомогательная функция для конвертирования юникода в другую кодировку и преобразование в массив байтов
-		/// </summary>
-		/// <param name="text"></param>
-		/// <returns></returns>
-		private byte[] ConvertEncoding(string text)
-		{
-			Encoding w1251 = Encoding.GetEncoding("windows-1251");
-			Encoding unicode = Encoding.Unicode;
-			byte[] unicodeBytes = unicode.GetBytes(text);
-			byte[] w1251Bytes = Encoding.Convert(unicode, w1251, unicodeBytes);
-			return w1251Bytes;
-		}
-
-		private EncodingInfo enc1 = Encoding.GetEncodings()[0];
-
+	
 		protected override void PrintOnly(int x, int y, string text)
 		{
-			byte[] w1251Bytes = ConvertEncoding(text);
-
-			// вывод текста
-			gl.PushAttrib(GL.DEPTH_TEST);       // Save the current Depth test settings (Used for blending )
-			gl.PushAttrib(GL.TEXTURE_2D);       // Save the current GL_TEXTURE_2D
-			gl.PushAttrib(GL.ALPHA_TEST);       // Save the current GL_ALPHA_TEST
-			gl.PushAttrib(GL.BLEND);            // Save the current GL_BLEND
-			gl.Disable(GL.DEPTH_TEST);          // Turn off depth testing (otherwise we get no FPS)
-			gl.Disable(GL.TEXTURE_2D);          // Выключаем текстурирование, текстурный текст
-			gl.Enable(GL.ALPHA_TEST);
-			gl.Enable(GL.BLEND);
-
-			gl.WindowPos2iARB(x, _formOpenGl.Height - y - FontHeight);
-			gl.PushAttrib(GL.LIST_BIT);     // Save's the current base list
-			gl.BlendFunc(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA);
-			gl.ListBase((uint)_fontOpenGLList);            // Set the base list to our character list
-			gl.CallLists(w1251Bytes.Length, GL.UNSIGNED_BYTE, w1251Bytes); // Display the text
-			gl.PopAttrib();                     // Restore the old base list
-
-			gl.PopAttrib(); // Restore GL_BLEND
-			gl.PopAttrib(); // Restore GL_ALPHA_TEST
-			gl.PopAttrib(); // Restore GL_TEXTURE_2D
-			gl.PopAttrib(); // Restore GL_DEPTH_TEST
+			_currentFont.PrintOnly(x, y, text);
 		}
 
 		public override void BeginDraw()
@@ -849,83 +778,15 @@ namespace VisualizationOpenGL
 			_angle = 0;
 		}
 
-		/// <summary>
-		/// код шрифта у openGL
-		/// </summary>
-		private int _fontOpenGLList = -1;
-		private enum FontType { GdiFont, TextureFont }
-		class FontInfo
-		{
-			public FontType FontType;
-			public int FontHeight;
-			public int FontOpenGLList;
-			public Gdi.GLYPHMETRICSFLOAT[] GlyphMetrics;
-			public IntPtr Font;
-			public int Counter;
-		}
-		private Dictionary<string, FontInfo> _fontInfos = new Dictionary<string, FontInfo>();
-
-		// Хранит информацию о шрифте. нужна для вычисления длины текста
-		private Gdi.GLYPHMETRICSFLOAT[] _glyphMetrics = new Gdi.GLYPHMETRICSFLOAT[256];
-
-		private void BuildFont(string fontCodeName, string fontName, int fontHeight)
-		{
-			IntPtr font;
-			IntPtr oldfont;
-
-			_fontOpenGLList = (int)gl.GenLists(256);
-			font = Gdi.CreateFont(-fontHeight,
-								  0,
-								  0,
-								  0,
-								  Gdi.FF_DONTCARE,//Gdi.FW_BOLD
-								  false,
-								  false,
-								  false,
-								  Gdi.DEFAULT_CHARSET,
-								  Gdi.OUT_TT_PRECIS,
-								  Gdi.CLIP_DEFAULT_PRECIS,
-								  Gdi.ANTIALIASED_QUALITY,
-								  0,
-								  fontName);
-
-			IntPtr dc = Wgl.wglGetCurrentDC();
-			oldfont = Gdi.SelectObject(dc, font);
-			Wgl.wglUseFontOutlinesA(dc, 0, 256, _fontOpenGLList, 0.1f, 0.2f, Wgl.WGL_FONT_POLYGONS, _glyphMetrics);
-			Wgl.wglUseFontBitmapsA(dc, 0, 256, _fontOpenGLList);
-
-			Gdi.SelectObject(dc, oldfont);
-
-			if (_fontInfos.ContainsKey(fontCodeName)) {
-				Gdi.DeleteObject(_fontInfos[fontCodeName].Font);
-				// TODO логировать удаление шрифта
-			} else {
-				_fontInfos.Add(fontCodeName, new FontInfo());
-			}
-			var fi = _fontInfos[fontCodeName];
-			fi.FontType = FontType.GdiFont;
-			fi.Font = font;
-			fi.FontOpenGLList = _fontOpenGLList;
-			fi.GlyphMetrics = _glyphMetrics;
-			fi.FontHeight = fontHeight;
-			fi.Counter = 0;
-		}
+		private FontBase _currentFont;
+		private Dictionary<string, FontBase> _fonts = new Dictionary<string, FontBase>();
 
 		public override void SetFont(string fontCodeName)
 		{
-			if (!_fontInfos.ContainsKey(fontCodeName)) return;
-			var fi = _fontInfos[fontCodeName];
-			_fontOpenGLList = fi.FontOpenGLList;
-			_glyphMetrics = fi.GlyphMetrics;
-			FontHeight = fi.FontHeight;
-
-			var font = fi.Font;
-
-			IntPtr dc = Wgl.wglGetCurrentDC();
-			IntPtr oldfont = Gdi.SelectObject(dc, font);
-			//Wgl.wglUseFontOutlinesA(dc, 0, 256, _fontOpenGLList, 0.1f, 0.2f, Wgl.WGL_FONT_POLYGONS, _glyphMetrics);
-			Wgl.wglUseFontBitmapsA(dc, 0, 256, _fontOpenGLList);
-			Gdi.SelectObject(dc, oldfont);
+			if (!_fonts.ContainsKey(fontCodeName)) return;
+			_currentFont = _fonts[fontCodeName];
+			FontHeight = _currentFont.FontHeight;
+			_currentFont.ActivateFont();
 		}
 
 
@@ -957,31 +818,6 @@ namespace VisualizationOpenGL
 			}
 			// возвращаем идентификатор текстурного объекта 
 			return texObject;
-		}
-
-		public void DrawCursor(int cursorX, int cursorY)
-		{
-			gl.MatrixMode(GL.PROJECTION); // Switch to the projection matrix
-			gl.PushMatrix(); // Save current projection matrix
-			gl.LoadIdentity();
-			//Gl.glOrtho(0, TAOWindow.Width, 0, TAOWindow.Height, -1, 1);
-			gl.Ortho(0, _formOpenGl.Width, _formOpenGl.Height, 0, -1, 1);
-			gl.MatrixMode(GL.MODELVIEW); // Return to the modelview matrix
-			gl.PushMatrix(); // Save the current modelview matrix
-			gl.LoadIdentity();
-
-			DrawTexture(cursorX, cursorY, "Cursor");
-			//ShowMasked(cursorX, cursorY, "Pic1", "Pic1m");
-
-			gl.MatrixMode(GL.PROJECTION); //Switch to projection matrix
-			gl.PopMatrix(); // Restore the old projection matrix
-			gl.MatrixMode(GL.MODELVIEW); // Return to modelview matrix
-			gl.PopMatrix(); // Restore old modelview matrix
-
-			double[] modelview = new double[16]; gl.GetDoublev(GL.MODELVIEW_MATRIX, modelview);
-			double[] projection = new double[16]; gl.GetDoublev(GL.PROJECTION_MATRIX, projection);
-			int[] viewport = new int[4]; gl.GetIntegerv(GL.VIEWPORT, viewport);
-
 		}
 
 		protected override void _CopyToTexture(string textureName)
@@ -1140,13 +976,13 @@ void main(void)
 			var texInfo = _atlasManager.GetTextureInfo(textureName);
 			float coeff = 0;
 			if (texInfo.Width < texInfo.Height)
-				coeff = texInfo.Width / texInfo.Height;
+				coeff = (float)texInfo.Width / texInfo.Height;
 			else
-				coeff = texInfo.Height / texInfo.Width;
+				coeff = (float)texInfo.Height / texInfo.Width;
 
 			placeWidth = FontHeight;// текущий размер шрифта
-			if (!string.IsNullOrEmpty(fontName) && _fontInfos.ContainsKey(fontName))
-				placeWidth = _fontInfos[fontName].FontHeight;// размер шрифта для которого выводится текстура
+			if (!string.IsNullOrEmpty(fontName) && _fonts.ContainsKey(fontName))
+				placeWidth = _fonts[fontName].FontHeight;// размер шрифта для которого выводится текстура
 			placeHeight = (int)(placeWidth * coeff + 0.5);
 			dx = 0;
 			dy = (int)(placeHeight * 1 / 7);
@@ -1154,20 +990,37 @@ void main(void)
 
 		// https://habr.com/ru/post/347354/
 		// создание буфера кадра 
-		private int _fbuffer;
-		private int _fbTexture;
+		// придётся делать всю инфраструктуру
+		// у VisualizationProvider появится метод для обработки рендера в текстуру (передаётся имя текстуры и там уже всё рендерится в неё)
+		// и дальше обычным способом - выводим текстуру (полученную уже рендером в текстуру) на экран как обычно
+		// в начале создаём текстуру для рендера
+		// когда надо подключаемся к очереди рисования в текстуру
+		// там очищаем экран, настраиваем операции (автоматический шаг)
+		// рисуем на экран что нужно
+		// после этого сохраняем текстуру, отключаем рисование в текстуру (автоматический шаг)
+		private uint _fbuffer;
+		private uint _fbTexture;
 
 		public int CreateFrameBufferTexture()
 		{
-			//unsigned int texture;
-			//glGenTextures(1, &texture);
-			//glBindTexture(GL_TEXTURE_2D, texture);
+			uint framebuffer;
+			gl.GenFramebuffers(1, out framebuffer);
+			gl.BindFramebuffer(GL.FRAMEBUFFER, framebuffer);
 
-			//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 800, 600, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
 
-			//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			return 0;
+			uint texture;
+			gl.GenTextures(1, out texture);
+			gl.BindTexture(GL.TEXTURE_2D, texture);
+
+			gl.TexImage2D(GL.TEXTURE_2D, 0, GL.RGB, 800, 600, 0, GL.RGB, GL.UNSIGNED_BYTE, null);
+
+			gl.TexParameteri(GL.TEXTURE_2D, GL.TEXTURE_MIN_FILTER, GL.LINEAR);
+			gl.TexParameteri(GL.TEXTURE_2D, GL.TEXTURE_MAG_FILTER, GL.LINEAR);
+
+			gl.FramebufferTexture2D(GL.FRAMEBUFFER, GL.COLOR_ATTACHMENT0, GL.TEXTURE_2D, texture, 0);
+
+			_fbTexture = texture;
+			return (int)texture;
 		}
 
 		public int CreateFrameBuffer()

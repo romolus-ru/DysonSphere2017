@@ -63,8 +63,10 @@
     <Compile Include="Items\ItemHolder.cs" />
     <Compile Include="Items\ItemHull.cs" />
     <Compile Include="Items\ItemManeuverDevice.cs" />
+    <Compile Include="Items\ItemMap.cs" />
     <Compile Include="Items\ItemsCostContainer.cs" />
     <Compile Include="Items\ItemsManager.cs" />
+    <Compile Include="Items\ItemSpawnGroup.cs" />
     <Compile Include="Items\ItemSubmarine.cs" />
     <Compile Include="Items\Loots\ItemLootHolder.cs" />
     <Compile Include="Items\ItemRarity.cs" />
@@ -72,6 +74,10 @@
     <Compile Include="Items\ItemType.cs" />
     <Compile Include="Items\ItemGroup.cs" />
     <Compile Include="Items\Loots\LootContainerType.cs" />
+    <Compile Include="Items\SpawnType.cs" />
+    <Compile Include="Maps\MapBase.cs" />
+    <Compile Include="Maps\MapController.cs" />
+    <Compile Include="Maps\MapsBuilder.cs" />
     <Compile Include="Submarines\Engine.cs" />
     <Compile Include="IEngineSupport.cs" />
     <Compile Include="IManeuverSupport.cs" />

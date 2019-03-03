@@ -16,6 +16,8 @@ namespace Submarines.GeometryEditor
 		private GeometryBase _geometry = null;
 		private ViewManager _viewManager = null;
 
+		тут. добавить масштаб и создание новой геометрии
+
 		private int _mapX = 0;
 		private int _mapY = 0;
 		private int _dragNum = -1;// номер в списке - что бы заменить
@@ -78,6 +80,10 @@ namespace Submarines.GeometryEditor
 
 		private void DragModeEnd()
 		{
+			_dragMode = -1;
+			if (_dragNum == -1)
+				return;
+
 			// применяем координаты
 			var minDist = _dragCurrent.DistanceTo(_geometry.Lines[0].From); // первоначальное значение, чтоб не с потолка брать
 			var foundNum = -1;
@@ -109,7 +115,6 @@ namespace Submarines.GeometryEditor
 			// заменяем линию новой
 			var newLine = new LineInfo(_dragCurrent, _dragStatic);
 			_geometry.Lines[_dragNum] = newLine;
-			_dragMode = -1;
 			_dragNum = -1;
 		}
 
@@ -228,6 +233,7 @@ namespace Submarines.GeometryEditor
 
 			visualizationProvider.OffsetAdd(_mapX, _mapY);
 			visualizationProvider.SetColor(Color.White);
+			visualizationProvider.Circle(0, 0, 10);
 			foreach (var line in _geometry.Lines) {
 				DrawLine(visualizationProvider, line.From, line.To);
 			}
