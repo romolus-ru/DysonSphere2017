@@ -19,6 +19,18 @@ namespace Submarines.Maps
 		/// </summary>
 		public List<SubmarineBase> Submarines { get; }
 
+		public SubmarineBase FocusedShip { get; protected set; }
+
+		public MapBase(GeometryBase mapGeometry, List<SubmarineBase> submarines)
+		{
+			Geometry = mapGeometry;
+			Submarines = submarines;
+		}
+		
+		public virtual void SetFocusOnShip(SubmarineBase focus)
+		{
+			FocusedShip = focus;
+		}
 
 
 	}

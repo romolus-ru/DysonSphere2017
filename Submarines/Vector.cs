@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace Submarines
 {
 	/// <summary>
 	/// Вектор
 	/// </summary>
+	[DebuggerDisplay("Vector {X},{Y},{Z}")]
 	struct Vector
 	{
 		public float X;

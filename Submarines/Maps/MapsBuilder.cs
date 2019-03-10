@@ -13,11 +13,16 @@ namespace Submarines.Maps
 		/// Создаём карту и заполняем ее нужными параметрами. 
 		/// </summary>
 		/// <param name="mapInfo"></param>
-		/// <param name="submarines">Управляемые подлодки</param>
+		/// <param name="playerSubmarine">Текущая подлодка игрока</param>
 		/// <returns></returns>
-		public static MapBase CreateMap(ItemMap mapInfo, List<SubmarineBase> submarines)
+		public static MapBase CreateMap(ItemMap mapInfo, SubmarineBase playerSubmarine)
 		{
-			return null;
+			var submarines = new List<SubmarineBase>();
+			submarines.Add(playerSubmarine);
+			
+			var map = new MapBase(mapInfo.MapGeometry, submarines);
+			map.SetFocusOnShip(playerSubmarine);
+			return map;
 		}
 	}
 }

@@ -139,6 +139,7 @@
     <Compile Include="EventSystem\Event\MessageString.cs" />
     <Compile Include="Exceptions\NoConnectionException.cs" />
     <Compile Include="Extensions\DictionaryExtensions.cs" />
+    <Compile Include="Extensions\EnumExtensions.cs" />
     <Compile Include="Extensions\FloatExtensions.cs" />
     <Compile Include="Extensions\ListExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />

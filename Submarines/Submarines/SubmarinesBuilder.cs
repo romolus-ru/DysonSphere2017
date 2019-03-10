@@ -7,7 +7,7 @@ namespace Submarines.Submarines
 	/// </summary>
 	internal static class SubmarinesBuilder
 	{
-		public static SubmarineBase CreateHull(ItemHull info, Engine engine, ManeuverDevice maneuverDevice)
+		private static SubmarineBase CreateHull(ItemHull info, Engine engine, ManeuverDevice maneuverDevice)
 		{
 			return new Submarine(info.Geometry, engine, maneuverDevice);
 		}

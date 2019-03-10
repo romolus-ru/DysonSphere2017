@@ -103,7 +103,7 @@ namespace VisualizationOpenGL
 
 		private void ResizeGlScene(int width, int height)
 		{
-			float aspect = (float) width / height;
+			var aspect = 1f * width / height;// TODO возможно лучше упростить - всё равно WxH
 			// задаётся размер экрана, влияет на искажение вида, поэтому надо пересчитать размеры
 			gl.Viewport(0, 0, width, height);
 			gl.MatrixMode(GL.PROJECTION);
@@ -111,10 +111,10 @@ namespace VisualizationOpenGL
 
 			if (width >= height) {
 				// aspect >= 1, set the height from -1 to 1, with larger width
-				gl.Ortho(0, width * aspect, height, 0, -1, 1);
+				gl.Ortho(0, width, width / aspect, 0, -1, 1);
 			} else {
 				// aspect < 1, set the width to -1 to 1, with larger height
-				gl.Ortho(0, width, height / aspect, 0, -1, 1);
+				gl.Ortho(0, height * aspect, height, 0, -1, 1);
 			}
 
 			//Glu.gluOrtho2D(0, width, height, 0);

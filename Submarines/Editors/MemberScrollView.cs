@@ -1,11 +1,10 @@
 ﻿using Engine;
-using Engine.EventSystem.Event;
 using Engine.Visualization;
 using System;
 using System.Drawing;
 using System.Reflection;
 
-namespace EngineTools
+namespace Submarines.Editors
 {
 	/// <summary>
 	/// Основа для редакторов свойств класса
@@ -15,7 +14,7 @@ namespace EngineTools
 	/// по умолчанию InputView заблокирован
 	/// Требует внешнее управление для установки фильтра и для получения значения переменной из строки
 	/// </remarks>
-	public class MemberScrollView<T> : MemberBaseScrollView<T> where T : EventBase
+	public class MemberScrollView<T> : MemberBaseScrollView<T> where T : class
 	{
 		private ViewInput _inputView;
 		private MemberInfo _memberInfo;
@@ -35,7 +34,7 @@ namespace EngineTools
 		/// <summary>
 		/// Настроить Filter для работы с конкретным типом данных
 		/// </summary>
-		public virtual void SetupMemberEditor(Func<string, object> getValue, Func<string, string> filter=null)
+		public virtual void SetupMemberEditor(Func<string, object> getValue, Func<string, string> filter = null)
 		{
 			_getValue = getValue;
 			_inputView.Enabled = true;

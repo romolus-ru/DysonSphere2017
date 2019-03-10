@@ -3,6 +3,7 @@ using Engine.Visualization;
 using System;
 using Submarines.GeometryEditor;
 using Submarines.Items;
+using Submarines.Maps;
 using Submarines.Submarines;
 
 namespace Submarines
@@ -64,6 +65,8 @@ namespace Submarines
 			ItemSubmarine itemSubmarine = (ItemSubmarine)ItemsManager.GetItemBase("SubmarineDefault");
 			Submarine submarine = (Submarine)SubmarinesBuilder.Create(itemSubmarine);
 			ShipController shipController = new ShipController(submarine);
+			создать mapinfo и создать ViewMap на основе ViewShip 
+			MapsBuilder.CreateMap(mapInfo, submarine);
 
 			_mtg = new ModelGame(submarine, shipController);
 			_modelMainClient.AddModel(_mtg);

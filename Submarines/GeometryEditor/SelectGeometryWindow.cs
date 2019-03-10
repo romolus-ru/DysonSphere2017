@@ -27,7 +27,7 @@ namespace Submarines.GeometryEditor
 				var scrollItem = new SelectGeometryScrollItem(item);
 				ViewScroll.AddComponent(scrollItem);
 				scrollItem.OnSelect = SelectGeometry;
-				scrollItem.SetParams(1, 1, 980, 100, "ri" + i + " " + item.Name);
+				scrollItem.SetParams(1, 1, 980, 55, "ri" + i + " " + item.Name);
 				i++;
 			}
 		}

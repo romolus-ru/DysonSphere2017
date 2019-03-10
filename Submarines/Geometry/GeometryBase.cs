@@ -8,6 +8,6 @@ namespace Submarines.Geometry
 		public string Name { get; set; }
 		public Color Color { get; set; }
 		public GeometryType GeometryType { get;set; }
-		public List<LineInfo> Lines { get; set; } = null;
+		public List<LineInfo> Lines { get; set; } = new List<LineInfo>();
 	}
 }

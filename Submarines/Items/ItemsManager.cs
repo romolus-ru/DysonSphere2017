@@ -155,6 +155,12 @@ namespace Submarines.Items
 		}
 
 		// for editor
+		internal static void AddGeometry(GeometryBase newGeometry)
+		{
+			_geometries.Add(newGeometry.Name, newGeometry);
+		}
+
+		// for editor
 		internal static void SaveGeometries()
 		{
 			var geometries = GetAllGeometries();

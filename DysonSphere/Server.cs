@@ -56,7 +56,7 @@ namespace DysonSphere
 			// 3 создаётся объект для вывода на экран
 			var visualizationId = _datasupport.ServerSettingsGetValue("visualization");
 			_visualization = _collector.GetObject(visualizationId) as VisualizationProvider;
-			_visualization.InitVisualization(_datasupport, _logsystem, 800, 600, false);
+			_visualization.InitVisualization(_datasupport, _logsystem, 800, 600, true);
 
 			// 1 создаётся объект для работы с пользователями (мат модель работы с пользователями)
 			_model = new ModelMainServer(_collector);

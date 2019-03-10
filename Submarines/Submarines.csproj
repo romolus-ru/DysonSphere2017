@@ -51,6 +51,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Client.cs" />
+    <Compile Include="Editors\DataEditor.cs" />
+    <Compile Include="Editors\MemberBaseScrollView.cs" />
+    <Compile Include="Editors\MemberEnumScrollView.cs" />
+    <Compile Include="Editors\MemberScrollView.cs" />
     <Compile Include="GameConstants.cs" />
     <Compile Include="GeometryEditor\SelectGeometryScrollItem.cs" />
     <Compile Include="GeometryEditor\SelectGeometryWindow.cs" />
