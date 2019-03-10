@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace Submarines.Geometry
 {
@@ -7,6 +9,7 @@ namespace Submarines.Geometry
 	{
 		public string Name { get; set; }
 		public Color Color { get; set; }
+		[JsonConverter(typeof(StringEnumConverter))]
 		public GeometryType GeometryType { get;set; }
 		public List<LineInfo> Lines { get; set; } = new List<LineInfo>();
 	}
