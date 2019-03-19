@@ -62,16 +62,16 @@ namespace Submarines
 			_viewManager.RemoveView(_vMenu);
 			_vMenu = null;
 
-			ItemSubmarine itemSubmarine = (ItemSubmarine)ItemsManager.GetItemBase("SubmarineDefault");
-			Submarine submarine = (Submarine)SubmarinesBuilder.Create(itemSubmarine);
+			ItemSubmarine itemSubmarine = (ItemSubmarine) ItemsManager.GetItemBase("SubmarineDefault");
+			Submarine submarine = (Submarine) SubmarinesBuilder.Create(itemSubmarine);
 			ShipController shipController = new ShipController(submarine);
-			создать mapinfo и создать ViewMap на основе ViewShip 
-			MapsBuilder.CreateMap(mapInfo, submarine);
+			var mapInfo = ItemsManager.GetMap("Test");
+			var map = MapsBuilder.CreateMap(mapInfo, submarine);
 
-			_mtg = new ModelGame(submarine, shipController);
+			_mtg = new ModelGame(map);
 			_modelMainClient.AddModel(_mtg);
 			_vtg = new ViewGame();
-			_vtg.InitGame(_viewManager, submarine, shipController);
+			_vtg.InitGame(_viewManager, map, shipController);
 			_viewManager.AddView(_vtg);
 			_vtg.OnExitPressed += Close;
 

@@ -1,5 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using Submarines.Items.Loots;
 using Submarines.Utils;
 
@@ -22,10 +23,12 @@ namespace Submarines.Items
 		/// <summary>
 		/// Группа предмета (мета-тип, например корпус и оружие относятся к снаряжению подлодки)
 		/// </summary>
+		[JsonConverter(typeof(StringEnumConverter))]
 		public ItemGroup ItemGroup { get; protected set; }
 		/// <summary>
 		/// Тип предмета
 		/// </summary>
+		[JsonConverter(typeof(StringEnumConverter))]
 		public ItemType ItemType { get; protected set; }
 		/// <summary>
 		/// Нестандартный тип (NonTypical)

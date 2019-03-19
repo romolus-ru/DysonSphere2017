@@ -3,6 +3,7 @@ using Engine.Visualization;
 using System;
 using System.Drawing;
 using System.Windows.Forms;
+using Submarines.Maps;
 using Submarines.Submarines;
 
 namespace Submarines
@@ -16,13 +17,13 @@ namespace Submarines
 		private int _mapY = 300;
 		private int _curX;
 		private int _curY;
-		private Submarine _submarine;
+		private MapBase _map;
 		private ShipController _shipController;
 
-		internal void InitGame(ViewManager viewManager, Submarine submarine, ShipController shipController)
+		internal void InitGame(ViewManager viewManager, MapBase map, ShipController shipController)
 		{
 			_viewManager = viewManager;
-			_submarine = submarine;
+			_map = map;
 			_shipController = shipController;
 		}
 
@@ -39,9 +40,9 @@ namespace Submarines
 			var viewShipController = new ViewShipController(_shipController);
 			AddComponent(viewShipController);
 
-			var viewShip = new ViewShip();
-			AddComponent(viewShip);
-			viewShip.SetShip(_submarine);
+			var viewMap = new ViewMap();
+			AddComponent(viewMap);
+			viewMap.SetMap(_map);
 			visualizationProvider.LoadAtlas("Submarines_background");
 			visualizationProvider.LoadAtlas("Submarines01");
 			visualizationProvider.LoadAtlas("Submarines01map");

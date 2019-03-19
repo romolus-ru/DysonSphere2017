@@ -1,26 +1,24 @@
 ﻿using Engine.Models;
-using Submarines.Submarines;
 using System;
+using Submarines.Maps;
 
 namespace Submarines
 {
 	internal class ModelGame : Model
 	{
-		private Submarine _submarine;
-		private ShipController _shipController;
+		private MapBase _map;
 		private DateTime _currentTime;
 
-		public ModelGame(Submarine submarine, ShipController shipController)
+		public ModelGame(MapBase map)
 		{
-			_submarine = submarine;
-			_shipController = shipController;
-			_currentTime=DateTime.Now;// но лучше передавать это извне через тик
+			_map = map;
+			_currentTime = DateTime.Now; // но лучше передавать это извне через тик
 		}
 
 		public override void Tick()
 		{
 			var timeCoefficient = (DateTime.Now - _currentTime).Milliseconds / 100f;
-			_submarine.CalculateMovement(timeCoefficient);
+			_map.RunActivities(timeCoefficient);
 			_currentTime = DateTime.Now;
 		}
 

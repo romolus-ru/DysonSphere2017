@@ -10,13 +10,13 @@ namespace Submarines.Submarines
 	/// </summary>
 	internal class SubmarineBase : IEngineSupport, IManeuverSupport
 	{
-
+		public delegate SubmarineCollisionResult OnCheckCollisionDelegate(SubmarineBase submarine, Vector currentPosition, Vector newPosition);
 		public SubmarineType SubmarineType = SubmarineType.Unknown;
 
 		/// <summary>
 		/// Проверяем есть ли столкновение
 		/// </summary>
-		public Func<SubmarineBase, Vector, Vector, SubmarineCollisionResult> OnCheckCollision;
+		public OnCheckCollisionDelegate OnCheckCollision;
 
 		public float EnginePercent { get; protected set; }
 
@@ -92,7 +92,9 @@ namespace Submarines.Submarines
 			// меняем положение корабля
 			if (!VCurrent.IsZero()) {
 				Vector newPos = Position.MoveRelative(SpeedVector.X, SpeedVector.Y);
-				SubmarineCollisionResult collision = OnCheckCollision?.Invoke(this, Position, newPos);
+				SubmarineCollisionResult collision = new SubmarineCollisionResult();
+				if (OnCheckCollision != null)
+					collision = OnCheckCollision(this, Position, newPos);
 				MoveToNewPos(collision, newPos);
 			}
 		}

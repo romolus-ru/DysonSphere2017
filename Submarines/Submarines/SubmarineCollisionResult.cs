@@ -1,13 +1,14 @@
 ﻿namespace Submarines.Submarines
 {
 	/// <summary>
-	/// Результат столкновений корабля
+	/// Результат столкновений корабля.
+	/// лучше структура. или у каждого корабля хранить класс результатов столкновений
 	/// </summary>
-	internal class SubmarineCollisionResult
+	internal struct SubmarineCollisionResult
 	{
 		/// <summary>
-		/// Изменение вектора движения встредствии столкновений
+		/// Изменение вектора движения вследствии столкновений
 		/// </summary>
-		public float DeltaSteeringResult = 0;
+		public float DeltaSteeringResult;
 	}
 }

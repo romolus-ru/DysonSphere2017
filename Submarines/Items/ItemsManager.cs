@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
 using Engine.Helpers;
 using Engine.Utils;
@@ -26,12 +25,16 @@ namespace Submarines.Items
 		private const string GeometriesFile = DataSupportFileHelper.DataFileDirectory + GameConstants.DataDirectory +
 												  "/Geometries" + DataSupportFileHelper.DataFileExtension;
 
+		private const string MapsFile = DataSupportFileHelper.DataFileDirectory + GameConstants.DataDirectory +
+		                                      "/Maps" + DataSupportFileHelper.DataFileExtension;
+
 		private const string tstFile = DataSupportFileHelper.DataFileDirectory + GameConstants.DataDirectory +
 		                               "/tst" + DataSupportFileHelper.DataFileExtension;
 
 		private static Dictionary<string, ItemBase> _items = new Dictionary<string, ItemBase>();
 		private static Dictionary<string, ItemsCostContainer> _money = new Dictionary<string, ItemsCostContainer>();
 		private static Dictionary<string, GeometryBase> _geometries = new Dictionary<string, GeometryBase>();
+		private static Dictionary<string, ItemMap> _maps = new Dictionary<string, ItemMap>();
 
 		static ItemsManager()
 		{
@@ -58,16 +61,20 @@ namespace Submarines.Items
 			//var data1 = JsonConvert.SerializeObject(tst, Formatting.Indented);
 			//File.WriteAllText(tstFile, data1);
 
-			
 
-
-			//загрузка линий и добавление их в корпусу для вывода на экран
+			//загрузка линий и добавление их к корпусу для вывода на экран
 
 
 			var data = FileUtils.LoadStringFromFile(GeometriesFile);
 			var listGeometries = JsonConvert.DeserializeObject<List<GeometryBase>>(data);
 			foreach (var geometry in listGeometries) {
 				_geometries.Add(geometry.Name, geometry);
+			}
+
+			data = FileUtils.LoadStringFromFile(MapsFile);
+			var listMaps = JsonConvert.DeserializeObject<List<ItemMap>>(data);
+			foreach (var map in listMaps) {
+				_maps.Add(map.MapCode, map);
 			}
 
 			Dictionary<string, Dictionary<string, string>> objValues = new Dictionary<string, Dictionary<string, string>>();
@@ -142,6 +149,11 @@ namespace Submarines.Items
 		internal static GeometryBase GetGeometry(string geometryName)
 			=> _geometries.ContainsKey(geometryName)
 				? _geometries[geometryName]
+				: null;
+
+		internal static ItemMap GetMap(string mapName)
+			=> _maps.ContainsKey(mapName)
+				? _maps[mapName]
 				: null;
 
 		// for editor

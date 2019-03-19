@@ -13,6 +13,7 @@ namespace Submarines.Maps
 		public string Name { get; }
 		public string Description { get; }
 		public GeometryBase Geometry { get; }
+		private MapController _mapController;
 
 		/// <summary>
 		/// Все подлодки, включая игрока
@@ -25,6 +26,12 @@ namespace Submarines.Maps
 		{
 			Geometry = mapGeometry;
 			Submarines = submarines;
+			_mapController = new MapController(mapGeometry);
+			foreach (var submarineBase in submarines) {
+				var submarine = (Submarine) submarineBase;
+				if (submarine != null)
+					_mapController.AddSubmarine(submarine);
+			}
 		}
 		
 		public virtual void SetFocusOnShip(SubmarineBase focus)
@@ -32,6 +39,12 @@ namespace Submarines.Maps
 			FocusedShip = focus;
 		}
 
+		public void RunActivities(float timeCoefficient)
+		{
+			foreach (var submarine in Submarines) {
+				submarine.CalculateMovement(timeCoefficient);
+			}
+		}
 
 	}
 }
