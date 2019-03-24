@@ -71,7 +71,7 @@ namespace Submarines
 			=> new Vector(v1.X + v2.X, v1.Y + v2.Y, v1.Z + v2.Z);
 
 		public Vector MoveRelative(float x, float y, float z = 0)
-			=> new Vector(this.X + x, this.Y + y, this.Z + z);
+			=> new Vector(X + x, Y + y, Z + z);
 
 
 		private float Distance2To(Vector other)

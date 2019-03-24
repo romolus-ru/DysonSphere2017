@@ -14,6 +14,7 @@ namespace Engine.Visualization
 		{
 			X = x; Y = y;
 		}
+
 		public static ScreenPoint operator +(ScreenPoint a, ScreenPoint b)
 			=> new ScreenPoint { X = a.X + b.X, Y = a.Y + b.Y };
 
@@ -43,7 +44,18 @@ namespace Engine.Visualization
 
 		public override string ToString()
 		{
-			return string.Format("({0},{1})", X, Y);
+			return $"({X},{Y})";
 		}
+
+		public void MovePolar(float angle, float radius)
+		{
+			var radians = angle * (Math.PI / 180);
+			int x = (int) (radius * Math.Cos(radians));
+			int y = (int) (radius * Math.Sin(radians));
+
+			X += x;
+			Y += y;
+		}
+
 	}
 }

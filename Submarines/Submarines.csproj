@@ -50,6 +50,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AI\Commands\Command.cs" />
+    <Compile Include="AI\Commands\Move\MoveCommand.cs" />
+    <Compile Include="AI\Commands\Move\MoveCommandCreator.cs" />
     <Compile Include="Client.cs" />
     <Compile Include="Editors\DataEditor.cs" />
     <Compile Include="Editors\MemberBaseScrollView.cs" />
@@ -99,6 +102,7 @@
     <Compile Include="Submarines\SubmarinesBuilder.cs" />
     <Compile Include="Submarines\SubmarineType.cs" />
     <Compile Include="Utils\StringExtensions.cs" />
+    <Compile Include="Utils\VectorExtensions.cs" />
     <Compile Include="Vector.cs" />
     <Compile Include="ViewGame.cs" />
     <Compile Include="ViewMainMenu.cs" />

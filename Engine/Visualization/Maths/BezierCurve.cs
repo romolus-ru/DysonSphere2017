@@ -220,7 +220,6 @@ namespace Engine.Visualization.Maths
 		// Calculate Bernstein basis
 		private double Bernstein(int n, int i, double t)
 		{
-			double basis;
 			double ti; /* t^i */
 			double tni; /* (1 - t)^i */
 
@@ -237,27 +236,24 @@ namespace Engine.Visualization.Maths
 				tni = System.Math.Pow((1 - t), (n - i));
 
 			//Bernstein basis
-			basis = Ni(n, i) * ti * tni;
+			double basis = Ni(n, i) * ti * tni;
 			return basis;
 		}
 
 		public void Bezier2D(List<ScreenPoint> b, int cpts, List<ScreenPoint> p)
 		{
 			int npts = b.Count;
-			int icount, jcount;
-			double step, t;
 
 			// Calculate points on curve
-
-			icount = 0;
-			t = 0;
-			step = 1.0 / (cpts - 1);
+			
+			double t = 0;
+			var step = 1.0 / (cpts - 1);
 
 			for (int i1 = 0; i1 != cpts; i1++) {
 				if ((1.0 - t) < 5e-6)
 					t = 1.0;
 
-				jcount = 0;
+				var jcount = 0;
 				var x = 0.0;
 				var y = 0.0;
 				for (int i = 0; i != npts; i++) {
@@ -268,7 +264,6 @@ namespace Engine.Visualization.Maths
 				}
 
 				p.Add(new ScreenPoint((int)x, (int)y));
-				icount += 2;
 				t += step;
 			}
 		}

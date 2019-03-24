@@ -11,12 +11,20 @@ namespace Submarines.Submarines
 	internal class SubmarineBase : IEngineSupport, IManeuverSupport
 	{
 		public delegate SubmarineCollisionResult OnCheckCollisionDelegate(SubmarineBase submarine, Vector currentPosition, Vector newPosition);
+
+		public delegate float OnCorrectionMovementLengthDelegate(float currentLength);
+
 		public SubmarineType SubmarineType = SubmarineType.Unknown;
 
 		/// <summary>
 		/// Проверяем есть ли столкновение
 		/// </summary>
 		public OnCheckCollisionDelegate OnCheckCollision;
+
+		/// <summary>
+		/// Корректируем длину движения - нужно что бы корабль двигался по траектории
+		/// </summary>
+		public OnCorrectionMovementLengthDelegate OnCorrectionMovementLength;
 
 		public float EnginePercent { get; protected set; }
 
@@ -50,7 +58,7 @@ namespace Submarines.Submarines
 
 		public GeometryBase Geometry { get; private set; }
 
-		private int _currentRotatedAngle = 0;
+		private int _currentRotatedAngle;
 
 		public List<LineInfo> GeometryRotatedLines { get; private set; }
 
@@ -83,8 +91,11 @@ namespace Submarines.Submarines
 				var radians = CurrentAngle * (Math.PI / 180);
 				float cosRad = (float) Math.Cos(radians);
 				float sinRad = (float) Math.Sin(radians);
-				float x = VCurrent * timeCoefficient * cosRad;
-				float y = VCurrent * timeCoefficient * sinRad;
+				var length = VCurrent * timeCoefficient;
+				if (OnCorrectionMovementLength != null)
+					length = OnCorrectionMovementLength(length);
+				float x = length * cosRad;
+				float y = length * sinRad;
 				SpeedVector = new Vector(x, y, 0);
 				VCurrentPrev = VCurrent;
 			}
@@ -151,6 +162,14 @@ namespace Submarines.Submarines
 				var point = new LineInfo(p1, p2);
 				GeometryRotatedLines[i] = point;
 			}
+		}
+
+		/// <summary>
+		/// Расстояние движения по прямой во время которого подлодка изменит скорость до заданной
+		/// </summary>
+		public virtual float GetDistanceToChangeSpeed(float fromSpeed, float toSpeed)
+		{
+			return 0;// по умолчанию скорость разгона подлодки мгновенная
 		}
 	}
 }
