@@ -1,6 +1,9 @@
 ﻿using Engine.Visualization;
 using Submarines.Submarines;
 using System.Drawing;
+using System.Windows.Forms;
+using Engine;
+using Submarines.AI.Commands.Move;
 using Submarines.Maps;
 
 namespace Submarines
@@ -9,12 +12,43 @@ namespace Submarines
 	{
 		private Submarine _submarine;
 		private MapBase _map;
+		private MoveCommand _moveCommand;
+		private int _startX;
+		private int _startY;
+		private int _endX;
+		private int _endY;
 
 		internal void SetMap(MapBase map)
 		{
 			_map = map;
 			_submarine = (Submarine)_map.FocusedShip;
 		}
+
+		protected override void InitObject(VisualizationProvider visualizationProvider, Input input)
+		{
+			base.InitObject(visualizationProvider, input);
+			input.AddKeyAction(StartClick, Keys.LButton);
+			input.AddKeyAction(EndClick, Keys.LButton);
+		}
+
+		private void StartClick()
+		{
+			_startX = Input.CursorX;
+			_startY = Input.CursorY;
+		}
+
+		private void EndClick()
+		{
+			_endX = Input.CursorX;
+			_endY = Input.CursorY;
+			//преобразовать надо. это явно не те координаты которые нужны
+			_moveCommand = MoveCommandCreator.Create(null, _submarine, 100, 
+				new Vector(
+					_startX + _submarine.Position.X-700, 
+					_startY + _submarine.Position.Y-500,
+					0));
+		}
+
 
 		public override void DrawObject(VisualizationProvider visualizationProvider)
 		{
@@ -44,6 +78,22 @@ namespace Submarines
 			visualizationProvider.SetColor(_map.Geometry.Color);
 			foreach (var line in _map.Geometry.Lines) {
 				DrawLine(visualizationProvider, line.From, line.To);
+			}
+
+			if (_moveCommand?.BezierPoints != null) {
+				var count = _moveCommand.BezierPoints.Count;
+				for (int i = 1; i < count; i++) {
+					var p1 = _moveCommand.BezierPoints[i-1];
+					var p2 = _moveCommand.BezierPoints[i];
+					visualizationProvider.Line(p1.X, p1.Y, p2.X, p2.Y);
+				}
+
+				var count2 = _moveCommand.BasePoints.Count;
+				for (int i = 1; i < count2; i++) {
+					var p1 = _moveCommand.BasePoints[i - 1];
+					var p2 = _moveCommand.BasePoints[i];
+					visualizationProvider.Line(p1.X, p1.Y, p2.X, p2.Y);
+				}
 			}
 
 			visualizationProvider.OffsetRemove();

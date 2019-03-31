@@ -35,17 +35,20 @@ namespace Submarines.AI.Commands.Move
 
 			// формируем 4 точки - начальная конечная и вспомогательные для них
 			basePoints.Add(submarine.Position.ToScreenPoint());
-			basePoints.Add(CreatePoint(submarine.Position, submarine.CurrentAngle, 50));
-			basePoints.Add(CreatePoint(targetPos, targetAngle, -50));
-			basePoints.Add(submarine.Position.ToScreenPoint());
+			basePoints.Add(CreatePoint(submarine.Position, submarine.CurrentAngle, 250));
+			basePoints.Add(CreatePoint(targetPos, targetAngle, -250));
+			basePoints.Add(targetPos.ToScreenPoint());
 
 			// по ним строим кривую безье
 			var bc = new BezierCurve();
-			var pathLength = 180*2;угол поворота разделенный на минимальный угол поворота
+			var pathLength = (int) (submarine.ManeuverDevice.MaxSteeringPerSecond * 180);
 			var bezierPoints = new List<ScreenPoint>();
 			bc.Bezier2D(basePoints, pathLength, bezierPoints);
+			result.BasePoints = basePoints;
+			result.BezierPoints = bezierPoints;
 
-			// по этим точкам определяем углы поворота и расстояние которое надо пройти
+			// по этим точкам определяем углы поворота, скорость и расстояние которые надо пройти
+			// отдельный метод, в котором проходим по точкам и вычисляем угол поворота и расстояние
 			// создаём массив и вычисляем углы поворота (не превышающие максимального угла для текущего устройства)
 			// если углы поворота не позволят переместиться в нужную точку то маркируем команду как возможно сбойную
 

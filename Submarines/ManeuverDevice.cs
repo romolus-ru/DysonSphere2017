@@ -8,7 +8,7 @@
 		/// <summary>
 		/// Максимальный угол поворота в секунду
 		/// </summary>
-		protected float MaxSteeringPerSecond { get; }
+		public float MaxSteeringPerSecond { get; }
 		
 		/// <summary>
 		/// Предельное значение задаваемого угла поворота (инерция поворота)

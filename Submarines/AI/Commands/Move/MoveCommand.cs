@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using Engine.Visualization;
 
 namespace Submarines.AI.Commands.Move
 {
@@ -7,6 +9,8 @@ namespace Submarines.AI.Commands.Move
 	/// </summary>
 	internal class MoveCommand : Command
 	{
+		public List<ScreenPoint> BasePoints;
+		public List<ScreenPoint> BezierPoints;
 		public MoveCommand(Action onEndCommand = null) 
 			: base(onEndCommand)
 		{
