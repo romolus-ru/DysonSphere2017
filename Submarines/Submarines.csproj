@@ -85,6 +85,7 @@
     <Compile Include="Maps\MapBase.cs" />
     <Compile Include="Maps\MapController.cs" />
     <Compile Include="Maps\MapsBuilder.cs" />
+    <Compile Include="Maps\MapZoomController.cs" />
     <Compile Include="Submarines\Engine.cs" />
     <Compile Include="IEngineSupport.cs" />
     <Compile Include="IManeuverSupport.cs" />

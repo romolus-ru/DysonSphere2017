@@ -4,7 +4,8 @@ namespace Engine.Visualization
 {
 	public class ScreenPoint
 	{
-		// TODO попробовать заменить Vetex из triangulation на ScreenPoint. пока проблема в том что там плавающие переменные, погрешности большие могут быть
+		// TODO попробовать заменить Vertex из triangulation на ScreenPoint. пока проблема в том что там плавающие переменные, погрешности большие могут быть
+		// или возможно заменить ScreenPoint и vertex на Vector (от microsoft)
 		public int X;
 		public int Y;
 
@@ -55,6 +56,19 @@ namespace Engine.Visualization
 
 			X += x;
 			Y += y;
+		}
+
+		/// <summary>
+		/// Угол по отношению к другому вектору в градусах
+		/// </summary>
+		/// <param name="vector2"></param>
+		/// <returns></returns>
+		public double AngleWith(ScreenPoint vector2)
+		{
+			double sin = this.X * vector2.Y - vector2.X * this.Y;
+			double cos = this.X * vector2.X + this.Y * vector2.Y;
+
+			return Math.Atan2(sin, cos) * (180 / Math.PI);
 		}
 
 	}
