@@ -53,6 +53,7 @@
     <Compile Include="AI\Commands\Command.cs" />
     <Compile Include="AI\Commands\Move\MoveCommand.cs" />
     <Compile Include="AI\Commands\Move\MoveCommandCreator.cs" />
+    <Compile Include="AI\Commands\Move\MoveCommandSegment.cs" />
     <Compile Include="Client.cs" />
     <Compile Include="Editors\DataEditor.cs" />
     <Compile Include="Editors\MemberBaseScrollView.cs" />

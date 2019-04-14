@@ -4,6 +4,7 @@ using Engine.Visualization;
 using Submarines.Submarines;
 using Submarines.Utils;
 using Engine.Visualization.Maths;
+using Engine;
 
 namespace Submarines.AI.Commands.Move
 {
@@ -21,7 +22,7 @@ namespace Submarines.AI.Commands.Move
 		/// <param name="targetPos">Координаты которых надо достичь</param>
 		/// <param name="cruisingSpeedPercent">Крейсерская скорость в процентах</param>
 		/// <returns></returns>
-		public static MoveCommand Create(Action onEndCommand, SubmarineBase submarine, float targetAngle, Vector targetPos, float cruisingSpeedPercent=100)
+		public static MoveCommand Create(Action onEndCommand, SubmarineBase submarine, float targetAngle, Vector targetPos, float cruisingSpeedPercent = 100)
 		{
 			MoveCommand result = new MoveCommand(onEndCommand);
 			var basePoints = new List<ScreenPoint>();
@@ -56,7 +57,7 @@ namespace Submarines.AI.Commands.Move
 			result.BezierPoints = bezierPoints;
 
 			// по этим точкам определяем углы поворота, скорость и расстояние которые надо пройти
-			вычисляем параметры
+			result.Segments = CreateSegments(bezierPoints, submarine.CurrentAngle, submarine.VCurrent);
 			// отдельный метод, в котором проходим по точкам и вычисляем угол поворота и расстояние
 			// создаём массив и вычисляем углы поворота (не превышающие максимального угла для текущего устройства)
 			// если углы поворота не позволят переместиться в нужную точку то маркируем команду как возможно сбойную
@@ -72,5 +73,23 @@ namespace Submarines.AI.Commands.Move
 			return ret;
 		}
 
+		private static List<MoveCommandSegment> CreateSegments(List<ScreenPoint> bezierPoints, float startAngle, float startSpeed)
+		{
+			List<MoveCommandSegment> ret = new List<MoveCommandSegment>();
+			List<MoveCommandSegment> tmp = new List<MoveCommandSegment>();
+			// формируем основной список
+			for (int i = 0; i < bezierPoints.Count - 1; i++) {
+				var p1 = bezierPoints[i];
+				var p2 = bezierPoints[i + 1];
+				float dist = p1.distanceTo(p2);
+				float angle = (float) p1.AngleWith(p2);
+				tmp.Add(new MoveCommandSegment() {Distance = dist, Angle = angle, Speed = 0});
+			}
+			// корректируем список, объединяя или растягивая расстояния что бы действие происходило в 1 такт
+			тут
+
+			return ret;
+
+		}
 	}
 }

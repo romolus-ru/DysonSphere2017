@@ -11,6 +11,7 @@ namespace Submarines.AI.Commands.Move
 	{
 		public List<ScreenPoint> BasePoints;
 		public List<ScreenPoint> BezierPoints;
+		public List<MoveCommandSegment> Segments;
 		public MoveCommand(Action onEndCommand = null) 
 			: base(onEndCommand)
 		{
