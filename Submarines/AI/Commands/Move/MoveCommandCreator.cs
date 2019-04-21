@@ -77,6 +77,27 @@ namespace Submarines.AI.Commands.Move
 		{
 			List<MoveCommandSegment> ret = new List<MoveCommandSegment>();
 			List<MoveCommandSegment> tmp = new List<MoveCommandSegment>();
+
+			var spd = startSpeed;
+			var cur = 0;
+			var prev = -1;
+			do {
+				cur++;
+				prev = cur - 1;
+				var segment=new MoveCommandSegment();
+				var p1 = bezierPoints[prev]; возможно надо поменять точки местами. первая точка должна быть текущая
+					или написать цикл который будет перебиать точки вперед пока не найдётся нужная длина
+				var p2 = bezierPoints[cur];
+				float dist = p1.distanceTo(p2);
+				float angle = (float)p1.AngleWith(p2);
+				if (dist / spd > Constants.TimerInterval) {
+					вычисляем угол и расстояние между текущей и следующей следующей точкой
+				}
+
+
+			} while (cur < bezierPoints.Count);
+
+
 			// формируем основной список
 			for (int i = 0; i < bezierPoints.Count - 1; i++) {
 				var p1 = bezierPoints[i];
@@ -86,7 +107,12 @@ namespace Submarines.AI.Commands.Move
 				tmp.Add(new MoveCommandSegment() {Distance = dist, Angle = angle, Speed = 0});
 			}
 			// корректируем список, объединяя или растягивая расстояния что бы действие происходило в 1 такт
-			тут
+			//смотрим какое расстояние от текущей точки до точки с которой работает
+			//	усмтанавливаем растояние которое надо пройти в зависимости от растояния между точек и текущей скоростью
+			//	если угол поворота слишком резкий - уменьшаем скоростью и ищем ближайшую точку из впередистоящих
+
+			var currentSpeed = startSpeed;
+
 
 			return ret;
 
