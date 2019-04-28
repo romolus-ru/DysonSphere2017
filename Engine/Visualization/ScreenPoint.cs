@@ -71,5 +71,9 @@ namespace Engine.Visualization
 			return Math.Atan2(sin, cos) * (180 / Math.PI);
 		}
 
+		public ScreenPoint Clone()
+		{
+			return new ScreenPoint(this.X, this.Y);
+		}
 	}
 }

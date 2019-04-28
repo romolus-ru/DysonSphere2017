@@ -86,6 +86,29 @@ namespace Submarines
 			return (float)Math.Sqrt(Distance2To(other));
 		}
 
+		public Vector MovePolar(float angle, float radius)
+		{
+			var radians = angle * (Math.PI / 180);
+			float x = (int)(radius * Math.Cos(radians));
+			float y = (int)(radius * Math.Sin(radians));
+
+			X += x;
+			Y += y;
+			return new Vector(X, Y, 0);
+		}
+
+		/// <summary>
+		/// Угол по отношению к другому вектору в градусах
+		/// </summary>
+		/// <param name="vector2"></param>
+		/// <returns></returns>
+		public double AngleWith(Vector vector2)
+		{
+			double sin = this.X * vector2.Y - vector2.X * this.Y;
+			double cos = this.X * vector2.X + this.Y * vector2.Y;
+
+			return Math.Atan2(sin, cos) * (180 / Math.PI);
+		}
 
 	}
 }

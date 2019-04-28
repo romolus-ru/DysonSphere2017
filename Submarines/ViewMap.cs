@@ -27,28 +27,19 @@ namespace Submarines
 		protected override void InitObject(VisualizationProvider visualizationProvider, Input input)
 		{
 			base.InitObject(visualizationProvider, input);
-			input.AddKeyAction(StartClick, Keys.LButton);
-			input.AddKeyAction(EndClick, Keys.LButton);
-		}
-
-		private void StartClick()
-		{
-			_startX = Input.CursorX;
-			_startY = Input.CursorY;
+			input.AddKeyActionSticked(EndClick, Keys.LButton);
 		}
 
 		private void EndClick()
 		{
-			_endX = Input.CursorX;
-			_endY = Input.CursorY;
-			//преобразовать надо. это явно не те координаты которые нужны
-			_moveCommand = MoveCommandCreator.Create(null, _submarine, 100, 
+			_startX = Input.CursorX;
+			_startY = Input.CursorY;
+			_moveCommand = MoveCommandCreator.Create(null, _submarine, 100,
 				new Vector(
-					_startX + _submarine.Position.X-700, 
-					_startY + _submarine.Position.Y-500,
+					_startX + _submarine.Position.X - 700,
+					_startY + _submarine.Position.Y - 500,
 					0));
 		}
-
 
 		public override void DrawObject(VisualizationProvider visualizationProvider)
 		{
@@ -94,6 +85,16 @@ namespace Submarines
 					var p2 = _moveCommand.BasePoints[i];
 					visualizationProvider.Line(p1.X, p1.Y, p2.X, p2.Y);
 				}
+
+				visualizationProvider.SetColor(Color.Gold);
+				var count3 = _moveCommand.Simplified.Count;
+				for (int i = 1; i < count3; i++) {
+					var p1 = _moveCommand.Simplified[i - 1];
+					var p2 = _moveCommand.Simplified[i];
+					visualizationProvider.Line((int) p1.X, (int) p1.Y, (int) p2.X, (int) p2.Y);
+				}
+
+
 			}
 
 			visualizationProvider.OffsetRemove();
