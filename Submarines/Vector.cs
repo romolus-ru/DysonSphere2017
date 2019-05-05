@@ -89,8 +89,8 @@ namespace Submarines
 		public Vector MovePolar(float angle, float radius)
 		{
 			var radians = angle * (Math.PI / 180);
-			float x = (int)(radius * Math.Cos(radians));
-			float y = (int)(radius * Math.Sin(radians));
+			float x = (float)(radius * Math.Cos(radians));
+			float y = (float)(radius * Math.Sin(radians));
 
 			X += x;
 			Y += y;
@@ -104,11 +104,17 @@ namespace Submarines
 		/// <returns></returns>
 		public double AngleWith(Vector vector2)
 		{
-			double sin = this.X * vector2.Y - vector2.X * this.Y;
-			double cos = this.X * vector2.X + this.Y * vector2.Y;
-
-			return Math.Atan2(sin, cos) * (180 / Math.PI);
+			//double sin = this.X * vector2.Y - vector2.X * this.Y;
+			//double cos = this.X * vector2.X + this.Y * vector2.Y;
+			//return Math.Atan2(sin, cos) * (180 / Math.PI);
+			var a = vector2.Y - this.Y;
+			var b = vector2.X - this.X;
+			return Math.Atan2(a, b) * (180 / Math.PI);
 		}
 
+		public override string ToString()
+		{
+			return $"({X,6:F1},{Y,6:F1} )";
+		}
 	}
 }

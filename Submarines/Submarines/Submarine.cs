@@ -25,6 +25,12 @@ namespace Submarines.Submarines
 			AddSpeed(5);
 		}
 
+		public void SetSpeed(float value)
+		{
+			тут. не двигается, хотя корабль команды получает
+			AddSpeed(value - EnginePercent);
+		}
+
 		public void AddSpeed(float delta)
 		{
 			EnginePercent += delta;

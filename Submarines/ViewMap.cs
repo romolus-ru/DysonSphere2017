@@ -72,6 +72,14 @@ namespace Submarines
 			}
 
 			if (_moveCommand?.BezierPoints != null) {
+				_moveCommand.Execute();
+				var segment = _moveCommand.GetCommand();
+				if (segment != null) {
+					_submarine.SetSpeed(segment.Speed);
+					_submarine.AddSteering(-segment.Angle);
+				}
+
+				visualizationProvider.SetColor(Color.LawnGreen);
 				var count = _moveCommand.BezierPoints.Count;
 				for (int i = 1; i < count; i++) {
 					var p1 = _moveCommand.BezierPoints[i-1];
@@ -79,6 +87,7 @@ namespace Submarines
 					visualizationProvider.Line(p1.X, p1.Y, p2.X, p2.Y);
 				}
 
+				visualizationProvider.SetColor(Color.CornflowerBlue);
 				var count2 = _moveCommand.BasePoints.Count;
 				for (int i = 1; i < count2; i++) {
 					var p1 = _moveCommand.BasePoints[i - 1];
