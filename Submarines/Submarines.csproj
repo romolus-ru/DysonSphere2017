@@ -76,6 +76,7 @@
     <Compile Include="Items\ItemsManager.cs" />
     <Compile Include="Items\ItemSpawnGroup.cs" />
     <Compile Include="Items\ItemSubmarine.cs" />
+    <Compile Include="Items\ItemWeapon.cs" />
     <Compile Include="Items\Loots\ItemLootHolder.cs" />
     <Compile Include="Items\ItemRarity.cs" />
     <Compile Include="Items\Loots\ItemsLootContainer.cs" />
@@ -111,6 +112,7 @@
     <Compile Include="ViewMap.cs" />
     <Compile Include="ViewShip.cs" />
     <Compile Include="ViewShipController.cs" />
+    <Compile Include="Weapon.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

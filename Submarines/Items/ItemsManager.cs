@@ -112,6 +112,7 @@ namespace Submarines.Items
 				case ItemType.Hull: return new ItemHull();
 				case ItemType.ManeuverDevice: return new ItemManeuverDevice();
 				case ItemType.Submarine: return new ItemSubmarine();
+				case ItemType.Weapon: return new ItemWeapon();
 			}
 
 			throw new Exception("нету нужного типа " + itemType);

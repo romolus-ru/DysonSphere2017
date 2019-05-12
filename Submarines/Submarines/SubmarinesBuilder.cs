@@ -1,4 +1,5 @@
-﻿using Submarines.Items;
+﻿using System.Windows.Forms;
+using Submarines.Items;
 
 namespace Submarines.Submarines
 {
@@ -7,9 +8,23 @@ namespace Submarines.Submarines
 	/// </summary>
 	internal static class SubmarinesBuilder
 	{
-		private static SubmarineBase CreateHull(ItemHull info, Engine engine, ManeuverDevice maneuverDevice)
+		private static SubmarineBase CreateHull(ItemHull info, Engine engine, ManeuverDevice maneuverDevice, Weapon weapon)
 		{
-			return new Submarine(info.Geometry, engine, maneuverDevice);
+			return new Submarine(info.Geometry, engine, maneuverDevice, weapon);
+		}
+
+		/// <summary>
+		/// Создать оружие с заданными характеристиками
+		/// </summary>
+		/// <returns></returns>
+		private static Weapon CreateWeapon(ItemWeapon info)
+		{
+			Weapon weapon = new Weapon(
+						info.LoadWeaponTime,
+						info.AmmunitionType
+					);
+
+			return weapon;
 		}
 
 		/// <summary>
@@ -55,7 +70,8 @@ namespace Submarines.Submarines
 		{
 			var md = CreateManeuverDevice(itemSubmarine.ManeuverDevice);
 			var en = CreateEngine(itemSubmarine.Engine);
-			var sub = CreateHull(itemSubmarine.Hull, en, md);
+			var wp = CreateWeapon(itemSubmarine.Weapon);
+			var sub = CreateHull(itemSubmarine.Hull, en, md, wp);
 
 			return sub;
 		}

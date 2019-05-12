@@ -40,6 +40,12 @@ namespace Submarines.Utils
 				: defaultValue;
 		}
 
+		public static TimeSpan ToTimeSpan(this string value, int milliseconds=5000)
+		{
+			var ms = ToInt(value, milliseconds);
+			return new TimeSpan(0, 0, 0, 0, ms);
+		}
+
 		public static string GetString(this Dictionary<string, string> values, string keyName)
 		{
 			return values.ContainsKey(keyName)

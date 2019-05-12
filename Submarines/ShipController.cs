@@ -28,6 +28,15 @@ namespace Submarines
 		{
 			_submarine.AddSteering(delta);
 		}
-		
+
+		/// <summary>
+		/// Игрок стреляет по координатам (возможно добавятся группы выбранных орудий) (стрельба по готовности - команда ожидает пока оружие зарядится)
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		public void Fire(float x, float y)
+		{
+			_submarine.ShootToCoordinates(x, y);
+		}
 	}
 }

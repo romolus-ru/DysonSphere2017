@@ -16,7 +16,8 @@ namespace Submarines.Submarines
 
 		private DateTime _currentTime;
 
-		public Submarine(GeometryBase geometry, Engine engine, ManeuverDevice maneuverDevice) : base(geometry, engine, maneuverDevice)
+		public Submarine(GeometryBase geometry, Engine engine, ManeuverDevice maneuverDevice, Weapon weapon) 
+			: base(geometry, engine, maneuverDevice, weapon)
 		{
 			EnginePercentMax = 150;
 			EnginePercentMin = -50;
@@ -27,7 +28,6 @@ namespace Submarines.Submarines
 
 		public void SetSpeed(float value)
 		{
-			тут. не двигается, хотя корабль команды получает
 			AddSpeed(value - EnginePercent);
 		}
 
@@ -38,6 +38,16 @@ namespace Submarines.Submarines
 				EnginePercent = EnginePercentMax;
 			if (EnginePercent < EnginePercentMin)
 				EnginePercent = EnginePercentMin;
+		}
+
+		/// <summary>
+		/// Выстрел по координатам
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		internal void ShootToCoordinates(float x, float y)
+		{
+			Weapon?.StartShootToCoordinates(x,y);
 		}
 
 		public void StopEngine() => AddSpeed(-EnginePercent);

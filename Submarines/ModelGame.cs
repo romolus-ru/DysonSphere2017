@@ -17,8 +17,9 @@ namespace Submarines
 
 		public override void Tick()
 		{
-			var timeCoefficient = (DateTime.Now - _currentTime).Milliseconds / 100f;
-			_map.RunActivities(timeCoefficient);
+			var elapsedTime = DateTime.Now - _currentTime;
+			var timeCoefficient = (elapsedTime).Milliseconds / 100f;
+			_map.RunActivities(timeCoefficient, elapsedTime);
 			_currentTime = DateTime.Now;
 		}
 

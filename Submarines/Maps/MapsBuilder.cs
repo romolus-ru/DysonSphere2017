@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Submarines.Items;
 using Submarines.Submarines;
 
@@ -23,7 +22,7 @@ namespace Submarines.Maps
 
 			var geometry = ItemsManager.GetGeometry(mapInfo.MapGeometryName);
 			var map = new MapBase(geometry, submarines);
-			map.SetFocusOnShip(playerSubmarine);
+			map.SetPlayerShip(playerSubmarine);
 			return map;
 		}
 	}

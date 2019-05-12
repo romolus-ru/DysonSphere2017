@@ -10,6 +10,10 @@ namespace Submarines
 {
 	internal class ViewMap : ViewComponent
 	{
+		public delegate void PlayerFireDelegate(float x, float y);
+
+		public PlayerFireDelegate PlayerFire;
+
 		private Submarine _submarine;
 		private MapBase _map;
 		private MoveCommand _moveCommand;
@@ -21,7 +25,7 @@ namespace Submarines
 		internal void SetMap(MapBase map)
 		{
 			_map = map;
-			_submarine = (Submarine)_map.FocusedShip;
+			_submarine = (Submarine)_map.PlayerShip;
 		}
 
 		protected override void InitObject(VisualizationProvider visualizationProvider, Input input)
@@ -39,6 +43,9 @@ namespace Submarines
 					_startX + _submarine.Position.X - 700,
 					_startY + _submarine.Position.Y - 500,
 					0));
+			PlayerFire?.Invoke(
+				_startX + _submarine.Position.X - 700,
+				_startY + _submarine.Position.Y - 500);
 		}
 
 		public override void DrawObject(VisualizationProvider visualizationProvider)

@@ -8,5 +8,6 @@
 		Unknown,
 		Engine,
 		Hull,
+		Weapon,
 	}
 }

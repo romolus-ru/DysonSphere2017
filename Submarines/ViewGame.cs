@@ -4,7 +4,6 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 using Submarines.Maps;
-using Submarines.Submarines;
 
 namespace Submarines
 {
@@ -43,6 +42,7 @@ namespace Submarines
 			var viewMap = new ViewMap();
 			AddComponent(viewMap);
 			viewMap.SetMap(_map);
+			viewMap.PlayerFire = _shipController.Fire;
 			visualizationProvider.LoadAtlas("Submarines_background");
 			visualizationProvider.LoadAtlas("Submarines01");
 			visualizationProvider.LoadAtlas("Submarines01map");

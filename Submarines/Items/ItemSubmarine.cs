@@ -11,6 +11,7 @@ namespace Submarines.Items
 
 		public ItemHull Hull { get; private set; }
 		public ItemEngine Engine { get; private set; }
+		public ItemWeapon Weapon { get; private set; }
 		public ItemManeuverDevice ManeuverDevice { get; private set; }
 
 		internal override void Init(Dictionary<string, string> values)
@@ -20,6 +21,8 @@ namespace Submarines.Items
 			Hull = (ItemHull) ItemsManager.GetItemBase(hullName);
 			var engineName = values.GetString("Engine");
 			Engine = (ItemEngine) ItemsManager.GetItemBase(engineName);
+			var weaponName = values.GetString("Weapon");
+			Weapon = (ItemWeapon)ItemsManager.GetItemBase(weaponName);
 			var maneuverDeviceName = values.GetString("ManeuverDevice");
 			ManeuverDevice = (ItemManeuverDevice) ItemsManager.GetItemBase(maneuverDeviceName);
 		}

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Submarines.Geometry;
 using Submarines.Submarines;
 
@@ -20,7 +21,10 @@ namespace Submarines.Maps
 		/// </summary>
 		public List<SubmarineBase> Submarines { get; }
 
-		public SubmarineBase FocusedShip { get; protected set; }
+		/// <summary>
+		/// Корабль, управляемый игроком в данный момент
+		/// </summary>
+		public SubmarineBase PlayerShip { get; protected set; }
 
 		public MapBase(GeometryBase mapGeometry, List<SubmarineBase> submarines)
 		{
@@ -34,14 +38,21 @@ namespace Submarines.Maps
 			}
 		}
 		
-		public virtual void SetFocusOnShip(SubmarineBase focus)
+		/// <summary>
+		/// Установить корабль, управляемый игроком
+		/// </summary>
+		/// <param name="playerShip"></param>
+		public virtual void SetPlayerShip(SubmarineBase playerShip)
 		{
-			FocusedShip = focus;
+			PlayerShip = playerShip;
+			if (!Submarines.Contains(playerShip))
+				Submarines.Add(playerShip);
 		}
 
-		public void RunActivities(float timeCoefficient)
+		public void RunActivities(float timeCoefficient, TimeSpan elapsedTime)
 		{
 			foreach (var submarine in Submarines) {
+				submarine.Shoot(elapsedTime);
 				submarine.CalculateMovement(timeCoefficient);
 			}
 		}

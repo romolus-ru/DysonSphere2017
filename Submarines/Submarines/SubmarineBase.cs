@@ -36,7 +36,7 @@ namespace Submarines.Submarines
 		protected float VCurrentPrev { get; set; }
 
 		/// <summary>
-		/// Направление вектора скорости (что бы лодку могло заносить немного)
+		/// Направление вектора скорости
 		/// </summary>
 		public Vector SpeedVector { get; protected set; }
 
@@ -48,7 +48,7 @@ namespace Submarines.Submarines
 		public float CurrentAngle { get; protected set; } = -90;
 
 		/// <summary>
-		/// Позиция корабля относительно текущего центра квадранта
+		/// Позиция корабля
 		/// </summary>
 		public Vector Position { get; protected set; }
 
@@ -56,21 +56,37 @@ namespace Submarines.Submarines
 
 		public ManeuverDevice ManeuverDevice { get; private set; }
 
+		public Weapon Weapon { get; private set; }
+
 		public GeometryBase Geometry { get; private set; }
 
 		private int _currentRotatedAngle;
 
 		public List<LineInfo> GeometryRotatedLines { get; private set; }
 
-		public SubmarineBase(GeometryBase geometry, Engine engine, ManeuverDevice maneuverDevice)
+		public SubmarineBase(GeometryBase geometry, Engine engine, ManeuverDevice maneuverDevice, Weapon weapon)
 		{
 			Geometry = geometry;
 			Engine = engine;
 			ManeuverDevice = maneuverDevice;
+			Weapon = weapon;
 			VCurrentPrev = 0;
 
 			GeometryRotatedLines = new List<LineInfo>(geometry.Lines);
 			RecalculateGeometry();
+			Weapon.OnShootToCoordinates = ShootToCoordinates;
+		}
+
+		private void ShootToCoordinates(Weapon weapon, float shootX, float shootY)
+		{
+			// убедиться что для выстрела есть ресурсы и убрать их (израсходовать)
+			// в mapcontroller передать информацию о выстреле
+			тут. передать в mapcontroller информацию и создать ракету
+		}
+
+		internal void Shoot(TimeSpan elapsedTime)
+		{
+			Weapon?.Shoot(elapsedTime);
 		}
 
 		/// <summary>
