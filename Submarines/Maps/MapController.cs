@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Submarines.Geometry;
 using Submarines.Submarines;
 
@@ -50,9 +49,21 @@ namespace Submarines.Maps
 		/// <returns></returns>
 		private SubmarineCollisionResult SubmarineCheckCollision(SubmarineBase submarine, Vector currentPosition, Vector newPosition)
 		{
-
-			тут
-			throw new NotImplementedException();
+			return new SubmarineCollisionResult();
+			//throw new NotImplementedException();
 		}
+
+		/// <summary>
+		/// Определяем столкновение и возвращаем результат
+		/// </summary>
+		/// <param name="submarine"></param>
+		/// <param name="currentPosition"></param>
+		/// <param name="newPosition"></param>
+		/// <returns></returns>
+		private SubmarineCollisionResult ShootCheckCollision(SubmarineBase submarine, Vector currentPosition, Vector newPosition)
+		{
+			return new SubmarineCollisionResult();
+		}
+
 	}
 }

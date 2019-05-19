@@ -74,19 +74,11 @@ namespace Submarines.Submarines
 
 			GeometryRotatedLines = new List<LineInfo>(geometry.Lines);
 			RecalculateGeometry();
-			Weapon.OnShootToCoordinates = ShootToCoordinates;
 		}
 
-		private void ShootToCoordinates(Weapon weapon, float shootX, float shootY)
+		internal void ChangeShootLock(TimeSpan elapsedTime)
 		{
-			// убедиться что для выстрела есть ресурсы и убрать их (израсходовать)
-			// в mapcontroller передать информацию о выстреле
-			тут. передать в mapcontroller информацию и создать ракету
-		}
-
-		internal void Shoot(TimeSpan elapsedTime)
-		{
-			Weapon?.Shoot(elapsedTime);
+			Weapon?.ChangeShootLock(elapsedTime);
 		}
 
 		/// <summary>

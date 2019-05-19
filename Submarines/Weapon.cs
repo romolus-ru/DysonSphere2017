@@ -7,41 +7,34 @@ namespace Submarines
 	/// </summary>
 	internal class Weapon
 	{
-		public delegate void OnShootToCoordinatesDelegate(Weapon weapon, float shootX, float shootY);
-
 		public TimeSpan LoadWeaponTime { get; private set; }
 		public int AmmunitionType { get; private set; }
-		public OnShootToCoordinatesDelegate OnShootToCoordinates;
+		/// <summary>
+		/// Готовность к выстрелу
+		/// </summary>
+		public bool ReadyToShoot { get; private set; }
 
 		public TimeSpan WaitForShoot = TimeSpan.Zero;
 
-		public float _shootX;
-		public float _shootY;
-		public bool ShootToCoordinates = false;
-		
 		public Weapon(TimeSpan loadWeaponTime, int ammunitionType)
 		{
 			LoadWeaponTime = loadWeaponTime;
+			WaitForShoot = LoadWeaponTime; // сразу запускаем зарядку оружия
 			AmmunitionType = ammunitionType;
+			ReadyToShoot = false;
 		}
 
-		public void StartShootToCoordinates(float x, float y)
-		{
-			_shootX = x;
-			_shootY = y;
-			ShootToCoordinates = true;
-		}
-
-		public void Shoot(TimeSpan elapsedTime)
+		/// <summary>
+		/// Изменить блокировку выстрела
+		/// </summary>
+		/// <param name="elapsedTime"></param>
+		public void ChangeShootLock(TimeSpan elapsedTime)
 		{
 			WaitForShoot -= elapsedTime;
-			if (WaitForShoot>TimeSpan.Zero)
+			if (WaitForShoot > TimeSpan.Zero)
 				return;
-			if (!ShootToCoordinates)
-				return;
-			ShootToCoordinates = false;
-			WaitForShoot = LoadWeaponTime;
-			OnShootToCoordinates?.Invoke(this, _shootX, _shootY);
+
+			ReadyToShoot = true;
 		}
 
 	}

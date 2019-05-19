@@ -38,11 +38,11 @@ namespace Submarines
 		{
 			_startX = Input.CursorX;
 			_startY = Input.CursorY;
-			_moveCommand = MoveCommandCreator.Create(null, _submarine, 100,
-				new Vector(
-					_startX + _submarine.Position.X - 700,
-					_startY + _submarine.Position.Y - 500,
-					0));
+			//_moveCommand = MoveCommandCreator.Create(null, _submarine, 100,
+			//	new Vector(
+			//		_startX + _submarine.Position.X - 700,
+			//		_startY + _submarine.Position.Y - 500,
+			//		0));
 			PlayerFire?.Invoke(
 				_startX + _submarine.Position.X - 700,
 				_startY + _submarine.Position.Y - 500);
@@ -78,13 +78,26 @@ namespace Submarines
 				DrawLine(visualizationProvider, line.From, line.To);
 			}
 
+			_moveCommand = _map._mapAIController._commands.Count > 0
+				? _moveCommand = _map._mapAIController._commands[0] as MoveCommand
+				: null;
+
 			if (_moveCommand?.BezierPoints != null) {
-				_moveCommand.Execute();
-				var segment = _moveCommand.GetCommand();
-				if (segment != null) {
-					_submarine.SetSpeed(segment.Speed);
-					_submarine.AddSteering(-segment.Angle);
-				}
+				var submarine = _map.Submarines[_map.Submarines.Count - 1];
+
+				visualizationProvider.Rotate((int)submarine.CurrentAngle + 90);
+				visualizationProvider.DrawTexture(
+					(int) (submarine.Position.X - 700f / 2),
+					(int) (submarine.Position.Y - 500f / 2),
+					"Submarines01map.pl02");
+				visualizationProvider.RotateReset();
+
+				//_moveCommand.Execute();
+				//var segment = _moveCommand.GetCommand();
+				//if (segment != null) {
+				//	_submarine.SetSpeed(segment.Speed);
+				//	_submarine.AddSteering(-segment.Angle);
+				//}
 
 				visualizationProvider.SetColor(Color.LawnGreen);
 				var count = _moveCommand.BezierPoints.Count;

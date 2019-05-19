@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Engine.Visualization;
+using Submarines.Submarines;
 
 namespace Submarines.AI.Commands.Move
 {
@@ -14,9 +15,12 @@ namespace Submarines.AI.Commands.Move
 		public List<Vector> Simplified;
 		public List<MoveCommandSegment> Segments;
 		private int _currentNum = -1;
-		public MoveCommand(Action onEndCommand = null) 
+		private Submarine _submarine;
+
+		public MoveCommand(Submarine submarine, Action<Command> onEndCommand = null) 
 			: base(onEndCommand)
 		{
+			_submarine = submarine;
 		}
 
 		public MoveCommandSegment GetCommand()
@@ -25,13 +29,18 @@ namespace Submarines.AI.Commands.Move
 					? null
 					: Segments[_currentNum];
 
-		public override void Execute()
+		public override void Execute(TimeSpan elapsedTime)
 		{
 			_currentNum++;
 			if (_currentNum >= Segments.Count) {
-				base.Execute();
+				base.Execute(elapsedTime);
 				return;
 			}
+
+			тут. поворачивается, но не двигается
+			var segment = Segments[_currentNum];
+			_submarine.SetSpeed(segment.Speed);
+			_submarine.AddSteering(-segment.Angle);
 		}
 	}
 }

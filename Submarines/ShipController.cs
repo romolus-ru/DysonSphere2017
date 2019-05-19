@@ -1,4 +1,5 @@
-﻿using Submarines.Submarines;
+﻿using System;
+using Submarines.Submarines;
 
 namespace Submarines
 {
@@ -8,6 +9,7 @@ namespace Submarines
 	internal class ShipController
 	{
 		private Submarine _submarine;
+		public Action<SubmarineBase, Weapon, float, float> OnFire;
 
 		public ShipController(Submarine submarine)
 		{
@@ -30,13 +32,13 @@ namespace Submarines
 		}
 
 		/// <summary>
-		/// Игрок стреляет по координатам (возможно добавятся группы выбранных орудий) (стрельба по готовности - команда ожидает пока оружие зарядится)
+		/// Игрок стреляет по координатам
 		/// </summary>
 		/// <param name="x"></param>
 		/// <param name="y"></param>
 		public void Fire(float x, float y)
 		{
-			_submarine.ShootToCoordinates(x, y);
+			OnFire?.Invoke(_submarine, _submarine.Weapon, x, y);
 		}
 	}
 }

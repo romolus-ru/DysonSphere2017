@@ -15,6 +15,7 @@ namespace Submarines.Maps
 		public string Description { get; }
 		public GeometryBase Geometry { get; }
 		private MapController _mapController;
+		public MapAiController _mapAIController;
 
 		/// <summary>
 		/// Все подлодки, включая игрока
@@ -30,6 +31,8 @@ namespace Submarines.Maps
 		{
 			Geometry = mapGeometry;
 			Submarines = submarines;
+			_mapAIController = new MapAiController();
+			_mapAIController.Map = this;
 			_mapController = new MapController(mapGeometry);
 			foreach (var submarineBase in submarines) {
 				var submarine = (Submarine) submarineBase;
@@ -51,11 +54,23 @@ namespace Submarines.Maps
 
 		public void RunActivities(float timeCoefficient, TimeSpan elapsedTime)
 		{
+			_mapAIController.ProcessCommands(elapsedTime);
+
 			foreach (var submarine in Submarines) {
-				submarine.Shoot(elapsedTime);
+				submarine.ChangeShootLock(elapsedTime);
 				submarine.CalculateMovement(timeCoefficient);
 			}
 		}
 
+		public void PlayerShoot(SubmarineBase submarine, Weapon weapon, float x, float y)
+		{
+			_mapAIController.ShootToCoordinatesCommand(submarine, weapon, x, y);
+		}
+
+		public void AddShoot(SubmarineBase submarine)
+		{
+			Submarines.Add(submarine);
+			_mapController.AddShoot(submarine);
+		}
 	}
 }

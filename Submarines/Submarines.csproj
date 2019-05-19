@@ -84,6 +84,7 @@
     <Compile Include="Items\ItemGroup.cs" />
     <Compile Include="Items\Loots\LootContainerType.cs" />
     <Compile Include="Items\SpawnType.cs" />
+    <Compile Include="Maps\MapAiController.cs" />
     <Compile Include="Maps\MapBase.cs" />
     <Compile Include="Maps\MapController.cs" />
     <Compile Include="Maps\MapsBuilder.cs" />

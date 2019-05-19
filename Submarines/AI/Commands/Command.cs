@@ -10,9 +10,11 @@ namespace Submarines.AI.Commands
 		/// <summary>
 		/// Выполнение команды завершено
 		/// </summary>
-		public Action OnEndCommand;
+		public Action<Command> OnEndCommand;
 
-		public Command(Action onEndCommand = null)
+		public virtual bool IsActive => true;
+
+		public Command(Action<Command> onEndCommand = null)
 		{
 			OnEndCommand = onEndCommand;
 		}
@@ -20,6 +22,6 @@ namespace Submarines.AI.Commands
 		/// <summary>
 		/// Запускаем команду
 		/// </summary>
-		public virtual void Execute() => OnEndCommand?.Invoke();
+		public virtual void Execute(TimeSpan elapsedTime) => OnEndCommand?.Invoke(this);
 	}
 }

@@ -70,7 +70,10 @@ namespace Submarines.Submarines
 		{
 			var md = CreateManeuverDevice(itemSubmarine.ManeuverDevice);
 			var en = CreateEngine(itemSubmarine.Engine);
-			var wp = CreateWeapon(itemSubmarine.Weapon);
+			var wp =
+				itemSubmarine.Weapon == null
+					? null
+					: CreateWeapon(itemSubmarine.Weapon);
 			var sub = CreateHull(itemSubmarine.Hull, en, md, wp);
 
 			return sub;

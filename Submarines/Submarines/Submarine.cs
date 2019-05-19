@@ -40,16 +40,6 @@ namespace Submarines.Submarines
 				EnginePercent = EnginePercentMin;
 		}
 
-		/// <summary>
-		/// Выстрел по координатам
-		/// </summary>
-		/// <param name="x"></param>
-		/// <param name="y"></param>
-		internal void ShootToCoordinates(float x, float y)
-		{
-			Weapon?.StartShootToCoordinates(x,y);
-		}
-
 		public void StopEngine() => AddSpeed(-EnginePercent);
 
 		/// <summary>

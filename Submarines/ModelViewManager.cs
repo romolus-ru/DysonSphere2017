@@ -67,6 +67,7 @@ namespace Submarines
 			ShipController shipController = new ShipController(submarine);
 			var mapInfo = ItemsManager.GetMap("Test");
 			var map = MapsBuilder.CreateMap(mapInfo, submarine);
+			shipController.OnFire += map.PlayerShoot;
 
 			_mtg = new ModelGame(map);
 			_modelMainClient.AddModel(_mtg);

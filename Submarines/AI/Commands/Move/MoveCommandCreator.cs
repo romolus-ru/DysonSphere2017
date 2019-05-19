@@ -22,9 +22,9 @@ namespace Submarines.AI.Commands.Move
 		/// <param name="targetPos">Координаты которых надо достичь</param>
 		/// <param name="cruisingSpeedPercent">Крейсерская скорость в процентах</param>
 		/// <returns></returns>
-		public static MoveCommand Create(Action onEndCommand, SubmarineBase submarine, float targetAngle, Vector targetPos, float cruisingSpeedPercent = 100)
+		public static MoveCommand Create(Action<Command> onEndCommand, SubmarineBase submarine, float targetAngle, Vector targetPos, float cruisingSpeedPercent = 100)
 		{
-			MoveCommand result = new MoveCommand(onEndCommand);
+			MoveCommand result = new MoveCommand(submarine as Submarine, onEndCommand);
 			var basePoints = new List<ScreenPoint>();
 
 			// данная команда должна подписаться на реакцию на столкновение что бы завершить обработку
