@@ -17,6 +17,14 @@ namespace Submarines.Submarines
 		public SubmarineType SubmarineType = SubmarineType.Unknown;
 
 		/// <summary>
+		/// Управляется игроком 
+		/// </summary>
+		/// <remarks>
+		/// Для обеспечения автоматического движения по траектории, что бы не вызывать лишний раз CalculateMovement (должно быть только у одного корабля - корабля игрока)
+		/// </remarks>
+		public bool ManualControl = false;
+
+		/// <summary>
 		/// Проверяем есть ли столкновение
 		/// </summary>
 		public OnCheckCollisionDelegate OnCheckCollision;

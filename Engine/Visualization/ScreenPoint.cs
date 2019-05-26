@@ -65,8 +65,8 @@ namespace Engine.Visualization
 		/// <returns></returns>
 		public double AngleWith(ScreenPoint vector2)
 		{
-			double sin = this.X * vector2.Y - vector2.X * this.Y;
-			double cos = this.X * vector2.X + this.Y * vector2.Y;
+			double sin = vector2.Y - this.Y;
+			double cos = vector2.X - this.Y;
 
 			return Math.Atan2(sin, cos) * (180 / Math.PI);
 		}

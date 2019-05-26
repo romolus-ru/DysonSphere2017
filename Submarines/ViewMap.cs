@@ -1,4 +1,5 @@
-﻿using Engine.Visualization;
+﻿using System;
+using Engine.Visualization;
 using Submarines.Submarines;
 using System.Drawing;
 using System.Windows.Forms;
@@ -87,8 +88,8 @@ namespace Submarines
 
 				visualizationProvider.Rotate((int)submarine.CurrentAngle + 90);
 				visualizationProvider.DrawTexture(
-					(int) (submarine.Position.X - 700f / 2),
-					(int) (submarine.Position.Y - 500f / 2),
+					(int) (submarine.Position.X),
+					(int) (submarine.Position.Y),
 					"Submarines01map.pl02");
 				visualizationProvider.RotateReset();
 
@@ -121,6 +122,23 @@ namespace Submarines
 					var p1 = _moveCommand.Simplified[i - 1];
 					var p2 = _moveCommand.Simplified[i];
 					visualizationProvider.Line((int) p1.X, (int) p1.Y, (int) p2.X, (int) p2.Y);
+				}
+
+				visualizationProvider.SetColor(Color.Cyan);
+				var count4 = _moveCommand.Segments.Count;
+				float angle = -90;
+				float x = 0;
+				float y = 0;
+				for (int i = 0; i < count4; i++) {
+					var p = _moveCommand.Segments[i];
+					angle -= p.Angle;
+					var radians = angle * (Math.PI / 180);
+					float px = x + (float) (Constants.TimerInterval * p.Speed * Math.Cos(radians));
+					float py = y + (float) (Constants.TimerInterval * p.Speed * Math.Sin(radians));
+
+					visualizationProvider.Line((int) x, (int) y, (int) px, (int) py);
+					x = px;
+					y = py;
 				}
 
 

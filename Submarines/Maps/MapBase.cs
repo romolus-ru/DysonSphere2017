@@ -47,7 +47,11 @@ namespace Submarines.Maps
 		/// <param name="playerShip"></param>
 		public virtual void SetPlayerShip(SubmarineBase playerShip)
 		{
+			foreach (var submarine in Submarines) {
+				submarine.ManualControl = false;
+			}
 			PlayerShip = playerShip;
+			playerShip.ManualControl = true;
 			if (!Submarines.Contains(playerShip))
 				Submarines.Add(playerShip);
 		}
@@ -58,7 +62,8 @@ namespace Submarines.Maps
 
 			foreach (var submarine in Submarines) {
 				submarine.ChangeShootLock(elapsedTime);
-				submarine.CalculateMovement(timeCoefficient);
+				if (submarine.ManualControl)
+					submarine.CalculateMovement(timeCoefficient);
 			}
 		}
 

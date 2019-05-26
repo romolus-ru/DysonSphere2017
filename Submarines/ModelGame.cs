@@ -1,5 +1,6 @@
 ﻿using Engine.Models;
 using System;
+using Engine;
 using Submarines.Maps;
 
 namespace Submarines
@@ -18,9 +19,11 @@ namespace Submarines
 		public override void Tick()
 		{
 			var elapsedTime = DateTime.Now - _currentTime;
+			_currentTime = DateTime.Now;
+			if (elapsedTime.TotalMilliseconds > Constants.TimerInterval)
+				elapsedTime = new TimeSpan(0, 0, 0, 0, Constants.TimerInterval);
 			var timeCoefficient = (elapsedTime).Milliseconds / 100f;
 			_map.RunActivities(timeCoefficient, elapsedTime);
-			_currentTime = DateTime.Now;
 		}
 
 	}

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Engine;
 using Engine.Visualization;
 using Submarines.Submarines;
 
@@ -31,16 +32,23 @@ namespace Submarines.AI.Commands.Move
 
 		public override void Execute(TimeSpan elapsedTime)
 		{
+			переделать
+				брать текущий сегмент в котором должно быть время движения и скорость
+				выставлять параметры в зависимости от сегмента и пришедшего времени
+				
 			_currentNum++;
 			if (_currentNum >= Segments.Count) {
 				base.Execute(elapsedTime);
 				return;
 			}
-
-			тут. поворачивается, но не двигается
+			
 			var segment = Segments[_currentNum];
-			_submarine.SetSpeed(segment.Speed);
-			_submarine.AddSteering(-segment.Angle);
+
+			
+			_submarine.SetSpeed(speedPercent);
+			_submarine.AddSteering(angle);
+			//_submarine.SetAutoPosition(pos, Constants.TimerInterval * segment.Speed * 100, -segment.Angle);
+
 		}
 	}
 }

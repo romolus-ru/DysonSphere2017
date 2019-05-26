@@ -40,6 +40,12 @@ namespace Submarines.Maps
 			_submarines.Add(submarine);
 		}
 
+		public void AddShoot(SubmarineBase shoot)
+		{
+			shoot.OnCheckCollision = ShootCheckCollision;
+			_rockets.Add(shoot);
+		}
+
 		/// <summary>
 		/// Определяем столкновение и возвращаем результат
 		/// </summary>
