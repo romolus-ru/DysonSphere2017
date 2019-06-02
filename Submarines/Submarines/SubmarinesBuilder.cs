@@ -1,5 +1,4 @@
-﻿using System.Windows.Forms;
-using Submarines.Items;
+﻿using Submarines.Items;
 
 namespace Submarines.Submarines
 {

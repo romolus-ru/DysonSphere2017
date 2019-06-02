@@ -80,6 +80,8 @@ namespace Submarines.Submarines
 			Weapon = weapon;
 			VCurrentPrev = 0;
 
+			Engine?.SetupParameters(this);
+
 			GeometryRotatedLines = new List<LineInfo>(geometry.Lines);
 			RecalculateGeometry();
 		}
@@ -89,12 +91,17 @@ namespace Submarines.Submarines
 			Weapon?.ChangeShootLock(elapsedTime);
 		}
 
+		public void CalculateMovement(TimeSpan time)
+		{
+			CalculateMovement((float) (time.TotalMilliseconds * GameConstants.TimeCoefficient));
+		}
+
 		/// <summary>
 		/// Расчёт движения устройства
 		/// </summary>
 		public virtual void CalculateMovement(float timeCoefficient)
 		{
-			VCurrent = Engine.CalculateSpeed(this, timeCoefficient);
+			VCurrent = Engine.CalculateSpeed(timeCoefficient);
 			var deltaSteeringAngle = ManeuverDevice.CalculateSteering(this, timeCoefficient);
 			if (!deltaSteeringAngle.IsZero()) {
 				SteeringAngle -= deltaSteeringAngle;

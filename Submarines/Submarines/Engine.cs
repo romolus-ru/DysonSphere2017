@@ -9,6 +9,7 @@
 		public float EnginePower;
 		public int EnginePercentMin;
 		public int EnginePercentMax;
+		protected IEngineSupport Parameters = null;
 
 		public Engine(float enginePower, int enginePercentMin, int enginePercentMax)
 		{
@@ -16,12 +17,26 @@
 			EnginePercentMin = enginePercentMin;
 			EnginePercentMax = enginePercentMax;
 		}
+
+		/// <summary>
+		/// Параметры для динамического расчёта данных двигателя
+		/// </summary>
+		/// <param name="parameters"></param>
+		public void SetupParameters(IEngineSupport parameters)
+		{
+			Parameters = parameters;
+		}
+
+		public float GetCurrentMaxSpeed()
+		{
+			return EnginePower /
+			       (Parameters.Mass * Parameters.OpposingCoefficient * G);
+		}
 		
-		public virtual float CalculateSpeed(IEngineSupport parameters, float deltaTime)
+		public virtual float CalculateSpeed(float deltaTime)
 		{
 			// для примера. у разных двигателей разное вычисление и требования будут
-			var vMax = parameters.EnginePercent * EnginePower
-			           / (parameters.Mass * parameters.OpposingCoefficient * G);
+			var vMax = Parameters.EnginePercent * GetCurrentMaxSpeed();
 			return vMax;
 		}
 

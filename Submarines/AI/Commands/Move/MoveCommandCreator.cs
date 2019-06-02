@@ -65,7 +65,7 @@ namespace Submarines.AI.Commands.Move
 				result.Segments,
 				bezierPoints,
 				submarine.CurrentAngle,
-				0.5f //submarine.VCurrent
+				submarine.Engine.GetCurrentMaxSpeed() //0.5f //submarine.VCurrent
 			);
 
 			// сохраняем данные и возвращаем команду
@@ -113,8 +113,12 @@ namespace Submarines.AI.Commands.Move
 						dist1 = Constants.TimerInterval * currentSpeed;
 					currentPoint = currentPoint.MovePolar(angle1, dist1);
 					simplified.Add(currentPoint);
-					var segment = new MoveCommandSegment()
-						{Angle = currentAngle - angle1, Speed = currentSpeed, Distance = dist1};
+					var segment = new MoveCommandSegment() {
+						Angle = currentAngle - angle1,
+						Speed = currentSpeed,
+						Distance = dist1,
+						Time = new TimeSpan(0, 0, 0, 0, (int) (dist1 / currentSpeed))
+					};
 					segments.Add(segment);
 					currentAngle = angle1;
 				}

@@ -1,4 +1,6 @@
-﻿namespace Submarines.AI.Commands.Move
+﻿using System;
+
+namespace Submarines.AI.Commands.Move
 {
 	/// <summary>
 	/// Команда движения для одного сегмента с одним поворотом, постоянной скоростью и заданным расстоянием
@@ -8,5 +10,6 @@
 		public float Angle;
 		public float Speed;
 		public float Distance;
+		public TimeSpan Time;
 	}
 }

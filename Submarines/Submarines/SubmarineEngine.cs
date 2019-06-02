@@ -2,14 +2,14 @@
 {
 	internal class SubmarineEngine : Engine
 	{
-		public SubmarineEngine(float enginePower, int enginePercentMin, int enginePercentMax) 
+		public SubmarineEngine(float enginePower, int enginePercentMin, int enginePercentMax)
 			: base(enginePower, enginePercentMin, enginePercentMax)
 		{
 		}
 
-		public override float CalculateSpeed(IEngineSupport parameters, float deltaTime)
+		public override float CalculateSpeed(float deltaTime)
 		{
-			return parameters.EnginePercent * EnginePower / 100;
+			return Parameters.EnginePercent * EnginePower / 100;
 		}
 	}
 }

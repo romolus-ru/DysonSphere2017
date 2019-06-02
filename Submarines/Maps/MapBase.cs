@@ -56,14 +56,14 @@ namespace Submarines.Maps
 				Submarines.Add(playerShip);
 		}
 
-		public void RunActivities(float timeCoefficient, TimeSpan elapsedTime)
+		public void RunActivities(TimeSpan elapsedTime)
 		{
 			_mapAIController.ProcessCommands(elapsedTime);
 
 			foreach (var submarine in Submarines) {
 				submarine.ChangeShootLock(elapsedTime);
 				if (submarine.ManualControl)
-					submarine.CalculateMovement(timeCoefficient);
+					submarine.CalculateMovement(elapsedTime);
 			}
 		}
 

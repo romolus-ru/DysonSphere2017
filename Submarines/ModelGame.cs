@@ -22,8 +22,7 @@ namespace Submarines
 			_currentTime = DateTime.Now;
 			if (elapsedTime.TotalMilliseconds > Constants.TimerInterval)
 				elapsedTime = new TimeSpan(0, 0, 0, 0, Constants.TimerInterval);
-			var timeCoefficient = (elapsedTime).Milliseconds / 100f;
-			_map.RunActivities(timeCoefficient, elapsedTime);
+			_map.RunActivities(elapsedTime);
 		}
 
 	}
