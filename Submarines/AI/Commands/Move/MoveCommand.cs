@@ -26,14 +26,36 @@ namespace Submarines.AI.Commands.Move
 
 		public override void Execute(TimeSpan elapsedTime)
 		{
-			переделать
-			if (_currentNum == -1) {
-				_currentNum = 0;
-			}
+			while (elapsedTime.TotalMilliseconds > 0) {
+
+				if (_currentSpan.TotalMilliseconds <= 0) {
+					_currentNum++;
+					if (_currentNum >= Segments.Count) {// выходим
+						base.Execute(elapsedTime);
+						return;
+					}
+
+					_currentSpan = Segments[_currentNum].Time;
+				}
+
+				var segment = Segments[_currentNum];
+				if (_currentSpan <= elapsedTime) {// время сегмента меньше чем время для обработки
+					// двигаемся оставшееся время и смотрим что дальше происходит
+					ProcessMove(segment, _currentSpan);
+					elapsedTime = -_currentSpan;
+					_currentSpan = TimeSpan.Zero;
+					continue;
+				}
 				
-			вычисляем время необходимое для движения
-				двигаемся на это время
-				запоминаем сколько уже прошли для этого сегмента
+				// времея сегмента меньше чем время на обработку
+				var processTime = elapsedTime - _currentSpan;
+				ProcessMove(segment, processTime);
+				elapsedTime -= processTime;
+				_currentSpan -= processTime;
+
+			}
+
+			тут
 
 
 			_currentNum++;
@@ -42,7 +64,6 @@ namespace Submarines.AI.Commands.Move
 				return;
 			}
 			
-			var segment = Segments[_currentNum];
 
 			
 			_submarine.SetSpeed(speedPercent);
