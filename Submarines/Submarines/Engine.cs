@@ -5,17 +5,40 @@
 	/// </summary>
 	public class Engine
 	{
-		public const float G = 9.8f;
-		public float EnginePower;
+
 		public int EnginePercentMin;
 		public int EnginePercentMax;
+
+
+		/// <summary>
+		/// Крейсерская скорость (максимальная энергия двигателя)
+		/// </summary>
+		public float CruisingEnginePowerMax { get; }
+
+		/// <summary>
+		/// Текущее значение мощности двигателя
+		/// </summary>
+		public float CruisingEnginePowerCurrent { get; private set; }
+
+		свойство Speed сделать что бы оно могло перевычисляться
+		и оно должно учитывать возможные значения enginepower в процентах
+			и управление оставить в процентах - что бы текущее управление от игрока было в процентах - независимо от реальной скорости подлодки
+		/// <summary>
+		/// Текущая скорость двигателя
+		/// </summary>
+		protected float Speed { get; private set; }
+
+		private bool _needRecalc;
+
 		protected IEngineSupport Parameters = null;
 
-		public Engine(float enginePower, int enginePercentMin, int enginePercentMax)
+		public Engine(float cruisingEnginePower, int enginePercentMin, int enginePercentMax)
 		{
-			EnginePower = enginePower;
 			EnginePercentMin = enginePercentMin;
 			EnginePercentMax = enginePercentMax;
+			CruisingEnginePowerMax = cruisingEnginePower;
+			CruisingEnginePowerCurrent = 0;
+			_needRecalc = true;
 		}
 
 		/// <summary>
@@ -29,15 +52,44 @@
 
 		public float GetCurrentMaxSpeed()
 		{
-			return EnginePower /
-			       (Parameters.Mass * Parameters.OpposingCoefficient * G);
+			if (_needRecalc) {
+				Speed = CruisingEnginePowerCurrent * SpeedCoefficient();
+				//_needRecalc = false;
+			}
+
+			return Speed;
 		}
-		
+
+		protected float SpeedCoefficient()
+		{
+			return 1 / (Parameters.Mass * Parameters.OpposingCoefficient * GameConstants.G);
+		}
+
+		public void SetSpeed(float newSpeed)
+		{
+			var enginePower = newSpeed / SpeedCoefficient();
+			SetEnginePower(enginePower);
+		}
+
+		protected void SetEnginePower(float enginePower)
+		{
+			if (enginePower > CruisingEnginePowerMax)
+				enginePower = CruisingEnginePowerMax;
+			if (enginePower < -CruisingEnginePowerMax)
+				enginePower = -CruisingEnginePowerMax;
+			CruisingEnginePowerCurrent = enginePower;
+		}
+
+		public void NeedSpeedRecalc()
+		{
+			_needRecalc = true;
+		}
+
 		public virtual float CalculateSpeed(float deltaTime)
 		{
+			return GetCurrentMaxSpeed();
 			// для примера. у разных двигателей разное вычисление и требования будут
-			var vMax = Parameters.EnginePercent * GetCurrentMaxSpeed();
-			return vMax;
+			//var vMax = Parameters.EnginePercent * GetCurrentMaxSpeed();
 		}
 
 		/*

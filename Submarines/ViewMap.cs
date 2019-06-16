@@ -136,7 +136,7 @@ namespace Submarines
 					float px = x + (float) (Constants.TimerInterval * p.Speed * Math.Cos(radians));
 					float py = y + (float) (Constants.TimerInterval * p.Speed * Math.Sin(radians));
 
-					visualizationProvider.Line((int) x, (int) y, (int) px, (int) py);
+					visualizationProvider.Line((int) x + 10, (int) y + 10, (int) px, (int) py);
 					x = px;
 					y = py;
 				}

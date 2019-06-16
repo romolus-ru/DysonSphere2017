@@ -79,6 +79,7 @@ namespace Submarines.Submarines
 			ManeuverDevice = maneuverDevice;
 			Weapon = weapon;
 			VCurrentPrev = 0;
+			OpposingCoefficient = 0.01f;
 
 			Engine?.SetupParameters(this);
 

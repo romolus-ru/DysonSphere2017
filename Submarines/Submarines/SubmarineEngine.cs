@@ -9,7 +9,8 @@
 
 		public override float CalculateSpeed(float deltaTime)
 		{
-			return Parameters.EnginePercent * EnginePower / 100;
+			//return Parameters.EnginePercent * EnginePower / 100;
+			return base.CalculateSpeed(deltaTime);
 		}
 	}
 }

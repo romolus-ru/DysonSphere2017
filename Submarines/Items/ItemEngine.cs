@@ -16,7 +16,7 @@ namespace Submarines.Items
 		internal override void Init(Dictionary<string, string> values)
 		{
 			base.Init(values);
-			EnginePower = values.GetString("EnginePower").ToFloat(0);
+			EnginePower = values.GetString("CruisingEnginePower").ToFloat(0);
 			EnginePercentMin = values.GetString("EnginePercentMin").ToInt(0);
 			EnginePercentMax = values.GetString("EnginePercentMax").ToInt(0);
 			EngineType = values.GetString("EngineType");

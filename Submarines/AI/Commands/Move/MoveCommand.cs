@@ -18,7 +18,7 @@ namespace Submarines.AI.Commands.Move
 		private Submarine _submarine;
 		private TimeSpan _currentSpan = new TimeSpan();
 
-		public MoveCommand(Submarine submarine, Action<Command> onEndCommand = null) 
+		public MoveCommand(Submarine submarine, Action<Command> onEndCommand = null)
 			: base(onEndCommand)
 		{
 			_submarine = submarine;
@@ -30,7 +30,7 @@ namespace Submarines.AI.Commands.Move
 
 				if (_currentSpan.TotalMilliseconds <= 0) {
 					_currentNum++;
-					if (_currentNum >= Segments.Count) {// выходим
+					if (_currentNum >= Segments.Count) { // выходим
 						base.Execute(elapsedTime);
 						return;
 					}
@@ -39,36 +39,19 @@ namespace Submarines.AI.Commands.Move
 				}
 
 				var segment = Segments[_currentNum];
-				if (_currentSpan <= elapsedTime) {// время сегмента меньше чем время для обработки
+				if (_currentSpan <= elapsedTime) { // время сегмента меньше чем время для обработки
 					// двигаемся оставшееся время и смотрим что дальше происходит
 					ProcessMove(segment, _currentSpan);
-					elapsedTime = -_currentSpan;
+					elapsedTime -= _currentSpan;
 					_currentSpan = TimeSpan.Zero;
 					continue;
 				}
-				
-				// времея сегмента меньше чем время на обработку
-				var processTime = elapsedTime - _currentSpan;
-				ProcessMove(segment, processTime);
-				elapsedTime -= processTime;
-				_currentSpan -= processTime;
 
+				// время сегмента больше чем время на обработку
+				ProcessMove(segment, elapsedTime);
+				_currentSpan -= elapsedTime;
+				elapsedTime = TimeSpan.Zero;
 			}
-
-			тут
-
-
-			_currentNum++;
-			if (_currentNum >= Segments.Count) {
-				base.Execute(elapsedTime);
-				return;
-			}
-			
-
-			
-			_submarine.SetSpeed(speedPercent);
-			_submarine.AddSteering(angle);
-			//_submarine.SetAutoPosition(pos, Constants.TimerInterval * segment.Speed * 100, -segment.Angle);
 
 		}
 

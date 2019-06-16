@@ -38,7 +38,6 @@ namespace Submarines.AI.Commands.Move
 			var endPoint = targetPos.ToScreenPoint();
 			var calculatedTargetAngle = startPoint.AngleWith(endPoint) - 90;
 
-
 			// формируем 4 точки - начальная конечная и вспомогательные для них
 			// третью точку вычислить
 			// текущую третью точку надо отразить по линии второй и 4й точек

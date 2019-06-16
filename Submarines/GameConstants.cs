@@ -13,5 +13,7 @@ namespace Submarines
 
 		public static float TimeCoefficient = 1 / 100f;
 
+		public const float G = 9.8f;
+
 	}
 }

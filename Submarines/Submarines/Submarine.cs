@@ -19,8 +19,8 @@ namespace Submarines.Submarines
 		public Submarine(GeometryBase geometry, Engine engine, ManeuverDevice maneuverDevice, Weapon weapon) 
 			: base(geometry, engine, maneuverDevice, weapon)
 		{
-			EnginePercentMax = 150;
-			EnginePercentMin = -50;
+			EnginePercentMax = engine.EnginePercentMax;
+			EnginePercentMin = engine.EnginePercentMin;
 			_currentTime = DateTime.Now;
 			Mass = 100000;
 			AddSpeed(5);
