@@ -11,7 +11,7 @@ namespace Submarines
 			1 / 15f, 1 / 20f, 1 / 25f, 1 / 30f, 1 / 40f, 1 / 50f,
 		};
 
-		public static float TimeCoefficient = 1 / 100f;
+		public static float TimeCoefficient = 1 / 1f;
 
 		public const float G = 9.8f;
 

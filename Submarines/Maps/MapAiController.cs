@@ -37,6 +37,7 @@ namespace Submarines.Maps
 			// создаём выстрел
 			ItemSubmarine itemSubmarine = (ItemSubmarine)ItemsManager.GetItemBase("RocketDefault");
 			SubmarineBase shoot = SubmarinesBuilder.Create(itemSubmarine);
+			shoot.Engine.SetSpeedPercent(100);
 			Map.AddShoot(shoot);
 			// создаём команду для управления выстрелом
 			MoveCommand moveCommand = MoveCommandCreator.Create(RemoveCommand, shoot, 100, new Vector(x, y, 0));

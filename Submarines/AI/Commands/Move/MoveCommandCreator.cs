@@ -50,8 +50,8 @@ namespace Submarines.AI.Commands.Move
 			// по ним строим кривую безье
 			var bc = new BezierCurve();
 			var pathLength = (int) (submarine.ManeuverDevice.MaxSteeringPerSecond * 180);
-			var bezierPoints = new List<ScreenPoint>();
-			bc.Bezier2D(basePoints, pathLength, bezierPoints);
+			var bezierPoints = new List<Vector>();
+			bc.Bezier2D(basePoints, pathLength, (x, y) => bezierPoints.Add(new Vector(x, y, 0)));
 			result.BasePoints = basePoints;
 			result.BezierPoints = bezierPoints;
 
@@ -64,7 +64,7 @@ namespace Submarines.AI.Commands.Move
 				result.Segments,
 				bezierPoints,
 				submarine.CurrentAngle,
-				submarine.Engine.GetCurrentMaxSpeed() //0.5f //submarine.VCurrent
+				submarine.Engine.Speed //0.5f //submarine.VCurrent
 			);
 
 			// сохраняем данные и возвращаем команду
@@ -79,7 +79,7 @@ namespace Submarines.AI.Commands.Move
 		}
 
 		private static void CreateSimplified(List<Vector> simplified, List<MoveCommandSegment> segments,
-			List<ScreenPoint> bezierPoints, float startAngle, float startSpeed)
+			List<Vector> bezierPoints, float startAngle, float startSpeed)
 		{
 			bool end;
 			var currentPoint = new Vector(bezierPoints[0].X, bezierPoints[0].Y, 0);
@@ -113,7 +113,7 @@ namespace Submarines.AI.Commands.Move
 					currentPoint = currentPoint.MovePolar(angle1, dist1);
 					simplified.Add(currentPoint);
 					var segment = new MoveCommandSegment() {
-						Angle = currentAngle - angle1,
+						Angle = angle1,
 						Speed = currentSpeed,
 						Distance = dist1,
 						Time = new TimeSpan(0, 0, 0, 0, (int) (dist1 / currentSpeed))

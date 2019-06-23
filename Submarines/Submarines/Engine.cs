@@ -1,4 +1,6 @@
-﻿namespace Submarines.Submarines
+﻿using Engine.Extensions;
+
+namespace Submarines.Submarines
 {
 	/// <summary>
 	/// Класс для двигателя. производит расчёт и изменение скорости
@@ -20,13 +22,25 @@
 		/// </summary>
 		public float CruisingEnginePowerCurrent { get; private set; }
 
-		свойство Speed сделать что бы оно могло перевычисляться
-		и оно должно учитывать возможные значения enginepower в процентах
-			и управление оставить в процентах - что бы текущее управление от игрока было в процентах - независимо от реальной скорости подлодки
+		private float _speed;
+
+		//свойство Speed сделать что бы оно могло перевычисляться
+		//и оно должно учитывать возможные значения enginepower в процентах
+		//	и управление оставить в процентах - что бы текущее управление от игрока было в процентах - независимо от реальной скорости подлодки
 		/// <summary>
 		/// Текущая скорость двигателя
+		/// возможно надо будет часть перенести к подлодке - скорость то вычисляется для нее
 		/// </summary>
-		protected float Speed { get; private set; }
+		public float Speed {
+			get {
+				if (_needRecalc) {
+					_speed = CruisingEnginePowerCurrent * SpeedCoefficient();
+					_needRecalc = false;
+				}
+
+				return _speed;
+			}
+		}
 
 		private bool _needRecalc;
 
@@ -50,16 +64,6 @@
 			Parameters = parameters;
 		}
 
-		public float GetCurrentMaxSpeed()
-		{
-			if (_needRecalc) {
-				Speed = CruisingEnginePowerCurrent * SpeedCoefficient();
-				//_needRecalc = false;
-			}
-
-			return Speed;
-		}
-
 		protected float SpeedCoefficient()
 		{
 			return 1 / (Parameters.Mass * Parameters.OpposingCoefficient * GameConstants.G);
@@ -77,7 +81,13 @@
 				enginePower = CruisingEnginePowerMax;
 			if (enginePower < -CruisingEnginePowerMax)
 				enginePower = -CruisingEnginePowerMax;
-			CruisingEnginePowerCurrent = enginePower;
+			if (!CruisingEnginePowerCurrent.IsEqualTo(enginePower))
+				CruisingEnginePowerCurrent = enginePower;
+		}
+
+		public void SetSpeedPercent(float percents)
+		{
+			SetEnginePower((CruisingEnginePowerMax / 100f) * percents);
 		}
 
 		public void NeedSpeedRecalc()
@@ -87,7 +97,7 @@
 
 		public virtual float CalculateSpeed(float deltaTime)
 		{
-			return GetCurrentMaxSpeed();
+			return Speed;
 			// для примера. у разных двигателей разное вычисление и требования будут
 			//var vMax = Parameters.EnginePercent * GetCurrentMaxSpeed();
 		}

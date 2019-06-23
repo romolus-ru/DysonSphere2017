@@ -103,26 +103,26 @@ namespace Submarines
 				visualizationProvider.SetColor(Color.LawnGreen);
 				var count = _moveCommand.BezierPoints.Count;
 				for (int i = 1; i < count; i++) {
-					var p1 = _moveCommand.BezierPoints[i-1];
+					var p1 = _moveCommand.BezierPoints[i - 1];
 					var p2 = _moveCommand.BezierPoints[i];
-					visualizationProvider.Line(p1.X, p1.Y, p2.X, p2.Y);
-				}
-
-				visualizationProvider.SetColor(Color.CornflowerBlue);
-				var count2 = _moveCommand.BasePoints.Count;
-				for (int i = 1; i < count2; i++) {
-					var p1 = _moveCommand.BasePoints[i - 1];
-					var p2 = _moveCommand.BasePoints[i];
-					visualizationProvider.Line(p1.X, p1.Y, p2.X, p2.Y);
-				}
-
-				visualizationProvider.SetColor(Color.Gold);
-				var count3 = _moveCommand.Simplified.Count;
-				for (int i = 1; i < count3; i++) {
-					var p1 = _moveCommand.Simplified[i - 1];
-					var p2 = _moveCommand.Simplified[i];
 					visualizationProvider.Line((int) p1.X, (int) p1.Y, (int) p2.X, (int) p2.Y);
 				}
+
+				//visualizationProvider.SetColor(Color.CornflowerBlue);
+				//var count2 = _moveCommand.BasePoints.Count;
+				//for (int i = 1; i < count2; i++) {
+				//	var p1 = _moveCommand.BasePoints[i - 1];
+				//	var p2 = _moveCommand.BasePoints[i];
+				//	visualizationProvider.Line(p1.X, p1.Y, p2.X, p2.Y);
+				//}
+
+				//visualizationProvider.SetColor(Color.Gold);
+				//var count3 = _moveCommand.Simplified.Count;
+				//for (int i = 1; i < count3; i++) {
+				//	var p1 = _moveCommand.Simplified[i - 1];
+				//	var p2 = _moveCommand.Simplified[i];
+				//	visualizationProvider.Line((int) p1.X, (int) p1.Y, (int) p2.X, (int) p2.Y);
+				//}
 
 				visualizationProvider.SetColor(Color.Cyan);
 				var count4 = _moveCommand.Segments.Count;
@@ -131,12 +131,12 @@ namespace Submarines
 				float y = 0;
 				for (int i = 0; i < count4; i++) {
 					var p = _moveCommand.Segments[i];
-					angle -= p.Angle;
+					angle = p.Angle;
 					var radians = angle * (Math.PI / 180);
 					float px = x + (float) (Constants.TimerInterval * p.Speed * Math.Cos(radians));
 					float py = y + (float) (Constants.TimerInterval * p.Speed * Math.Sin(radians));
 
-					visualizationProvider.Line((int) x + 10, (int) y + 10, (int) px, (int) py);
+					visualizationProvider.Line((int) x + 10, (int) y + 10, (int) px + 11, (int) py + 11);
 					x = px;
 					y = py;
 				}

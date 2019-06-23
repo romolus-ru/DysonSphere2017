@@ -11,7 +11,7 @@ namespace Submarines.AI.Commands.Move
 	internal class MoveCommand : Command
 	{
 		public List<ScreenPoint> BasePoints;
-		public List<ScreenPoint> BezierPoints;
+		public List<Vector> BezierPoints;
 		public List<Vector> Simplified;
 		public List<MoveCommandSegment> Segments;
 		private int _currentNum = -1;
@@ -58,7 +58,8 @@ namespace Submarines.AI.Commands.Move
 		private void ProcessMove(MoveCommandSegment segment, TimeSpan processingTime)
 		{
 			_submarine.SetSpeed(segment.Speed);
-			_submarine.AddSteering(segment.Angle);
+			//_submarine.AddSteering(segment.Angle);
+			_submarine.SetAngle(segment.Angle);
 			_submarine.CalculateMovement(processingTime);
 		}
 

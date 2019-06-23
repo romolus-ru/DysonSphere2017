@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Engine.Visualization.Maths
 {
@@ -267,5 +264,34 @@ namespace Engine.Visualization.Maths
 				t += step;
 			}
 		}
+
+		public void Bezier2D(List<ScreenPoint> b, int cpts, Action<float, float> createPoint)
+		{
+			int npts = b.Count;
+
+			// Calculate points on curve
+
+			double t = 0;
+			var step = 1.0 / (cpts - 1);
+
+			for (int i1 = 0; i1 != cpts; i1++) {
+				if ((1.0 - t) < 5e-6)
+					t = 1.0;
+
+				var jcount = 0;
+				var x = 0.0;
+				var y = 0.0;
+				for (int i = 0; i != npts; i++) {
+					double basis = Bernstein(npts - 1, i, t);
+					x += basis * b[jcount].X;
+					y += basis * b[jcount].Y;
+					jcount++;
+				}
+
+				createPoint((float) x, (float) y);
+				t += step;
+			}
+		}
+
 	}
 }

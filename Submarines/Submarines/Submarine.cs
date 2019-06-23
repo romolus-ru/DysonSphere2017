@@ -26,9 +26,10 @@ namespace Submarines.Submarines
 			AddSpeed(5);
 		}
 
-		public void SetSpeed(float value)
+		public void SetSpeed(float speed)
 		{
-			AddSpeed(value - EnginePercent);
+			//AddSpeed(value - EnginePercent);
+			Engine.SetSpeed(speed);
 		}
 
 		public void AddSpeed(float delta)
@@ -48,5 +49,13 @@ namespace Submarines.Submarines
 		/// <param name="angle"></param>
 		public void AddSteering(float angle) => SteeringAngle += ManeuverDevice.AddSteering(this, angle);
 
+		public void SetAngle(float angle)
+		{
+			CurrentAngle = angle - 0.1f;
+			SteeringAngle = 0.1f;
+			//SteeringAngle = CurrentAngle - angle;
+			//CurrentAngle = angle;
+			//SteeringAngle = 0;
+		}
 	}
 }
