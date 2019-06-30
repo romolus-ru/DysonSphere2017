@@ -6,6 +6,7 @@
 	/// </summary>
 	internal struct SubmarineCollisionResult
 	{
+		public bool CollisionDetected;
 		/// <summary>
 		/// Изменение вектора движения вследствии столкновений
 		/// </summary>

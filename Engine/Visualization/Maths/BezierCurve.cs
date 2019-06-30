@@ -265,7 +265,7 @@ namespace Engine.Visualization.Maths
 			}
 		}
 
-		public void Bezier2D(List<ScreenPoint> b, int cpts, Action<float, float> createPoint)
+		public void Bezier2D(List<ScreenPoint> b, int cpts, Action<double, double> createPoint)
 		{
 			int npts = b.Count;
 
@@ -288,7 +288,7 @@ namespace Engine.Visualization.Maths
 					jcount++;
 				}
 
-				createPoint((float) x, (float) y);
+				createPoint(x, y);
 				t += step;
 			}
 		}

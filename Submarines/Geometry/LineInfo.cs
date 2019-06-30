@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Submarines.Geometry
+﻿namespace Submarines.Geometry
 {
 	/// <summary>
 	/// Хранит 2 точки

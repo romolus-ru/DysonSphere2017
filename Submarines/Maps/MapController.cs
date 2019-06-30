@@ -55,8 +55,7 @@ namespace Submarines.Maps
 		/// <returns></returns>
 		private SubmarineCollisionResult SubmarineCheckCollision(SubmarineBase submarine, Vector currentPosition, Vector newPosition)
 		{
-			return new SubmarineCollisionResult();
-			//throw new NotImplementedException();
+			return CollisionHelper.GetSubmarineMapCollision(submarine, newPosition, _mapGeometry.Lines);
 		}
 
 		/// <summary>

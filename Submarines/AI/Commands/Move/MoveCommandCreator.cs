@@ -51,7 +51,7 @@ namespace Submarines.AI.Commands.Move
 			var bc = new BezierCurve();
 			var pathLength = (int) (submarine.ManeuverDevice.MaxSteeringPerSecond * 180);
 			var bezierPoints = new List<Vector>();
-			bc.Bezier2D(basePoints, pathLength, (x, y) => bezierPoints.Add(new Vector(x, y, 0)));
+			bc.Bezier2D(basePoints, pathLength, (x, y) => bezierPoints.Add(new Vector((float) x, (float) y, 0)));
 			result.BasePoints = basePoints;
 			result.BezierPoints = bezierPoints;
 

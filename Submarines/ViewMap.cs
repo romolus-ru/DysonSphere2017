@@ -90,7 +90,7 @@ namespace Submarines
 				visualizationProvider.DrawTexture(
 					(int) (submarine.Position.X),
 					(int) (submarine.Position.Y),
-					"Submarines01map.pl02");
+					"Submarines01map.pl02", 0.6f);
 				visualizationProvider.RotateReset();
 
 				//_moveCommand.Execute();
