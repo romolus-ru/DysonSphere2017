@@ -6,8 +6,6 @@ namespace Submarines.Submarines
 	internal class Submarine : SubmarineBase
 	{
 		public int EnginePercentMax { get; private set; }
-		public float VMax;
-		public float VMin;
 
 		/// <summary>
 		/// Допустимая обратная скорость (обычно меньше чем скорость вперед)
@@ -28,7 +26,6 @@ namespace Submarines.Submarines
 
 		public void SetSpeed(float speed)
 		{
-			//AddSpeed(value - EnginePercent);
 			Engine.SetSpeed(speed);
 		}
 
@@ -39,6 +36,7 @@ namespace Submarines.Submarines
 				EnginePercent = EnginePercentMax;
 			if (EnginePercent < EnginePercentMin)
 				EnginePercent = EnginePercentMin;
+			Engine.SetSpeedPercent(EnginePercent);
 		}
 
 		public void StopEngine() => AddSpeed(-EnginePercent);
@@ -56,6 +54,15 @@ namespace Submarines.Submarines
 			//SteeringAngle = CurrentAngle - angle;
 			//CurrentAngle = angle;
 			//SteeringAngle = 0;
+		}
+
+		protected override void MoveToNewPos(SubmarineCollisionResult collisionResult, Vector newPos)
+		{
+			if (collisionResult.CollisionDetected) {
+				AddSteering(collisionResult.DeltaSteeringResult);
+				return;
+			}
+			base.MoveToNewPos(collisionResult, newPos);
 		}
 	}
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Submarines.Geometry;
 
 namespace Submarines.Submarines
@@ -37,8 +38,12 @@ namespace Submarines.Submarines
 						continue;
 
 					res.CollisionDetected = true;
-					// вычисляем направление поворота (угол будем определять по маневровому двигателю)
-					тут
+					// вычисляем направление поворота (угол будем определять по текущему углу движения)
+					var submarineAngle = submarine.CurrentAngle;
+					var lineAngle = line.From.AngleWith(line.To);
+					var delta = Math.Sign(lineAngle - submarineAngle);
+					res.DeltaSteeringResult = delta;
+
 					goto Finish;// прерываем оба цикла
 				}
 

@@ -14,7 +14,7 @@ namespace Submarines
 		/// </summary>
 		public bool ReadyToShoot { get; private set; }
 
-		public TimeSpan WaitForShoot = TimeSpan.Zero;
+		public TimeSpan WaitForShoot;
 
 		public Weapon(TimeSpan loadWeaponTime, int ammunitionType)
 		{

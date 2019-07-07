@@ -1,5 +1,4 @@
-﻿using System;
-using Engine.Extensions;
+﻿using Engine.Extensions;
 
 namespace Submarines.Submarines
 {

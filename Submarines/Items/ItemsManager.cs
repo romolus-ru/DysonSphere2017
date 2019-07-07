@@ -20,13 +20,13 @@ namespace Submarines.Items
 		                                     "/ItemsTypes" + DataSupportFileHelper.DataFileExtension;
 
 		private const string ItemSubmarinesFile = DataSupportFileHelper.DataFileDirectory + GameConstants.DataDirectory +
-		                                     "/ItemsSubmarines" + DataSupportFileHelper.DataFileExtension;
+		                                          "/ItemsSubmarines" + DataSupportFileHelper.DataFileExtension;
 
 		private const string GeometriesFile = DataSupportFileHelper.DataFileDirectory + GameConstants.DataDirectory +
-												  "/Geometries" + DataSupportFileHelper.DataFileExtension;
+		                                      "/Geometries" + DataSupportFileHelper.DataFileExtension;
 
 		private const string MapsFile = DataSupportFileHelper.DataFileDirectory + GameConstants.DataDirectory +
-		                                      "/Maps" + DataSupportFileHelper.DataFileExtension;
+		                                "/Maps" + DataSupportFileHelper.DataFileExtension;
 
 		private const string tstFile = DataSupportFileHelper.DataFileDirectory + GameConstants.DataDirectory +
 		                               "/tst" + DataSupportFileHelper.DataFileExtension;
@@ -164,6 +164,7 @@ namespace Submarines.Items
 			foreach (var geometry in _geometries) {
 				ret.Add(geometry.Value);
 			}
+
 			return ret;
 		}
 
@@ -181,6 +182,30 @@ namespace Submarines.Items
 			File.WriteAllText(GeometriesFile, data);
 		}
 
+		// for editor
+		internal static List<ItemMap> GetAllMaps()
+		{
+			var ret = new List<ItemMap>();
+			foreach (var map in _maps) {
+				ret.Add(map.Value);
+			}
+
+			return ret;
+		}
+
+		// for editor
+		internal static void AddMap(ItemMap newMap)
+		{
+			_maps.Add(newMap.MapName, newMap);
+		}
+
+		// for editor
+		internal static void SaveMaps()
+		{
+			var maps = GetAllMaps();
+			var data = JsonConvert.SerializeObject(maps, Formatting.Indented);
+			File.WriteAllText(MapsFile, data);
+		}
 
 	}
 }

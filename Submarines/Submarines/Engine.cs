@@ -7,10 +7,8 @@ namespace Submarines.Submarines
 	/// </summary>
 	public class Engine
 	{
-
 		public int EnginePercentMin;
 		public int EnginePercentMax;
-
 
 		/// <summary>
 		/// Крейсерская скорость (максимальная энергия двигателя)
@@ -77,10 +75,11 @@ namespace Submarines.Submarines
 
 		protected void SetEnginePower(float enginePower)
 		{
-			if (enginePower > CruisingEnginePowerMax)
-				enginePower = CruisingEnginePowerMax;
-			if (enginePower < -CruisingEnginePowerMax)
-				enginePower = -CruisingEnginePowerMax;
+			переделать в предвычисляемые константы в конструкторе
+			if (enginePower > CruisingEnginePowerMax * EnginePercentMax / 100)
+				enginePower = CruisingEnginePowerMax * EnginePercentMax / 100;
+			if (enginePower < -CruisingEnginePowerMax * EnginePercentMin / 100)
+				enginePower = -CruisingEnginePowerMax * EnginePercentMin / 100;
 			if (!CruisingEnginePowerCurrent.IsEqualTo(enginePower))
 				CruisingEnginePowerCurrent = enginePower;
 		}

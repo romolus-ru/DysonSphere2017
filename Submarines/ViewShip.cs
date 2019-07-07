@@ -22,8 +22,7 @@ namespace Submarines
 			visualizationProvider.Rectangle(500,500, 20,20);
 
 			visualizationProvider.Line(450, 650, 450, (int)(650 - _submarine.EnginePercent));
-
-			visualizationProvider.Print(550, 515, "VMax=" + _submarine.VMax);
+			
 			visualizationProvider.Print(550, 525, "curAng=" + _submarine.CurrentAngle);
 			visualizationProvider.Print(550, 535, "strAng=" + _submarine.SteeringAngle);
 			visualizationProvider.Print(550, 545, "svx=" + _submarine.SpeedVector.X);
