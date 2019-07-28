@@ -64,6 +64,7 @@
     <Compile Include="GeometryEditor\SelectGeometryWindow.cs" />
     <Compile Include="GeometryEditor\ViewGeometryEditor.cs" />
     <Compile Include="Geometry\GeometryBase.cs" />
+    <Compile Include="Items\ItemSpawn.cs" />
     <Compile Include="MapEditor\SelectItemMapScrollItem.cs" />
     <Compile Include="MapEditor\SelectItemMapWindow.cs" />
     <Compile Include="MapEditor\ViewItemMapEditor.cs" />

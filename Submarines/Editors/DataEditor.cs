@@ -6,7 +6,6 @@ using Engine.EventSystem;
 using Engine.Helpers;
 using Engine.Visualization;
 using Engine.Visualization.Scroll;
-using Submarines.Editors;
 
 namespace Submarines.Editors
 {

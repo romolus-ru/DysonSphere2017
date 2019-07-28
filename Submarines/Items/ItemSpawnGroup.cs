@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using Submarines.Geometry;
 
@@ -7,6 +8,8 @@ namespace Submarines.Items
 	/// <summary>
 	/// Группа точек где создаются какие-либо объекты на карте
 	/// </summary>
+	/// <remarks>Пока не нужно - точка спауна будет определять что она из себя представляет - точка, тип точки, радиус или геометрия</remarks>
+	[Obsolete]
 	internal class ItemSpawnGroup : ItemBase
 	{
 		public SpawnType SpawnType { get; private set; }

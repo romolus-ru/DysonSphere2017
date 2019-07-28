@@ -40,7 +40,7 @@ namespace Submarines.MapEditor
 			visualizationProvider.Print(X + 250, Y, "тип " + _map.MapCode+ " "+_map.MapName);
 			visualizationProvider.Print(X + 250, Y + 10, _map.MapDescription);
 			visualizationProvider.Print(X + 250, Y + 20, "geometry name =  " + _map.MapGeometryName);
-			visualizationProvider.Print(X + 250, Y + 30, "spawn names count " + _map.MapSpawnsNames.Count.ToString());
+			visualizationProvider.Print(X + 250, Y + 30, "spawn names count " + _map.MapSpawns.Count.ToString());
 		}
 	}
 }
