@@ -5,7 +5,7 @@ using System;
 
 namespace Submarines.MapEditor
 {
-	class SelectItemMapWindow : FilteredScrollViewWindow
+	internal class SelectItemMapWindow : FilteredScrollViewWindow
 	{
 		private Action<ItemMap> _onSelect;
 		private Action _onClose;
