@@ -5,6 +5,7 @@ using Submarines.GeometryEditor;
 using Submarines.Items;
 using Submarines.Maps;
 using Submarines.Submarines;
+using Submarines.MapEditor;
 
 namespace Submarines
 {
@@ -21,9 +22,11 @@ namespace Submarines
 
 		private ViewMainMenu _vMenu;
 
-		private ViewGeometryEditor _vGeometryEditor;
+        private ViewGeometryEditor _vGeometryEditor;
+        private ViewItemMapEditor _vItemMapEditor;
+        private ViewItemMapRelationEditor _vItemMapRelationEditor;
 
-		public Action OnExit;
+        public Action OnExit;
 
 		public void Start(ModelMainClient modelMainClient, ViewManager viewManager)
 		{
@@ -38,9 +41,11 @@ namespace Submarines
 			_viewManager.AddView(_vMenu);
 			_vMenu.OnStartGame = StartGame;
 			_vMenu.OnStartGeometryEditor = StartGeometryEditor;
-		}
+            _vMenu.OnStartItemMapEditor = StartItemMapEditor;
+            _vMenu.OnStartItemMapRelationEditor = StartItemMapRelationEditor;
+        }
 
-		private void StartGeometryEditor()
+        private void StartGeometryEditor()
 		{
 			_viewManager.RemoveView(_vMenu);
 			_vMenu = null;
@@ -50,14 +55,46 @@ namespace Submarines
 			_vGeometryEditor.OnCloseEditor = CloseGeometryEditor;
 		}
 
-		private void CloseGeometryEditor()
+        private void CloseGeometryEditor()
 		{
 			_viewManager.RemoveView(_vGeometryEditor);
 			_vGeometryEditor = null;
 			Start();
 		}
 
-		private void StartGame()
+        private void StartItemMapEditor()
+        {
+            _viewManager.RemoveView(_vMenu);
+            _vMenu = null;
+
+            _vItemMapEditor = new ViewItemMapEditor(_viewManager);
+            _viewManager.AddView(_vItemMapEditor);
+            _vItemMapEditor.OnCloseEditor = CloseItemMapEditor;
+        }
+
+        private void CloseItemMapEditor()
+        {
+            _viewManager.RemoveView(_vItemMapEditor);
+            _vItemMapEditor = null;
+            Start();
+        }
+
+        private void StartItemMapRelationEditor() {
+            _viewManager.RemoveView(_vMenu);
+            _vMenu = null;
+
+            _vItemMapRelationEditor = new ViewItemMapRelationEditor(_viewManager);
+            _viewManager.AddView(_vItemMapRelationEditor);
+            _vItemMapRelationEditor.OnCloseEditor = CloseItemMapRelationEditor;
+        }
+
+        private void CloseItemMapRelationEditor() {
+            _viewManager.RemoveView(_vItemMapRelationEditor);
+            _vItemMapRelationEditor = null;
+            Start();
+        }
+
+        private void StartGame()
 		{
 			_viewManager.RemoveView(_vMenu);
 			_vMenu = null;

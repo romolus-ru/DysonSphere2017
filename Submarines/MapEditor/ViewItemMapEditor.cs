@@ -7,11 +7,10 @@ using System.Drawing;
 using System.Windows.Forms;
 using Submarines.Editors;
 using Submarines.Geometry;
-using System.Collections.Generic;
 
 namespace Submarines.MapEditor
 {
-
+    // для редактора mapgeometry сделать переопределение и выбирать из геометрий для карт (SelectGeometryWindow)
     //переделать в редактор карты. выбор/сохранение карты, расстановка точек и задание им типов (респаун (+радиус) город, специальная точка, телепорт и т.п.)
 
     /// <summary>
@@ -22,11 +21,12 @@ namespace Submarines.MapEditor
         public Action OnCloseEditor;
         private SelectItemMapWindow _selectItemMapWindow = null;
         private ItemMap _map = null;
+        private ItemMap.ItemMapSpawnPoint _mapSpawnSelected = null;
         private GeometryBase _mapGeometry;
-        private List<ItemSpawn> _mapSpawns = new List<ItemSpawn>();
         private ViewManager _viewManager = null;
         private float _currentZoom = 1;
         private int _currentZoomIndex = 0;
+
         /// <summary>
         /// После редактирования если код карты изменен надо обязательно поменять их у всех spawnPoints
         /// </summary>
@@ -35,8 +35,6 @@ namespace Submarines.MapEditor
         private int _mapX = 0;
         private int _mapY = 0;
         private int _dragNum = -1;// номер в списке - что бы заменить
-        private int _dragCode = -1;// 0 или 1 (From or To)
-        private LineInfo _dragLine;// линия которая будет изменена
         private Vector _dragCurrent;// текущая перемещаемая точка
         private Vector _dragStatic;// текущая точка которая остаётся неподвижной
         private int _dragMode = -1;// 0 - map 1 - point
@@ -50,11 +48,9 @@ namespace Submarines.MapEditor
             _viewManager = viewManager;
         }
 
-        //тут. для начала просто загружаем карту и позволяем её смотреть
-
         protected override void InitObject(VisualizationProvider visualizationProvider, Input input)
         {
-            SetParams(0, 0, visualizationProvider.CanvasWidth, visualizationProvider.CanvasHeight, "ViewGeometryEditor");
+            SetParams(0, 0, visualizationProvider.CanvasWidth, visualizationProvider.CanvasHeight, "ViewItemMapEditor");
 
             var buttonCloseEditor = new ViewButton();
             AddComponent(buttonCloseEditor);
@@ -68,11 +64,11 @@ namespace Submarines.MapEditor
             selectGeometry.SetParams(110, 35, 140, 25, "SelectItemMap");
             selectGeometry.InitTexture("textRB", "textRB");
 
-            var editGeometry = new ViewButton();
-            AddComponent(editGeometry);
-            editGeometry.InitButton(EditCurrentItemMap, "EditItemMap", "Редактировать информацию о карте", Keys.E);
-            editGeometry.SetParams(110, 60, 140, 25, "EditItemMap");
-            editGeometry.InitTexture("textRB", "textRB");
+            var editItemMap = new ViewButton();
+            AddComponent(editItemMap);
+            editItemMap.InitButton(EditCurrentItemMap, "EditItemMap", "Редактировать информацию о карте", Keys.E);
+            editItemMap.SetParams(110, 60, 140, 25, "EditItemMap");
+            editItemMap.InitTexture("textRB", "textRB");
 
             var newMapItem = new ViewButton();
             AddComponent(newMapItem);
@@ -80,6 +76,12 @@ namespace Submarines.MapEditor
             newMapItem.SetParams(110, 90, 140, 25, "NewItemMap");
             newMapItem.InitTexture("textRB", "textRB");
 
+            var newSpawnItem = new ViewButton();
+            AddComponent(newSpawnItem);
+            newSpawnItem.InitButton(NewSpawnItem, "NewSpawnItem", "Создать новую точку на карте", Keys.M);
+            newSpawnItem.SetParams(110, 120, 140, 25, "NewSpawnItem");
+            newSpawnItem.InitTexture("textRB", "textRB");
+            
             var buttonSaveMaps = new ViewButton();
             AddComponent(buttonSaveMaps);
             buttonSaveMaps.InitButton(SaveMaps, "Save", "Save", Keys.X);
@@ -111,6 +113,20 @@ namespace Submarines.MapEditor
 
         }
 
+        private void NewSpawnItem()
+        {
+            if (_map == null)
+                return;
+            var newSpawnPoint = _map.AddNewSpawn(0, 0);
+            new DataEditor<ItemMap.ItemMapSpawnPoint>().InitWindow(_viewManager, newSpawnPoint, null, cancel: RemoveNewSpawnPoint);
+        }
+
+        private void RemoveNewSpawnPoint(ItemMap.ItemMapSpawnPoint remove) {
+            if (_map == null)
+                return;
+            _map.MapSpawns.Remove(remove);
+        }
+
         private void EditCurrentItemMap()
         {
             if (_map == null)
@@ -121,10 +137,10 @@ namespace Submarines.MapEditor
         private void NewItemMap()
         {
             var itemMap = new ItemMap { MapName = "NewMap", MapCode = "NewMapCode" };
-            new DataEditor<ItemMap>().InitWindow(_viewManager, itemMap, NewMap);
+            new DataEditor<ItemMap>().InitWindow(_viewManager, itemMap, SaveNewMap);
         }
 
-        private void NewMap(ItemMap newMap)
+        private void SaveNewMap(ItemMap newMap)
         {
             _map = newMap;
             ItemsManager.AddMap(newMap);
@@ -150,120 +166,95 @@ namespace Submarines.MapEditor
         {
             _dragMode = _dragNum == -1 ? 0 : 1;
         }
-
+        
         private void DragModeEnd()
         {
-            //_dragMode = -1;
-            //if (_dragNum == -1)
-            //	return;
+            _dragMode = -1;
+            if (_dragNum == -1)
+                return;
 
-            //// применяем координаты
-            //var minDist = _dragCurrent.DistanceTo(_map.Lines[0].From); // первоначальное значение, чтоб не с потолка брать
-            //var foundNum = -1;
-            //Vector nearPoint = new Vector(0, 0, 0);
-            //var mmDist = MouseMinimalDistance;
-            //float curDist;
-            //for (int i = 0; i < _map.Lines.Count; i++) {
-            //	if (i == _dragNum) continue;
+            // применяем координаты
+            var minDist = _dragCurrent.DistanceTo(_map.MapSpawns[0].Point);
+            var foundNum = -1;
+            Vector nearPoint = new Vector(0, 0, 0);
+            var mmDist = MouseMinimalDistance;
+            float curDist;
+            for (int i = 0; i < _map.MapSpawns.Count; i++) {
+                if (i == _dragNum)
+                    continue;
 
-            //	LineInfo line = _map.Lines[i];
+                var point = _map.MapSpawns[i].Point;
 
-            //	curDist = _dragCurrent.DistanceTo(line.From);
-            //	if (curDist <= mmDist && curDist <= minDist) {
-            //		minDist = curDist;
-            //		foundNum = i;
-            //		nearPoint = line.From;
-            //	}
-            //	curDist = _dragCurrent.DistanceTo(line.To);
-            //	if (curDist <= mmDist && curDist <= minDist) {
-            //		minDist = curDist;
-            //		foundNum = i;
-            //		nearPoint = line.To;
-            //	}
-            //}
+                curDist = _dragCurrent.DistanceTo(point);
+                if (curDist <= mmDist && curDist <= minDist) {
+                    minDist = curDist;
+                    foundNum = i;
+                    nearPoint = point;
+                }
+            }
 
-            //if (foundNum != -1) {// меняем координаты на найденные ближайшие
-            //	_dragCurrent = nearPoint;
-            //}
+            if (foundNum != -1) {// меняем координаты на найденные ближайшие
+                _dragCurrent = nearPoint;
+            }
 
-            //// заменяем линию новой
+            // заменяем точку новой
             //var newLine = new LineInfo(_dragCurrent, _dragStatic);
-            //_map.Lines[_dragNum] = newLine;
-            //_dragNum = -1;
-            //_dxZoomed = 0;
-            //_dyZoomed = 0;
+            _map.MapSpawns[_dragNum].Point = _dragCurrent;
+            _dragNum = -1;
+            _dxZoomed = 0;
+            _dyZoomed = 0;
         }
 
         private void DragMove(int dx, int dy)
         {
-            //_dxZoomed += (dx / _currentZoom);
-            //_dyZoomed += (dy / _currentZoom);
-            //int deltaX = (int)_dxZoomed;
-            //int deltaY = (int)_dyZoomed;
-            //_dxZoomed -= deltaX;// оставляем остаток - а то набежит ошибка и будет не круто
-            //_dyZoomed -= deltaY;// с другой стороны можно упростить - при делении получается умножение на целое число (на данный момент) и остатков нету
-            //if (_dragMode == 0) {
-            //	_mapX += deltaX;
-            //	_mapY += deltaY;
-            //} else {
-            //	_dragCurrent = _dragCurrent.MoveRelative(deltaX, deltaY);
-            //}
-        }
-
-        private void AddLine()
-        {
-            //LineInfo newLineInfo;
-            //newLineInfo.From = new Vector(0, 100 / _currentZoom, 0);
-            //newLineInfo.To = new Vector(0, -100 / _currentZoom, 0);
-            //_map.Lines.Add(newLineInfo);
+            _dxZoomed += (dx / _currentZoom);
+            _dyZoomed += (dy / _currentZoom);
+            int deltaX = (int)_dxZoomed;
+            int deltaY = (int)_dyZoomed;
+            _dxZoomed -= deltaX;// оставляем остаток - а то набежит ошибка и будет не круто
+            _dyZoomed -= deltaY;// с другой стороны можно упростить - при делении получается умножение на целое число (на данный момент) и остатков нету
+            if (_dragMode == 0) {
+                _mapX += deltaX;
+                _mapY += deltaY;
+            } else {
+                _dragCurrent = _dragCurrent.MoveRelative(deltaX, deltaY);
+            }
         }
 
         protected override void Cursor(int cursorX, int cursorY)
         {
-            //if (_dragMode != -1)
-            //	return;
-            //if (_map == null || _map.Lines.Count == 0)
-            //	return;
+            if (_dragMode != -1)
+            	return;
+            if (_map == null || _map.MapSpawns.Count == 0)
+                return;
 
-            //var p = new Vector((cursorX - _mapX) / _currentZoom, (cursorY - _mapY) / _currentZoom, 0);
-            //var minDist = p.DistanceTo(_map.Lines[0].From); // первоначальное значение, чтоб не с потолка брать
-            //var dragCode = 0;
-            //var dragNum = -1;
-            //Vector dragCurrent = new Vector(0, 0, 0);
-            //Vector dragStatic = new Vector(0, 0, 0);
-            //var mmDist = MouseMinimalDistance;
-            //float curDist;
-            //for (int i = 0; i < _map.Lines.Count; i++) {
-            //	LineInfo line = _map.Lines[i];
+            var p = new Vector((cursorX - _mapX) / _currentZoom, (cursorY - _mapY) / _currentZoom, 0);
+            var minDist = p.DistanceTo(_map.MapSpawns[0].Point);
+            var dragNum = -1;
+            Vector dragCurrent = new Vector(0, 0, 0);
+            Vector dragStatic = new Vector(0, 0, 0);
+            var mmDist = MouseMinimalDistance;
+            float curDist;
+            for (int i = 0; i < _map.MapSpawns.Count; i++) {
+            	var point = _map.MapSpawns[i].Point;
 
-            //	curDist = p.DistanceTo(line.From);
-            //	if (curDist <= mmDist && curDist <= minDist) {
-            //		minDist = curDist;
-            //		dragCode = 0;
-            //		dragNum = i;
-            //		dragStatic = line.To;
-            //		dragCurrent = line.From;
-            //	}
-            //	curDist = p.DistanceTo(line.To);
-            //	if (curDist <= mmDist && curDist <= minDist) {
-            //		minDist = curDist;
-            //		dragCode = 1;
-            //		dragNum = i;
-            //		dragStatic = line.From;
-            //		dragCurrent = line.To;
-            //	}
-            //}
+                curDist = p.DistanceTo(point);
+            	if (curDist <= mmDist && curDist <= minDist) {
+            		minDist = curDist;
+            		dragNum = i;
+            		dragStatic = point;
+            		dragCurrent = point;
+            	}
+            }
 
-            //if (dragNum == -1) {
-            //	_dragNum = -1;
-            //	_dragCode = -1;
-            //} else {
-            //	_dragNum = dragNum;
-            //	_dragCode = dragCode;
-            //	_dragLine = _map.Lines[_dragNum];
-            //	_dragStatic = dragStatic;
-            //	_dragCurrent = dragCurrent;
-            //}
+            if (dragNum == -1) {
+            	_dragNum = -1;
+            } else {
+            	_dragNum = dragNum;
+            	_mapSpawnSelected = _map.MapSpawns[_dragNum];
+            	_dragStatic = dragStatic;
+            	_dragCurrent = dragCurrent;
+            }
         }
 
         private void SaveMaps()
@@ -274,38 +265,41 @@ namespace Submarines.MapEditor
         private void SelectItemMap()
         {
             _selectItemMapWindow = new SelectItemMapWindow();
-            _selectItemMapWindow.InitWindow(_viewManager, SetGeometry, null);
+            _selectItemMapWindow.InitWindow(_viewManager, SetItemMap, null);
         }
 
-        public void SetGeometry(ItemMap itemMap)
+        public void SetItemMap(ItemMap itemMap)
         {
             _map = itemMap;
+            _mapGeometry = ItemsManager.GetGeometry(_map.MapGeometryName);
             CorrectPosAndScale();
         }
 
         private void CorrectPosAndScale()
         {
-            //_mapX = 0;
-            //_mapY = 0;
-            //if (_map == null)
-            //	return;
+            _mapX = 0;
+            _mapY = 0;
+            if (_mapGeometry == null)
+            	return;
 
-            //float x = 0;
-            //float y = 0;
-            //foreach (var line in _map.Lines) {
-            //	x += line.From.X;
-            //	y += line.From.Y;
-            //	x += line.To.X;
-            //	y += line.To.Y;
-            //}
+            float x = 0;
+            float y = 0;
+            foreach (var line in _mapGeometry.Lines)
+            {
+                x += line.From.X;
+                y += line.From.Y;
+                x += line.To.X;
+                y += line.To.Y;
+            }
 
-            //if (_map.Lines.Count > 0) {
-            //	x /= (_map.Lines.Count * 2);
-            //	y /= (_map.Lines.Count * 2);
-            //}
+            if (_mapGeometry.Lines.Count > 0)
+            {
+                x /= (_mapGeometry.Lines.Count * 2);
+                y /= (_mapGeometry.Lines.Count * 2);
+            }
 
-            //_mapX = (int)(-x + VisualizationProvider.CanvasWidth / 2f);
-            //_mapY = (int)(-y + VisualizationProvider.CanvasHeight / 2f);
+            _mapX = (int)(-x + VisualizationProvider.CanvasWidth / 2f);
+            _mapY = (int)(-y + VisualizationProvider.CanvasHeight / 2f);
         }
 
         private void CloseEditor()
@@ -325,23 +319,38 @@ namespace Submarines.MapEditor
             visualizationProvider.OffsetAdd(_mapX, _mapY);
             visualizationProvider.SetColor(Color.White);
             visualizationProvider.Circle(0, 0, 10);
-            //foreach (var line in _map.Lines) {
-            //	DrawLine(visualizationProvider, line.From, line.To);
-            //}
-
+            if (_mapGeometry != null) {
+                foreach (var line in _mapGeometry.Lines) {
+                    DrawLine(visualizationProvider, line.From, line.To);
+                }
+                if (_map.MapSpawns.Count > 0) {
+                    visualizationProvider.SetColor(Color.DarkOrchid);
+                    foreach (var spawn in _map.MapSpawns) {
+                        DrawSpawn(visualizationProvider, spawn.Point);
+                    }
+                }
+            }
+            
             if (_dragNum != -1)
             {
                 visualizationProvider.SetColor(Color.Red);
-                DrawLine(visualizationProvider, _dragLine.From, _dragLine.To);
+                DrawSpawn(visualizationProvider, _mapSpawnSelected.Point);
 
                 if (_dragMode == 1)
                 {
                     visualizationProvider.SetColor(Color.GreenYellow);
-                    DrawLine(visualizationProvider, _dragCurrent, _dragStatic);
+                    DrawSpawn(visualizationProvider, _dragCurrent);
                 }
             }
 
             visualizationProvider.OffsetRemove();
+        }
+
+        private void DrawSpawn(VisualizationProvider visualizationProvider, Vector spawnPoint) {
+            visualizationProvider.Circle((int)spawnPoint.X, (int)spawnPoint.Y, 8);
+            //visualizationProvider.Line(
+            //    (int)(spawnPoint.X * _currentZoom), (int)(spawnPoint.Y * _currentZoom),
+            //    (int)(spawnPoint.X * _currentZoom + 10), (int)(spawnPoint.Y * _currentZoom + 10));
         }
 
         private void DrawLine(VisualizationProvider visualizationProvider, Vector from, Vector to)

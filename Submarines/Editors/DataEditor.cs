@@ -16,10 +16,10 @@ namespace Submarines.Editors
 	public class DataEditor<T> : FilteredScrollViewWindow where T : class
 	{
 		private Action<T> _update;
-		private Action _cancel;
+		private Action<T> _cancel;
 		private T _objectToEdit;
 
-		public void InitWindow(ViewManager viewManager, T objectToEdit, Action<T> update, Action cancel = null)
+		public void InitWindow(ViewManager viewManager, T objectToEdit, Action<T> update, Action<T> cancel = null)
 		{
 			_update = update;
 			_cancel = cancel;
@@ -28,32 +28,30 @@ namespace Submarines.Editors
 			InitWindow("Редактор для " + objectToEdit.GetType(), viewManager, showOkButton: true);
 		}
 
-		protected override void InitScrollItems()
-		{
-			var row = 0;
-			var t = _objectToEdit.GetType();
-			var mi = t.GetMembers().Where(m => m.MemberType == MemberTypes.Property);
-			foreach (PropertyInfo item in mi) {
-				if (AttributesHelper.IsHasAttribute<SkipEditEditorAttribute>(item))
-					continue;
-				if (item.PropertyType.IsEnum) {
-					var scrollItem = new MemberEnumScrollView<T>();
-					ViewScroll.AddComponent(scrollItem);
-					scrollItem.InitValueEditor(_objectToEdit, item);
-					scrollItem.SetParams(10, (row) * 60 + 10, 950, 50, "enum" + item.Name);
+        protected override void InitScrollItems() {
+            var row = 0;
+            var t = _objectToEdit.GetType();
+            var mi = t.GetMembers().Where(m => m.MemberType == MemberTypes.Property);
+            foreach (PropertyInfo item in mi) {
+                if (AttributesHelper.IsHasAttribute<SkipEditEditorAttribute>(item))
+                    continue;
+                if (item.PropertyType.IsEnum) {
+                    var scrollItem = new MemberEnumScrollView<T>();
+                    ViewScroll.AddComponent(scrollItem);
+                    scrollItem.InitValueEditor(_objectToEdit, item);
+                    scrollItem.SetParams(10, (row) * 60 + 10, 950, 50, "enum" + item.Name);
+                } else {
+                    var scrollItem = new MemberScrollView<T>();
+                    ViewScroll.AddComponent(scrollItem);
+                    scrollItem.InitValueEditor(_objectToEdit, item);
+                    scrollItem.SetParams(10, (row) * 60 + 10, 950, 50, "item" + item);
+                    if (item.PropertyType.Name == "String")
+                        scrollItem.SetupMemberEditor(getValue: str => str);
+                }
 
-				} else {
-					var scrollItem = new MemberScrollView<T>();
-					ViewScroll.AddComponent(scrollItem);
-					scrollItem.InitValueEditor(_objectToEdit, item);
-					scrollItem.SetParams(10, (row) * 60 + 10, 950, 50, "item" + item);
-					if (item.PropertyType.Name == "String")
-						scrollItem.SetupMemberEditor(getValue: str => str);
-				}
-
-				row++;
-			}
-		}
+                row++;
+            }
+        }
 
 		protected override void InitButtonOk(ViewButton btnOk)
 		{
@@ -96,7 +94,7 @@ namespace Submarines.Editors
 		{
 			if (_cancel == null) return;
 			var canceler = _cancel;
-			Checkers.AddToCheckOnce(() => canceler?.Invoke());
+			Checkers.AddToCheckOnce(() => canceler?.Invoke(_objectToEdit));
 		}
 
 		public override void DrawObject(VisualizationProvider visualizationProvider)

@@ -9,7 +9,7 @@ namespace Engine.Helpers
 	/// </summary>
 	public static class AttributesHelper
 	{
-		public static bool IsHasAttribute<T>(PropertyInfo prop) where T : Attribute
+		public static bool IsHasAttribute<T>(MemberInfo prop) where T : Attribute
 			=> prop.GetCustomAttribute<T>() != null;
 
 		public static T GetAttribute<T>(PropertyInfo prop) where T : Attribute

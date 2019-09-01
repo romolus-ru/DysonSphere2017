@@ -58,27 +58,28 @@ namespace Submarines.Editors
 		public override void InitValueEditor(T obj, MemberInfo memberInfo)
 		{
 			_memberInfo = memberInfo;
-			var value = (_memberInfo as PropertyInfo).GetValue(obj);
+            var value = (_memberInfo as PropertyInfo).GetValue(obj);
 			if (value != null)
 				_inputView.InputAction(value.ToString());
 		}
 
-		/// <summary>
-		/// Установить значение поля объекта
-		/// </summary>
-		/// <param name="obj"></param>
-		public override void SetValue(T obj)
-		{
-			if (!_inputView.Enabled) return;
+        /// <summary>
+        /// Установить значение поля объекта
+        /// </summary>
+        /// <param name="obj"></param>
+        public override void SetValue(T obj) {
+            if (!_inputView.Enabled)
+                return;
 
-			string str = _inputView.Text;
-			PropertyInfo pi = _memberInfo as PropertyInfo;
-			object value = _getValue == null
-				? Convert.ChangeType(str, pi.PropertyType)
-				: _getValue(str);
+            string str = _inputView.Text;
 
-			pi.SetValue(obj, value);
-		}
+            PropertyInfo pi = _memberInfo as PropertyInfo;
+            object value = _getValue == null
+                ? Convert.ChangeType(str, pi.PropertyType)
+                : _getValue(str);
+
+            pi.SetValue(obj, value);
+        }
 
 		public override void DrawObject(VisualizationProvider vp)
 		{
