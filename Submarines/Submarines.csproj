@@ -64,12 +64,14 @@
     <Compile Include="GeometryEditor\SelectGeometryWindow.cs" />
     <Compile Include="GeometryEditor\ViewGeometryEditor.cs" />
     <Compile Include="Geometry\GeometryBase.cs" />
+    <Compile Include="Items\ItemGlobalMap.cs" />
     <Compile Include="Items\ItemMapPoint.cs" />
     <Compile Include="Items\ItemMapRelation.cs" />
     <Compile Include="Items\ItemSpawn.cs" />
     <Compile Include="MapEditor\SelectItemMapScrollItem.cs" />
     <Compile Include="MapEditor\SelectItemMapWindow.cs" />
     <Compile Include="MapEditor\ViewItemMapEditor.cs" />
+    <Compile Include="MapEditor\ViewItemGlobalMapEditor.cs" />
     <Compile Include="Submarines\CollisionHelper.cs" />
     <Compile Include="Geometry\GeometryType.cs" />
     <Compile Include="Geometry\LineInfo.cs" />

@@ -31,7 +31,10 @@ namespace Submarines.Items
 		private const string tstFile = DataSupportFileHelper.DataFileDirectory + GameConstants.DataDirectory +
 		                               "/tst" + DataSupportFileHelper.DataFileExtension;
 
-		private static Dictionary<string, ItemBase> _items = new Dictionary<string, ItemBase>();
+        private const string GlobalMapFile = DataSupportFileHelper.DataFileDirectory + GameConstants.DataDirectory +
+                                       "/MapGlobal" + DataSupportFileHelper.DataFileExtension;
+
+        private static Dictionary<string, ItemBase> _items = new Dictionary<string, ItemBase>();
 		private static Dictionary<string, ItemsCostContainer> _money = new Dictionary<string, ItemsCostContainer>();
 		private static Dictionary<string, GeometryBase> _geometries = new Dictionary<string, GeometryBase>();
 		private static Dictionary<string, ItemMap> _maps = new Dictionary<string, ItemMap>();
@@ -207,5 +210,17 @@ namespace Submarines.Items
 			File.WriteAllText(MapsFile, data);
 		}
 
-	}
+        // for editor
+        internal static void SaveGlobalMap(ItemGlobalMap globalMap) {
+            var data = JsonConvert.SerializeObject(globalMap, Formatting.Indented);
+            File.WriteAllText(GlobalMapFile, data);
+        }
+
+        // for editor
+        internal static ItemGlobalMap LoadGlobalMap() {
+            var data = FileUtils.LoadStringFromFile(MapsFile);
+            var globalMap = JsonConvert.DeserializeObject<ItemGlobalMap>(data);
+            return globalMap;
+        }
+    }
 }

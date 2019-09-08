@@ -5,8 +5,9 @@
     /// </summary>
     internal class ItemMapPoint
     {
+        public int PointId { get; set; }
         public string PointName { get; set; }
         public Vector Point { get; set; }
-        public string MapName { get; set; }
+        public string MapCode { get; set; }
     }
 }

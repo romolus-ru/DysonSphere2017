@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Submarines.Items
+﻿namespace Submarines.Items
 {
     /// <summary>
     /// 
@@ -22,16 +16,19 @@ namespace Submarines.Items
         public string ConditionViewName { get; set; }
 
         /// <summary>
-        /// Имя точки карты на глобальной карте
+        /// Идентификатор карты
         /// </summary>
-        public string MapName1 { get; set; }
+        public int MapPointId1 { get; set; }
+
+        public int MapSpawnId1 { get; set; }
         /// <summary>
-        /// Имя точки карты на глобальной карте
+        /// Идентификатор карты
         /// </summary>
-        public string MapName2 { get; set; }
+        public int MapPointId2 { get; set; }
+        public int MapSpawnId2 { get; set; }
         
         /// <summary>
-        /// Вес линии для расчёта и измменения кратчайшего пути
+        /// Вес линии для расчёта и измерения кратчайшего пути
         /// </summary>
         public int Weight { get; set; }
     }

@@ -24,7 +24,7 @@ namespace Submarines
 
         private ViewGeometryEditor _vGeometryEditor;
         private ViewItemMapEditor _vItemMapEditor;
-        private ViewItemMapRelationEditor _vItemMapRelationEditor;
+        private ViewItemGlobalMapEditor _vItemMapRelationEditor;
 
         public Action OnExit;
 
@@ -83,7 +83,7 @@ namespace Submarines
             _viewManager.RemoveView(_vMenu);
             _vMenu = null;
 
-            _vItemMapRelationEditor = new ViewItemMapRelationEditor(_viewManager);
+            _vItemMapRelationEditor = new ViewItemGlobalMapEditor(_viewManager);
             _viewManager.AddView(_vItemMapRelationEditor);
             _vItemMapRelationEditor.OnCloseEditor = CloseItemMapRelationEditor;
         }
