@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using Engine.Extensions;
 using Engine.Helpers;
 using Engine.Utils;
 using Newtonsoft.Json;
@@ -218,7 +219,9 @@ namespace Submarines.Items
 
         // for editor
         internal static ItemGlobalMap LoadGlobalMap() {
-            var data = FileUtils.LoadStringFromFile(MapsFile);
+            var data = FileUtils.LoadStringFromFile(GlobalMapFile);
+            if (data.IsNullOrEmpty())
+                return new ItemGlobalMap();
             var globalMap = JsonConvert.DeserializeObject<ItemGlobalMap>(data);
             return globalMap;
         }

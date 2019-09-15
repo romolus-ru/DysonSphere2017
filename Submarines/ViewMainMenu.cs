@@ -34,11 +34,11 @@ namespace Submarines
             buttonStartItemMapEditor.SetParams(110, 95, 140, 25, "StartItemMapEditor");
             buttonStartItemMapEditor.InitTexture("textRB", "textRB");
 
-            var buttonStartItemMapRelationEditor = new ViewButton();
-            AddComponent(buttonStartItemMapRelationEditor);
-            buttonStartItemMapRelationEditor.InitButton(StartItemMapRelationEditor, "StartItemMapRelationEditor", "Запустить редактор глобальной карты", Keys.N);
-            buttonStartItemMapRelationEditor.SetParams(110, 135, 140, 25, "StartItemMapRelationEditor");
-            buttonStartItemMapRelationEditor.InitTexture("textRB", "textRB");
+            var buttonStartGlobalMapEditor = new ViewButton();
+            AddComponent(buttonStartGlobalMapEditor);
+            buttonStartGlobalMapEditor.InitButton(StartGlobalMapEditor, "StartGlobalMapEditor", "Запустить редактор глобальной карты", Keys.N);
+            buttonStartGlobalMapEditor.SetParams(110, 135, 140, 25, "StartGlobalMapEditor");
+            buttonStartGlobalMapEditor.InitTexture("textRB", "textRB");
         }
 
         private void StartGame()
@@ -55,7 +55,7 @@ namespace Submarines
         {
             OnStartItemMapEditor?.Invoke();
         }
-        private void StartItemMapRelationEditor() {
+        private void StartGlobalMapEditor() {
             OnStartItemMapRelationEditor?.Invoke();
         }
     }

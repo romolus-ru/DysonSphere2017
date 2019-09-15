@@ -48,6 +48,8 @@ namespace Engine.Utils
 		/// <returns></returns>
 		public static string LoadStringFromFile(string fileName)
 		{
+            if (!File.Exists(fileName))
+                return null;
 			return File.ReadAllText(fileName);
 		}
 

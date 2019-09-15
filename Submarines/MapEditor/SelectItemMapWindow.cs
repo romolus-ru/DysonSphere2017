@@ -33,11 +33,11 @@ namespace Submarines.MapEditor
 
 		private void SelectMap(ItemMap map)
 		{
-			_onSelect?.Invoke(map);
 			CloseWindow();
-		}
+            _onSelect?.Invoke(map);
+        }
 
-		protected override void InitButtonCancel(ViewButton btnCancel)
+        protected override void InitButtonCancel(ViewButton btnCancel)
 		{
 			base.InitButtonCancel(btnCancel);
 			btnCancel.SetCoordinatesRelative(-100, 0, 0);

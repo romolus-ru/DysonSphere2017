@@ -5,7 +5,9 @@ using Submarines.Editors;
 using Submarines.Geometry;
 using Submarines.Items;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace Submarines.MapEditor
@@ -15,40 +17,28 @@ namespace Submarines.MapEditor
     /// </summary>
     internal class ViewItemGlobalMapEditor : ViewComponent
     {
-        private enum DragSelectionType { None, Map, MapPoint, MapRelation, }
-        private enum SelectionMode { None, SelectPoint1, SelectPoint2, }
+        private enum SelectionType { None, Map, MapPoint, MapRelation, }
+        private enum RelationSelectionMode { None, SelectPoint1, SelectPoint2, }
         public Action OnCloseEditor;
         private ItemGlobalMap _globalMap = null;
 
-        private DragSelectionType _dragMode1 = DragSelectionType.None;
+        private SelectionType _selectionType = SelectionType.None;
         private ItemMapPoint _dragMapPoint;// передвигать можно
+        private bool _dragMode;
         private ItemMapRelation _selectedRelation;// только для редактирования
 
-        private SelectionMode _currentSelectionMode = SelectionMode.None;
+        private RelationSelectionMode _currentRelationSelectionMode = RelationSelectionMode.None;
         private ItemMapPoint _selectedPoint1;
         private ItemMapPoint _selectedPoint2;
 
-
-
-
-
-
         private SelectItemMapWindow _selectItemMapWindow = null;
-        private ItemMap _map = null;
-        private ItemMap.ItemMapSpawnPoint _mapSpawnSelected = null;
-        private GeometryBase _mapGeometry;
         private ViewManager _viewManager = null;
         private float _currentZoom = 1;
         private int _currentZoomIndex = 0;
 
-        private string _oldMapCode = null;
-
         private int _mapX = 0;
         private int _mapY = 0;
-        private int _dragNum = -1;// номер в списке - что бы заменить
         private Vector _dragCurrent;// текущая перемещаемая точка
-        private Vector _dragStatic;// текущая точка которая остаётся неподвижной
-        private int _dragMode = -1;// 0 - map 1 - point
         private float _dxZoomed;
         private float _dyZoomed;
 
@@ -66,19 +56,19 @@ namespace Submarines.MapEditor
             var buttonCloseEditor = new ViewButton();
             AddComponent(buttonCloseEditor);
             buttonCloseEditor.InitButton(CloseEditor, "CloseEditor", "Закрыть редактор", Keys.X);
-            buttonCloseEditor.SetParams(110, 15, 140, 25, "CloseEditor");
+            buttonCloseEditor.SetParams(110, 10, 140, 25, "CloseEditor");
             buttonCloseEditor.InitTexture("textRB", "textRB");
 
             var newItemMapPoint = new ViewButton();
             AddComponent(newItemMapPoint);
             newItemMapPoint.InitButton(NewItemMapPoint, "NewItemMapPoint", "Создать новую точку на карте", Keys.N);
-            newItemMapPoint.SetParams(110, 90, 140, 25, "NewItemMapPoint");
+            newItemMapPoint.SetParams(110, 30, 140, 25, "NewItemMapPoint");
             newItemMapPoint.InitTexture("textRB", "textRB");
 
             var newItemMapRelationt = new ViewButton();
             AddComponent(newItemMapRelationt);
             newItemMapRelationt.InitButton(NewItemMapRelation, "NewItemMapRelation", "Создать новую связь между точками на карте", Keys.N);
-            newItemMapRelationt.SetParams(110, 90, 140, 25, "NewItemMapRelation");
+            newItemMapRelationt.SetParams(110, 50, 140, 25, "NewItemMapRelation");
             newItemMapRelationt.InitTexture("textRB", "textRB");
 
             var buttonSaveGlobalMap = new ViewButton();
@@ -109,7 +99,7 @@ namespace Submarines.MapEditor
             mover.OnMoveObjectRelative += DragMove;
             mover.OnDragModeStart += DragStart;
             mover.OnDragModeEnd += DragModeEnd;
-
+            CorrectPosAndScale();
         }
 
         private void NewItemMapPoint() {
@@ -128,10 +118,11 @@ namespace Submarines.MapEditor
 
         private void AddItemMap(ItemMapPoint newItemMapPoint) {
             _globalMap.MapPoints.Add(newItemMapPoint);
+            CorrectPosAndScale();
         }
 
         private void NewItemMapRelation() {
-            _currentSelectionMode = SelectionMode.SelectPoint1;
+            _currentRelationSelectionMode = RelationSelectionMode.SelectPoint1;
         }
 
         private void ZoomPlus() {
@@ -149,42 +140,15 @@ namespace Submarines.MapEditor
         }
 
         private void DragStart() {
-            _dragMode = _dragNum == -1 ? 0 : 1;
+            _dragMode = true;
         }
 
         private void DragModeEnd() {
-            _dragMode = -1;
-            if (_dragNum == -1)
-                return;
-
-            // применяем координаты
-            var minDist = _dragCurrent.DistanceTo(_map.MapSpawns[0].Point);
-            var foundNum = -1;
-            Vector nearPoint = new Vector(0, 0, 0);
-            var mmDist = MouseMinimalDistance;
-            float curDist;
-            for (int i = 0; i < _map.MapSpawns.Count; i++) {
-                if (i == _dragNum)
-                    continue;
-
-                var point = _map.MapSpawns[i].Point;
-
-                curDist = _dragCurrent.DistanceTo(point);
-                if (curDist <= mmDist && curDist <= minDist) {
-                    minDist = curDist;
-                    foundNum = i;
-                    nearPoint = point;
-                }
+            _dragMode = false;
+            if (_selectionType == SelectionType.MapPoint && _dragMapPoint != null) {
+                _dragMapPoint.Point = _dragCurrent;
             }
-
-            if (foundNum != -1) {// меняем координаты на найденные ближайшие
-                _dragCurrent = nearPoint;
-            }
-
-            // заменяем точку новой
-            //var newLine = new LineInfo(_dragCurrent, _dragStatic);
-            _map.MapSpawns[_dragNum].Point = _dragCurrent;
-            _dragNum = -1;
+            _dragMapPoint = null;
             _dxZoomed = 0;
             _dyZoomed = 0;
         }
@@ -194,22 +158,26 @@ namespace Submarines.MapEditor
             _dyZoomed += (dy / _currentZoom);
             int deltaX = (int)_dxZoomed;
             int deltaY = (int)_dyZoomed;
-            _dxZoomed -= deltaX;// оставляем остаток - а то набежит ошибка и будет не круто
-            _dyZoomed -= deltaY;// с другой стороны можно упростить - при делении получается умножение на целое число (на данный момент) и остатков нету
-            if (_dragMode == 0) {
-                _mapX += deltaX;
-                _mapY += deltaY;
-            } else {
-                _dragCurrent = _dragCurrent.MoveRelative(deltaX, deltaY);
+            _dxZoomed -= deltaX;
+            _dyZoomed -= deltaY;
+            switch (_selectionType) {
+                case SelectionType.Map:
+                    _mapX += deltaX;
+                    _mapY += deltaY;
+                    break;
+                case SelectionType.MapPoint:
+                    _dragCurrent = _dragCurrent.MoveRelative(deltaX, deltaY);
+                    break;
             }
         }
 
         protected override void Cursor(int cursorX, int cursorY) {
-            if (_dragMode1 != DragSelectionType.None)
+            if (_dragMode)
                 return;
             if (_globalMap == null || _globalMap.MapPoints.Count == 0)
                 return;
 
+            _selectionType = SelectionType.Map;
             _dragMapPoint = null;
             _selectedRelation = null;
 
@@ -225,7 +193,8 @@ namespace Submarines.MapEditor
                 if (curDist <= mmDist && curDist <= minDist) {
                     minDist = curDist;
                     _dragMapPoint = mapPoint;
-                    _dragMode1 = DragSelectionType.MapPoint;
+                    _dragCurrent = mapPoint.Point;
+                    _selectionType = SelectionType.MapPoint;
                 }
             }
 
@@ -240,48 +209,30 @@ namespace Submarines.MapEditor
                     minDist = curDist;
                     _dragMapPoint = null;
                     _selectedRelation = mapRelation;
-                    _dragMode1 = DragSelectionType.MapRelation;
+                    _selectionType = SelectionType.MapRelation;
                 }
             }
-            тут
-            if (dragNum == -1) {
-                _dragNum = -1;
-            } else {
-                _dragNum = dragNum;
-                _mapSpawnSelected = _map.MapSpawns[_dragNum];
-                _dragStatic = dragStatic;
-                _dragCurrent = dragCurrent;
-            }
+
         }
 
         private void SaveGlobalMap() {
             ItemsManager.SaveGlobalMap(_globalMap);
         }
 
-        public void SetItemMap(ItemMap itemMap) {
-            _map = itemMap;
-            _mapGeometry = ItemsManager.GetGeometry(_map.MapGeometryName);
-            CorrectPosAndScale();
-        }
-
         private void CorrectPosAndScale() {
             _mapX = 0;
             _mapY = 0;
-            if (_mapGeometry == null)
-                return;
 
             float x = 0;
             float y = 0;
-            foreach (var line in _mapGeometry.Lines) {
-                x += line.From.X;
-                y += line.From.Y;
-                x += line.To.X;
-                y += line.To.Y;
+            foreach (var point in _globalMap.MapPoints) {
+                x += point.Point.X;
+                y += point.Point.Y;
             }
 
-            if (_mapGeometry.Lines.Count > 0) {
-                x /= (_mapGeometry.Lines.Count * 2);
-                y /= (_mapGeometry.Lines.Count * 2);
+            if (_globalMap.MapPoints.Count > 0) {
+                x /= (_globalMap.MapPoints.Count * 2);
+                y /= (_globalMap.MapPoints.Count * 2);
             }
 
             _mapX = (int)(-x + VisualizationProvider.CanvasWidth / 2f);
@@ -293,9 +244,6 @@ namespace Submarines.MapEditor
         }
 
         public override void DrawObject(VisualizationProvider visualizationProvider) {
-            if (_map == null)
-                return;
-
             visualizationProvider.SetColor(Color.BlanchedAlmond);
             visualizationProvider.Print(510, 0, "Zoom 1:" + (1 / _currentZoom) + "x "
                                                 + _mapX + ":" + _mapY);
@@ -303,23 +251,19 @@ namespace Submarines.MapEditor
             visualizationProvider.OffsetAdd(_mapX, _mapY);
             visualizationProvider.SetColor(Color.White);
             visualizationProvider.Circle(0, 0, 10);
-            if (_mapGeometry != null) {
-                foreach (var line in _mapGeometry.Lines) {
-                    DrawLine(visualizationProvider, line.From, line.To);
-                }
-                if (_map.MapSpawns.Count > 0) {
-                    visualizationProvider.SetColor(Color.DarkOrchid);
-                    foreach (var spawn in _map.MapSpawns) {
-                        DrawSpawn(visualizationProvider, spawn.Point);
-                    }
-                }
+            visualizationProvider.SetColor(Color.Coral);
+            foreach (var point in _globalMap.MapPoints) {
+                visualizationProvider.Circle((int)point.Point.X, (int)point.Point.Y, 11);
+            }
+            foreach (var line in _globalMap.MapRelations) {
+                DrawLine2(visualizationProvider, line.MapPointId1, line.MapPointId2, _globalMap.MapPoints);
             }
 
-            if (_dragNum != -1) {
+            if (_dragMapPoint != null) {
                 visualizationProvider.SetColor(Color.Red);
-                DrawSpawn(visualizationProvider, _mapSpawnSelected.Point);
+                DrawSpawn(visualizationProvider, _dragMapPoint.Point);
 
-                if (_dragMode == 1) {
+                if (_dragMode) {
                     visualizationProvider.SetColor(Color.GreenYellow);
                     DrawSpawn(visualizationProvider, _dragCurrent);
                 }
@@ -339,6 +283,25 @@ namespace Submarines.MapEditor
             visualizationProvider.Line(
                 (int)(from.X * _currentZoom), (int)(from.Y * _currentZoom),
                 (int)(to.X * _currentZoom), (int)(to.Y * _currentZoom));
+        }
+
+        сделать класс для кэширования данных на основе словаря
+        private Dictionary<int, Vector> _idPoints = new Dictionary<int, Vector>();
+        private void DrawLine2(VisualizationProvider visualizationProvider, int id1, int id2, List<ItemMapPoint> points) {
+            var p1 = GetPoint(id1, points);
+            var p2 = GetPoint(id2, points);
+            visualizationProvider.Line(
+                (int)(p1.X * _currentZoom), (int)(p1.Y * _currentZoom),
+                (int)(p2.X * _currentZoom), (int)(p2.Y * _currentZoom));
+        }
+
+        private Vector GetPoint(int id, List<ItemMapPoint> points) {
+            Vector point;
+            if (!_idPoints.TryGetValue(id, out point)){
+                point = points.FirstOrDefault(p => p.PointId == id).Point;
+                _idPoints.Add(id, point);
+            }
+            return point;
         }
 
     }

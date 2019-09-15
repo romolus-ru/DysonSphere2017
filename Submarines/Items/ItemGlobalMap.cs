@@ -11,8 +11,8 @@ namespace Submarines.Items
         /// <summary>
         /// Точки-карты
         /// </summary>
-        public List<ItemMapPoint> MapPoints { get; set; }
-        public List<ItemMapRelation> MapRelations { get; set; }
+        public List<ItemMapPoint> MapPoints { get; set; } = new List<ItemMapPoint>();
+        public List<ItemMapRelation> MapRelations { get; set; } = new List<ItemMapRelation>();
 
         public int GetNewId() {
             var max = 0;

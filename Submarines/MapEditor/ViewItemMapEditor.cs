@@ -43,13 +43,11 @@ namespace Submarines.MapEditor
 
         private const int MouseMinimalDistance = 10;
 
-        public ViewItemMapEditor(ViewManager viewManager)
-        {
+        public ViewItemMapEditor(ViewManager viewManager) {
             _viewManager = viewManager;
         }
 
-        protected override void InitObject(VisualizationProvider visualizationProvider, Input input)
-        {
+        protected override void InitObject(VisualizationProvider visualizationProvider, Input input) {
             SetParams(0, 0, visualizationProvider.CanvasWidth, visualizationProvider.CanvasHeight, "ViewItemMapEditor");
 
             var buttonCloseEditor = new ViewButton();
@@ -81,7 +79,7 @@ namespace Submarines.MapEditor
             newSpawnItem.InitButton(NewSpawnItem, "NewSpawnItem", "Создать новую точку на карте", Keys.M);
             newSpawnItem.SetParams(110, 120, 140, 25, "NewSpawnItem");
             newSpawnItem.InitTexture("textRB", "textRB");
-            
+
             var buttonSaveMaps = new ViewButton();
             AddComponent(buttonSaveMaps);
             buttonSaveMaps.InitButton(SaveMaps, "Save", "Save", Keys.X);
@@ -113,8 +111,7 @@ namespace Submarines.MapEditor
 
         }
 
-        private void NewSpawnItem()
-        {
+        private void NewSpawnItem() {
             if (_map == null)
                 return;
             var newSpawnPoint = _map.AddNewSpawn(0, 0);
@@ -127,51 +124,48 @@ namespace Submarines.MapEditor
             _map.MapSpawns.Remove(remove);
         }
 
-        private void EditCurrentItemMap()
-        {
+        private void EditCurrentItemMap() {
             if (_map == null)
                 return;
             new DataEditor<ItemMap>().InitWindow(_viewManager, _map, null);
         }
 
-        private void NewItemMap()
-        {
+        private void NewItemMap() {
             var itemMap = new ItemMap { MapName = "NewMap", MapCode = "NewMapCode" };
             new DataEditor<ItemMap>().InitWindow(_viewManager, itemMap, SaveNewMap);
         }
 
-        private void SaveNewMap(ItemMap newMap)
-        {
+        private void SaveNewMap(ItemMap newMap) {
             _map = newMap;
             ItemsManager.AddMap(newMap);
         }
 
-        private void ZoomPlus()
-        {
+        private void ZoomPlus() {
             _currentZoomIndex--;
             if (_currentZoomIndex < 0)
                 _currentZoomIndex = 0;
             _currentZoom = GameConstants.ZoomValue[_currentZoomIndex];
         }
 
-        private void ZoomMinus()
-        {
+        private void ZoomMinus() {
             _currentZoomIndex++;
             if (_currentZoomIndex >= GameConstants.ZoomValue.Count)
                 _currentZoomIndex = GameConstants.ZoomValue.Count - 1;
             _currentZoom = GameConstants.ZoomValue[_currentZoomIndex];
         }
 
-        private void DragStart()
-        {
+        private void DragStart() {
             _dragMode = _dragNum == -1 ? 0 : 1;
         }
-        
-        private void DragModeEnd()
-        {
+
+        private void DragModeEnd() {
             _dragMode = -1;
             if (_dragNum == -1)
                 return;
+
+            var total = _dragCurrent - _map.MapSpawns[_dragNum].Point;
+            if (Math.Abs(total.X) < 3 && Math.Abs(total.Y) < 3)
+                StartEditPoint(_dragNum);
 
             // применяем координаты
             var minDist = _dragCurrent.DistanceTo(_map.MapSpawns[0].Point);
@@ -205,8 +199,7 @@ namespace Submarines.MapEditor
             _dyZoomed = 0;
         }
 
-        private void DragMove(int dx, int dy)
-        {
+        private void DragMove(int dx, int dy) {
             _dxZoomed += (dx / _currentZoom);
             _dyZoomed += (dy / _currentZoom);
             int deltaX = (int)_dxZoomed;
@@ -221,10 +214,9 @@ namespace Submarines.MapEditor
             }
         }
 
-        protected override void Cursor(int cursorX, int cursorY)
-        {
+        protected override void Cursor(int cursorX, int cursorY) {
             if (_dragMode != -1)
-            	return;
+                return;
             if (_map == null || _map.MapSpawns.Count == 0)
                 return;
 
@@ -236,64 +228,64 @@ namespace Submarines.MapEditor
             var mmDist = MouseMinimalDistance;
             float curDist;
             for (int i = 0; i < _map.MapSpawns.Count; i++) {
-            	var point = _map.MapSpawns[i].Point;
+                var point = _map.MapSpawns[i].Point;
 
                 curDist = p.DistanceTo(point);
-            	if (curDist <= mmDist && curDist <= minDist) {
-            		minDist = curDist;
-            		dragNum = i;
-            		dragStatic = point;
-            		dragCurrent = point;
-            	}
+                if (curDist <= mmDist && curDist <= minDist) {
+                    minDist = curDist;
+                    dragNum = i;
+                    dragStatic = point;
+                    dragCurrent = point;
+                }
             }
 
             if (dragNum == -1) {
-            	_dragNum = -1;
+                _dragNum = -1;
             } else {
-            	_dragNum = dragNum;
-            	_mapSpawnSelected = _map.MapSpawns[_dragNum];
-            	_dragStatic = dragStatic;
-            	_dragCurrent = dragCurrent;
+                _dragNum = dragNum;
+                _mapSpawnSelected = _map.MapSpawns[_dragNum];
+                _dragStatic = dragStatic;
+                _dragCurrent = dragCurrent;
             }
         }
 
-        private void SaveMaps()
-        {
+        private void SaveMaps() {
             ItemsManager.SaveMaps();
         }
 
-        private void SelectItemMap()
-        {
+        private void StartEditPoint(int dragNum) {
+            new DataEditor<ItemMap.ItemMapSpawnPoint>().InitWindow(
+                _viewManager, _map.MapSpawns[dragNum],
+                null, cancel: RemoveNewSpawnPoint);
+        }
+
+        private void SelectItemMap() {
             _selectItemMapWindow = new SelectItemMapWindow();
             _selectItemMapWindow.InitWindow(_viewManager, SetItemMap, null);
         }
 
-        public void SetItemMap(ItemMap itemMap)
-        {
+        public void SetItemMap(ItemMap itemMap) {
             _map = itemMap;
             _mapGeometry = ItemsManager.GetGeometry(_map.MapGeometryName);
             CorrectPosAndScale();
         }
 
-        private void CorrectPosAndScale()
-        {
+        private void CorrectPosAndScale() {
             _mapX = 0;
             _mapY = 0;
             if (_mapGeometry == null)
-            	return;
+                return;
 
             float x = 0;
             float y = 0;
-            foreach (var line in _mapGeometry.Lines)
-            {
+            foreach (var line in _mapGeometry.Lines) {
                 x += line.From.X;
                 y += line.From.Y;
                 x += line.To.X;
                 y += line.To.Y;
             }
 
-            if (_mapGeometry.Lines.Count > 0)
-            {
+            if (_mapGeometry.Lines.Count > 0) {
                 x /= (_mapGeometry.Lines.Count * 2);
                 y /= (_mapGeometry.Lines.Count * 2);
             }
@@ -302,13 +294,11 @@ namespace Submarines.MapEditor
             _mapY = (int)(-y + VisualizationProvider.CanvasHeight / 2f);
         }
 
-        private void CloseEditor()
-        {
+        private void CloseEditor() {
             OnCloseEditor?.Invoke();
         }
 
-        public override void DrawObject(VisualizationProvider visualizationProvider)
-        {
+        public override void DrawObject(VisualizationProvider visualizationProvider) {
             if (_map == null)
                 return;
 
@@ -326,35 +316,37 @@ namespace Submarines.MapEditor
                 if (_map.MapSpawns.Count > 0) {
                     visualizationProvider.SetColor(Color.DarkOrchid);
                     foreach (var spawn in _map.MapSpawns) {
-                        DrawSpawn(visualizationProvider, spawn.Point);
+                        DrawSpawn(visualizationProvider, spawn);
                     }
                 }
             }
-            
-            if (_dragNum != -1)
-            {
-                visualizationProvider.SetColor(Color.Red);
-                DrawSpawn(visualizationProvider, _mapSpawnSelected.Point);
 
-                if (_dragMode == 1)
-                {
+            if (_dragNum != -1) {
+                visualizationProvider.SetColor(Color.Red);
+                DrawSpawn(visualizationProvider, _mapSpawnSelected);
+
+                if (_dragMode == 1) {
                     visualizationProvider.SetColor(Color.GreenYellow);
-                    DrawSpawn(visualizationProvider, _dragCurrent);
+                    DrawSpawnPoint(visualizationProvider, _dragCurrent);
                 }
             }
 
             visualizationProvider.OffsetRemove();
         }
 
-        private void DrawSpawn(VisualizationProvider visualizationProvider, Vector spawnPoint) {
-            visualizationProvider.Circle((int)spawnPoint.X, (int)spawnPoint.Y, 8);
-            //visualizationProvider.Line(
-            //    (int)(spawnPoint.X * _currentZoom), (int)(spawnPoint.Y * _currentZoom),
-            //    (int)(spawnPoint.X * _currentZoom + 10), (int)(spawnPoint.Y * _currentZoom + 10));
+        private void DrawSpawn(VisualizationProvider visualizationProvider, ItemMap.ItemMapSpawnPoint spawn) {
+            DrawSpawnPoint(visualizationProvider, spawn.Point);
+            visualizationProvider.Print(
+                (int)(spawn.Point.X * _currentZoom - 20), (int)(spawn.Point.Y * _currentZoom + 5),
+                spawn.Id + " " + spawn.Name + " " + spawn.SpawnType + " " + spawn.Description);
+
         }
 
-        private void DrawLine(VisualizationProvider visualizationProvider, Vector from, Vector to)
-        {
+        private void DrawSpawnPoint(VisualizationProvider visualizationProvider, Vector spawnPoint) {
+            visualizationProvider.Circle((int)spawnPoint.X, (int)spawnPoint.Y, 8);
+        }
+
+        private void DrawLine(VisualizationProvider visualizationProvider, Vector from, Vector to) {
             visualizationProvider.Line(
                 (int)(from.X * _currentZoom), (int)(from.Y * _currentZoom),
                 (int)(to.X * _currentZoom), (int)(to.Y * _currentZoom));
