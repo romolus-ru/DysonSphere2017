@@ -176,6 +176,7 @@
     <Compile Include="TCPNet\TCPMessage.cs" />
     <Compile Include="TCPNet\TCPServer.cs" />
     <Compile Include="Utils\AtlasUtils.cs" />
+    <Compile Include="Utils\SimpleCache.cs" />
     <Compile Include="Utils\Collector.cs" />
     <Compile Include="Utils\FileUtils.cs" />
     <Compile Include="Utils\LogData.cs" />

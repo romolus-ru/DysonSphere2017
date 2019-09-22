@@ -68,6 +68,7 @@
     <Compile Include="Items\ItemMapPoint.cs" />
     <Compile Include="Items\ItemMapRelation.cs" />
     <Compile Include="Items\ItemSpawn.cs" />
+    <Compile Include="MapEditor\ItemMapPointCache.cs" />
     <Compile Include="MapEditor\SelectItemMapScrollItem.cs" />
     <Compile Include="MapEditor\SelectItemMapWindow.cs" />
     <Compile Include="MapEditor\ViewItemMapEditor.cs" />

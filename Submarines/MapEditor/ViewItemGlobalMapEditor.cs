@@ -1,8 +1,8 @@
 ﻿using Engine;
 using Engine.Helpers;
+using Engine.Utils;
 using Engine.Visualization;
 using Submarines.Editors;
-using Submarines.Geometry;
 using Submarines.Items;
 using System;
 using System.Collections.Generic;
@@ -43,6 +43,7 @@ namespace Submarines.MapEditor
         private float _dyZoomed;
 
         private const int MouseMinimalDistance = 10;
+        private ItemMapPointCache _pcache = new ItemMapPointCache();
 
         public ViewItemGlobalMapEditor(ViewManager viewManager) {
             _viewManager = viewManager;
@@ -100,6 +101,7 @@ namespace Submarines.MapEditor
             mover.OnDragModeStart += DragStart;
             mover.OnDragModeEnd += DragModeEnd;
             CorrectPosAndScale();
+            BuildCache();
         }
 
         private void NewItemMapPoint() {
@@ -285,23 +287,15 @@ namespace Submarines.MapEditor
                 (int)(to.X * _currentZoom), (int)(to.Y * _currentZoom));
         }
 
-        сделать класс для кэширования данных на основе словаря
-        private Dictionary<int, Vector> _idPoints = new Dictionary<int, Vector>();
+        private void BuildCache() {
+            _pcache.InitCache(_globalMap.MapPoints);
+        }
         private void DrawLine2(VisualizationProvider visualizationProvider, int id1, int id2, List<ItemMapPoint> points) {
-            var p1 = GetPoint(id1, points);
-            var p2 = GetPoint(id2, points);
+            var p1 = _pcache.GetValue(id1);
+            var p2 = _pcache.GetValue(id2);
             visualizationProvider.Line(
                 (int)(p1.X * _currentZoom), (int)(p1.Y * _currentZoom),
                 (int)(p2.X * _currentZoom), (int)(p2.Y * _currentZoom));
-        }
-
-        private Vector GetPoint(int id, List<ItemMapPoint> points) {
-            Vector point;
-            if (!_idPoints.TryGetValue(id, out point)){
-                point = points.FirstOrDefault(p => p.PointId == id).Point;
-                _idPoints.Add(id, point);
-            }
-            return point;
         }
 
     }
