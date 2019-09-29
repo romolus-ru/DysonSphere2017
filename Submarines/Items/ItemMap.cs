@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Engine.DataPlus;
+using System.Collections.Generic;
 using System.Drawing;
 
 namespace Submarines.Items
@@ -35,6 +36,7 @@ namespace Submarines.Items
             /// <summary>
             /// Геометрия области для взаимодействия
             /// </summary>
+            [MemberSpecialEditor(EditorType = "SelectSpawnGeometry")]
             public string AreaGeometryName { get; set; }
             public Color ChangeColor { get; set; }// цвет если надо переопределить
             /// <summary>
@@ -49,10 +51,11 @@ namespace Submarines.Items
         public string MapCode { get; set; }
         public string MapName { get; set; }
         public string MapDescription { get; set; }
+        [MemberSpecialEditor(EditorType = "SelectMapGeometry")]
         public string MapGeometryName { get; set; }
         public List<ItemMapSpawnPoint> MapSpawns { get; set; }
 
-        public ItemMapSpawnPoint AddNewSpawn(int x, int y) {
+        public ItemMapSpawnPoint GenerateNewSpawn(int x, int y) {
             if (MapSpawns == null)
                 MapSpawns = new List<ItemMapSpawnPoint>();
 
@@ -66,10 +69,11 @@ namespace Submarines.Items
             newMapSpawn.Id = maxNum + 1;
             newMapSpawn.Name = MapName + "Spawn" + newMapSpawn.Id;
             newMapSpawn.Point = new Vector(x, y, 0);
-            MapSpawns.Add(newMapSpawn);
             return newMapSpawn;
         }
 
-
+        public void AddNewSpawn(ItemMapSpawnPoint newMapSpawn) {
+            MapSpawns.Add(newMapSpawn);
+        }
     }
 }

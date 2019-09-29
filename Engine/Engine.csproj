@@ -149,6 +149,7 @@
     <Compile Include="Helpers\DataSupportFileHelper.cs" />
     <Compile Include="Helpers\InputHelper.cs" />
     <Compile Include="Helpers\RandomHelper.cs" />
+    <Compile Include="Helpers\ReflectionHelper.cs" />
     <Compile Include="Helpers\ViewHelper.cs" />
     <Compile Include="Input.cs" />
     <Compile Include="InputKeyStatePause.cs" />

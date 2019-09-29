@@ -290,6 +290,7 @@ namespace Submarines.MapEditor
         private void BuildCache() {
             _pcache.InitCache(_globalMap.MapPoints);
         }
+
         private void DrawLine2(VisualizationProvider visualizationProvider, int id1, int id2, List<ItemMapPoint> points) {
             var p1 = _pcache.GetValue(id1);
             var p2 = _pcache.GetValue(id2);

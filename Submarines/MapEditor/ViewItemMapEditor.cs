@@ -26,6 +26,7 @@ namespace Submarines.MapEditor
         private ViewManager _viewManager = null;
         private float _currentZoom = 1;
         private int _currentZoomIndex = 0;
+        private SpawnGeometryCache _cacheSpawnGeometry;
 
         /// <summary>
         /// После редактирования если код карты изменен надо обязательно поменять их у всех spawnPoints
@@ -109,37 +110,54 @@ namespace Submarines.MapEditor
             mover.OnDragModeStart += DragStart;
             mover.OnDragModeEnd += DragModeEnd;
 
+            Input.AddKeyActionSticked(DeleteSelectedSpawn, Keys.Delete);
+            _cacheSpawnGeometry = new SpawnGeometryCache();
+        }
+
+        protected override void ClearObject() {
+            Input.RemoveKeyActionSticked(DeleteSelectedSpawn, Keys.Delete);
+             base.ClearObject();
         }
 
         private void NewSpawnItem() {
             if (_map == null)
                 return;
-            var newSpawnPoint = _map.AddNewSpawn(0, 0);
-            new DataEditor<ItemMap.ItemMapSpawnPoint>().InitWindow(_viewManager, newSpawnPoint, null, cancel: RemoveNewSpawnPoint);
+            var newSpawnPoint = _map.GenerateNewSpawn(0, 0);
+            RunDataEditorSpawn(newSpawnPoint, update: AddNewSpawnPoint);
         }
 
-        private void RemoveNewSpawnPoint(ItemMap.ItemMapSpawnPoint remove) {
+        private void AddNewSpawnPoint(ItemMap.ItemMapSpawnPoint remove) {
             if (_map == null)
                 return;
-            _map.MapSpawns.Remove(remove);
+            _map.AddNewSpawn(remove);
+        }
+
+        private void DeleteSelectedSpawn() {
+            if (_map?.MapSpawns == null && _mapSpawnSelected != null)
+                _map.MapSpawns.Remove(_mapSpawnSelected);
         }
 
         private void EditCurrentItemMap() {
             if (_map == null)
                 return;
-            new DataEditor<ItemMap>().InitWindow(_viewManager, _map, null);
+            RunDataEditorMap(_map, null);
         }
 
         private void NewItemMap() {
             var itemMap = new ItemMap { MapName = "NewMap", MapCode = "NewMapCode" };
-            new DataEditor<ItemMap>().InitWindow(_viewManager, itemMap, SaveNewMap);
+            RunDataEditorMap(itemMap, SaveNewMap);
         }
-
+               
         private void SaveNewMap(ItemMap newMap) {
-            _map = newMap;
             ItemsManager.AddMap(newMap);
+            SetItemMap(newMap);
         }
 
+        private void RunDataEditorMap(ItemMap item, Action<ItemMap> update) {
+            new DataEditor<ItemMap>()
+                .AddEditor("SelectMapGeometry", typeof(SpawnGeometryScrollItem<>))
+                .InitWindow(_viewManager, item, update: update);
+        }
         private void ZoomPlus() {
             _currentZoomIndex--;
             if (_currentZoomIndex < 0)
@@ -217,7 +235,7 @@ namespace Submarines.MapEditor
         protected override void Cursor(int cursorX, int cursorY) {
             if (_dragMode != -1)
                 return;
-            if (_map == null || _map.MapSpawns.Count == 0)
+            if (_map == null || _map.MapSpawns==null || _map.MapSpawns.Count == 0)
                 return;
 
             var p = new Vector((cursorX - _mapX) / _currentZoom, (cursorY - _mapY) / _currentZoom, 0);
@@ -254,9 +272,13 @@ namespace Submarines.MapEditor
         }
 
         private void StartEditPoint(int dragNum) {
-            new DataEditor<ItemMap.ItemMapSpawnPoint>().InitWindow(
-                _viewManager, _map.MapSpawns[dragNum],
-                null, cancel: RemoveNewSpawnPoint);
+            RunDataEditorSpawn(_map.MapSpawns[dragNum], update: null);
+        }
+
+        private void RunDataEditorSpawn(ItemMap.ItemMapSpawnPoint item, Action<ItemMap.ItemMapSpawnPoint> update) {
+            new DataEditor<ItemMap.ItemMapSpawnPoint>()
+                .AddEditor("SelectSpawnGeometry", typeof(SpawnGeometryScrollItem<>))
+                .InitWindow(_viewManager, item, update: update);
         }
 
         private void SelectItemMap() {
@@ -313,7 +335,7 @@ namespace Submarines.MapEditor
                 foreach (var line in _mapGeometry.Lines) {
                     DrawLine(visualizationProvider, line.From, line.To);
                 }
-                if (_map.MapSpawns.Count > 0) {
+                if (_map.MapSpawns?.Count > 0) {
                     visualizationProvider.SetColor(Color.DarkOrchid);
                     foreach (var spawn in _map.MapSpawns) {
                         DrawSpawn(visualizationProvider, spawn);
@@ -340,6 +362,14 @@ namespace Submarines.MapEditor
                 (int)(spawn.Point.X * _currentZoom - 20), (int)(spawn.Point.Y * _currentZoom + 5),
                 spawn.Id + " " + spawn.Name + " " + spawn.SpawnType + " " + spawn.Description);
 
+            var geometry = _cacheSpawnGeometry.GetValue(spawn);
+            if (geometry != null) {
+                visualizationProvider.OffsetAdd((int)spawn.Point.X, (int)spawn.Point.Y);
+                foreach (var line in geometry.Lines) {
+                    DrawLine(visualizationProvider, line.From, line.To);
+                }
+                visualizationProvider.OffsetRemove();
+            }
         }
 
         private void DrawSpawnPoint(VisualizationProvider visualizationProvider, Vector spawnPoint) {

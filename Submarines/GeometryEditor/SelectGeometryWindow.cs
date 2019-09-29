@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Engine.Visualization;
 using Engine.Visualization.Scroll;
 using Submarines.Geometry;
@@ -10,11 +11,13 @@ namespace Submarines.GeometryEditor
 	{
 		private Action<GeometryBase> _onSelect;
 		private Action _onClose;
+        private List<GeometryType> _filter;
 
-		public void InitWindow(ViewManager viewManager, Action<GeometryBase> onSelect, Action onClose)
+		public void InitWindow(ViewManager viewManager, Action<GeometryBase> onSelect, Action onClose, List<GeometryType> filter = null)
 		{
 			_onSelect = onSelect;
 			_onClose = onClose;
+            _filter = filter;
 
 			InitWindow("Выбор геометрии для редактирования", viewManager, showOkButton: false, showNewButton: false);
 		}
@@ -24,6 +27,8 @@ namespace Submarines.GeometryEditor
 			var items = ItemsManager.GetAllGeometries();
 			var i = 1;
 			foreach (var item in items) {
+                if (_filter != null && _filter.Contains(item.GeometryType))
+                    continue;
 				var scrollItem = new SelectGeometryScrollItem(item);
 				ViewScroll.AddComponent(scrollItem);
 				scrollItem.OnSelect = SelectGeometry;

@@ -71,6 +71,8 @@
     <Compile Include="MapEditor\ItemMapPointCache.cs" />
     <Compile Include="MapEditor\SelectItemMapScrollItem.cs" />
     <Compile Include="MapEditor\SelectItemMapWindow.cs" />
+    <Compile Include="MapEditor\SpawnGeometryCache.cs" />
+    <Compile Include="MapEditor\SpawnGeometryScrollItem.cs" />
     <Compile Include="MapEditor\ViewItemMapEditor.cs" />
     <Compile Include="MapEditor\ViewItemGlobalMapEditor.cs" />
     <Compile Include="Submarines\CollisionHelper.cs" />

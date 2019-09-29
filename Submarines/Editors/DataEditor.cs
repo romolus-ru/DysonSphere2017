@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Engine.DataPlus;
@@ -19,6 +20,8 @@ namespace Submarines.Editors
 		private Action<T> _cancel;
 		private T _objectToEdit;
 
+        private Dictionary<string, Type> _scrollsCreators = null;
+
 		public void InitWindow(ViewManager viewManager, T objectToEdit, Action<T> update, Action<T> cancel = null)
 		{
 			_update = update;
@@ -28,6 +31,14 @@ namespace Submarines.Editors
 			InitWindow("Редактор для " + objectToEdit.GetType(), viewManager, showOkButton: true);
 		}
 
+        public DataEditor<T> AddEditor(string name, Type type) {
+            if (_scrollsCreators == null)
+                _scrollsCreators = new Dictionary<string, Type>();
+
+            _scrollsCreators.Add(name, type);
+            return this;
+        }
+
         protected override void InitScrollItems() {
             var row = 0;
             var t = _objectToEdit.GetType();
@@ -35,6 +46,20 @@ namespace Submarines.Editors
             foreach (PropertyInfo item in mi) {
                 if (AttributesHelper.IsHasAttribute<SkipEditEditorAttribute>(item))
                     continue;
+                
+                if (AttributesHelper.IsHasAttribute<MemberSpecialEditorAttribute>(item)) {
+                    var type = AttributesHelper.GetAttribute<MemberSpecialEditorAttribute>(item);
+                    foreach (var scrollCreator in _scrollsCreators) {
+                        if (type.EditorType != scrollCreator.Key)
+                            continue;
+
+                        var scrollItem = (MemberBaseScrollView<T>)ReflectionHelper.CreateGenericType(scrollCreator.Value, typeof(T));
+                        ViewScroll.AddComponent(scrollItem);
+                        scrollItem.InitValueEditor(_objectToEdit, item);
+                        scrollItem.SetParams(10, (row) * 60 + 10, 950, 50, "item" + item);
+                    }
+                }
+                else 
                 if (item.PropertyType.IsEnum) {
                     var scrollItem = new MemberEnumScrollView<T>();
                     ViewScroll.AddComponent(scrollItem);

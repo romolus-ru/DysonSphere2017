@@ -730,8 +730,8 @@ namespace VisualizationOpenGL
 
 		public override int TextLength(string font, string text)
 		{
-			if (!_fonts.ContainsKey(font))
-				return 0;
+            if (font == null || !_fonts.ContainsKey(font))
+                return 0;
 			return _fonts[font].TextLength(text);
 		}
 
