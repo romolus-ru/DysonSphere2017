@@ -16,13 +16,13 @@
         public string ConditionViewName { get; set; }
 
         /// <summary>
-        /// Идентификатор карты
+        /// Идентификатор глобальной точки на карте
         /// </summary>
         public int MapPointId1 { get; set; }
 
         public int MapSpawnId1 { get; set; }
         /// <summary>
-        /// Идентификатор карты
+        /// Идентификатор глобальной точки на карте
         /// </summary>
         public int MapPointId2 { get; set; }
         public int MapSpawnId2 { get; set; }

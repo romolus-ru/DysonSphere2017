@@ -5,18 +5,19 @@ using Engine.Visualization.Text;
 using Submarines.Editors;
 using Submarines.Geometry;
 using Submarines.GeometryEditor;
+using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 
 namespace Submarines.MapEditor
 {
-    public class SpawnGeometryScrollItem<T> : MemberBaseScrollView<T> where T : class
+    public class GeometryScrollItem<T> : MemberBaseScrollView<T> where T : class
     {
         private ViewText _viewValue;
         private string _value;
         private PropertyInfo _valueProperty;
+        internal List<GeometryType> Filter = null;
 
         protected override void InitObject(VisualizationProvider visualizationProvider, Input input) {
             base.InitObject(visualizationProvider, input);
@@ -35,10 +36,10 @@ namespace Submarines.MapEditor
         }
 
         private void SelectGeometry() {
-            new SelectGeometryWindow().InitWindow(ViewHelper.ViewManager, SelectClassInFileResult, null);
+            new SelectGeometryWindow().InitWindow(ViewHelper.ViewManager, SaveGeometryName, null, Filter);
         }
 
-        private void SelectClassInFileResult(GeometryBase geometry) {
+        private void SaveGeometryName(GeometryBase geometry) {
             _value = geometry.Name;
             SetupViewValue(_value);
         }

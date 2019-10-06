@@ -10,32 +10,44 @@ using Engine.Visualization.Scroll;
 
 namespace Submarines.Editors
 {
-	/// <summary>
-	/// see EngineTools.DataEditor
-	/// </summary>
-	/// <typeparam name="T"></typeparam>
-	public class DataEditor<T> : FilteredScrollViewWindow where T : class
-	{
-		private Action<T> _update;
-		private Action<T> _cancel;
-		private T _objectToEdit;
+    /// <summary>
+    /// see EngineTools.DataEditor
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    public class DataEditor<T> : FilteredScrollViewWindow where T : class
+    {
+        private Action<T> _update;
+        private Action<T> _cancel;
+        private T _objectToEdit;
 
         private Dictionary<string, Type> _scrollsCreators = null;
+        private Dictionary<string, Action<ScrollItem>> _scrollActions = null;
 
-		public void InitWindow(ViewManager viewManager, T objectToEdit, Action<T> update, Action<T> cancel = null)
-		{
-			_update = update;
-			_cancel = cancel;
-			_objectToEdit = objectToEdit;
+        public void InitWindow(ViewManager viewManager, T objectToEdit, Action<T> update, Action<T> cancel = null) {
+            _update = update;
+            _cancel = cancel;
+            _objectToEdit = objectToEdit;
 
-			InitWindow("Редактор для " + objectToEdit.GetType(), viewManager, showOkButton: true);
-		}
+            InitWindow("Редактор для " + objectToEdit.GetType(), viewManager, showOkButton: true, showNewButton: false);
+        }
 
-        public DataEditor<T> AddEditor(string name, Type type) {
+        public DataEditor<T> AddEditor(string name, Type type, Action<ScrollItem> action) {
             if (_scrollsCreators == null)
                 _scrollsCreators = new Dictionary<string, Type>();
 
             _scrollsCreators.Add(name, type);
+
+            if (action != null) {
+                if (_scrollActions == null)
+                    _scrollActions = new Dictionary<string, Action<ScrollItem>>();
+
+                Action<ScrollItem> value;
+                if (!_scrollActions.TryGetValue(name, out value))
+                    _scrollActions.Add(name, null);
+
+                _scrollActions[name] += action;
+            }
+
             return this;
         }
 
@@ -46,8 +58,9 @@ namespace Submarines.Editors
             foreach (PropertyInfo item in mi) {
                 if (AttributesHelper.IsHasAttribute<SkipEditEditorAttribute>(item))
                     continue;
-                
-                if (AttributesHelper.IsHasAttribute<MemberSpecialEditorAttribute>(item)) {
+
+                if (_scrollsCreators != null &&
+                    AttributesHelper.IsHasAttribute<MemberSpecialEditorAttribute>(item)) {
                     var type = AttributesHelper.GetAttribute<MemberSpecialEditorAttribute>(item);
                     foreach (var scrollCreator in _scrollsCreators) {
                         if (type.EditorType != scrollCreator.Key)
@@ -57,9 +70,10 @@ namespace Submarines.Editors
                         ViewScroll.AddComponent(scrollItem);
                         scrollItem.InitValueEditor(_objectToEdit, item);
                         scrollItem.SetParams(10, (row) * 60 + 10, 950, 50, "item" + item);
+                        if (_scrollActions != null && _scrollActions.ContainsKey(scrollCreator.Key))
+                            _scrollActions[scrollCreator.Key](scrollItem);
                     }
-                }
-                else 
+                } else
                 if (item.PropertyType.IsEnum) {
                     var scrollItem = new MemberEnumScrollView<T>();
                     ViewScroll.AddComponent(scrollItem);
@@ -78,55 +92,51 @@ namespace Submarines.Editors
             }
         }
 
-		protected override void InitButtonOk(ViewButton btnOk)
-		{
-			base.InitButtonOk(btnOk);
-			btnOk.Caption = "Ok";
-			btnOk.Hint = "Сохранить";
-		}
+        protected override void InitButtonOk(ViewButton btnOk) {
+            base.InitButtonOk(btnOk);
+            btnOk.Caption = "Ok";
+            btnOk.Hint = "Сохранить";
+        }
 
-		protected override void OkCommand()
-		{
-			GetValues();
-			if (_update == null)
-				return;
-			var updater = _update;
-			Checkers.AddToCheckOnce(() => updater?.Invoke(_objectToEdit));
-		}
+        protected override void OkCommand() {
+            GetValues();
+            if (_update == null)
+                return;
+            var updater = _update;
+            Checkers.AddToCheckOnce(() => updater?.Invoke(_objectToEdit));
+        }
 
-		/// <summary>
-		/// Получить значения переменных
-		/// </summary>
-		private void GetValues()
-		{
-			var a = ViewScroll.GetItems();
-			foreach (var item in a) {
-				var m = item as MemberBaseScrollView<T>;
-				if (m == null) continue;
+        /// <summary>
+        /// Получить значения переменных
+        /// </summary>
+        private void GetValues() {
+            var a = ViewScroll.GetItems();
+            foreach (var item in a) {
+                var m = item as MemberBaseScrollView<T>;
+                if (m == null)
+                    continue;
 
-				m.SetValue(_objectToEdit);
-			}
-		}
+                m.SetValue(_objectToEdit);
+            }
+        }
 
-		protected override void CloseWindow()
-		{
-			base.CloseWindow();
-			_update = null;
-			_cancel = null;
-		}
+        protected override void CloseWindow() {
+            base.CloseWindow();
+            _update = null;
+            _cancel = null;
+        }
 
-		protected override void CancelCommand()
-		{
-			if (_cancel == null) return;
-			var canceler = _cancel;
-			Checkers.AddToCheckOnce(() => canceler?.Invoke(_objectToEdit));
-		}
+        protected override void CancelCommand() {
+            if (_cancel == null)
+                return;
+            var canceler = _cancel;
+            Checkers.AddToCheckOnce(() => canceler?.Invoke(_objectToEdit));
+        }
 
-		public override void DrawObject(VisualizationProvider visualizationProvider)
-		{
-			visualizationProvider.SetColor(System.Drawing.Color.Black, 50);
-			visualizationProvider.Box(X, Y, Width, Height);
-			base.DrawObject(visualizationProvider);
-		}
-	}
+        public override void DrawObject(VisualizationProvider visualizationProvider) {
+            visualizationProvider.SetColor(System.Drawing.Color.Black, 50);
+            visualizationProvider.Box(X, Y, Width, Height);
+            base.DrawObject(visualizationProvider);
+        }
+    }
 }

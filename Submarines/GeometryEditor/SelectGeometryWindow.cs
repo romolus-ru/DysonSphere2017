@@ -27,7 +27,7 @@ namespace Submarines.GeometryEditor
 			var items = ItemsManager.GetAllGeometries();
 			var i = 1;
 			foreach (var item in items) {
-                if (_filter != null && _filter.Contains(item.GeometryType))
+                if (_filter != null && !_filter.Contains(item.GeometryType))
                     continue;
 				var scrollItem = new SelectGeometryScrollItem(item);
 				ViewScroll.AddComponent(scrollItem);

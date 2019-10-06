@@ -7,6 +7,8 @@ using System.Drawing;
 using System.Windows.Forms;
 using Submarines.Editors;
 using Submarines.Geometry;
+using Engine.Visualization.Scroll;
+using System.Collections.Generic;
 
 namespace Submarines.MapEditor
 {
@@ -155,9 +157,19 @@ namespace Submarines.MapEditor
 
         private void RunDataEditorMap(ItemMap item, Action<ItemMap> update) {
             new DataEditor<ItemMap>()
-                .AddEditor("SelectMapGeometry", typeof(SpawnGeometryScrollItem<>))
+                .AddEditor("SelectMapGeometry", typeof(GeometryScrollItem<>), InitMapFilter)
                 .InitWindow(_viewManager, item, update: update);
         }
+
+        private void InitMapFilter(ScrollItem scroll) {
+            var s = scroll as GeometryScrollItem<ItemMap>;
+            if (s != null) {
+                var list = new List<GeometryType>();
+                list.Add(GeometryType.Map);
+                s.Filter = list;
+            }
+        }
+
         private void ZoomPlus() {
             _currentZoomIndex--;
             if (_currentZoomIndex < 0)
@@ -277,13 +289,23 @@ namespace Submarines.MapEditor
 
         private void RunDataEditorSpawn(ItemMap.ItemMapSpawnPoint item, Action<ItemMap.ItemMapSpawnPoint> update) {
             new DataEditor<ItemMap.ItemMapSpawnPoint>()
-                .AddEditor("SelectSpawnGeometry", typeof(SpawnGeometryScrollItem<>))
+                .AddEditor("SelectSpawnGeometry", typeof(GeometryScrollItem<>), InitSpawnFilter)
                 .InitWindow(_viewManager, item, update: update);
+        }
+
+        private void InitSpawnFilter(ScrollItem scroll) {
+            var s = scroll as GeometryScrollItem<ItemMap.ItemMapSpawnPoint>;
+            if (s != null) {
+                var list = new List<GeometryType>();
+                list.Add(GeometryType.Place);
+                list.Add(GeometryType.Symbol);
+                s.Filter = list;
+            }
         }
 
         private void SelectItemMap() {
             _selectItemMapWindow = new SelectItemMapWindow();
-            _selectItemMapWindow.InitWindow(_viewManager, SetItemMap, null);
+            _selectItemMapWindow.InitWindow(_viewManager, SetItemMap, onClose: null, filter: null);
         }
 
         public void SetItemMap(ItemMap itemMap) {

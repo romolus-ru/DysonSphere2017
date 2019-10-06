@@ -2,6 +2,7 @@
 using Engine.Visualization.Scroll;
 using Submarines.Items;
 using System;
+using System.Collections.Generic;
 
 namespace Submarines.MapEditor
 {
@@ -9,11 +10,13 @@ namespace Submarines.MapEditor
 	{
 		private Action<ItemMap> _onSelect;
 		private Action _onClose;
+        private List<string> _filter = null;
 
-		public void InitWindow(ViewManager viewManager, Action<ItemMap> onSelect, Action onClose)
+		public void InitWindow(ViewManager viewManager, Action<ItemMap> onSelect, Action onClose, List<string> filter)
 		{
 			_onSelect = onSelect;
 			_onClose = onClose;
+            _filter = filter;
 
 			InitWindow("Выбор карты для редактирования", viewManager, showOkButton: false, showNewButton: false);
 		}
@@ -23,6 +26,9 @@ namespace Submarines.MapEditor
 			var items = ItemsManager.GetAllMaps();
 			var i = 1;
 			foreach (var item in items) {
+                if (_filter != null && _filter.Contains(item.MapCode))
+                    continue;
+
 				var scrollItem = new SelectItemMapScrollItem(item);
 				ViewScroll.AddComponent(scrollItem);
 				scrollItem.OnSelect = SelectMap;

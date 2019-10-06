@@ -1,13 +1,12 @@
 ﻿using Engine;
 using Engine.Helpers;
-using Engine.Utils;
 using Engine.Visualization;
+using Engine.Visualization.Scroll;
 using Submarines.Editors;
 using Submarines.Items;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using System.Windows.Forms;
 
 namespace Submarines.MapEditor
@@ -33,6 +32,7 @@ namespace Submarines.MapEditor
 
         private SelectItemMapWindow _selectItemMapWindow = null;
         private ViewManager _viewManager = null;
+        private ViewDraggable _mover = null;
         private float _currentZoom = 1;
         private int _currentZoomIndex = 0;
 
@@ -94,37 +94,94 @@ namespace Submarines.MapEditor
             GUIHelper.DraggableCursorOverColor = Color.Transparent;
             GUIHelper.DraggableDragModeColor = Color.White;
 
-            var mover = new ViewDraggable();
-            AddComponent(mover);
-            mover.SetParams(0, 150, visualizationProvider.CanvasWidth - 10, visualizationProvider.CanvasHeight - 200, "mover");
-            mover.OnMoveObjectRelative += DragMove;
-            mover.OnDragModeStart += DragStart;
-            mover.OnDragModeEnd += DragModeEnd;
+            _mover = new ViewDraggable();
+            AddComponent(_mover);
+            _mover.SetParams(0, 150, visualizationProvider.CanvasWidth - 10, visualizationProvider.CanvasHeight - 200, "mover");
+            _mover.OnMoveObjectRelative += DragMove;
+            _mover.OnDragModeStart += DragStart;
+            _mover.OnDragModeEnd += DragModeEnd;
+
+            Input.AddKeyActionSticked(ClearModes, Keys.Escape);
+
             CorrectPosAndScale();
             BuildCache();
         }
 
-        private void NewItemMapPoint() {
-            _selectItemMapWindow = new SelectItemMapWindow();
-            _selectItemMapWindow.InitWindow(_viewManager, GetItemMap, null);
+        protected override void ClearObject() {
+            Input.RemoveKeyActionSticked(ClearModes, Keys.Delete);
+            base.ClearObject();
         }
 
+        private void ClearModes() {
+            _currentRelationSelectionMode = RelationSelectionMode.None;
+            _selectedPoint1 = null;
+            _selectedPoint2 = null;
+        }
+
+        private void NewItemMapPoint() {
+            _selectItemMapWindow = new SelectItemMapWindow();
+            _selectItemMapWindow.InitWindow(_viewManager, onSelect: GetItemMap, onClose: null, filter: GetExistedMapCodes());
+        }
+
+        private List<string> GetExistedMapCodes() {
+            if (_globalMap.MapPoints == null || _globalMap.MapPoints.Count <= 0)
+                return null;
+            var list = new List<string>();
+            foreach (var mapPoint in _globalMap.MapPoints) {
+                list.Add(mapPoint.MapCode);
+            }
+            return list;
+        }
         private void GetItemMap(ItemMap itemMap) {
             var mapPoint = new ItemMapPoint();
             mapPoint.Point = new Vector(0, 0, 0);
             mapPoint.PointId = _globalMap.GetNewId();
             mapPoint.PointName = "NewPoint" + mapPoint.PointId + " " + itemMap.MapCode;
             mapPoint.MapCode = itemMap.MapCode;
-            new DataEditor<ItemMapPoint>().InitWindow(_viewManager, mapPoint, AddItemMap);
-        }
 
+            RunDataEditor(mapPoint, AddItemMap);
+        }
+        
         private void AddItemMap(ItemMapPoint newItemMapPoint) {
             _globalMap.MapPoints.Add(newItemMapPoint);
             CorrectPosAndScale();
         }
 
+        private void StartEditPoint(ItemMapPoint point) {
+            RunDataEditor(point, null);
+        }
+
+        private void RunDataEditor(ItemMapPoint point, Action<ItemMapPoint> update) {
+            new DataEditor<ItemMapPoint>()
+                .AddEditor("SelectMap", typeof(MapCodeScrollItem<>), InitCodeMapFilter)
+                .InitWindow(_viewManager, point, update);
+        }
+
+        private void InitCodeMapFilter(ScrollItem scroll) {
+            var s = scroll as MapCodeScrollItem<ItemMapPoint>;
+            if (s != null) {
+                s.Filter = GetExistedMapCodes();
+            }
+        }
+
         private void NewItemMapRelation() {
             _currentRelationSelectionMode = RelationSelectionMode.SelectPoint1;
+        }
+
+        private void CreateItemMapRelation(ItemMapPoint point1, ItemMapPoint point2) {
+            var item = new ItemMapRelation();
+            item.MapPointId1 = point1.PointId;
+            item.MapPointId2 = point2.PointId;
+            StartItemMapRelationEditor(item, AddItemMapRelation);
+        }
+
+        private void StartItemMapRelationEditor(ItemMapRelation relation, Action<ItemMapRelation> update) {
+            new DataEditor<ItemMapRelation>()
+                .InitWindow(_viewManager, relation, update: update);
+        }
+
+        private void AddItemMapRelation(ItemMapRelation relation) {
+            _globalMap.MapRelations.Add(relation);
         }
 
         private void ZoomPlus() {
@@ -147,8 +204,32 @@ namespace Submarines.MapEditor
 
         private void DragModeEnd() {
             _dragMode = false;
+
+            if (_selectionType == SelectionType.MapRelation && _selectedRelation != null) {
+                StartItemMapRelationEditor(_selectedRelation, null);
+                return;
+            }
+
+            if (_currentRelationSelectionMode == RelationSelectionMode.SelectPoint1) {
+                _selectedPoint1 = _dragMapPoint;
+                _currentRelationSelectionMode = RelationSelectionMode.SelectPoint2;
+                return;
+            }
+
+            if (_currentRelationSelectionMode == RelationSelectionMode.SelectPoint2) {
+                _currentRelationSelectionMode = RelationSelectionMode.None;
+                CreateItemMapRelation(_selectedPoint1, _dragMapPoint);
+                return;
+            }
+
             if (_selectionType == SelectionType.MapPoint && _dragMapPoint != null) {
-                _dragMapPoint.Point = _dragCurrent;
+                var total = _dragCurrent - _dragMapPoint.Point;
+                if (Math.Abs(total.X) < 3 && Math.Abs(total.Y) < 3)
+                    StartEditPoint(_dragMapPoint);
+                else { 
+                    _dragMapPoint.Point = _dragCurrent;
+                    _pcache.Clear();
+                }
             }
             _dragMapPoint = null;
             _dxZoomed = 0;
@@ -202,8 +283,8 @@ namespace Submarines.MapEditor
 
             for (int i = 0; i < _globalMap.MapRelations.Count; i++) {
                 var mapRelation = _globalMap.MapRelations[i];
-                var point1 = _globalMap.GetPointById(mapRelation.MapPointId1).Point;
-                var point2 = _globalMap.GetPointById(mapRelation.MapPointId2).Point;
+                var point1 = _pcache.GetValue(mapRelation.MapPointId1);
+                var point2 = _pcache.GetValue(mapRelation.MapPointId2);
                 var point = (point1 + point2) / 2;
 
                 curDist = p.DistanceTo(point);
@@ -269,6 +350,11 @@ namespace Submarines.MapEditor
                     visualizationProvider.SetColor(Color.GreenYellow);
                     DrawSpawn(visualizationProvider, _dragCurrent);
                 }
+            }
+
+            if (_selectedRelation != null) {
+                visualizationProvider.SetColor(Color.Red);
+                DrawLine2(visualizationProvider, _selectedRelation.MapPointId1, _selectedRelation.MapPointId2, _globalMap.MapPoints);
             }
 
             visualizationProvider.OffsetRemove();
