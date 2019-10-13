@@ -32,10 +32,20 @@ namespace Submarines
 		protected override void InitObject(VisualizationProvider visualizationProvider, Input input)
 		{
 			base.InitObject(visualizationProvider, input);
-			input.AddKeyActionSticked(EndClick, Keys.LButton);
+            Input.AddKeyActionSticked(EndClick, Keys.LButton);
+            Input.OnMouseWheel += MouseWheel;
 		}
 
-		private void EndClick()
+        protected override void ClearObject() {
+            Input.OnMouseWheel -= MouseWheel;
+            base.ClearObject();
+        }
+
+        private void MouseWheel(int obj) {
+            
+        }
+
+        private void EndClick()
 		{
 			_startX = Input.CursorX;
 			_startY = Input.CursorY;
@@ -57,7 +67,17 @@ namespace Submarines
 			visualizationProvider.SetColor(Color.LightSalmon);
 			visualizationProvider.Rectangle(500, 500, 20, 20);
 
-			visualizationProvider.OffsetAdd(700, 500);
+            visualizationProvider.Print(550, 495, "crp=" + _submarine.Engine.CruisingEnginePowerCurrent);
+            visualizationProvider.Print(550, 505, "epr=" + _submarine.Engine.Speed);
+            visualizationProvider.Print(550, 515, "ep=" + _submarine.EnginePercent);
+            visualizationProvider.Print(550, 525, "curAng=" + _submarine.CurrentAngle);
+            visualizationProvider.Print(550, 535, "strAng=" + _submarine.SteeringAngle);
+            visualizationProvider.Print(550, 545, "svx=" + _submarine.SpeedVector.X);
+            visualizationProvider.Print(550, 555, "svy=" + _submarine.SpeedVector.Y);
+            visualizationProvider.Print(550, 565, "px=" + _submarine.Position.X);
+            visualizationProvider.Print(550, 575, "py=" + _submarine.Position.Y);
+
+            visualizationProvider.OffsetAdd(700, 500);
 
 			visualizationProvider.Rotate((int)_submarine.CurrentAngle + 90);
 			visualizationProvider.DrawTexture(0, 0, "Submarines01map.pl01");
@@ -79,7 +99,14 @@ namespace Submarines
 				DrawLine(visualizationProvider, line.From, line.To);
 			}
 
-			_moveCommand = _map._mapAIController._commands.Count > 0
+            foreach (var spawn in _map.Spawns) {
+                visualizationProvider.SetColor(spawn.Geometry.Color);
+                foreach (var line in spawn.Geometry.Lines) {
+                    DrawLine(visualizationProvider, line.From, line.To);
+                }
+            }
+
+            _moveCommand = _map._mapAIController._commands.Count > 0
 				? _moveCommand = _map._mapAIController._commands[0] as MoveCommand
 				: null;
 

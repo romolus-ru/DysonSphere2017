@@ -68,10 +68,11 @@ namespace Submarines.Editors
 
                         var scrollItem = (MemberBaseScrollView<T>)ReflectionHelper.CreateGenericType(scrollCreator.Value, typeof(T));
                         ViewScroll.AddComponent(scrollItem);
-                        scrollItem.InitValueEditor(_objectToEdit, item);
-                        scrollItem.SetParams(10, (row) * 60 + 10, 950, 50, "item" + item);
+                        // вызывается до инициализации объекта. но возможно нужно будет и потом ещё инициализировать
                         if (_scrollActions != null && _scrollActions.ContainsKey(scrollCreator.Key))
                             _scrollActions[scrollCreator.Key](scrollItem);
+                        scrollItem.InitValueEditor(_objectToEdit, item);
+                        scrollItem.SetParams(10, (row) * 60 + 10, 950, 50, "item" + item);
                     }
                 } else
                 if (item.PropertyType.IsEnum) {

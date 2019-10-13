@@ -12,11 +12,8 @@ using System.Collections.Generic;
 
 namespace Submarines.MapEditor
 {
-    // для редактора mapgeometry сделать переопределение и выбирать из геометрий для карт (SelectGeometryWindow)
-    //переделать в редактор карты. выбор/сохранение карты, расстановка точек и задание им типов (респаун (+радиус) город, специальная точка, телепорт и т.п.)
-
     /// <summary>
-    /// Просмотр карты и добавление,установка м редактирование респаунов
+    /// Просмотр карты и добавление,установка и редактирование респаунов
     /// </summary>
     internal class ViewItemMapEditor : ViewComponent
     {
@@ -29,6 +26,7 @@ namespace Submarines.MapEditor
         private float _currentZoom = 1;
         private int _currentZoomIndex = 0;
         private SpawnGeometryCache _cacheSpawnGeometry;
+        private bool _moveStartAngle = false;
 
         /// <summary>
         /// После редактирования если код карты изменен надо обязательно поменять их у всех spawnPoints
@@ -113,12 +111,20 @@ namespace Submarines.MapEditor
             mover.OnDragModeEnd += DragModeEnd;
 
             Input.AddKeyActionSticked(DeleteSelectedSpawn, Keys.Delete);
+            Input.OnMouseWheel += MouseWheel;
             _cacheSpawnGeometry = new SpawnGeometryCache();
         }
 
         protected override void ClearObject() {
+            Input.OnMouseWheel -= MouseWheel;
             Input.RemoveKeyActionSticked(DeleteSelectedSpawn, Keys.Delete);
              base.ClearObject();
+        }
+
+        private void MouseWheel(int delta) {
+            if (delta == 0)
+                return;
+
         }
 
         private void NewSpawnItem() {
@@ -197,33 +203,12 @@ namespace Submarines.MapEditor
             if (Math.Abs(total.X) < 3 && Math.Abs(total.Y) < 3)
                 StartEditPoint(_dragNum);
 
-            // применяем координаты
-            var minDist = _dragCurrent.DistanceTo(_map.MapSpawns[0].Point);
-            var foundNum = -1;
-            Vector nearPoint = new Vector(0, 0, 0);
-            var mmDist = MouseMinimalDistance;
-            float curDist;
-            for (int i = 0; i < _map.MapSpawns.Count; i++) {
-                if (i == _dragNum)
-                    continue;
-
-                var point = _map.MapSpawns[i].Point;
-
-                curDist = _dragCurrent.DistanceTo(point);
-                if (curDist <= mmDist && curDist <= minDist) {
-                    minDist = curDist;
-                    foundNum = i;
-                    nearPoint = point;
-                }
-            }
-
-            if (foundNum != -1) {// меняем координаты на найденные ближайшие
-                _dragCurrent = nearPoint;
-            }
-
             // заменяем точку новой
-            //var newLine = new LineInfo(_dragCurrent, _dragStatic);
-            _map.MapSpawns[_dragNum].Point = _dragCurrent;
+            if (_moveStartAngle) {
+                _map.MapSpawns[_dragNum].StartAngle = (int)total.AngleWith(Vector.Left()) - 90;
+            } else
+                _map.MapSpawns[_dragNum].Point = _dragCurrent;
+
             _dragNum = -1;
             _dxZoomed = 0;
             _dyZoomed = 0;
@@ -266,6 +251,17 @@ namespace Submarines.MapEditor
                     dragNum = i;
                     dragStatic = point;
                     dragCurrent = point;
+                    _moveStartAngle = false;
+                }
+
+                var point2 = point.MovePolar(_map.MapSpawns[i].StartAngle - 90, 80);
+                curDist = p.DistanceTo(point2);
+                if (curDist <= mmDist && curDist <= minDist) {
+                    minDist = curDist;
+                    dragNum = i;
+                    dragStatic = point;
+                    dragCurrent = point;
+                    _moveStartAngle = true;
                 }
             }
 
@@ -367,11 +363,21 @@ namespace Submarines.MapEditor
 
             if (_dragNum != -1) {
                 visualizationProvider.SetColor(Color.Red);
-                DrawSpawn(visualizationProvider, _mapSpawnSelected);
+                if (!_moveStartAngle)
+                    DrawSpawn(visualizationProvider, _mapSpawnSelected);
+                else {
+                    visualizationProvider.OffsetAdd((int)(_mapSpawnSelected.Point.X * _currentZoom), (int)(_mapSpawnSelected.Point.Y * _currentZoom));
+
+                    var direction = Vector.Zero().MovePolar(_mapSpawnSelected.StartAngle - 90, 80 * _currentZoom);
+                    visualizationProvider.Circle((int)direction.X, (int)direction.Y, 8);
+                    visualizationProvider.Line(0, 0, (int)direction.X, (int)direction.Y);
+
+                    visualizationProvider.OffsetRemove();
+                }
 
                 if (_dragMode == 1) {
                     visualizationProvider.SetColor(Color.GreenYellow);
-                    DrawSpawnPoint(visualizationProvider, _dragCurrent);
+                    visualizationProvider.Circle((int)_dragCurrent.X, (int)_dragCurrent.Y, 8);
                 }
             }
 
@@ -379,23 +385,28 @@ namespace Submarines.MapEditor
         }
 
         private void DrawSpawn(VisualizationProvider visualizationProvider, ItemMap.ItemMapSpawnPoint spawn) {
+            visualizationProvider.OffsetAdd((int)(spawn.Point.X * _currentZoom), (int)(spawn.Point.Y * _currentZoom));
+
+            var direction = Vector.Zero().MovePolar(spawn.StartAngle - 90, 80 * _currentZoom);
+            visualizationProvider.Circle((int)direction.X, (int)direction.Y, 8);
+            visualizationProvider.Line(0, 0, (int)direction.X, (int)direction.Y);
+
             DrawSpawnPoint(visualizationProvider, spawn.Point);
-            visualizationProvider.Print(
-                (int)(spawn.Point.X * _currentZoom - 20), (int)(spawn.Point.Y * _currentZoom + 5),
+
+            visualizationProvider.Print(20, 5,
                 spawn.Id + " " + spawn.Name + " " + spawn.SpawnType + " " + spawn.Description);
 
             var geometry = _cacheSpawnGeometry.GetValue(spawn);
             if (geometry != null) {
-                visualizationProvider.OffsetAdd((int)spawn.Point.X, (int)spawn.Point.Y);
                 foreach (var line in geometry.Lines) {
                     DrawLine(visualizationProvider, line.From, line.To);
                 }
-                visualizationProvider.OffsetRemove();
             }
+            visualizationProvider.OffsetRemove();
         }
 
         private void DrawSpawnPoint(VisualizationProvider visualizationProvider, Vector spawnPoint) {
-            visualizationProvider.Circle((int)spawnPoint.X, (int)spawnPoint.Y, 8);
+            visualizationProvider.Circle(0, 0, 8);
         }
 
         private void DrawLine(VisualizationProvider visualizationProvider, Vector from, Vector to) {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Submarines.Geometry;
+using Submarines.Items;
 
 namespace Submarines.Submarines
 {
@@ -9,7 +10,7 @@ namespace Submarines.Submarines
 	/// </summary>
 	internal static class CollisionHelper
 	{
-		public static SubmarineCollisionResult GetSubmarineMapCollision(
+		public static SubmarineCollisionResult GetCollision(
 			SubmarineBase submarine,
 			Vector newPosition,
 			List<LineInfo> mapGeometryLines)
@@ -135,5 +136,17 @@ namespace Submarines.Submarines
 				Y2 = y2 + position.Y,
 			};
 		}
+
+        private static Dictionary<SpawnType, CollisionType> _converter = new Dictionary<SpawnType, CollisionType>() {
+            { SpawnType.Portal, CollisionType.Teleport }
+        };
+
+        public static CollisionType GetCollisionType(this SpawnType spawnType) {
+            CollisionType result;
+            if (_converter.TryGetValue(spawnType, out result))
+                return result;
+            return CollisionType.Unknown;
+        }
+
 	}
 }

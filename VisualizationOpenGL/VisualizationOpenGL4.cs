@@ -86,6 +86,7 @@ namespace VisualizationOpenGL
 		/// <param name="e"></param>
 		private void MouseWheel(object sender, MouseEventArgs e)
 		{
+            OnMouseWheel?.Invoke(e.Delta);
 			//_controller.StartEvent("ViewStringListAdd", this, MessageEventArgs.Msg("Колесо мыши " + e.Delta));
 			//_controller.StartEvent("CursorDelta", this, EngineGenericEventArgs<int>.Send(e.Delta));
 		}

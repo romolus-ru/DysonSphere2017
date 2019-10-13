@@ -50,6 +50,7 @@ namespace Submarines
 			var visualizationId = _datasupport.ServerSettingsGetValue("visualization");
 			_visualization = collector.GetObject(visualizationId) as VisualizationProvider;
 			_visualization.InitVisualization(_datasupport, logSystem, 500, 500, true);
+            _visualization.OnMouseWheel += _input.MouseWheel;
 
 			// создаётся объект для работы с мат моделями
 			_rplayer = _datasupport.UserStatus;// загружаем данные игрока (основные)

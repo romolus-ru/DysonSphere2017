@@ -53,7 +53,7 @@ namespace Submarines.Submarines
 			CruisingEnginePowerMax = cruisingEnginePower;
 			CruisingEnginePowerCurrent = 0;
             _powerMax = CruisingEnginePowerMax * EnginePercentMax / 100;
-            _powerMin = -CruisingEnginePowerMax * EnginePercentMin / 100;
+            _powerMin = CruisingEnginePowerMax * EnginePercentMin / 100;
             _needRecalc = true;
 		}
 

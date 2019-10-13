@@ -17,6 +17,7 @@ namespace Submarines.Items
             public int Id { get; set; }// уникальный номер для каждой карты
             public string Name { get; set; }
             public Vector Point { get; set; }
+            public int StartAngle { get; set; }
             /// <summary>
             /// Векторное представление знака спавна
             /// </summary>

@@ -65,6 +65,8 @@ namespace Engine
 		/// </summary>
 		public Action OnModalStateStopped;
 
+        public Action<int> OnMouseWheel;
+
 		/// <summary>
 		/// Кнопки в комбинациях, которые можно держать нажатыми, но комбинация будет считаться сработавшей
 		/// </summary>
@@ -609,6 +611,10 @@ namespace Engine
 		{
 			return string.Empty;
 		}
+
+        public void MouseWheel(int delta) {
+            OnMouseWheel?.Invoke(delta);
+        }
 
 	}
 }

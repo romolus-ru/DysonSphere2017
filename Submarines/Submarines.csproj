@@ -70,12 +70,16 @@
     <Compile Include="Items\ItemSpawn.cs" />
     <Compile Include="MapEditor\ItemMapPointCache.cs" />
     <Compile Include="MapEditor\MapCodeScrollItem.cs" />
+    <Compile Include="MapEditor\MapSpawnIdScrollItem.cs" />
     <Compile Include="MapEditor\SelectItemMapScrollItem.cs" />
+    <Compile Include="MapEditor\SelectItemMapSpawnScrollItem.cs" />
+    <Compile Include="MapEditor\SelectItemMapSpawnWindow.cs" />
     <Compile Include="MapEditor\SelectItemMapWindow.cs" />
     <Compile Include="MapEditor\SpawnGeometryCache.cs" />
     <Compile Include="MapEditor\GeometryScrollItem.cs" />
     <Compile Include="MapEditor\ViewItemMapEditor.cs" />
     <Compile Include="MapEditor\ViewItemGlobalMapEditor.cs" />
+    <Compile Include="Maps\Spawns\MapSpawnTeleport.cs" />
     <Compile Include="Submarines\CollisionHelper.cs" />
     <Compile Include="Geometry\GeometryType.cs" />
     <Compile Include="Geometry\LineInfo.cs" />
@@ -103,6 +107,7 @@
     <Compile Include="Maps\MapController.cs" />
     <Compile Include="Maps\MapsBuilder.cs" />
     <Compile Include="Maps\MapZoomController.cs" />
+    <Compile Include="Submarines\CollisionType.cs" />
     <Compile Include="Submarines\Engine.cs" />
     <Compile Include="IEngineSupport.cs" />
     <Compile Include="IManeuverSupport.cs" />
@@ -110,6 +115,7 @@
     <Compile Include="ModelViewManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Maps\Spawns\MapSpawn.cs" />
     <Compile Include="Submarines\Submarine.cs" />
     <Compile Include="ShipController.cs" />
     <Compile Include="Submarines\SubmarineBase.cs" />

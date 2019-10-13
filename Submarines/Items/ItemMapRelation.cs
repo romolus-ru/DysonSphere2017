@@ -1,4 +1,6 @@
-﻿namespace Submarines.Items
+﻿using Engine.DataPlus;
+
+namespace Submarines.Items
 {
     /// <summary>
     /// 
@@ -20,11 +22,13 @@
         /// </summary>
         public int MapPointId1 { get; set; }
 
+        [MemberSpecialEditor(EditorType = "SelectSpawnId1")]
         public int MapSpawnId1 { get; set; }
         /// <summary>
         /// Идентификатор глобальной точки на карте
         /// </summary>
         public int MapPointId2 { get; set; }
+        [MemberSpecialEditor(EditorType = "SelectSpawnId2")]
         public int MapSpawnId2 { get; set; }
         
         /// <summary>

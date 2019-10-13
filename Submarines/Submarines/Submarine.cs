@@ -64,5 +64,10 @@ namespace Submarines.Submarines
 			}
 			base.MoveToNewPos(collisionResult, newPos);
 		}
-	}
+
+        internal void SetStartValues(Vector startPoint, float startAngle) {
+            Position = startPoint;
+            CurrentAngle = startAngle;
+        }
+    }
 }

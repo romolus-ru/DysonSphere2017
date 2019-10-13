@@ -6,6 +6,8 @@ using Submarines.Items;
 using Submarines.Maps;
 using Submarines.Submarines;
 using Submarines.MapEditor;
+using Submarines.Maps.Spawns;
+using System.Linq;
 
 namespace Submarines
 {
@@ -39,7 +41,7 @@ namespace Submarines
 		{
 			_vMenu = new ViewMainMenu();
 			_viewManager.AddView(_vMenu);
-			_vMenu.OnStartGame = StartGame;
+			_vMenu.OnStartGame = StartGamePrepare;
 			_vMenu.OnStartGeometryEditor = StartGeometryEditor;
             _vMenu.OnStartItemMapEditor = StartItemMapEditor;
             _vMenu.OnStartItemMapRelationEditor = StartItemMapRelationEditor;
@@ -94,16 +96,33 @@ namespace Submarines
             Start();
         }
 
+        private string _mapName = "TM01";
+        private int _mapSpawnId = -1;
+        private ItemGlobalMap _globalMap;
+
+        private void StartGamePrepare() {
+            _viewManager.RemoveView(_vMenu);
+            _vMenu = null;
+
+            _globalMap = ItemsManager.LoadGlobalMap();
+            StartGame();
+        }
+
         private void StartGame()
 		{
-			_viewManager.RemoveView(_vMenu);
-			_vMenu = null;
+            ItemSubmarine itemSubmarine = (ItemSubmarine) ItemsManager.GetItemBase("SubmarineDefault");
+            Submarine submarine = (Submarine)SubmarinesBuilder.Create(itemSubmarine);
+            
+            if (_mapSpawnId != -1) {// перемещаем корабль к точке
+                var map1 = ItemsManager.GetMap(_mapName);
+                var spawn = map1.MapSpawns.FirstOrDefault(p => p.Id == _mapSpawnId);
+                submarine.SetStartValues(spawn.Point, spawn.StartAngle);
+            }
 
-			ItemSubmarine itemSubmarine = (ItemSubmarine) ItemsManager.GetItemBase("SubmarineDefault");
-			Submarine submarine = (Submarine) SubmarinesBuilder.Create(itemSubmarine);
-			ShipController shipController = new ShipController(submarine);
-			var mapInfo = ItemsManager.GetMap("Test");
-			var map = MapsBuilder.CreateMap(mapInfo, submarine);
+
+            ShipController shipController = new ShipController(submarine);
+            var map = MapsBuilder.CreateMap(_mapName, submarine, _globalMap);
+            map.OnTeleport += Teleport;
 			shipController.OnFire += map.PlayerShoot;
 
 			_mtg = new ModelGame(map);
@@ -115,7 +134,22 @@ namespace Submarines
 
 		}
 
-		private void Close()
+        private void Teleport(MapSpawnTeleport spawn) {
+            _mapName = spawn.TargetMapCode;
+            _mapSpawnId = spawn.TargetMapSpawnId;
+
+            _modelMainClient.DelModel(_mtg);
+            _mtg.Stop();
+            _mtg = null;
+
+            _viewManager.RemoveView(_vtg);
+            _vtg.Clear();
+            _vtg = null;
+
+            StartGame();
+        }
+
+        private void Close()
 		{
 			StateClient.SaveState();
 			_viewManager.Provider.Exit();

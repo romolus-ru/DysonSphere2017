@@ -20,6 +20,8 @@ namespace Engine.Visualization
 		/// </summary>
 		public Action<int, int> OnResizeWindow;
 
+        public Action<int> OnMouseWheel;
+
 		public virtual void Exit() { }
 		
 		public Version Version = new Version(0, 2);

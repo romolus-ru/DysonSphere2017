@@ -156,9 +156,9 @@ namespace Submarines.Items
 				? _geometries[geometryName]
 				: null;
 
-		internal static ItemMap GetMap(string mapName)
-			=> _maps.ContainsKey(mapName)
-				? _maps[mapName]
+		internal static ItemMap GetMap(string mapCode)
+			=> _maps.ContainsKey(mapCode)
+				? _maps[mapCode]
 				: null;
 
 		// for editor

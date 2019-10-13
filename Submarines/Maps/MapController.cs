@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Submarines.Geometry;
+using Submarines.Maps.Spawns;
 using Submarines.Submarines;
 
 namespace Submarines.Maps
@@ -13,6 +15,10 @@ namespace Submarines.Maps
 		/// Границы карты
 		/// </summary>
 		private GeometryBase _mapGeometry;
+
+        private List<MapSpawn> _mapSpawns;
+
+        public Action<MapSpawn> OnSpawnActivated;
 
 		/// <summary>
 		/// Подлодки
@@ -29,9 +35,10 @@ namespace Submarines.Maps
 		/// </summary>
 		private List<SubmarineBase> _defance = new List<SubmarineBase>();
 
-		public MapController(GeometryBase mapGeometry)
+		public MapController(GeometryBase mapGeometry, List<MapSpawn> mapSpawns)
 		{
 			_mapGeometry = mapGeometry;
+            _mapSpawns = mapSpawns;
 		}
 
 		public void AddSubmarine(Submarine submarine)
@@ -46,6 +53,7 @@ namespace Submarines.Maps
 			_rockets.Add(shoot);
 		}
 
+
 		/// <summary>
 		/// Определяем столкновение и возвращаем результат
 		/// </summary>
@@ -55,7 +63,22 @@ namespace Submarines.Maps
 		/// <returns></returns>
 		private SubmarineCollisionResult SubmarineCheckCollision(SubmarineBase submarine, Vector currentPosition, Vector newPosition)
 		{
-			return CollisionHelper.GetSubmarineMapCollision(submarine, newPosition, _mapGeometry.Lines);
+            // добавить проверку столкновения с объектами карты
+            foreach (var spawn in _mapSpawns) {
+                var collisionSpawn = CollisionHelper.GetCollision(submarine, newPosition, spawn.Geometry.Lines);
+                if (collisionSpawn.CollisionDetected && spawn.ActiveCollision) {
+                    collisionSpawn.CollisionType = spawn.SpawnType.GetCollisionType();
+                    OnSpawnActivated?.Invoke(spawn);
+                    return collisionSpawn;
+                }
+                if (!collisionSpawn.CollisionDetected && !spawn.ActiveCollision) {
+                    spawn.ActiveCollision = true;
+                }
+            }
+            var collision = CollisionHelper.GetCollision(submarine, newPosition, _mapGeometry.Lines);
+            if (collision.CollisionDetected)
+                collision.CollisionType = CollisionType.Map;
+            return collision;
 		}
 
 		/// <summary>

@@ -1,4 +1,5 @@
 ﻿using Engine;
+using Engine.Extensions;
 using Engine.Helpers;
 using Engine.Visualization;
 using Engine.Visualization.Scroll;
@@ -7,6 +8,7 @@ using Submarines.Items;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace Submarines.MapEditor
@@ -172,12 +174,37 @@ namespace Submarines.MapEditor
             var item = new ItemMapRelation();
             item.MapPointId1 = point1.PointId;
             item.MapPointId2 = point2.PointId;
+            _selectedRelation = item;
             StartItemMapRelationEditor(item, AddItemMapRelation);
         }
 
         private void StartItemMapRelationEditor(ItemMapRelation relation, Action<ItemMapRelation> update) {
             new DataEditor<ItemMapRelation>()
+                .AddEditor("SelectSpawnId1", typeof(MapSpawnIdScrollItem<>), InitMapSpawnValues1)
+                .AddEditor("SelectSpawnId2", typeof(MapSpawnIdScrollItem<>), InitMapSpawnValues2)
                 .InitWindow(_viewManager, relation, update: update);
+        }
+
+        private void InitMapSpawnValues1(ScrollItem scroll) {
+            var s = scroll as MapSpawnIdScrollItem<ItemMapRelation>;
+            if (s != null) {
+                var mapCode1 = _globalMap.MapPoints.FirstOrDefault(m => m.PointId == _selectedRelation.MapPointId1)?.MapCode;
+                if (!mapCode1.IsNullOrEmpty()) {
+                    var map = ItemsManager.GetMap(mapCode1);
+                    s.Map = map;
+                }
+            }
+        }
+
+        private void InitMapSpawnValues2(ScrollItem scroll) {
+            var s = scroll as MapSpawnIdScrollItem<ItemMapRelation>;
+            if (s != null) {
+                var mapCode2 = _globalMap.MapPoints.FirstOrDefault(m => m.PointId == _selectedRelation.MapPointId2)?.MapCode;
+                if (!mapCode2.IsNullOrEmpty()) {
+                    var map = ItemsManager.GetMap(mapCode2);
+                    s.Map = map;
+                }
+            }
         }
 
         private void AddItemMapRelation(ItemMapRelation relation) {

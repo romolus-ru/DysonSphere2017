@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using Submarines.Geometry;
+using Submarines.Items;
+using Submarines.Maps.Spawns;
 using Submarines.Submarines;
 
 namespace Submarines.Maps
@@ -16,6 +18,12 @@ namespace Submarines.Maps
 		public GeometryBase Geometry { get; }
 		private MapController _mapController;
 		public MapAiController _mapAIController;
+        public List<MapSpawn> Spawns;
+        
+        /// <summary>
+        /// Событие телепорта
+        /// </summary>
+        public Action<MapSpawnTeleport> OnTeleport;
 
 		/// <summary>
 		/// Все подлодки, включая игрока
@@ -27,25 +35,27 @@ namespace Submarines.Maps
 		/// </summary>
 		public SubmarineBase PlayerShip { get; protected set; }
 
-		public MapBase(GeometryBase mapGeometry, List<SubmarineBase> submarines)
+		public MapBase(GeometryBase mapGeometry, List<SubmarineBase> submarines, List<MapSpawn> spawns)
 		{
 			Geometry = mapGeometry;
 			Submarines = submarines;
+            Spawns = spawns;
 			_mapAIController = new MapAiController();
 			_mapAIController.Map = this;
-			_mapController = new MapController(mapGeometry);
+            _mapController = new MapController(mapGeometry, Spawns);
+            _mapController.OnSpawnActivated += SpawnActivated;
 			foreach (var submarineBase in submarines) {
 				var submarine = (Submarine) submarineBase;
 				if (submarine != null)
 					_mapController.AddSubmarine(submarine);
 			}
 		}
-		
-		/// <summary>
-		/// Установить корабль, управляемый игроком
-		/// </summary>
-		/// <param name="playerShip"></param>
-		public virtual void SetPlayerShip(SubmarineBase playerShip)
+
+        /// <summary>
+        /// Установить корабль, управляемый игроком
+        /// </summary>
+        /// <param name="playerShip"></param>
+        public virtual void SetPlayerShip(SubmarineBase playerShip)
 		{
 			foreach (var submarine in Submarines) {
 				submarine.ManualControl = false;
@@ -77,5 +87,10 @@ namespace Submarines.Maps
 			Submarines.Add(submarine);
 			_mapController.AddShoot(submarine);
 		}
-	}
+
+        private void SpawnActivated(MapSpawn spawn) {
+            if (spawn.SpawnType == SpawnType.Portal)
+                OnTeleport?.Invoke(spawn as MapSpawnTeleport);
+        }
+    }
 }
