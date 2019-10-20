@@ -21,7 +21,7 @@ namespace Submarines.Submarines
 			EnginePercentMin = engine.EnginePercentMin;
 			_currentTime = DateTime.Now;
 			Mass = 100000;
-			AddSpeed(5);
+			AddSpeed(-5);
 		}
 
 		public void SetSpeed(float speed)

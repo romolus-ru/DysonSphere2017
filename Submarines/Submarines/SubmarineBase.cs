@@ -43,6 +43,8 @@ namespace Submarines.Submarines
 		public float VCurrent { get; protected set; }
 		protected float VCurrentPrev { get; set; }
 
+        public float CurrentLength { get; set; }
+
 		/// <summary>
 		/// Направление вектора скорости
 		/// </summary>
@@ -116,6 +118,7 @@ namespace Submarines.Submarines
 				float cosRad = (float) Math.Cos(radians);
 				float sinRad = (float) Math.Sin(radians);
 				var length = VCurrent * timeCoefficient;
+                CurrentLength = length;
 				if (OnCorrectionMovementLength != null)
 					length = OnCorrectionMovementLength(length);
 				float x = length * cosRad;

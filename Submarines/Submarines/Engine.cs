@@ -83,8 +83,10 @@ namespace Submarines.Submarines
 				enginePower = _powerMax;
 			if (enginePower < _powerMin)
 				enginePower = _powerMin;
-			if (!CruisingEnginePowerCurrent.IsEqualTo(enginePower))
-				CruisingEnginePowerCurrent = enginePower;
+            if (!CruisingEnginePowerCurrent.IsEqualTo(enginePower)) {
+                CruisingEnginePowerCurrent = enginePower;
+                NeedSpeedRecalc();
+            }
 		}
 
 		public void SetSpeedPercent(float percents)

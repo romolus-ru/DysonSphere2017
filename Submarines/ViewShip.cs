@@ -28,9 +28,10 @@ namespace Submarines
 			visualizationProvider.Print(550, 545, "svx=" + _submarine.SpeedVector.X);
 			visualizationProvider.Print(550, 555, "svy=" + _submarine.SpeedVector.Y);
 			visualizationProvider.Print(550, 565, "px=" + _submarine.Position.X);
-			visualizationProvider.Print(550, 575, "py=" + _submarine.Position.Y);
+            visualizationProvider.Print(550, 575, "py=" + _submarine.Position.Y);
+            visualizationProvider.Print(550, 585, "l_sdp=" + _submarine.CurrentLength);
 
-			visualizationProvider.Rotate((int) _submarine.CurrentAngle + 90);
+            visualizationProvider.Rotate((int) _submarine.CurrentAngle + 90);
 			visualizationProvider.OffsetAdd(700 + (int) _submarine.Position.X, 500 + (int) _submarine.Position.Y);
 			visualizationProvider.DrawTexture(0, 0, "Submarines01map.pl01");
 			visualizationProvider.RotateReset();

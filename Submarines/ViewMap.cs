@@ -76,6 +76,7 @@ namespace Submarines
             visualizationProvider.Print(550, 555, "svy=" + _submarine.SpeedVector.Y);
             visualizationProvider.Print(550, 565, "px=" + _submarine.Position.X);
             visualizationProvider.Print(550, 575, "py=" + _submarine.Position.Y);
+            visualizationProvider.Print(550, 585, "l_sdp=" + _submarine.CurrentLength);
 
             visualizationProvider.OffsetAdd(700, 500);
 
