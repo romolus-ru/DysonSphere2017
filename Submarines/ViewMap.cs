@@ -101,7 +101,8 @@ namespace Submarines
 			}
 
             foreach (var spawn in _map.Spawns) {
-                visualizationProvider.SetColor(spawn.Geometry.Color);
+                byte alpha = spawn.ActiveCollision ? (byte)100 : (byte)20;
+                visualizationProvider.SetColor(spawn.Geometry.Color, alpha);
                 foreach (var line in spawn.Geometry.Lines) {
                     DrawLine(visualizationProvider, line.From, line.To);
                 }

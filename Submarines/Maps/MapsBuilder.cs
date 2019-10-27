@@ -50,6 +50,11 @@ namespace Submarines.Maps
                     }
                     spawn = spawn1;
                     break;
+                case SpawnType.Rock:
+                    var spawnRock = new MapSpawnRock();
+                    spawnRock.Health = mapSpawn.Health;
+                    spawn = spawnRock;
+                    break;
                 default:
                     break;
             }
@@ -58,6 +63,7 @@ namespace Submarines.Maps
                 spawn.Id = mapSpawn.Id;
                 spawn.SpawnType = mapSpawn.SpawnType;
                 spawn.Geometry = CreateSpawnGeometry(mapSpawn);
+                spawn.Point = mapSpawn.Point;
             }
 
             return spawn;

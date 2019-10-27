@@ -119,7 +119,6 @@ namespace Submarines
                 submarine.SetStartValues(spawn.Point, spawn.StartAngle);
             }
 
-
             ShipController shipController = new ShipController(submarine);
             var map = MapsBuilder.CreateMap(_mapName, submarine, _globalMap);
             map.OnTeleport += Teleport;

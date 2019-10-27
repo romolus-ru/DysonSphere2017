@@ -65,6 +65,10 @@ namespace Submarines.Maps
 		{
             // добавить проверку столкновения с объектами карты
             foreach (var spawn in _mapSpawns) {
+                
+                if (spawn.SpawnType == Items.SpawnType.Rock)
+                    continue;
+
                 var collisionSpawn = CollisionHelper.GetCollision(submarine, newPosition, spawn.Geometry.Lines);
                 if (collisionSpawn.CollisionDetected && spawn.ActiveCollision) {
                     collisionSpawn.CollisionType = spawn.SpawnType.GetCollisionType();
@@ -72,7 +76,9 @@ namespace Submarines.Maps
                     return collisionSpawn;
                 }
                 if (!collisionSpawn.CollisionDetected && !spawn.ActiveCollision) {
-                    spawn.ActiveCollision = true;
+                    const int minDistanceToActivate = 100;
+                    if (newPosition.DistanceTo(spawn.Point) > minDistanceToActivate)
+                        spawn.ActiveCollision = true;
                 }
             }
             var collision = CollisionHelper.GetCollision(submarine, newPosition, _mapGeometry.Lines);

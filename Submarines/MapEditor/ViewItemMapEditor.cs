@@ -387,9 +387,12 @@ namespace Submarines.MapEditor
         private void DrawSpawn(VisualizationProvider visualizationProvider, ItemMap.ItemMapSpawnPoint spawn) {
             visualizationProvider.OffsetAdd((int)(spawn.Point.X * _currentZoom), (int)(spawn.Point.Y * _currentZoom));
 
-            var direction = Vector.Zero().MovePolar(spawn.StartAngle - 90, 80 * _currentZoom);
-            visualizationProvider.Circle((int)direction.X, (int)direction.Y, 8);
-            visualizationProvider.Line(0, 0, (int)direction.X, (int)direction.Y);
+            if (spawn.SpawnType == SpawnType.Portal)
+            {
+                var direction = Vector.Zero().MovePolar(spawn.StartAngle - 90, 80 * _currentZoom);
+                visualizationProvider.Circle((int)direction.X, (int)direction.Y, 8);
+                visualizationProvider.Line(0, 0, (int)direction.X, (int)direction.Y);
+            }
 
             DrawSpawnPoint(visualizationProvider, spawn.Point);
 

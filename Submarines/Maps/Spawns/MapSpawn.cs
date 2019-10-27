@@ -11,6 +11,7 @@ namespace Submarines.Maps.Spawns
         public int Id;
         public GeometryBase Geometry;
         public SpawnType SpawnType;
+        public Vector Point;
         
         /// <summary>
         /// Для блокировки точки в момент старта карты

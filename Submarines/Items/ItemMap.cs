@@ -18,6 +18,7 @@ namespace Submarines.Items
             public string Name { get; set; }
             public Vector Point { get; set; }
             public int StartAngle { get; set; }
+            public int Health { get; set; }
             /// <summary>
             /// Векторное представление знака спавна
             /// </summary>
