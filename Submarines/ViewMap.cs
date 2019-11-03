@@ -33,16 +33,29 @@ namespace Submarines
 		{
 			base.InitObject(visualizationProvider, input);
             Input.AddKeyActionSticked(EndClick, Keys.LButton);
+            Input.AddKeyActionSticked(Fire, Keys.Space);
             Input.OnMouseWheel += MouseWheel;
 		}
 
         protected override void ClearObject() {
+            Input.RemoveKeyActionSticked(EndClick, Keys.LButton);
+            Input.RemoveKeyActionSticked(Fire, Keys.Space);
             Input.OnMouseWheel -= MouseWheel;
             base.ClearObject();
         }
 
-        private void MouseWheel(int obj) {
-            
+        private void MouseWheel(int obj)
+        {
+
+        }
+
+        private void Fire()
+        {
+            _startX = Input.CursorX;
+            _startY = Input.CursorY;
+            PlayerFire?.Invoke(
+                _startX + _submarine.Position.X - 700,
+                _startY + _submarine.Position.Y - 500);
         }
 
         private void EndClick()
